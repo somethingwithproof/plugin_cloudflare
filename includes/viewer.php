@@ -40,10 +40,14 @@ function cloudflare_viewer_unreadable_text() : string {
 
 /*
  * A read that throws would reach CactiShutdownHandler, which disables the
- * plugin, so a missing or broken schema is reported instead.
+ * plugin, so a missing or broken schema is reported instead. Only a
+ * DatabaseException's message is known to carry no bound values or driver
+ * text; anything else is logged by class.
  */
-function cloudflare_viewer_unreadable(string $context, DatabaseException $e) : void {
-	cacti_log('CLOUDFLARE: viewer ' . $context . ' failed: ' . $e->getMessage(), false, 'CLOUDFLARE');
+function cloudflare_viewer_unreadable(string $context, Throwable $e) : void {
+	$detail = $e instanceof DatabaseException ? $e->getMessage() : get_class($e);
+
+	cacti_log('CLOUDFLARE: viewer ' . $context . ' failed: ' . $detail, false, 'CLOUDFLARE');
 
 	raise_message('cloudflare_unreadable', html_escape(cloudflare_viewer_unreadable_text()), MESSAGE_LEVEL_ERROR);
 }
@@ -341,9 +345,10 @@ function cloudflare_viewer_tunnel_request() : array {
 			'options' => array('options' => array('regexp' => $any_of(TunnelRepository::CF_STATUSES)))
 		),
 		'filter' => array(
-			'filter'  => FILTER_DEFAULT,
+			'filter'  => FILTER_CALLBACK,
 			'pageset' => true,
-			'default' => ''
+			'default' => '',
+			'options' => array('options' => 'sanitize_search_string')
 		),
 		'sort_column' => array(
 			'filter'  => FILTER_VALIDATE_REGEXP,
@@ -365,10 +370,14 @@ function cloudflare_viewer_tunnel_request() : array {
 		$rows = max(1, (int) read_config_option('num_rows_table'));
 	}
 
+	/* validate_store_request_vars() passes '0' through without running the
+	 * filter, so each value is checked against the repository's list again;
+	 * one it would reject is dropped rather than thrown from the page. */
 	$query_filters = array();
-	foreach (array('lifecycle', 'cf_status') as $name) {
+	$allowed       = array('lifecycle' => TunnelRepository::LIFECYCLES, 'cf_status' => TunnelRepository::CF_STATUSES);
+	foreach ($allowed as $name => $values) {
 		$value = (string) get_request_var($name);
-		if ($value !== '') {
+		if (in_array($value, $values, true)) {
 			$query_filters[$name] = $value;
 		}
 	}
@@ -493,7 +502,7 @@ function cloudflare_viewer_tunnels() : void {
 			$query['sort'],
 			$query['direction']
 		);
-	} catch (DatabaseException $e) {
+	} catch (DatabaseException | InvalidArgumentException $e) {
 		cloudflare_viewer_unreadable('tunnels', $e);
 
 		$unreadable = true;

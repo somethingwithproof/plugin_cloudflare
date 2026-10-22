@@ -552,7 +552,8 @@ if (!function_exists('validate_store_request_vars')) {
 	function validate_store_request_vars($filters, $sess_prefix = ''): void {
 		cloudflare_glue_record(__FUNCTION__, array($filters, $sess_prefix));
 
-		$changed = 0;
+		$changed  = 0;
+		$modelled = array(FILTER_VALIDATE_INT, FILTER_DEFAULT, FILTER_CALLBACK, FILTER_VALIDATE_REGEXP);
 
 		foreach ($filters as $variable => $options) {
 			$session_variable = '';
@@ -591,8 +592,10 @@ if (!function_exists('validate_store_request_vars')) {
 					$value = $options['default'] ?? '';
 				} elseif (empty($raw)) {
 					$value = '';
-				} elseif (!in_array($options['filter'], array(FILTER_VALIDATE_INT, FILTER_DEFAULT, FILTER_CALLBACK, FILTER_VALIDATE_REGEXP), true)) {
-					throw new LogicException('validate_store_request_vars stub does not model filter ' . var_export($options['filter'], true));
+				} elseif (!in_array($options['filter'], $modelled, true)) {
+					throw new LogicException(
+						'validate_store_request_vars stub does not model filter ' . var_export($options['filter'], true)
+					);
 				} elseif (!isset($options['options'])) {
 					$value = filter_var($raw, $options['filter']);
 				} else {
@@ -626,8 +629,14 @@ if (!function_exists('sanitize_search_string')) {
 	 * @return mixed
 	 */
 	function sanitize_search_string($string) {
-		static $drop_char_match   = array('(', ')', '^', '$', '<', '>', '`', '\'', '"', '|', ',', '?', '+', '[', ']', '{', '}', '#', ';', '!', '=', '*');
-		static $drop_char_replace = array('', '', ' ', ' ', ' ', ' ', '', '', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+		static $drop_char_match = array(
+			'(', ')', '^', '$', '<', '>', '`', '\'', '"', '|', ',',
+			'?', '+', '[', ']', '{', '}', '#', ';', '!', '=', '*',
+		);
+		static $drop_char_replace = array(
+			'', '', ' ', ' ', ' ', ' ', '', '', ' ', ' ', ' ',
+			' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+		);
 
 		$string = preg_replace('/[\n\r]/is', ' ', $string);
 		$string = preg_replace('/\b&[a-z]+;\b/', ' ', $string);
@@ -750,8 +759,18 @@ if (!function_exists('html_header_sort')) {
 	 * @param mixed $url
 	 * @param mixed $return_to
 	 */
-	function html_header_sort($header_items, $sort_column, $sort_direction, $last_item_colspan = 1, $url = '', $return_to = ''): void {
-		cloudflare_glue_record(__FUNCTION__, array($header_items, $sort_column, $sort_direction, $last_item_colspan, $url, $return_to));
+	function html_header_sort(
+		$header_items,
+		$sort_column,
+		$sort_direction,
+		$last_item_colspan = 1,
+		$url = '',
+		$return_to = ''
+	): void {
+		cloudflare_glue_record(
+			__FUNCTION__,
+			array($header_items, $sort_column, $sort_direction, $last_item_colspan, $url, $return_to)
+		);
 	}
 }
 

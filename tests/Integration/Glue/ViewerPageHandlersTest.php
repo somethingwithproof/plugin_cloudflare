@@ -253,6 +253,24 @@ final class ViewerPageHandlersTest extends IntegrationTestCase {
 		$this->assertSame(array('cf_status', 'DESC'), array($sort[0][1], $sort[0][2]));
 	}
 
+	public function testZeroFiltersListEveryTunnelInsteadOfThrowing(): void {
+		$this->seed();
+
+		$_REQUEST = array(
+			'lifecycle'      => '0',
+			'cf_status'      => '0',
+			'sort_column'    => '0',
+			'sort_direction' => '0',
+			'rows'           => '25',
+		);
+
+		self::capture('cloudflare_viewer_tunnels');
+
+		$this->assertCount(4, self::rows());
+		$this->assertSame(array(), cloudflare_glue_calls('raise_message'));
+		$this->assertSame('0', $_SESSION['sess_cf_tunnels_lifecycle'], 'stored as Cacti stores it');
+	}
+
 	public function testConnectorsShowOneTunnel(): void {
 		list($prod) = $this->seed();
 

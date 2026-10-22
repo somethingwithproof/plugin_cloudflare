@@ -242,6 +242,22 @@ final class ViewerPageTest extends TestCase {
 			'page'       => 1,
 		), cloudflare_viewer_tunnel_request());
 
+		/* Cacti returns '0' before running any filter, so it reaches the page unvalidated. */
+		foreach (array('lifecycle', 'cf_status', 'sort_column', 'sort_direction') as $name) {
+			$_REQUEST = array($name => '0');
+			$_SESSION = array();
+
+			$query = cloudflare_viewer_tunnel_request();
+
+			$this->assertSame(array(), $query['filters'], $name);
+			$this->assertSame('name', $query['sort'], $name);
+			$this->assertSame('ASC', $query['direction'], $name);
+		}
+
+		$_REQUEST = array('lifecycle' => '0', 'cf_status' => '0');
+		$_SESSION = array();
+		$this->assertSame(array(), cloudflare_viewer_tunnel_request()['filters'], 'both at once');
+
 		/* Every sortable header is a column the repository allows. */
 		$sortable = array_filter(array_keys(cloudflare_viewer_tunnel_columns(true)), function (string $key): bool {
 			return strpos($key, 'nosort') === false;

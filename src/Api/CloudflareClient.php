@@ -150,6 +150,7 @@ final class CloudflareClient {
 
 		$tunnels = array();
 		$seen    = array();
+		$total   = null;
 
 		for ($page = 1; $page <= self::MAX_PAGES; $page++) {
 			$envelope = $this->request('GET', '/accounts/' . $cfAccountId . '/cfd_tunnel', $token, array(
@@ -170,6 +171,17 @@ final class CloudflareClient {
 				throw new ApiException(ErrorClass::MALFORMED, 200, array(), 'tunnel listing has no usable result_info');
 			}
 
+			/*
+			 * A delete between pages shifts later pages by one item and lowers
+			 * their total, so the running count would still match and a live
+			 * tunnel would be missing. Pin page 1's total instead.
+			 */
+			if ($total === null) {
+				$total = $info['total_count'];
+			} elseif ($info['total_count'] !== $total) {
+				throw new ApiException(ErrorClass::MALFORMED, 200, array(), 'tunnel listing total changed between pages');
+			}
+
 			foreach ($items as $item) {
 				$tunnel = self::parseTunnel($item);
 				if (isset($seen[$tunnel->id])) {
@@ -180,7 +192,7 @@ final class CloudflareClient {
 				$tunnels[]         = $tunnel;
 			}
 
-			if (count($tunnels) >= $info['total_count']) {
+			if (count($tunnels) >= $total) {
 				return $tunnels;
 			}
 			if ($items === array()) {

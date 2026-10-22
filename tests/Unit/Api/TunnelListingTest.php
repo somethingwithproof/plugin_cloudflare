@@ -139,6 +139,33 @@ final class TunnelListingTest extends TestCase {
 		$this->assertStringEndsWith('&page=2', $this->transport->requests()[1]->url());
 	}
 
+	/**
+	 * Tunnel 1001 is deleted after page 1: page 2 starts one item later and
+	 * reports the smaller total, so the cumulative count alone would accept a
+	 * listing that is missing a live tunnel.
+	 */
+	public function testTotalChangingBetweenPagesIsMalformed(): void {
+		$all = array();
+		for ($i = 1; $i <= 1500; $i++) {
+			$all[] = $this->item($i);
+		}
+		$this->transport->queue($this->page(
+			array_slice($all, 0, 1000),
+			array('page' => 1, 'per_page' => 1000, 'count' => 1000, 'total_count' => 1500)
+		));
+		$this->transport->queue($this->page(
+			array_slice($all, 1001),
+			array('page' => 2, 'per_page' => 1000, 'count' => 499, 'total_count' => 1499)
+		));
+
+		$tunnels = null;
+		$this->expectFailure(function () use (&$tunnels): void {
+			$tunnels = $this->client()->listTunnels(self::ACCOUNT, $this->token);
+		}, ErrorClass::MALFORMED);
+		$this->assertNull($tunnels);
+		$this->assertCount(2, $this->transport->requests());
+	}
+
 	public function testEmptyAccountReturnsEmptyList(): void {
 		$this->transport->queue($this->page(
 			array(),

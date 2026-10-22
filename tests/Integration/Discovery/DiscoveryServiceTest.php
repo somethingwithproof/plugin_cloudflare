@@ -364,6 +364,46 @@ final class DiscoveryServiceTest extends IntegrationTestCase {
 		$this->assertSame((string) (self::T0 + 300), (string) $this->job($id)['next_run_at']);
 	}
 
+	/**
+	 * @param array<int, string> $ids
+	 */
+	private static function listingPage(array $ids, int $total): Response {
+		$items = array();
+		foreach ($ids as $tunnelId) {
+			$items[] = array('id' => $tunnelId, 'name' => 'n', 'status' => 'healthy');
+		}
+
+		return new Response(200, array(), (string) json_encode(array(
+			'success'     => true,
+			'errors'      => array(),
+			'result'      => $items,
+			'result_info' => array('total_count' => $total),
+		)));
+	}
+
+	/* staging is deleted after page 1, so page 2 starts one item later and old-office would be its only survivor. */
+	public function testTotalChangingBetweenPagesLeavesRowsUnchanged(): void {
+		$id = $this->account(self::CF_A);
+		$this->discoverOnce($id);
+		$tunnels    = $this->tunnels($id);
+		$connectors = $this->connectors();
+
+		$all = array(self::BLOG);
+		for ($i = 2; $i <= 1500; $i++) {
+			$all[] = sprintf('00000000-0000-4000-8000-%012x', $i);
+		}
+		$all[1000] = self::STAGING;
+		$all[1001] = self::OLDOFFICE;
+
+		$this->makeDue($id);
+		$this->transport()->queue(self::listingPage(array_slice($all, 0, 1000), 1500));
+		$this->transport()->queue(self::listingPage(array_slice($all, 1001), 1499));
+
+		$this->assertSame(array($id => self::outcome('failed', ErrorClass::MALFORMED)), $this->runDue());
+		$this->assertSame($tunnels, $this->tunnels($id));
+		$this->assertSame($connectors, $this->connectors());
+	}
+
 	public function testThreeFailuresMarkUnavailable(): void {
 		$id = $this->account(self::CF_A);
 		$this->discoverOnce($id);

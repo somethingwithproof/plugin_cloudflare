@@ -243,6 +243,47 @@ tunnel_rows() {
 	sql "SELECT * FROM plugin_cloudflare_tunnels ORDER BY id"
 }
 
+connector_rows() {
+	sql "SELECT * FROM plugin_cloudflare_connectors ORDER BY id"
+}
+
+account_row() {
+	sql "SELECT * FROM plugin_cloudflare_accounts WHERE id = ${account_id}"
+}
+
+log_size() {
+	"${dc[@]}" exec -T web stat -c %s log/cacti.log
+}
+
+# cacti.log from byte offset $1 on.
+log_since() {
+	"${dc[@]}" exec -T web tail -c "+$(($1 + 1))" log/cacti.log
+}
+
+# exec_background() logs this line at DEBUG before it spawns
+# (lib/poller.php:147 in 1.2.31); poller_cloudflare.php leaves no trace of
+# its own when it exits at the enabled check.
+spawn_pattern='About to Spawn a Remote Process \[CMD: [^]]*, ARGS: [^]]*poller_cloudflare\.php'
+
+# poll_debug <log file>: one forced poll at log_verbosity DEBUG (5), with
+# the setting put back afterwards; saves what cacti.log gained to $1.
+poll_debug() {
+	local file="$1" saved offset
+
+	saved="$(sql "SELECT IFNULL(MAX(value), '') FROM settings WHERE name = 'log_verbosity'")"
+	sql "REPLACE INTO settings (name, value) VALUES ('log_verbosity', '5')"
+	offset="$(log_size)"
+	run_poller
+	log_since "${offset}" >"${file}"
+	if [[ -n "${saved}" ]]; then
+		sql "REPLACE INTO settings (name, value) VALUES ('log_verbosity', '${saved}')"
+	else
+		sql "DELETE FROM settings WHERE name = 'log_verbosity'"
+	fi
+	# An empty capture would make the absence check in 5f vacuous.
+	found -F 'DEBUG' "${file}" || die 'the DEBUG poll wrote no DEBUG lines to cacti.log'
+}
+
 admin_jar="${work}/admin.jar"
 viewer_jar="${work}/viewer.jar"
 # cut drains its input, so no stage of the pipeline dies of SIGPIPE.
@@ -421,7 +462,9 @@ step='5c poller.php launches the collector, which stores the three fixture tunne
 # which logs PHP warnings on a network with no route and fails step 8.
 sql "UPDATE automation_networks SET enabled = ''"
 started="$(job_started)"
-run_poller
+poll_debug "${work}/log-5c"
+# Positive control for 5f: an enabled plugin's hook does log the spawn.
+found -E "${spawn_pattern}" "${work}/log-5c" || die 'no exec_background line for poller_cloudflare.php at DEBUG'
 wait_for_run "${started}"
 job="$(sql "SELECT CONCAT_WS('|', last_status, IFNULL(last_error_class, 'null')) FROM plugin_cloudflare_jobs WHERE account_id = ${account_id}")"
 [[ "${job}" = 'ok|null' ]] || die "discovery job ended ${job}"
@@ -430,6 +473,24 @@ stored="$(sql "SELECT CONCAT_WS('|', cf_tunnel_id, name, cf_status) FROM plugin_
 [[ "${stored}" = "${fixture_tunnels}" ]] || die 'stored tunnels differ from the fixture' "${stored}"
 found -E "^GET /client/v4/accounts/${cf_account}/cfd_tunnel\\?[^ ]*is_deleted=false[^ ]* 200$" <(fake_requests) \
 	|| die 'the fake saw no tunnel listing' "$(fake_requests)"
+connections="/client/v4/accounts/${cf_account}/cfd_tunnel"
+fake_requests >"${work}/requests-5c"
+for expect in \
+	"f70ff985-a4ef-4643-bbbc-4a0ed4fc8415/connections 200" \
+	"0b6a8e4c-6c3b-4f64-9d6e-2f6c1f8a1d11/connections 200" \
+	"7d1c3f52-91a4-4a39-8a55-3e1b0c6f2b77/connections 401"; do
+	found -Fx "GET ${connections}/${expect}" "${work}/requests-5c" || die "the fake did not log ${expect}" "$(cat "${work}/requests-5c")"
+done
+# blog's one connector from tunnel-connections.json, and nothing for the others.
+[[ "$(sql "SELECT COUNT(*) FROM plugin_cloudflare_connectors")" = '1' ]] || die 'expected exactly 1 connector' "$(connector_rows)"
+connector="$(sql "SELECT CONCAT_WS('|', t.name, c.cf_connector_id, c.version, c.arch, c.connection_count) FROM plugin_cloudflare_connectors c JOIN plugin_cloudflare_tunnels t ON t.id = c.tunnel_id")"
+[[ "${connector}" = 'blog|1bedc50d-42b3-473c-b108-ff3d10c0d925|2022.7.1|linux_amd64|1' ]] || die "stored connector is ${connector}"
+# The 401 with code 1001 on old-office's connections means that tunnel is
+# unknown, not that the token was revoked.
+[[ "$(sql "SELECT lifecycle FROM plugin_cloudflare_tunnels WHERE name = 'old-office'")" = 'active' ]] \
+	|| die 'old-office is no longer active after its connections 401'
+[[ "$(sql "SELECT status FROM plugin_cloudflare_accounts WHERE id = ${account_id}")" = 'ok' ]] \
+	|| die "account status is $(sql "SELECT status FROM plugin_cloudflare_accounts WHERE id = ${account_id}") after a connections 401"
 pass
 
 step='5d the Cloudflare: View user sees the three tunnels on the Tunnels page'
@@ -447,8 +508,11 @@ for name in blog staging old-office; do
 done
 pass
 
-step='5e a 503 from Cloudflare leaves every stored tunnel unchanged'
+step='5e a 503 from Cloudflare leaves the tunnels, connectors and account unchanged'
 before_rows="$(tunnel_rows)"
+before_connectors="$(connector_rows)"
+before_account="$(account_row)"
+[[ -n "${before_connectors}" ]] || die 'no connectors to compare'
 before_requests="$(fake_requests | wc -l)"
 fake touch /run/cf-fake/fail-503
 # A run that wrongly reconciled would stamp a later last_seen_at.
@@ -464,10 +528,13 @@ fake_requests | tail -n "+$((before_requests + 1))" >"${work}/requests-503"
 found -E "^GET /client/v4/accounts/${cf_account}/cfd_tunnel\\?[^ ]* 503$" "${work}/requests-503" \
 	|| die 'the collector did not reach the fake in 503 mode' "$(cat "${work}/requests-503")"
 [[ "$(tunnel_rows)" = "${before_rows}" ]] || die 'stored tunnels changed after a 503' "${before_rows}" '---' "$(tunnel_rows)"
+[[ "$(connector_rows)" = "${before_connectors}" ]] \
+	|| die 'stored connectors changed after a 503' "${before_connectors}" '---' "$(connector_rows)"
+[[ "$(account_row)" = "${before_account}" ]] || die 'the account row changed after a 503' "${before_account}" '---' "$(account_row)"
 fake rm /run/cf-fake/fail-503
 pass
 
-step='5f with the plugin disabled, poller.php starts no collector'
+step='5f with the plugin disabled, poller.php launches no collector'
 out="$(plugin_manage --disable 2>&1)" || die "${out}"
 require_clean "${out}"
 [[ "$(plugin_status)" = '4' ]] || die "status after disable is $(plugin_status)"
@@ -475,7 +542,10 @@ require_clean "${out}"
 sql "UPDATE plugin_cloudflare_jobs SET next_run_at = 0 WHERE account_id = ${account_id}"
 before_job="$(sql "SELECT * FROM plugin_cloudflare_jobs WHERE account_id = ${account_id}")"
 before_requests="$(fake_requests | wc -l)"
-run_poller
+poll_debug "${work}/log-5f"
+if found -E "${spawn_pattern}" "${work}/log-5f"; then
+	die 'poller.php spawned poller_cloudflare.php with the plugin disabled' "$(grep -E "${spawn_pattern}" "${work}/log-5f")"
+fi
 # 5c and 5e show a started collector leases the job within a second or two.
 for ((i = 0; i < 10; i++)); do
 	[[ "$(collectors_running)" = '0' ]] || die 'a poller_cloudflare.php process is running'

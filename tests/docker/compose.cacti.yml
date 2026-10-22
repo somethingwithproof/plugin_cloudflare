@@ -64,11 +64,12 @@ services:
       - smoke
 
   cloudflare-fake:
-    # The web image already has PHP and openssl, so the fake needs no new base.
-    build:
-      context: .
-      dockerfile: Dockerfile.cacti
+    # The web image already has PHP and openssl, so the fake needs no new
+    # base. web is the only service that builds it; `up --build` finishes
+    # every build before it creates any container, and pull_policy: never
+    # stops compose from looking for this local tag on a registry.
     image: cf-smoke-cacti:1.2.31
+    pull_policy: never
     entrypoint: ["bash", "/opt/fake-cloudflare/start.sh"]
     # Lets www-data bind 443 inside this container's own network namespace.
     sysctls:

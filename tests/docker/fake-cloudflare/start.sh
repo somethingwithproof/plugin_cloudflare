@@ -11,6 +11,11 @@ tls=/run/cf-fake-tls
 control=/run/cf-fake
 ca_out=/run/cf-smoke-ca
 
+# The volume outlives this container. Without the old CA, a mint that
+# fails leaves no certificate, so the healthcheck fails instead of passing
+# on a CA that does not sign the new leaf.
+rm -f "${ca_out}/ca.crt"
+
 ca_dir="$(mktemp -d)"
 trap 'rm -rf "${ca_dir}"' EXIT
 
@@ -26,7 +31,8 @@ printf '%s\n' \
 	'[v3_ca]' \
 	'basicConstraints = critical,CA:TRUE,pathlen:0' \
 	'keyUsage = critical,keyCertSign,cRLSign' \
-	'subjectKeyIdentifier = hash' >"${ca_dir}/ca.cnf"
+	'subjectKeyIdentifier = hash' \
+	'nameConstraints = critical,permitted;DNS:api.cloudflare.com' >"${ca_dir}/ca.cnf"
 
 openssl req -x509 -config "${ca_dir}/ca.cnf" -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -nodes -days 2 \
 	-keyout "${ca_dir}/ca.key" -out "${ca_dir}/ca.crt" 2>/dev/null

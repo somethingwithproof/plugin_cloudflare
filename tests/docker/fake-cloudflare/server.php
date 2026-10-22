@@ -54,9 +54,22 @@ $routes = array(
 		'per_page'   => array('1', '1000'),
 		'page'       => array(null, '1'),
 	)),
+	/* blog has one connector; staging has none, as Cloudflare answers for
+	 * a tunnel that is not running; old-office gets the 401 with code 1001
+	 * that Cloudflare was seen to return for a tunnel it no longer knows. */
 	$prefix . '/cfd_tunnel/f70ff985-a4ef-4643-bbbc-4a0ed4fc8415/connections' => array(
 		200,
 		'tunnel-connections.json',
+		array(),
+	),
+	$prefix . '/cfd_tunnel/0b6a8e4c-6c3b-4f64-9d6e-2f6c1f8a1d11/connections' => array(
+		200,
+		'tunnel-connections-empty.json',
+		array(),
+	),
+	$prefix . '/cfd_tunnel/7d1c3f52-91a4-4a39-8a55-3e1b0c6f2b77/connections' => array(
+		401,
+		'connections-1001.json',
 		array(),
 	),
 	'/client/v4/zones' => array(403, 'auth-error.json', array(

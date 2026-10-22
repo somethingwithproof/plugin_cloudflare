@@ -1,0 +1,73 @@
+# Cacti 1.2.31 under Apache for the plugin install smoke. Modelled on
+# Cacti's tests/e2e/docker/Dockerfile.cacti at release/1.2.31. The Cacti
+# tree comes from `make cacti-src`; the plugin is bind-mounted read-only by
+# the compose file.
+#
+# PHP 8.0 is the lowest release 1.2.31 runs on: its composer.json requires
+# php >=8.0 and include/vendor/composer/platform_check.php aborts on 7.4.
+# The plugin's own 7.4 floor is checked by `make lint74`.
+
+FROM php:8.0-apache
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# bullseye-security has moved to archive.debian.org; deb.debian.org still
+# lists its packages but answers 404 for them.
+RUN sed -i 's|http://deb.debian.org/debian-security|http://archive.debian.org/debian-security|' /etc/apt/sources.list \
+ && apt-get update \
+ && apt-get install -y --no-install-recommends \
+        rrdtool \
+        snmp \
+        libsnmp-dev \
+        mariadb-client \
+        ca-certificates \
+        curl \
+        libpng-dev \
+        libjpeg-dev \
+        libfreetype6-dev \
+        libldap2-dev \
+        libgmp-dev \
+        libicu-dev \
+        libonig-dev \
+        libxml2-dev \
+ && rm -rf /var/lib/apt/lists/*
+
+# curl and openssl are compiled into the official php image; the plugin's
+# check_config needs both, plus pdo_mysql.
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+ && docker-php-ext-install -j"$(nproc)" \
+        gd \
+        mysqli \
+        pcntl \
+        pdo_mysql \
+        snmp \
+        sockets \
+        gmp \
+        ldap \
+        intl \
+        mbstring \
+ && php -r 'foreach (array("curl", "openssl", "pdo_mysql") as $e) { if (!extension_loaded($e)) { fwrite(STDERR, "missing $e\n"); exit(1); } }'
+
+# cli/install_cacti.php calls parse_ini_file(php_ini_loaded_file()), which
+# needs a main php.ini to exist.
+RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini \
+ && { \
+        echo 'date.timezone = UTC'; \
+        echo 'memory_limit = 512M'; \
+        echo 'max_execution_time = 60'; \
+    } > /usr/local/etc/php/conf.d/cacti.ini
+
+ADD build/cacti.tar /var/www/html/cacti/
+RUN rm -f /var/www/html/cacti/include/config.php \
+ && mkdir -p /var/www/html/cacti/plugins/cloudflare \
+ && chown -R www-data:www-data /var/www/html/cacti
+
+COPY entrypoint.sh /usr/local/bin/cacti-smoke-entrypoint.sh
+RUN chmod 0755 /usr/local/bin/cacti-smoke-entrypoint.sh
+
+WORKDIR /var/www/html/cacti
+
+EXPOSE 80
+
+ENTRYPOINT ["/usr/local/bin/cacti-smoke-entrypoint.sh"]
+CMD ["apache2-foreground"]

@@ -22,9 +22,13 @@ namespace Cacti\PluginCloudflare\Features;
 
 use Cacti\PluginCloudflare\Account\AccountRepository;
 use Cacti\PluginCloudflare\Account\AccountService;
+use Cacti\PluginCloudflare\Account\CredentialResolver;
 use Cacti\PluginCloudflare\Api\CloudflareClient;
 use Cacti\PluginCloudflare\Api\RetryPolicy;
 use Cacti\PluginCloudflare\Auth\CallbackAuthorizer;
+use Cacti\PluginCloudflare\Discovery\DiscoveryService;
+use Cacti\PluginCloudflare\Discovery\Reconciler;
+use Cacti\PluginCloudflare\Jobs\JobRepository;
 use Cacti\PluginCloudflare\Secret\TokenVault;
 use Cacti\PluginCloudflare\Storage\Database;
 use Cacti\PluginCloudflare\Storage\Migrator;
@@ -59,6 +63,15 @@ final class World {
 	/** @var string */
 	private $token;
 
+	/** @var FrozenClock */
+	private $clock;
+
+	/** @var RecordingSleeper */
+	private $sleeper;
+
+	/** @var CloudflareClient */
+	private $client;
+
 	/** @var bool */
 	private $allowed = true;
 
@@ -91,7 +104,10 @@ final class World {
 		$this->token     = 'cfut_' . bin2hex(random_bytes(20));
 
 		$clock         = new FrozenClock(self::NOW);
-		$client        = new CloudflareClient($this->transport, new RetryPolicy($clock, new RecordingSleeper()));
+		$this->clock   = $clock;
+		$this->sleeper = new RecordingSleeper();
+		$client        = new CloudflareClient($this->transport, new RetryPolicy($clock, $this->sleeper));
+		$this->client  = $client;
 		$this->repo    = new AccountRepository($this->db);
 		$this->service = new AccountService(
 			$this->repo,
@@ -128,6 +144,59 @@ final class World {
 
 	public function transport(): FakeTransport {
 		return $this->transport;
+	}
+
+	public function database(): Database {
+		return $this->db;
+	}
+
+	public function clock(): FrozenClock {
+		return $this->clock;
+	}
+
+	public function sleeper(): RecordingSleeper {
+		return $this->sleeper;
+	}
+
+	/**
+	 * An account whose token sits in a 0600 file and whose discovery job is
+	 * due, the way the collector finds it.
+	 */
+	public function addDiscoveryAccount(): int {
+		$path = $this->dir . '/token';
+		file_put_contents($path, $this->token);
+		chmod($path, 0600);
+
+		$id = $this->repo->insert(array(
+			'cf_account_id'      => self::ACCOUNT,
+			'name'               => 'Production',
+			'token_source'       => 'file',
+			'token_file'         => $path,
+			'discovery_interval' => 300,
+			'created_at'         => 1,
+			'updated_at'         => 1,
+		));
+		(new JobRepository($this->db, $this->clock))->ensure(JobRepository::TYPE_DISCOVERY, $id);
+
+		return $id;
+	}
+
+	public function discovery(): DiscoveryService {
+		return new DiscoveryService(
+			$this->repo,
+			new CredentialResolver($this->repo, null),
+			$this->client,
+			new Reconciler($this->db, $this->clock),
+			new JobRepository($this->db, $this->clock),
+			$this->db,
+			$this->clock,
+			function (): bool {
+				return true;
+			},
+			function (string $line): void {
+				$this->logged[] = $line;
+			}
+		);
 	}
 
 	public function setAllowed(bool $allowed): void {

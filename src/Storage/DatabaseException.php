@@ -30,10 +30,19 @@ use RuntimeException;
  * The message carries the SQLSTATE and the driver error code. Driver text is
  * omitted for SQLSTATE classes 22 (data exception) and 23 (integrity
  * constraint), whose messages echo the offending value, for example
- * "Duplicate entry '<value>'". For every other class the text is appended with
- * each quoted literal replaced by '?' (an unterminated quote masks to the end
- * of the text, as in truncated "near '...'" output), since any driver message may quote
- * statement content. Bound values are never passed in.
+ * "Duplicate entry '<value>'". For every other class the text is appended
+ * after two passes, since any driver message may quote statement content and
+ * emulated prepares put bound values into that content:
+ *
+ * 1. Each complete single-quoted, double-quoted or backtick span, with
+ *    backslash escapes, becomes '?'.
+ * 2. The text is cut at the first quote, backtick or backslash left over, or
+ *    at the first masked span followed by anything but whitespace or the end
+ *    of the text, and '?' is appended. MariaDB does not escape quotes inside its "near '...'"
+ *    excerpt, so a value next to a masked span means the pairing in pass 1
+ *    was misaligned.
+ *
+ * If either pass fails, the driver text is replaced by '?'.
  */
 final class DatabaseException extends RuntimeException {
 	/** @var string */
@@ -45,11 +54,22 @@ final class DatabaseException extends RuntimeException {
 		$message = 'SQLSTATE[' . $sqlState . '] driver error ' . $driverCode;
 
 		if (!in_array(substr($sqlState, 0, 2), array('22', '23'), true)) {
-			$masked = preg_replace('/\'(?:[^\'\\\\]|\\\\.)*(?:\'|\z)|"(?:[^"\\\\]|\\\\.)*(?:"|\z)|`[^`]*(?:`|\z)/s', "'?'", $driverMessage);
-			$message .= ': ' . ($masked === null ? '?' : $masked);
+			$message .= ': ' . self::mask($driverMessage);
 		}
 
 		parent::__construct($message);
+	}
+
+	private static function mask(string $text): string {
+		$paired = preg_replace('/\'(?:[^\'\\\\]|\\\\.)*\'|"(?:[^"\\\\]|\\\\.)*"|`(?:[^`\\\\]|\\\\.)*`/s', "'?'", $text);
+
+		if ($paired === null) {
+			return '?';
+		}
+
+		$cut = preg_replace('/^(?:[^\'"`\\\\]|\'\?\'(?=\s|\z))*+\K.+/s', '?', $paired);
+
+		return $cut === null ? '?' : $cut;
 	}
 
 	public function getSqlState(): string {

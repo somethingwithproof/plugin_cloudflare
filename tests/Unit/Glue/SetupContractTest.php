@@ -194,7 +194,7 @@ final class SetupContractTest extends TestCase {
 		$info = plugin_cloudflare_version();
 
 		$this->assertSame('cloudflare', $info['name']);
-		$this->assertSame('1.0.0', $info['version']);
+		$this->assertSame('0.1.0', $info['version']);
 		$this->assertSame('Cloudflare', $info['longname']);
 		$this->assertSame('1.2.25', $info['compat']);
 		$this->assertSame('online_view:1, online_mgmt:1, offline_view:0, offline_mgmt:0, remote_collect:0', $info['capabilities']);

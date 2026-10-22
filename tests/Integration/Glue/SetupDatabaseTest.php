@@ -110,12 +110,12 @@ final class SetupDatabaseTest extends TestCase {
 
 		$this->assertTrue($this->tableExists('plugin_cloudflare_accounts'));
 		$this->assertSame(array(
-			array('UPDATE plugin_config SET version = ? WHERE directory = ?', array('1.0.0', 'cloudflare')),
+			array('UPDATE plugin_config SET version = ? WHERE directory = ?', array('0.1.0', 'cloudflare')),
 		), cloudflare_glue_calls('db_execute_prepared'));
 	}
 
 	public function testUpgradeRunsPendingMigrationsAtTheSameVersion(): void {
-		$GLOBALS['cloudflare_glue']['cell'] = '1.0.0';
+		$GLOBALS['cloudflare_glue']['cell'] = '0.1.0';
 
 		$this->assertTrue(plugin_cloudflare_upgrade());
 

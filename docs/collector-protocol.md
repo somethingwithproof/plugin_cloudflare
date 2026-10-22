@@ -80,7 +80,7 @@ orphaned.
 | `plugin_cloudflare_resources` | `account_id`, `host_id` where `kind = 'device'` |
 | `plugin_cloudflare_accounts` | `discovery_interval` |
 | `plugin_cloudflare_jobs` | `last_status`, `last_error_class`, `consecutive_failures` where `job_type = 'discovery'` |
-| `plugin_cloudflare_tunnels` | `cf_tunnel_id`, `name`, `cf_status`, `lifecycle`, `connector_count`, `connection_count`, `connections_refreshed_at`, `connections_attempted_at`, `connections_error_class`, `last_seen_at` |
+| `plugin_cloudflare_tunnels` | `id`, `account_id`, `cf_tunnel_id`, `name`, `cf_status`, `lifecycle`, `connector_count`, `connection_count`, `connections_refreshed_at`, `connections_attempted_at`, `connections_error_class`, `last_seen_at` |
 | `plugin_cloudflare_connectors` | `tunnel_id`, `version` |
 
 The script uses Cacti's database handle, the same one `cloudflare_db()`
@@ -114,8 +114,9 @@ state. The script then needs no change. To stay compatible, it must:
 - on a failed connections read, set `connections_attempted_at` and
   `connections_error_class` and leave the counts and
   `connections_refreshed_at` alone;
-- keep one `discovery` job row per account, with `last_status` of `ok`,
-  `partial` or `failed`, `last_error_class` on failure, and
+- keep one `discovery` job row per account, with `last_status` of `never`
+  before the first run and then `ok`, `partial` or `failed`,
+  `last_error_class` on failure, and
   `consecutive_failures` reset to 0 on success;
 - write every time as UTC epoch seconds from a clock that agrees with the
   main poller's to within 60 seconds.

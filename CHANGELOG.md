@@ -1,5 +1,18 @@
 ## ChangeLog
 
+--- 0.3.0 (unreleased) ---
+
+Milestone 3: tunnel metrics and graphs. Zone analytics and alerting are not
+included.
+
+* feature: ss_cloudflare.php is a script server data query that reads each tunnel's health, connectors, connections, connector versions, collection age and collection failures from the plugin tables and never calls Cloudflare
+* feature: A value is printed only when the account's last discovery was ok or partial, the tunnel is active and the reading is no older than twice the Discovery Interval plus 60 seconds; otherwise it is U, so a gap in a graph never records a zero
+* feature: The Cloudflare Account host template, the Cloudflare Tunnels data query and the Connectors, Health and Collection graph templates are imported at install and upgrade, and a tunnel's three graphs share one RRD file
+* feature: Create Cacti Device action on the Cloudflare Accounts page makes the account's device with the hostname <account ID>.cloudflare.invalid; it needs both the Cloudflare: Configure and Sites/Devices/Data realms
+* feature: Create Graphs account setting; after each ok or partial discovery the collector reindexes the device and creates the missing graphs of active tunnels, at most 50 graphs and 20 seconds per run
+* feature: Install and upgrade copy the data query XML to resource/script_server/cloudflare_tunnels.xml, the plugin's only write outside its own directory; uninstall keeps the file with the devices, graphs, RRD files and templates
+* feature: Upgrade adds the resources and metric_mappings tables, the create_graphs account column and the connections_error_class tunnel column
+
 --- 0.2.0 (unreleased) ---
 
 Milestone 2: tunnel and connector discovery. Graphs and analytics are not

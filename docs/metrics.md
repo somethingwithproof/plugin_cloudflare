@@ -71,7 +71,9 @@ The checks run in that order and the first one that fails gives the reason:
 6. The stored value itself. A null `connector_count` or `connection_count`
    gives `never_collected`, even when `connections_refreshed_at` is set. A
    Cloudflare status outside the health table gives `malformed` for health
-   only; the other metrics are unaffected.
+   only; the other metrics are unaffected. `versions` counts connector rows,
+   so it has no null state of its own: when the counts are null but a refresh
+   time is set, which discovery never stores, it would print 0.
 
 A failing job comes first because it explains the rest. Discovery marks
 tunnels `unavailable` after repeated outages, so the job's error class is the
@@ -93,7 +95,8 @@ lifecycle and the window. They are unknown when:
 - for `collectAge`, the refresh time is more than 60 seconds in the future
   (`clock_skew`).
 
-Their `observed_at` is the read time.
+A null `consecutive_failures` makes `collectFailures` unknown with reason
+`never_collected`. Their `observed_at` is the read time.
 
 ## Reasons
 

@@ -36,13 +36,16 @@ includes/bootstrap.php    loads src/ (vendor autoloader if present, else a
                           bundled PSR-4 loader), builds services from Cacti state
 includes/settings.php     config_arrays, config_settings, draw_navigation_text
 includes/polling.php      poller_bottom hook and the collector's entry function
+includes/templates.php    template import, and the copy of the data query XML
+includes/cacti_objects.php  device creation, reindex and graph creation
+includes/script_server.php  the functions behind ss_cloudflare.php
 includes/viewer.php       viewer page handlers: overview, tunnels, connectors
 cloudflare.php            viewer page dispatcher
 cloudflare_accounts.php   admin page: accounts, verify, diagnostics
 poller_cloudflare.php     CLI collector, launched in the background
-ss_cloudflare.php         script server functions that read cached state (M3)
-src/                      domain, API client, storage, secrets
-templates/                Cacti template XML (M3)
+ss_cloudflare.php         script server entry point for the tunnel data query
+src/                      domain, API client, storage, secrets, metrics
+templates/                Cacti template XML and the data query XML
 ```
 
 The release archive is self-contained. `vendor/` holds dev tools only, so
@@ -83,8 +86,9 @@ plugin has no runtime Composer dependencies.
   never depends on the session.
 - Migration 1 (M1): `accounts`, `jobs`, `migrations`. Migration 2 (M2):
   `tunnels`, `connectors`, and the `outage_failures` and `last_success_at`
-  columns on `jobs`. Migration 3 (M3): `resources`, `metric_mappings`.
-  This spreads the tables over three migrations, so the upgrade path gets
+  columns on `jobs`. Migration 3 (M3): `resources`, `metric_mappings`, and the
+  `connections_error_class` and `create_graphs` columns on `tunnels` and
+  `accounts`. This spreads the tables over three migrations, so the upgrade path gets
   exercised during development.
 - Core Cacti never calls an upgrade function (agent survey of
   `lib/plugins.php`). `plugin_cloudflare_upgrade()` compares the INFO version
@@ -96,8 +100,8 @@ plugin has no runtime Composer dependencies.
 
 Uninstall drops the plugin's own tables, which hold inventory, job state and
 encrypted credentials. All of it can be rediscovered or re-entered.
-Uninstall does not remove Cacti devices, graphs, data sources, RRD files or
-templates created for Cloudflare. Those hold historical monitoring data, and
+Uninstall does not remove Cacti devices, graphs, data sources, RRD files,
+templates or the copied data query XML created for Cloudflare. Those hold historical monitoring data, and
 removing them stays an explicit administrator action in Cacti. The README
 says this.
 
@@ -224,6 +228,107 @@ permissions needed to verify it; a 401 records `auth_failed`.
   name and show a fixed message, because Cacti disables a plugin whose page
   fails with an uncaught error.
 
+## Cacti objects
+
+### Object model
+
+An account maps to at most one Cacti device. The device uses the plugin's
+Cloudflare Account host template, SNMP version 0, availability method `'0'`
+and `poller_id` 1, and its hostname is `<cf_account_id>.cloudflare.invalid`
+(`includes/cacti_objects.php:103-130`). The availability method is the string
+`'0'` because Cacti's own `cli/add_device.php:199` notes that `AVAIL_NONE`
+fails validation. Only the administrator's Create Cacti Device action creates
+a device, and `plugin_cloudflare_resources` records which one the plugin made
+(`src/Metrics/ResourceRepository.php:67`).
+
+Tunnels are not devices. They are the indexes of one script server data
+query, keyed by `cf_tunnel_id`, so a new tunnel needs no new device and a
+Cacti graph for a tunnel follows the usual data query path. The index lists
+every tunnel of the account, `deleted` ones included
+(`src/Metrics/ObservationReader.php:81-92`). Cacti marks a data source
+orphaned when its index leaves a reindex (`lib/data_query.php:317`, the same
+line in 1.2.25 and 1.2.31), so dropping a deleted tunnel from the index would
+orphan its history. A deleted tunnel keeps its index, graphs and RRD file,
+and prints `U`.
+
+A host the administrator deletes is not recreated by the collector. Create
+Cacti Device replaces the record. A device already recorded for another
+account is refused, because two accounts on one host would print each other's
+tunnels into one data query.
+
+### Reindex
+
+The device's data query uses reindex method None
+(`DATA_QUERY_AUTOINDEX_NONE`, `include/global_constants.php:75`), so Cacti
+schedules no reindex of its own. `api_device_save()` sets None for SNMP
+version 0 (`lib/api_device.php:1073-1077`), but it then calls
+`api_device_update_host_template()` (`:1131`), which adds the template's data
+query again with the global default method (`:1266-1269` in 1.2.25,
+`:1285-1288` in 1.2.31). `cloudflare_create_device_locked()` therefore calls
+`api_device_dq_add()` with None afterwards. That call replaces the row and
+runs the query once (`lib/api_device.php:552-578`).
+
+The plugin reindexes instead. After each discovery that ends `ok` or `partial`,
+the collector calls `run_data_query()` for the account's device with `force`
+set (`includes/cacti_objects.php:284-286`), then creates missing graphs. `force`
+is always on. Without it Cacti refreshes data source and graph titles only for
+indexes that changed or were orphaned (`lib/data_query.php:356-363`), and a
+tunnel rename changes no index. A run that stopped between the cache update
+and the title update would also never be repaired by a later run, because the
+later run would see no change. With `force` every run refreshes the titles
+(`:363-368`). The cost is a title refresh for the device's graphs and data
+sources on each run.
+
+### Where Cacti reads the data query XML
+
+Cacti 1.2.31 resolves a data query's `xml_path` with `realpath()` and refuses
+a path that is not inside `<path_cacti>/resource`
+(`lib/data_query.php:612-620`, `cacti_path_is_within()` at
+`lib/functions.php:8058`). A path in the plugin directory fails, and so does a
+symbolic link from `resource/` into the plugin, because `realpath()` follows
+it. Cacti 1.2.25 only checks that the file exists
+(`lib/data_query.php:612`). The plugin therefore copies
+`templates/resource/cloudflare_tunnels.xml` to
+`<base_path>/resource/script_server/cloudflare_tunnels.xml` and the template
+XML points there. It is the plugin's only write outside its own directory, and
+`docs/security.md` describes how it is done.
+
+The script stays in the plugin directory. Script server 1.2.31 accepts an
+include file and a function whose source file is under `base_path`
+(`script_server.php:264-290`, `:327-361`), and `ss_cloudflare()` is defined in
+the file that the poller item names.
+
+### One RRD per tunnel
+
+Each of the three graph templates (Connectors, Health, Collection) maps all
+six output fields of the data query, so the first graph of a tunnel creates the
+data source and the other two reuse it through `data_source_exists()`
+(`lib/template.php:1594`, with the reuse at `:1613`, in 1.2.31). A tunnel has
+one data source and one RRD file with six data sources inside, shared by its
+three graphs. The install smoke checks 9 graphs, 3 data sources and 18 poller
+items for the three fixture tunnels (`tests/docker/smoke.sh:728-763`). Sharing
+keeps the RRD count at one per tunnel and means a metric appears in whichever
+graph is useful without being polled twice.
+
+### What the script reads
+
+`ss_cloudflare.php` reads only the plugin's tables
+(`docs/collector-protocol.md`). It never calls Cloudflare and never throws, so
+a Cloudflare outage cannot delay the poller, and a failure prints `U` or an
+empty listing, never 0. The collector alone writes those tables. The values
+and the conditions for printing them are in `docs/metrics.md`.
+
+### Locks
+
+Two named locks serialize work that would otherwise create objects twice.
+`plugin_cloudflare_device_<account id>` (30 second wait,
+`includes/cacti_objects.php:46,65`) makes a double submit of Create Cacti
+Device wait and then find the device. `plugin_cloudflare_templates` (10 second
+wait, `includes/templates.php:28,62`) keeps two processes that upgrade at once
+from importing the templates together, since the import would create each
+object twice. Both are `GET_LOCK()` locks, so MySQL releases them when the
+connection ends even if a release fails.
+
 ## Authorization
 
 - Realm "Cloudflare: View" covers `cloudflare.php` and is not admin-only.
@@ -233,6 +338,9 @@ permissions needed to verify it; a 401 records `auth_failed`.
   (`include/auth.php:183`). Each action handler also re-checks with
   `api_user_realm_auth('cloudflare_accounts.php')` before any write, so a
   page that is later reused cannot skip the check.
+- Create Cacti Device, and turning on Create Graphs, also need the Cacti realm
+  of `host.php`, because the plugin then creates Cacti devices and graphs. The
+  menu entry is hidden without it, and the server checks both realms again.
 - Every state-changing action is a POST protected by Cacti's csrf-magic,
   which `include/auth.php` loads for plugin pages.
 

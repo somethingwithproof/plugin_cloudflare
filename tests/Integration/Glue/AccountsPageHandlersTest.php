@@ -462,6 +462,8 @@ final class AccountsPageHandlersTest extends TestCase {
 	 * Cacti's shutdown handler, which disables the plugin.
 	 */
 	private function dropAccountsTable(): void {
+		$this->pdo->exec('DROP TABLE IF EXISTS plugin_cloudflare_connectors');
+		$this->pdo->exec('DROP TABLE IF EXISTS plugin_cloudflare_tunnels');
 		$this->pdo->exec('DROP TABLE IF EXISTS plugin_cloudflare_jobs');
 		$this->pdo->exec('DROP TABLE plugin_cloudflare_accounts');
 		cloudflare_glue_reset();

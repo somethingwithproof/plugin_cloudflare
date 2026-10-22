@@ -21,6 +21,7 @@
 namespace Cacti\PluginCloudflare\Storage;
 
 use Cacti\PluginCloudflare\Storage\Migrations\M001Foundation;
+use Cacti\PluginCloudflare\Storage\Migrations\M002Discovery;
 use InvalidArgumentException;
 
 final class Migrator {
@@ -58,7 +59,7 @@ final class Migrator {
 	 * @return Migration[]
 	 */
 	public static function defaultMigrations(): array {
-		return array(new M001Foundation());
+		return array(new M001Foundation(), new M002Discovery());
 	}
 
 	/**
@@ -143,7 +144,12 @@ final class Migrator {
 			$present[] = (string) $row['name'];
 		}
 
-		$first = array('plugin_cloudflare_jobs', 'plugin_cloudflare_accounts');
+		$first = array(
+			'plugin_cloudflare_connectors',
+			'plugin_cloudflare_tunnels',
+			'plugin_cloudflare_jobs',
+			'plugin_cloudflare_accounts',
+		);
 		$core = array_merge($first, array(self::TABLE));
 		$others = array_diff($present, $core);
 		$ordered = array_merge($core, $others);

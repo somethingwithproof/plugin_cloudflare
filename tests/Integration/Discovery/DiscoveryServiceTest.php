@@ -77,6 +77,9 @@ final class DiscoveryServiceTest extends IntegrationTestCase {
 	/** @var Database|null */
 	private $resolverDb;
 
+	/** @var int */
+	private $connectionsPerRun = 200;
+
 	protected function setUp(): void {
 		TestDatabase::skipIfUnavailable($this);
 		TestDatabase::reset();
@@ -169,7 +172,9 @@ final class DiscoveryServiceTest extends IntegrationTestCase {
 			},
 			function (string $line): void {
 				$this->logs[] = $line;
-			}
+			},
+			120,
+			$this->connectionsPerRun
 		);
 	}
 
@@ -262,7 +267,7 @@ final class DiscoveryServiceTest extends IntegrationTestCase {
 		}
 	}
 
-	/* The listing, then connections for each tunnel in name order: blog, old-office, staging. */
+	/* The listing, then connections for each tunnel never refreshed, by row id: blog, staging, old-office. */
 	private function queueFullDiscovery(): void {
 		$this->transport()->queue(FakeTransport::fixture('tunnel-list'));
 		for ($i = 0; $i < 3; $i++) {
@@ -310,8 +315,8 @@ final class DiscoveryServiceTest extends IntegrationTestCase {
 		$this->assertSame(array(
 			$base . '?is_deleted=false&per_page=1000&page=1',
 			$base . '/' . self::BLOG . '/connections',
-			$base . '/' . self::OLDOFFICE . '/connections',
 			$base . '/' . self::STAGING . '/connections',
+			$base . '/' . self::OLDOFFICE . '/connections',
 		), $this->urls());
 
 		$this->assertSame(array(), $this->runDue(), 'a job that is not due runs nothing');
@@ -492,7 +497,7 @@ final class DiscoveryServiceTest extends IntegrationTestCase {
 		$this->assertSame(array($id => self::outcome('ok', null, 0, 3)), $this->runDue());
 
 		$tunnels = $this->tunnels($id);
-		$this->assertSame('1', (string) $tunnels[self::BLOG]['connector_count']);
+		$this->assertSame('1', (string) $tunnels[self::BLOG]['connector_count'], 'blog was refreshed first and failed');
 		$this->assertSame('0', (string) $tunnels[self::OLDOFFICE]['connector_count']);
 		$this->assertSame('0', (string) $tunnels[self::STAGING]['connector_count']);
 		$this->assertCount(1, $this->connectors());
@@ -546,6 +551,105 @@ final class DiscoveryServiceTest extends IntegrationTestCase {
 		$this->transport()->queue(self::emptyListing());
 
 		$this->assertSame(array($a => self::outcome('ok', null), $b => self::outcome('ok', null)), $this->runDue(50));
+	}
+
+	private static function uuid(int $n): string {
+		return sprintf('00000000-0000-4000-8000-%012x', $n);
+	}
+
+	private static function listingOf(int $count): Response {
+		$items = array();
+		for ($n = 1; $n <= $count; $n++) {
+			$items[] = array('id' => self::uuid($n), 'name' => 'tunnel-' . $n, 'status' => 'healthy');
+		}
+
+		return new Response(200, array(), (string) json_encode(array(
+			'success'     => true,
+			'errors'      => array(),
+			'result'      => $items,
+			'result_info' => array('total_count' => $count),
+		)));
+	}
+
+	/**
+	 * @return array<int, string> cf_tunnel_id of each connections request
+	 */
+	private function connectionTargets(): array {
+		$targets = array();
+		foreach ($this->urls() as $url) {
+			if (preg_match('#/cfd_tunnel/([0-9a-f-]{36})/connections$#', $url, $m) === 1) {
+				$targets[] = $m[1];
+			}
+		}
+
+		return $targets;
+	}
+
+	public function testBudgetStopsMidAccountAsPartial(): void {
+		$id = $this->account(self::CF_A);
+		$this->transport()->queue(FakeTransport::fixture('tunnel-list'));
+		$this->transport()->queue(function (): Response {
+			$this->clock()->advance(50);
+
+			return FakeTransport::fixture('tunnel-connections');
+		});
+
+		$this->assertSame(array($id => self::outcome('partial', null, 3)), $this->runDue(50));
+		$this->assertSame(array(self::BLOG), $this->connectionTargets());
+
+		$job = $this->job($id);
+		$this->assertSame('partial', $job['last_status']);
+		$this->assertSame('0', (string) $job['consecutive_failures']);
+		$this->assertSame((string) (self::T0 + 50 + 300), (string) $job['next_run_at']);
+		$this->assertNull($job['lease_owner']);
+
+		$tunnels = $this->tunnels($id);
+		$this->assertSame((string) (self::T0 + 50), (string) $tunnels[self::BLOG]['connections_refreshed_at']);
+		$this->assertNull($tunnels[self::STAGING]['connections_refreshed_at']);
+	}
+
+	/* The cap covers the whole run, so a later account lists its tunnels but refreshes none. */
+	public function testConnectionsCapPerRun(): void {
+		$this->connectionsPerRun = 2;
+		$a                       = $this->account(self::CF_A);
+		$b                       = $this->account(self::CF_B);
+		$this->transport()->queue(FakeTransport::fixture('tunnel-list'));
+		$this->transport()->queue(self::noConnectors());
+		$this->transport()->queue(self::noConnectors());
+		$this->transport()->queue(FakeTransport::fixture('tunnel-list'));
+
+		$this->assertSame(
+			array($a => self::outcome('partial', null, 3), $b => self::outcome('partial', null, 3)),
+			$this->runDue()
+		);
+		$this->assertSame(array(self::BLOG, self::STAGING), $this->connectionTargets());
+		$this->assertCount(4, $this->transport()->requests());
+	}
+
+	public function testPartialRunsCoverTheTailOverSuccessiveRuns(): void {
+		$this->connectionsPerRun = 2;
+		$id                      = $this->account(self::CF_A);
+
+		$seen = array();
+		for ($run = 1; $run <= 3; $run++) {
+			$this->makeDue($id);
+			$this->clock()->advance(10);
+			$this->transport()->queue(self::listingOf(5));
+			$this->transport()->queue(self::noConnectors());
+			$this->transport()->queue(self::noConnectors());
+
+			$before = count($this->connectionTargets());
+			$this->assertSame('partial', $this->runDue()[$id]['status'], 'run ' . $run);
+			$seen[$run] = array_slice($this->connectionTargets(), $before);
+		}
+
+		$this->assertSame(array(self::uuid(1), self::uuid(2)), $seen[1]);
+		$this->assertSame(array(self::uuid(3), self::uuid(4)), $seen[2]);
+		$this->assertSame(array(self::uuid(5), self::uuid(1)), $seen[3], 'the tail first, then the stalest');
+
+		foreach ($this->tunnels($id) as $row) {
+			$this->assertNotNull($row['connections_refreshed_at']);
+		}
 	}
 
 	public function testLostLeaseRollsBackListing(): void {

@@ -47,8 +47,6 @@ use Throwable;
 final class DiscoveryService {
 	private const DUE_LIMIT = 500;
 
-	private const TUNNEL_PAGE = 500;
-
 	private const MARK_UNAVAILABLE_AFTER = 3;
 
 	private const NO_CHANGES = array('added' => 0, 'updated' => 0, 'deleted' => 0);
@@ -100,10 +98,22 @@ final class DiscoveryService {
 	/** @var string */
 	private $owner;
 
+	/** @var int */
+	private $connectionsPerRun;
+
+	/** @var int set by runDue() for the run in progress */
+	private $deadline = 0;
+
+	/** @var int connections calls left in the run in progress */
+	private $callsLeft = 0;
+
 	/**
 	 * @param callable(): bool            $stillEnabled false once the plugin has been disabled
 	 * @param callable(string): void|null $log
-	 * @param int                         $leaseTtl     seconds; must outlast the run budget plus one account
+	 * @param int                         $leaseTtl          seconds. touch() neither extends nor checks expiry,
+	 *                                                       so this is no stop; the collector's GET_LOCK is
+	 *                                                       the fence against a second run.
+	 * @param int                         $connectionsPerRun connections calls allowed in one runDue()
 	 */
 	public function __construct(
 		AccountRepository $accounts,
@@ -115,10 +125,14 @@ final class DiscoveryService {
 		Clock $clock,
 		callable $stillEnabled,
 		?callable $log = null,
-		int $leaseTtl = 120
+		int $leaseTtl = 120,
+		int $connectionsPerRun = 200
 	) {
 		if ($leaseTtl < 1) {
 			throw new InvalidArgumentException('invalid lease ttl');
+		}
+		if ($connectionsPerRun < 1) {
+			throw new InvalidArgumentException('invalid connections cap');
 		}
 
 		$this->accounts     = $accounts;
@@ -131,21 +145,25 @@ final class DiscoveryService {
 		$this->stillEnabled = $stillEnabled;
 		$this->log          = $log;
 		$this->leaseTtl     = $leaseTtl;
+
+		$this->connectionsPerRun = $connectionsPerRun;
 		$this->owner        = JobRepository::defaultOwner();
 	}
 
 	/**
 	 * Accounts not started before the budget ran out, or before the plugin
-	 * was disabled, are absent from the result and stay due.
+	 * was disabled, are absent from the result and stay due. The budget and
+	 * the connections cap also stop an account mid-way, recorded as partial.
 	 *
 	 * @return array<int, array{status: string, error_class: string|null, added: int, updated: int, deleted: int}>
 	 */
 	public function runDue(int $budgetSeconds = 50): array {
-		$start    = $this->clock->now();
-		$outcomes = array();
+		$this->deadline  = $this->clock->now() + $budgetSeconds;
+		$this->callsLeft = $this->connectionsPerRun;
+		$outcomes        = array();
 
 		foreach ($this->jobs->due(JobRepository::TYPE_DISCOVERY, self::DUE_LIMIT) as $job) {
-			if ($this->clock->now() - $start >= $budgetSeconds) {
+			if ($this->clock->now() >= $this->deadline) {
 				$this->say('Cloudflare discovery: run budget reached accounts=' . count($outcomes));
 
 				break;
@@ -292,7 +310,21 @@ final class DiscoveryService {
 		});
 
 		$skipped = 0;
-		foreach ($this->activeTunnels($accountId) as $tunnelRowId => $cfTunnelId) {
+		$partial = false;
+
+		/* One row past the remaining cap tells a finished account from a cut-off one. */
+		$queue = (new TunnelRepository($this->db))->activeForRefresh($accountId, $this->callsLeft + 1);
+		foreach ($queue as $row) {
+			if ($this->callsLeft < 1 || $this->clock->now() >= $this->deadline) {
+				$partial = true;
+
+				break;
+			}
+
+			$this->callsLeft--;
+			$tunnelRowId = (int) $row['id'];
+			$cfTunnelId  = (string) $row['cf_tunnel_id'];
+
 			try {
 				$connectors = $this->client->listConnections($account->cfAccountId(), $token, $cfTunnelId);
 			} catch (ApiException $e) {
@@ -317,38 +349,21 @@ final class DiscoveryService {
 			});
 		}
 
-		$this->jobs->succeed(
-			$lease,
-			JobRepository::nextRun($this->clock->now(), $account->discoveryInterval(), null, null, 0)
-		);
+		/* A cut-off run resumes on the normal schedule; the stalest tunnels go first next time. */
+		$next   = JobRepository::nextRun($this->clock->now(), $account->discoveryInterval(), null, null, 0);
+		$status = $partial ? 'partial' : 'ok';
+		if ($partial) {
+			$this->jobs->partial($lease, $next);
+		} else {
+			$this->jobs->succeed($lease, $next);
+		}
+
 		$this->say(
-			'Cloudflare discovery: ok account=' . $accountId . ' added=' . $counts['added'] . ' updated='
+			'Cloudflare discovery: ' . $status . ' account=' . $accountId . ' added=' . $counts['added'] . ' updated='
 			. $counts['updated'] . ' deleted=' . $counts['deleted'] . ' connection_failures=' . $skipped
 		);
 
-		return self::outcome('ok', null, $counts);
-	}
-
-	/**
-	 * Lifecycle is set by the listing just applied, so active is exactly
-	 * the tunnels Cloudflare returned.
-	 *
-	 * @return array<int, string> cf_tunnel_id by tunnel row id
-	 */
-	private function activeTunnels(int $accountId): array {
-		$repo    = new TunnelRepository($this->db);
-		$tunnels = array();
-
-		for ($offset = 0; ; $offset += self::TUNNEL_PAGE) {
-			$rows = $repo->forAccount($accountId, array('lifecycle' => 'active'), self::TUNNEL_PAGE, $offset);
-			foreach ($rows as $row) {
-				$tunnels[(int) $row['id']] = (string) $row['cf_tunnel_id'];
-			}
-
-			if (count($rows) < self::TUNNEL_PAGE) {
-				return $tunnels;
-			}
-		}
+		return self::outcome($status, null, $counts);
 	}
 
 	/**

@@ -42,6 +42,9 @@ teardown() {
 		printf 'FAIL: %s\n' "${step}"
 	fi
 
+	# A KEEP=1 stack would otherwise stay at DEBUG after a failed poll_debug.
+	restore_verbosity >/dev/null 2>&1 || true
+
 	if [[ "${KEEP:-0}" = '1' ]]; then
 		printf 'KEEP=1: stack %s left running at %s/\n' "${project}" "${base}" >&2
 	else
@@ -265,21 +268,33 @@ log_since() {
 # its own when it exits at the enabled check.
 spawn_pattern='About to Spawn a Remote Process \[CMD: [^]]*, ARGS: [^]]*poller_cloudflare\.php'
 
+# Set while poll_debug has log_verbosity raised; teardown restores it too,
+# because run_poller and log_since exit through die.
+verbosity_pending=''
+verbosity_saved=''
+
+restore_verbosity() {
+	[[ -n "${verbosity_pending}" ]] || return 0
+	if [[ -n "${verbosity_saved}" ]]; then
+		sql "REPLACE INTO settings (name, value) VALUES ('log_verbosity', '${verbosity_saved}')"
+	else
+		sql "DELETE FROM settings WHERE name = 'log_verbosity'"
+	fi
+	verbosity_pending=''
+}
+
 # poll_debug <log file>: one forced poll at log_verbosity DEBUG (5), with
 # the setting put back afterwards; saves what cacti.log gained to $1.
 poll_debug() {
-	local file="$1" saved offset
+	local file="$1" offset
 
-	saved="$(sql "SELECT IFNULL(MAX(value), '') FROM settings WHERE name = 'log_verbosity'")"
+	verbosity_saved="$(sql "SELECT IFNULL(MAX(value), '') FROM settings WHERE name = 'log_verbosity'")"
+	verbosity_pending=1
 	sql "REPLACE INTO settings (name, value) VALUES ('log_verbosity', '5')"
 	offset="$(log_size)"
 	run_poller
 	log_since "${offset}" >"${file}"
-	if [[ -n "${saved}" ]]; then
-		sql "REPLACE INTO settings (name, value) VALUES ('log_verbosity', '${saved}')"
-	else
-		sql "DELETE FROM settings WHERE name = 'log_verbosity'"
-	fi
+	restore_verbosity
 	# An empty capture would make the absence check in 5f vacuous.
 	found -F 'DEBUG' "${file}" || die 'the DEBUG poll wrote no DEBUG lines to cacti.log'
 }

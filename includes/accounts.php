@@ -40,15 +40,20 @@ function cloudflare_plugin_enabled() : bool {
 function cloudflare_page_failed(string $page, Throwable $e, string $text) : void {
 	cacti_log('CLOUDFLARE: ' . $page . ' page failed (' . get_class($e) . ')', false, 'CLOUDFLARE');
 
-	top_header();
+	/* This is the last handler before CactiShutdownHandler, so a broken template must not escape it either. */
+	try {
+		top_header();
 
-	html_start_box(__esc('Cloudflare', 'cloudflare'), '100%', '', '3', 'center', '');
+		html_start_box(__esc('Cloudflare', 'cloudflare'), '100%', '', '3', 'center', '');
 
-	print "<tr class='tableRow'><td><em>" . html_escape($text) . "</em></td></tr>\n";
+		print "<tr class='tableRow'><td><em>" . html_escape($text) . "</em></td></tr>\n";
 
-	html_end_box();
+		html_end_box();
 
-	bottom_footer();
+		bottom_footer();
+	} catch (Throwable $render) {
+		cacti_log('CLOUDFLARE: ' . $page . ' error page failed (' . get_class($render) . ')', false, 'CLOUDFLARE');
+	}
 }
 
 /**

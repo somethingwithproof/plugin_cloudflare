@@ -54,6 +54,7 @@ function cloudflare_glue_reset(): void {
 		'enabled'  => true,
 		'page'     => 'index.php',
 		'on_log'   => null,
+		'on_top'   => null,
 	);
 	$GLOBALS['cloudflare_glue_enabled_cache'] = array();
 }
@@ -106,7 +107,12 @@ if (!function_exists('api_plugin_valid_entrypoint')) {
 		$backtrace = debug_backtrace();
 		if (cacti_sizeof($backtrace)) {
 			if (!preg_match('/(install|upgrade|setup)/i', $backtrace[2]['function'])) {
-				cacti_log(sprintf('WARNING: Plugin \'%s\' is attempting to call \'%s\' improperly in function \'%s\'', $plugin, $function, $backtrace[2]['function']), false, 'PLUGIN');
+				cacti_log(sprintf(
+					'WARNING: Plugin \'%s\' is attempting to call \'%s\' improperly in function \'%s\'',
+					$plugin,
+					$function,
+					$backtrace[2]['function']
+				), false, 'PLUGIN');
 
 				return false;
 			}
@@ -290,7 +296,16 @@ if (!function_exists('db_execute_prepared')) {
 	 * @param mixed $return_func
 	 * @param mixed $return_params
 	 */
-	function db_execute_prepared($sql, $params = array(), $log = true, $db_conn = false, $execute_name = 'Exec', $default_value = true, $return_func = 'no_return_function', $return_params = array()): bool {
+	function db_execute_prepared(
+		$sql,
+		$params = array(),
+		$log = true,
+		$db_conn = false,
+		$execute_name = 'Exec',
+		$default_value = true,
+		$return_func = 'no_return_function',
+		$return_params = array()
+	): bool {
 		cloudflare_glue_record(__FUNCTION__, array($sql, $params));
 
 		return true;
@@ -465,6 +480,12 @@ if (!function_exists('top_header')) {
 	/* lib/functions.php:4853 */
 	function top_header(): void {
 		cloudflare_glue_record(__FUNCTION__, array());
+
+		/* Lets a test make the page chrome fail, as a broken theme or template would. */
+		$on_top = cloudflare_glue_state('on_top');
+		if (is_callable($on_top)) {
+			$on_top();
+		}
 	}
 }
 
@@ -510,7 +531,15 @@ if (!function_exists('get_filter_request_var')) {
 			return $_REQUEST[$name];
 		}
 
-		if (!is_int($filter) || !in_array($filter, array(FILTER_VALIDATE_INT, FILTER_DEFAULT, FILTER_CALLBACK, FILTER_VALIDATE_REGEXP, FILTER_VALIDATE_FLOAT, FILTER_VALIDATE_BOOLEAN), true)) {
+		$filters = array(
+			FILTER_VALIDATE_INT,
+			FILTER_DEFAULT,
+			FILTER_CALLBACK,
+			FILTER_VALIDATE_REGEXP,
+			FILTER_VALIDATE_FLOAT,
+			FILTER_VALIDATE_BOOLEAN,
+		);
+		if (!is_int($filter) || !in_array($filter, $filters, true)) {
 			throw new LogicException('get_filter_request_var stub does not model filter ' . var_export($filter, true));
 		}
 
@@ -731,8 +760,30 @@ if (!function_exists('html_nav_bar')) {
 	 * @param mixed $return_to
 	 * @param mixed $page_count
 	 */
-	function html_nav_bar($base_url, $max_pages, $current_page, $rows_per_page, $total_rows, $colspan = 30, $object = '', $page_var = 'page', $return_to = '', $page_count = true): string {
-		cloudflare_glue_record(__FUNCTION__, array($base_url, $max_pages, $current_page, $rows_per_page, $total_rows, $colspan, $object, $page_var, $return_to, $page_count));
+	function html_nav_bar(
+		$base_url,
+		$max_pages,
+		$current_page,
+		$rows_per_page,
+		$total_rows,
+		$colspan = 30,
+		$object = '',
+		$page_var = 'page',
+		$return_to = '',
+		$page_count = true
+	): string {
+		cloudflare_glue_record(__FUNCTION__, array(
+			$base_url,
+			$max_pages,
+			$current_page,
+			$rows_per_page,
+			$total_rows,
+			$colspan,
+			$object,
+			$page_var,
+			$return_to,
+			$page_count,
+		));
 
 		return '';
 	}
@@ -785,8 +836,24 @@ if (!function_exists('html_header_sort_checkbox')) {
 	 * @param mixed $return_to
 	 * @param mixed $prefix
 	 */
-	function html_header_sort_checkbox($header_items, $sort_column, $sort_direction, $include_form = true, $form_action = '', $return_to = '', $prefix = 'chk'): void {
-		cloudflare_glue_record(__FUNCTION__, array($header_items, $sort_column, $sort_direction, $include_form, $form_action, $return_to, $prefix));
+	function html_header_sort_checkbox(
+		$header_items,
+		$sort_column,
+		$sort_direction,
+		$include_form = true,
+		$form_action = '',
+		$return_to = '',
+		$prefix = 'chk'
+	): void {
+		cloudflare_glue_record(__FUNCTION__, array(
+			$header_items,
+			$sort_column,
+			$sort_direction,
+			$include_form,
+			$form_action,
+			$return_to,
+			$prefix,
+		));
 	}
 }
 

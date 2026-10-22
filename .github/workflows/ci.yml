@@ -4,8 +4,8 @@ name: CI
 on:
   push:
     branches: [main]
+  # Every PR, including PRs in a stack whose base is another feature branch.
   pull_request:
-    branches: [main]
   workflow_dispatch:
 
 permissions:

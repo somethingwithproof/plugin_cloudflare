@@ -52,6 +52,7 @@ final class AccountService {
 
 	private const MESSAGE_FORBIDDEN     = 'Token lacks the permissions needed to verify it';
 	private const MESSAGE_UNDECRYPTABLE = 'Stored token cannot be decrypted';
+	private const MESSAGE_KEY_MISSING   = 'Token vault key file is missing or unusable';
 	private const MESSAGE_FILE          = 'Token file is missing or insecure';
 	private const MESSAGE_VAULT_MISSING = 'Encrypted storage is unavailable; configure the key file or use a token file';
 
@@ -300,7 +301,13 @@ final class AccountService {
 		try {
 			$token = $this->loadToken($material);
 		} catch (SecretException $e) {
-			$message = $material['source'] === 'file' ? self::MESSAGE_FILE : self::MESSAGE_UNDECRYPTABLE;
+			if ($material['source'] === 'file') {
+				$message = self::MESSAGE_FILE;
+			} elseif ($e->getReason() === 'key_unavailable') {
+				$message = self::MESSAGE_KEY_MISSING;
+			} else {
+				$message = self::MESSAGE_UNDECRYPTABLE;
+			}
 
 			return $this->record($account, $now, 'error', $message, null, 'reason=' . $e->getReason());
 		}

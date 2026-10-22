@@ -677,7 +677,8 @@ final class AccountServiceTest extends TestCase {
 		$account = $this->service(null)->verify($id);
 
 		$this->assertSame('error', $account->status());
-		$this->assertSame('Stored token cannot be decrypted', $account->statusMessage());
+		$this->assertSame('Token vault key file is missing or unusable', $account->statusMessage());
+		$this->assertStringContainsString('reason=key_unavailable', implode("\n", $this->logged));
 		$this->assertSame(array(), $this->transport->requests());
 	}
 

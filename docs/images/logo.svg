@@ -1,109 +1,40 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 200" width="220" height="200" role="img" aria-labelledby="title desc">
-  <title id="title">Cacti Cloudflare plugin logo</title>
-  <desc id="desc">A cheerful hand-drawn saguaro peers through a brass telescope at a smiling cloud, which looks back at it. Beside them a road runs into a stone tunnel.</desc>
-  <defs>
-    <linearGradient id="skin" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#c3ec6d"/>
-      <stop offset="0.55" stop-color="#2f9e2f"/>
-      <stop offset="1" stop-color="#16701a"/>
-    </linearGradient>
-    <linearGradient id="stone" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#ead9b4"/>
-      <stop offset="1" stop-color="#c2a273"/>
-    </linearGradient>
-    <linearGradient id="depth" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#1c2430"/>
-      <stop offset="1" stop-color="#3b4656"/>
-    </linearGradient>
-    <linearGradient id="brass" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#f6d77a"/>
-      <stop offset="1" stop-color="#c58b26"/>
-    </linearGradient>
-  </defs>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 360" width="400" height="360" role="img" aria-labelledby="title desc">
+  <title id="title">Cloudflare plugin for Cacti</title>
+  <desc id="desc">A green cactus standing in front of a sky-blue cloud, with a white line chart rising across the cloud. Below it, the text "Cloudflare plugin for Cacti".</desc>
 
-  <!-- ground -->
-  <ellipse cx="110" cy="190" rx="104" ry="7" fill="#e8d7b0"/>
-
-  <!-- tunnel portal and road -->
-  <g stroke="#111" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round">
-    <path d="M128 189 V134 C128 98 212 98 212 134 V189 Z" fill="url(#stone)"/>
-    <path d="M144 189 V138 C144 116 196 116 196 138 V189 Z" fill="url(#depth)"/>
-    <path d="M150 189 L190 189 L176 142 L164 142 Z" fill="#59626e" stroke-width="2.5"/>
-  </g>
-  <g fill="#f4f1e8">
-    <rect x="168.5" y="174" width="3" height="10" rx="1"/>
-    <rect x="169" y="158" width="2.2" height="7" rx="1"/>
-    <rect x="169.3" y="146" width="1.6" height="5" rx="0.8"/>
+  <!-- cloud -->
+  <g fill="#4aa3df">
+    <circle cx="122" cy="228" r="58"/>
+    <circle cx="232" cy="176" r="92"/>
+    <circle cx="306" cy="226" r="60"/>
+    <rect x="64" y="226" width="302" height="58" rx="28"/>
   </g>
 
-  <!-- cloud: the outline is a thicker black copy of the same circles -->
-  <g fill="#111">
-    <circle cx="148" cy="38" r="15"/>
-    <circle cx="166" cy="26" r="20"/>
-    <circle cx="189" cy="30" r="17"/>
-    <circle cx="204" cy="42" r="12"/>
-    <circle cx="176" cy="46" r="16"/>
-    <circle cx="157" cy="48" r="13"/>
-    <circle cx="195" cy="50" r="11"/>
+  <!-- rising line chart -->
+  <g fill="none" stroke="#ffffff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="226,262 262,232 300,252 340,206"/>
   </g>
-  <g fill="#ffffff">
-    <circle cx="148" cy="38" r="11.5"/>
-    <circle cx="166" cy="26" r="16.5"/>
-    <circle cx="189" cy="30" r="13.5"/>
-    <circle cx="204" cy="42" r="8.5"/>
-    <circle cx="176" cy="46" r="12.5"/>
-    <circle cx="157" cy="48" r="9.5"/>
-    <circle cx="195" cy="50" r="7.5"/>
-  </g>
-  <path d="M142 47 C152 57 194 59 208 47 C204 55 192 59 176 59 C160 59 148 55 142 47 Z" fill="#cfe3f7"/>
-  <!-- the cloud looks down at the telescope -->
-  <ellipse cx="166" cy="36" rx="3.2" ry="4.2" fill="#111"/>
-  <ellipse cx="184" cy="36" rx="3.2" ry="4.2" fill="#111"/>
-  <circle cx="165" cy="38.5" r="1.1" fill="#fff"/>
-  <circle cx="183" cy="38.5" r="1.1" fill="#fff"/>
-  <path d="M168 44 Q175 51 182 44" fill="none" stroke="#111" stroke-width="2.5" stroke-linecap="round"/>
-  <circle cx="159" cy="44" r="3.5" fill="#f7a9b8" opacity="0.85"/>
-  <circle cx="191" cy="44" r="3.5" fill="#f7a9b8" opacity="0.85"/>
-  <!-- sparkle -->
-  <path d="M128 18 L130 24 L136 26 L130 28 L128 34 L126 28 L120 26 L126 24 Z" fill="#ffd54f" stroke="#111" stroke-width="1.5" stroke-linejoin="round"/>
-
-  <!-- telescope tripod -->
-  <g stroke="#111" stroke-width="6" stroke-linecap="round">
-    <line x1="100" y1="72" x2="84" y2="188"/>
-    <line x1="100" y1="72" x2="100" y2="188"/>
-    <line x1="100" y1="72" x2="116" y2="188"/>
-  </g>
-  <g stroke="#a1887f" stroke-width="3" stroke-linecap="round">
-    <line x1="100" y1="72" x2="84" y2="188"/>
-    <line x1="100" y1="72" x2="100" y2="188"/>
-    <line x1="100" y1="72" x2="116" y2="188"/>
+  <g fill="#ffffff" stroke="#4aa3df" stroke-width="3">
+    <circle cx="262" cy="232" r="10"/>
+    <circle cx="300" cy="252" r="10"/>
+    <circle cx="340" cy="206" r="11"/>
   </g>
 
-  <!-- telescope: eyepiece by the cactus, objective aimed at the cloud -->
-  <g transform="translate(66 92) rotate(-32)" stroke="#111" stroke-width="3" stroke-linejoin="round">
-    <rect x="-9" y="-4.5" width="12" height="9" rx="2" fill="#5d4037"/>
-    <rect x="0" y="-7.5" width="70" height="15" rx="3" fill="url(#brass)"/>
-    <rect x="62" y="-11" width="20" height="22" rx="4" fill="url(#brass)"/>
-    <line x1="22" y1="-7.5" x2="22" y2="7.5" stroke-width="2"/>
-    <line x1="44" y1="-7.5" x2="44" y2="7.5" stroke-width="2"/>
-    <ellipse cx="82" cy="0" rx="3" ry="9" fill="#9fd3f5" stroke-width="2"/>
+  <!-- cactus: a white copy underneath keeps a gap between it and the cloud -->
+  <g fill="#ffffff" stroke="#ffffff" stroke-width="14" stroke-linejoin="round">
+    <rect x="150" y="58" width="54" height="226" rx="27"/>
+    <rect x="98" y="118" width="40" height="98" rx="20"/>
+    <rect x="98" y="178" width="80" height="38" rx="19"/>
+    <rect x="216" y="160" width="38" height="74" rx="19"/>
+    <rect x="178" y="200" width="76" height="34" rx="17"/>
+  </g>
+  <g fill="#3fa34d">
+    <rect x="150" y="58" width="54" height="226" rx="27"/>
+    <rect x="98" y="118" width="40" height="98" rx="20"/>
+    <rect x="98" y="178" width="80" height="38" rx="19"/>
+    <rect x="216" y="160" width="38" height="74" rx="19"/>
+    <rect x="178" y="200" width="76" height="34" rx="17"/>
   </g>
 
-  <!-- saguaro -->
-  <g fill="url(#skin)" stroke="#111" stroke-width="3.5" stroke-linejoin="round">
-    <path d="M42 140 C29 140 16 136 16 120 L16 92 C16 78 32 78 32 92 L32 118 C32 124 36 126 42 126 Z"/>
-    <path d="M44 189 C41 150 39 104 41 76 C42 56 72 54 73 76 C75 104 74 150 71 189 Z"/>
-  </g>
-  <g stroke="#e6f7c0" stroke-width="1.6" stroke-linecap="round" fill="none" opacity="0.7">
-    <path d="M50 102 C49 130 49 160 50 184"/>
-    <path d="M57 104 C57 130 57 160 57 186"/>
-    <path d="M64 102 C66 130 66 160 64 184"/>
-    <path d="M24 90 V120"/>
-  </g>
-  <!-- face: one eye squeezed shut, the other at the eyepiece -->
-  <path d="M46 82 Q50 78 54 82" fill="none" stroke="#111" stroke-width="2.5" stroke-linecap="round"/>
-  <circle cx="61" cy="82" r="3.4" fill="#111"/>
-  <circle cx="62" cy="80.8" r="1.1" fill="#fff"/>
-  <path d="M48 93 Q54 99 60 93" fill="none" stroke="#111" stroke-width="2.5" stroke-linecap="round"/>
-  <circle cx="45" cy="89" r="3" fill="#f7a9b8" opacity="0.75"/>
+  <text fill="#2b2f33" x="200" y="334" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="27" font-weight="700" letter-spacing="0.5">Cloudflare plugin for Cacti</text>
 </svg>

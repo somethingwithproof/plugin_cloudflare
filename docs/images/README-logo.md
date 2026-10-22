@@ -1,15 +1,16 @@
 # Logo
 
-`logo.svg` is original artwork made for this plugin. A cheerful saguaro, a
-nod to Cacti, peers through a brass telescope at a smiling cloud that looks
-back at it; watching is what a monitoring plugin does. Beside them a road
-runs into a stone tunnel, a nod to Cloudflare Tunnel. It follows the style
-of Cacti's own logo (heavy outline, green gradient, light ribs) without
-reusing its artwork. The cloud is a generic round, white cartoon cloud; it
-is not Cloudflare's cloud mark and does not use Cloudflare's colors.
+`logo.svg` (light backgrounds) and `logo-dark.svg` (dark backgrounds) are
+drawn for this plugin from a concept sketch supplied by the project owner. A
+green cactus, a nod to Cacti, stands in front of a cloud with a rising line
+chart, which stands for monitoring a cloud service. The two files differ only
+in the color of the caption.
 
-It does not use Cloudflare's or Cacti's logos, cloud mark, colors or
-wordmarks. The plugin is not affiliated with or endorsed by Cloudflare, Inc.
+The cloud is sky blue rather than orange, so it is not confused with
+Cloudflare's cloud mark, and the caption names the plugin as a plugin for
+Cacti rather than presenting "Cacti" or "Cloudflare" as a product name.
+
+It does not use Cloudflare's or Cacti's logo artwork, colors or wordmarks. The plugin is not affiliated with or endorsed by Cloudflare, Inc.
 "Cloudflare" is a trademark of Cloudflare, Inc.; it appears in the plugin's
 name only to describe what the plugin works with.
 

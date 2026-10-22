@@ -1,5 +1,8 @@
 <p align="center">
-  <img src="docs/images/logo.svg" width="160" height="160" alt="Plugin logo: a cheerful saguaro peers through a brass telescope at a smiling cloud, next to a road running into a stone tunnel">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/logo-dark.svg">
+    <img src="docs/images/logo.svg" width="240" height="216" alt="Plugin logo: a green cactus in front of a sky-blue cloud with a rising line chart, above the text Cloudflare plugin for Cacti">
+  </picture>
 </p>
 
 # Cloudflare plugin for Cacti

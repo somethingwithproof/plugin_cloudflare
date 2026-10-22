@@ -68,6 +68,10 @@ The checks run in that order and the first one that fails gives the reason:
 4. Age below -60: `clock_skew`. Age above the window: `stale`.
 5. Connection metrics only: a later attempt than refresh gives the tunnel's
    `connections_error_class`, or `transient` if none is stored.
+6. The stored value itself. A null `connector_count` or `connection_count`
+   gives `never_collected`, even when `connections_refreshed_at` is set. A
+   Cloudflare status outside the health table gives `malformed` for health
+   only; the other metrics are unaffected.
 
 A failing job comes first because it explains the rest. Discovery marks
 tunnels `unavailable` after repeated outages, so the job's error class is the

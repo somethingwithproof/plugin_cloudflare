@@ -362,6 +362,31 @@ final class ObservationReaderTest extends IntegrationTestCase {
 		);
 	}
 
+	public function testNullCountsAfterRefreshAreUnknownNotZero(): void {
+		$this->insertTunnel(1, array('connector_count' => null, 'connection_count' => null));
+
+		$obs = $this->reader->observe($this->accountId, self::uuid(1));
+
+		$this->assertUnknown($obs, array('connectors', 'connections'), 'never_collected');
+		$this->assertSame('3', $obs['health']->rrdValue());
+		$this->assertSame('0', $obs['collectAge']->rrdValue());
+	}
+
+	public function testUnrecognisedHealthIsMalformed(): void {
+		$this->insertTunnel(1, array('cf_status' => 'bogus'));
+
+		$obs = $this->reader->observe($this->accountId, self::uuid(1));
+
+		$this->assertUnknown($obs, array('health'), 'malformed');
+		$this->assertSame(array(
+			'connectors'      => '2',
+			'connections'     => '4',
+			'versions'        => '0',
+			'collectAge'      => '0',
+			'collectFailures' => '0',
+		), array_slice(self::printed($obs), 1));
+	}
+
 	public function testZeroConnectorsAfterSuccessfulReadIsRealZero(): void {
 		$this->insertTunnel(1, array('cf_status' => 'inactive', 'connector_count' => 0, 'connection_count' => 0));
 

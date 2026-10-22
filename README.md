@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/images/logo.png" width="220" height="220" alt="Plugin logo: a green cactus in front of an orange cloud with a rising line chart, above the text CACTI Cloudflare Monitor">
+  <img src="docs/images/logo.png" width="300" height="200" alt="Plugin logo: a green cactus in front of an orange cloud outline with a line chart, above the text Cacti Monitor for Cloudflare">
 </p>
 
 # Cloudflare plugin for Cacti

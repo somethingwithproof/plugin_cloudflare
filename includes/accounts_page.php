@@ -54,11 +54,19 @@ function cloudflare_request_is_post() : bool {
 }
 
 function cloudflare_accounts_denied() : void {
-	raise_message('cloudflare_denied', __esc('You are not permitted to change Cloudflare accounts.', 'cloudflare'), MESSAGE_LEVEL_ERROR);
+	raise_message(
+		'cloudflare_denied',
+		__esc('You are not permitted to change Cloudflare accounts.', 'cloudflare'),
+		MESSAGE_LEVEL_ERROR
+	);
 }
 
 function cloudflare_accounts_missing() : void {
-	raise_message('cloudflare_missing', __esc('The Cloudflare account no longer exists.', 'cloudflare'), MESSAGE_LEVEL_ERROR);
+	raise_message(
+		'cloudflare_missing',
+		__esc('The Cloudflare account no longer exists.', 'cloudflare'),
+		MESSAGE_LEVEL_ERROR
+	);
 }
 
 function cloudflare_accounts_unreadable_text() : string {
@@ -103,7 +111,11 @@ function cloudflare_accounts_keep_form(array $errors) : void {
 		$_SESSION['sess_field_values'][$field] = (string) get_nfilter_request_var($field);
 	}
 
-	raise_message('cloudflare_invalid', implode('<br>', array_map('html_escape', array_values($errors))), MESSAGE_LEVEL_ERROR);
+	raise_message(
+		'cloudflare_invalid',
+		implode('<br>', array_map('html_escape', array_values($errors))),
+		MESSAGE_LEVEL_ERROR
+	);
 }
 
 /**
@@ -270,10 +282,32 @@ function cloudflare_accounts_actions() : ?string {
 	}
 
 	$prompts = array(
-		1 => __n('Click \'Continue\' to Delete the following Cloudflare Account. Its discovered inventory and job state are removed; Cacti devices and graphs are kept.', 'Click \'Continue\' to Delete the following Cloudflare Accounts. Their discovered inventory and job state are removed; Cacti devices and graphs are kept.', cacti_sizeof($ids), 'cloudflare'),
-		2 => __n('Click \'Continue\' to Verify the following Cloudflare Account against the Cloudflare API.', 'Click \'Continue\' to Verify the following Cloudflare Accounts against the Cloudflare API.', cacti_sizeof($ids), 'cloudflare'),
-		3 => __n('Click \'Continue\' to Enable the following Cloudflare Account.', 'Click \'Continue\' to Enable the following Cloudflare Accounts.', cacti_sizeof($ids), 'cloudflare'),
-		4 => __n('Click \'Continue\' to Disable the following Cloudflare Account.', 'Click \'Continue\' to Disable the following Cloudflare Accounts.', cacti_sizeof($ids), 'cloudflare')
+		1 => __n(
+			'Click \'Continue\' to Delete the following Cloudflare Account. Its discovered inventory and job state are ' .
+			'removed; Cacti devices and graphs are kept.',
+			'Click \'Continue\' to Delete the following Cloudflare Accounts. Their discovered inventory and job state are ' .
+			'removed; Cacti devices and graphs are kept.',
+			cacti_sizeof($ids),
+			'cloudflare'
+		),
+		2 => __n(
+			'Click \'Continue\' to Verify the following Cloudflare Account against the Cloudflare API.',
+			'Click \'Continue\' to Verify the following Cloudflare Accounts against the Cloudflare API.',
+			cacti_sizeof($ids),
+			'cloudflare'
+		),
+		3 => __n(
+			'Click \'Continue\' to Enable the following Cloudflare Account.',
+			'Click \'Continue\' to Enable the following Cloudflare Accounts.',
+			cacti_sizeof($ids),
+			'cloudflare'
+		),
+		4 => __n(
+			'Click \'Continue\' to Disable the following Cloudflare Account.',
+			'Click \'Continue\' to Disable the following Cloudflare Accounts.',
+			cacti_sizeof($ids),
+			'cloudflare'
+		)
 	);
 
 	top_header();
@@ -294,7 +328,13 @@ function cloudflare_accounts_actions() : ?string {
 			<input type='hidden' name='action' value='actions'>
 			<input type='hidden' name='selected_items' value='" . html_escape(serialize($ids)) . "'>
 			<input type='hidden' name='drp_action' value='" . $action . "'>
-			<input type='button' class='ui-button ui-corner-all ui-widget cactiReturnTo' value='" . __esc('Cancel', 'cloudflare') . "'>&nbsp;<input type='submit' class='ui-button ui-corner-all ui-widget' value='" . __esc('Continue', 'cloudflare') . "' title='" . html_escape($cloudflare_account_actions[$action]) . "'>
+			<input type='button' class='ui-button ui-corner-all ui-widget cactiReturnTo' value='" .
+				__esc('Cancel', 'cloudflare') .
+				"'>&nbsp;<input type='submit' class='ui-button ui-corner-all ui-widget' value='" .
+				__esc('Continue', 'cloudflare') .
+				"' title='" .
+				html_escape($cloudflare_account_actions[$action]) .
+				"'>
 		</td>
 	</tr>\n";
 
@@ -399,7 +439,9 @@ function cloudflare_accounts_status(Account $account) : void {
 
 	if ($permissions !== null) {
 		foreach ($permissions as $permission => $granted) {
-			$rows[__esc('Permission: %s', $permission, 'cloudflare')] = $granted ? __esc('Granted', 'cloudflare') : __esc('Missing', 'cloudflare');
+			$rows[__esc('Permission: %s', $permission, 'cloudflare')] = $granted
+				? __esc('Granted', 'cloudflare')
+				: __esc('Missing', 'cloudflare');
 		}
 	}
 
@@ -423,7 +465,11 @@ function cloudflare_accounts_script() : void {
 
 	$nonce = class_exists('CactiSecureHeaders') ? ' ' . CactiSecureHeaders::getNonceAttribute() : '';
 
-	print "<script type='text/javascript' src='" . html_escape($config['url_path'] . 'plugins/cloudflare/js/cloudflare_accounts.js') . "'" . $nonce . "></script>\n";
+	print "<script type='text/javascript' src='" .
+		html_escape($config['url_path'] . 'plugins/cloudflare/js/cloudflare_accounts.js') .
+		"'" .
+		$nonce .
+		"></script>\n";
 }
 
 function cloudflare_accounts_list() : void {
@@ -468,7 +514,14 @@ function cloudflare_accounts_list() : void {
 	$page   = max(1, (int) get_request_var('page'));
 	$filter = (string) get_request_var('filter');
 
-	html_start_box(__esc('Cloudflare Accounts', 'cloudflare'), '100%', '', '3', 'center', 'cloudflare_accounts.php?action=edit');
+	html_start_box(
+		__esc('Cloudflare Accounts', 'cloudflare'),
+		'100%',
+		'',
+		'3',
+		'center',
+		'cloudflare_accounts.php?action=edit'
+	);
 
 	?>
 	<tr class='even'>
@@ -480,18 +533,26 @@ function cloudflare_accounts_list() : void {
 						<label for='filter'><?php print __('Search', 'cloudflare');?></label>
 					</td>
 					<td>
-						<input type='text' class='ui-state-default ui-corner-all' id='filter' size='25' value='<?php print html_escape_request_var('filter');?>'>
+						<input type='text' class='ui-state-default ui-corner-all' id='filter' size='25'
+							value='<?php print html_escape_request_var('filter');?>'>
 					</td>
 					<td>
 						<label for='rows'><?php print __('Accounts', 'cloudflare');?></label>
 					</td>
 					<td>
 						<select id='rows'>
-							<option value='-1'<?php print (get_request_var('rows') == '-1' ? ' selected>':'>') . __('Default', 'cloudflare');?></option>
+							<option value='-1'<?php print (get_request_var('rows') == '-1' ? ' selected>':'>') .
+								__('Default', 'cloudflare');?></option>
 							<?php
 							if (cacti_sizeof($item_rows)) {
 								foreach ($item_rows as $key => $value) {
-									print "<option value='" . html_escape($key) . "'" . (get_request_var('rows') == $key ? ' selected' : '') . '>' . html_escape($value) . "</option>\n";
+									print "<option value='" .
+										html_escape($key) .
+										"'" .
+										(get_request_var('rows') == $key ? ' selected' : '') .
+										'>' .
+										html_escape($value) .
+										"</option>\n";
 								}
 							}
 							?>
@@ -499,8 +560,12 @@ function cloudflare_accounts_list() : void {
 					</td>
 					<td>
 						<span>
-							<input type='button' class='ui-button ui-corner-all ui-widget' id='refresh' value='<?php print __esc('Go', 'cloudflare');?>' title='<?php print __esc('Set/Refresh Filters', 'cloudflare');?>'>
-							<input type='button' class='ui-button ui-corner-all ui-widget' id='clear' value='<?php print __esc('Clear', 'cloudflare');?>' title='<?php print __esc('Clear Filters', 'cloudflare');?>'>
+							<input type='button' class='ui-button ui-corner-all ui-widget' id='refresh'
+								value='<?php print __esc('Go', 'cloudflare');?>'
+								title='<?php print __esc('Set/Refresh Filters', 'cloudflare');?>'>
+							<input type='button' class='ui-button ui-corner-all ui-widget' id='clear'
+								value='<?php print __esc('Clear', 'cloudflare');?>'
+								title='<?php print __esc('Clear Filters', 'cloudflare');?>'>
 						</span>
 					</td>
 				</tr>
@@ -533,16 +598,41 @@ function cloudflare_accounts_list() : void {
 	$accounts   = array_slice($accounts, $rows * ($page - 1), $rows);
 
 	$display_text = array(
-		'name'            => array('display' => __('Name', 'cloudflare'), 'align' => 'left', 'sort' => 'ASC', 'tip' => __('The name of this account in Cacti.', 'cloudflare')),
+		'name'            => array(
+			'display' => __('Name', 'cloudflare'),
+			'align' => 'left',
+			'sort' => 'ASC',
+			'tip' => __('The name of this account in Cacti.', 'cloudflare')
+		),
 		'cf_account_id'   => array('display' => __('Account ID', 'cloudflare'), 'align' => 'left', 'sort' => 'ASC'),
-		'has_token'       => array('display' => __('Token Stored', 'cloudflare'), 'align' => 'left', 'sort' => 'DESC', 'tip' => __('Whether an API token is configured. The edit page shows where it is kept.', 'cloudflare')),
+		'has_token'       => array(
+			'display' => __('Token Stored', 'cloudflare'),
+			'align' => 'left',
+			'sort' => 'DESC',
+			'tip' => __('Whether an API token is configured. The edit page shows where it is kept.', 'cloudflare')
+		),
 		'enabled'         => array('display' => __('Enabled', 'cloudflare'), 'align' => 'left', 'sort' => 'DESC'),
-		'status'          => array('display' => __('Status', 'cloudflare'), 'align' => 'left', 'sort' => 'ASC', 'tip' => __('The result of the last Verify.', 'cloudflare')),
+		'status'          => array(
+			'display' => __('Status', 'cloudflare'),
+			'align' => 'left',
+			'sort' => 'ASC',
+			'tip' => __('The result of the last Verify.', 'cloudflare')
+		),
 		'last_checked_at' => array('display' => __('Last Checked', 'cloudflare'), 'align' => 'left', 'sort' => 'DESC'),
 		'id'              => array('display' => __('ID', 'cloudflare'), 'align' => 'right', 'sort' => 'ASC')
 	);
 
-	$nav = html_nav_bar('cloudflare_accounts.php?filter=' . urlencode($filter), MAX_DISPLAY_PAGES, $page, $rows, $total_rows, cacti_sizeof($display_text) + 1, __('Accounts', 'cloudflare'), 'page', 'main');
+	$nav = html_nav_bar(
+		'cloudflare_accounts.php?filter=' . urlencode($filter),
+		MAX_DISPLAY_PAGES,
+		$page,
+		$rows,
+		$total_rows,
+		cacti_sizeof($display_text) + 1,
+		__('Accounts', 'cloudflare'),
+		'page',
+		'main'
+	);
 
 	form_start('cloudflare_accounts.php', 'chk');
 
@@ -557,7 +647,14 @@ function cloudflare_accounts_list() : void {
 			$id = $account->id();
 
 			form_alternate_row('line' . $id, true);
-			form_selectable_cell('<a class="linkEditMain" href="' . html_escape('cloudflare_accounts.php?action=edit&id=' . $id) . '">' . html_escape($account->name()) . '</a>', $id);
+			form_selectable_cell(
+				'<a class="linkEditMain" href="' .
+					html_escape('cloudflare_accounts.php?action=edit&id=' . $id) .
+					'">' .
+					html_escape($account->name()) .
+					'</a>',
+				$id
+			);
 			form_selectable_cell(html_escape($account->cfAccountId()), $id);
 			form_selectable_cell($account->hasToken() ? __esc('Yes', 'cloudflare') : __esc('No', 'cloudflare'), $id);
 			form_selectable_cell($account->isEnabled() ? __esc('Yes', 'cloudflare') : __esc('No', 'cloudflare'), $id);
@@ -572,7 +669,11 @@ function cloudflare_accounts_list() : void {
 		 * failure is also shown in the table rather than only next time. */
 		$empty = $unreadable ? cloudflare_accounts_unreadable_text() : __('No Cloudflare Accounts Found', 'cloudflare');
 
-		print "<tr class='tableRow'><td colspan='" . (cacti_sizeof($display_text) + 1) . "'><em>" . html_escape($empty) . "</em></td></tr>\n";
+		print "<tr class='tableRow'><td colspan='" .
+			(cacti_sizeof($display_text) + 1) .
+			"'><em>" .
+			html_escape($empty) .
+			"</em></td></tr>\n";
 	}
 
 	html_end_box(false);

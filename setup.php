@@ -31,7 +31,12 @@ use Cacti\PluginCloudflare\Storage\Migrator;
 function plugin_cloudflare_install() : void {
 	api_plugin_register_hook('cloudflare', 'config_arrays', 'cloudflare_config_arrays', 'includes/settings.php');
 	api_plugin_register_hook('cloudflare', 'config_settings', 'cloudflare_config_settings', 'includes/settings.php');
-	api_plugin_register_hook('cloudflare', 'draw_navigation_text', 'cloudflare_draw_navigation_text', 'includes/settings.php');
+	api_plugin_register_hook(
+		'cloudflare',
+		'draw_navigation_text',
+		'cloudflare_draw_navigation_text',
+		'includes/settings.php'
+	);
 
 	api_plugin_register_realm('cloudflare', 'cloudflare.php', 'Cloudflare: View', false);
 	api_plugin_register_realm('cloudflare', 'cloudflare_accounts.php', 'Cloudflare: Configure', true);
@@ -130,7 +135,11 @@ function plugin_cloudflare_setup_database() : void {
  */
 function cloudflare_log_schema_failure(string $stage, DatabaseException $e) : void {
 	if ($e->getSqlState() === 'HY000' && $e->getDriverCode() === 0) {
-		cacti_log('CLOUDFLARE: schema ' . $stage . ' deferred; another process holds the migration lock', false, 'CLOUDFLARE');
+		cacti_log(
+			'CLOUDFLARE: schema ' . $stage . ' deferred; another process holds the migration lock',
+			false,
+			'CLOUDFLARE'
+		);
 
 		return;
 	}

@@ -115,7 +115,11 @@ final class CurlTransport implements HttpTransport {
 		unset($ch);
 
 		if ($tooLarge) {
-			throw new TransportException(TransportException::TRANSIENT, 'CURLE_WRITE_ERROR', 'response too large: body exceeded ' . $maxBytes . ' bytes');
+			throw new TransportException(
+				TransportException::TRANSIENT,
+				'CURLE_WRITE_ERROR',
+				'response too large: body exceeded ' . $maxBytes . ' bytes'
+			);
 		}
 
 		if ($ok === false || $errno !== 0) {

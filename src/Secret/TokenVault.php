@@ -165,7 +165,16 @@ final class TokenVault {
 	): string {
 		$nonce = random_bytes(self::NONCE_BYTES);
 		$tag = '';
-		$ciphertext = openssl_encrypt($token, self::CIPHER, $this->key(SecretException::ENCRYPT_FAILED), OPENSSL_RAW_DATA, $nonce, $tag, $aad, self::TAG_BYTES);
+		$ciphertext = openssl_encrypt(
+			$token,
+			self::CIPHER,
+			$this->key(SecretException::ENCRYPT_FAILED),
+			OPENSSL_RAW_DATA,
+			$nonce,
+			$tag,
+			$aad,
+			self::TAG_BYTES
+		);
 
 		if ($ciphertext === false || strlen($tag) !== self::TAG_BYTES) {
 			throw new SecretException(SecretException::ENCRYPT_FAILED);
@@ -192,7 +201,15 @@ final class TokenVault {
 		$tag = substr($raw, self::NONCE_BYTES, self::TAG_BYTES);
 		$ciphertext = substr($raw, self::NONCE_BYTES + self::TAG_BYTES);
 
-		$token = openssl_decrypt($ciphertext, self::CIPHER, $this->key(SecretException::DECRYPT_FAILED), OPENSSL_RAW_DATA, $nonce, $tag, $aad);
+		$token = openssl_decrypt(
+			$ciphertext,
+			self::CIPHER,
+			$this->key(SecretException::DECRYPT_FAILED),
+			OPENSSL_RAW_DATA,
+			$nonce,
+			$tag,
+			$aad
+		);
 		if ($token === false) {
 			throw new SecretException(SecretException::DECRYPT_FAILED);
 		}

@@ -87,7 +87,12 @@ final class CloudflareClient {
 		}
 
 		$result = $envelope['result'] ?? null;
-		if (!is_array($result) || !isset($result['id'], $result['status']) || !is_string($result['id']) || !is_string($result['status'])) {
+		if (
+			!is_array($result)
+			|| !isset($result['id'], $result['status'])
+			|| !is_string($result['id'])
+			|| !is_string($result['status'])
+		) {
 			throw new ApiException(ErrorClass::MALFORMED, 200, array(), 'token verify result has an unexpected shape');
 		}
 
@@ -202,7 +207,13 @@ final class CloudflareClient {
 		$detail = Redactor::redact(implode('; ', array_slice($messages, 0, self::MAX_API_MESSAGES)), array($token));
 
 		if ($status >= 200 && $status < 300) {
-			if (!is_array($decoded) || !isset($decoded['success']) || !is_bool($decoded['success']) || !isset($decoded['errors']) || !is_array($decoded['errors'])) {
+			if (
+				!is_array($decoded)
+				|| !isset($decoded['success'])
+				|| !is_bool($decoded['success'])
+				|| !isset($decoded['errors'])
+				|| !is_array($decoded['errors'])
+			) {
 				throw new ApiException(ErrorClass::MALFORMED, $status, array(), 'response is not a Cloudflare envelope');
 			}
 			if ($decoded['success'] === false) {

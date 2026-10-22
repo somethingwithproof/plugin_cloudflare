@@ -53,7 +53,8 @@ final class SecretException extends RuntimeException {
 		self::KEY_UNAVAILABLE  => 'Token vault key file is missing, unreadable, insecure or malformed',
 		self::DECRYPT_FAILED   => 'Stored API token could not be decrypted',
 		self::FILE_UNAVAILABLE => 'Token file is missing, unreadable, not a regular file or too large',
-		self::FILE_INSECURE    => 'Token file path is not absolute, is a symlink, or the file is world-readable or world-writable',
+		self::FILE_INSECURE    => 'Token file path is not absolute, is a symlink, ' .
+			'or the file is world-readable or world-writable',
 		self::ENCRYPT_FAILED   => 'API token could not be encrypted',
 	);
 

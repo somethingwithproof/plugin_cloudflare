@@ -69,7 +69,10 @@ function cloudflare_account_fields(?Account $account, ?array $credentials, bool 
 		'cf_account_id' => array(
 			'method'        => 'textbox',
 			'friendly_name' => __('Account ID', 'cloudflare'),
-			'description'   => __('The 32-character Cloudflare account ID, shown in the dashboard URL and on the account overview page.', 'cloudflare'),
+			'description'   => __(
+				'The 32-character Cloudflare account ID, shown in the dashboard URL and on the account overview page.',
+				'cloudflare'
+			),
 			'value'         => $account === null ? '' : $account->cfAccountId(),
 			'max_length'    => '32',
 			'size'          => '40'
@@ -83,7 +86,11 @@ function cloudflare_account_fields(?Account $account, ?array $credentials, bool 
 			'friendly_name' => __('Token Storage', 'cloudflare'),
 			'description'   => $vault_available
 				? __('Where the scoped API token is kept. Global API Keys are not accepted.', 'cloudflare')
-				: __('Encrypted storage is unavailable because the key file in Settings is missing or unusable; only token files can be used.', 'cloudflare'),
+				: __(
+					'Encrypted storage is unavailable because the key file in Settings is missing or unusable; only token files ' .
+					'can be used.',
+					'cloudflare'
+				),
 			'value'         => $source,
 			'array'         => $sources
 		),
@@ -105,7 +112,11 @@ function cloudflare_account_fields(?Account $account, ?array $credentials, bool 
 	$fields['token_file'] = array(
 		'method'        => 'textbox',
 		'friendly_name' => __('Token File', 'cloudflare'),
-		'description'   => __('Absolute path to a file that contains only the token. It must be readable by the web server and poller users and must not be world-readable.', 'cloudflare'),
+		'description'   => __(
+			'Absolute path to a file that contains only the token. It must be readable by the web server and poller users ' .
+			'and must not be world-readable.',
+			'cloudflare'
+		),
 		'value'         => $credentials === null ? '' : (string) $credentials['token_file'],
 		'max_length'    => '255',
 		'size'          => '60'
@@ -131,7 +142,10 @@ function cloudflare_account_fields(?Account $account, ?array $credentials, bool 
 		'collect_analytics' => array(
 			'method'        => 'checkbox',
 			'friendly_name' => __('Collect Analytics', 'cloudflare'),
-			'description'   => __('Collect zone traffic analytics. This needs the Account Analytics Read and Analytics Read (Zone) permissions.', 'cloudflare'),
+			'description'   => __(
+				'Collect zone traffic analytics. This needs the Account Analytics Read and Analytics Read (Zone) permissions.',
+				'cloudflare'
+			),
 			'value'         => ($account !== null && $account->collectsAnalytics()) ? 'on' : '',
 		),
 		'discovery_interval' => array(

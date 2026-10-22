@@ -69,7 +69,11 @@ function cloudflare_config_settings() : void {
 	/* The tab stays while disabled: Cacti keeps this hook enabled so the key
 	 * path can be set before the plugin is turned on. The schema waits for
 	 * check_config, which runs the upgrade on enable. */
-	if (cloudflare_plugin_enabled() && function_exists('get_current_page') && in_array(get_current_page(), array('settings.php', 'plugins.php'), true)) {
+	if (
+		cloudflare_plugin_enabled()
+		&& function_exists('get_current_page')
+		&& in_array(get_current_page(), array('settings.php', 'plugins.php'), true)
+	) {
 		include_once(dirname(__DIR__) . '/setup.php');
 
 		plugin_cloudflare_upgrade();
@@ -84,7 +88,11 @@ function cloudflare_config_settings() : void {
 		),
 		'cloudflare_key_file' => array(
 			'friendly_name' => __('Token Vault Key File', 'cloudflare'),
-			'description'   => __('Absolute path to the 32-byte key used to encrypt stored API tokens. It must be readable by the web server and poller users and not world-readable. When the file is missing, only token files can be used.', 'cloudflare'),
+			'description'   => __(
+				'Absolute path to the 32-byte key used to encrypt stored API tokens. It must be readable by the web server and ' .
+				'poller users and not world-readable. When the file is missing, only token files can be used.',
+				'cloudflare'
+			),
 			'method'        => 'textbox',
 			'default'       => '/etc/cacti/cloudflare.key',
 			'max_length'    => '255',
@@ -92,7 +100,10 @@ function cloudflare_config_settings() : void {
 		),
 		'cloudflare_ui_timeout' => array(
 			'friendly_name' => __('Interactive Request Timeout', 'cloudflare'),
-			'description'   => __('Total time in seconds allowed for a Cloudflare API request made from the web interface, such as Verify.', 'cloudflare'),
+			'description'   => __(
+				'Total time in seconds allowed for a Cloudflare API request made from the web interface, such as Verify.',
+				'cloudflare'
+			),
 			'method'        => 'textbox',
 			'default'       => '10',
 			'max_length'    => '2',
@@ -100,7 +111,10 @@ function cloudflare_config_settings() : void {
 		),
 		'cloudflare_poller_timeout' => array(
 			'friendly_name' => __('Collector Request Timeout', 'cloudflare'),
-			'description'   => __('Total time in seconds allowed for a Cloudflare API request made by the background collector.', 'cloudflare'),
+			'description'   => __(
+				'Total time in seconds allowed for a Cloudflare API request made by the background collector.',
+				'cloudflare'
+			),
 			'method'        => 'textbox',
 			'default'       => '20',
 			'max_length'    => '3',

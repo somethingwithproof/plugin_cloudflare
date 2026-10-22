@@ -399,8 +399,18 @@ final class AccountService {
 				return array('token_inactive', self::MESSAGES['token_inactive'], null, '');
 			}
 
-			$tunnelRead = $this->client->probe($cfAccountId, $token, '/accounts/' . $cfAccountId . '/cfd_tunnel', array('per_page' => 1));
-			$zoneRead   = $this->client->probe($cfAccountId, $token, '/zones', array('account.id' => $cfAccountId, 'per_page' => 5));
+			$tunnelRead = $this->client->probe(
+				$cfAccountId,
+				$token,
+				'/accounts/' . $cfAccountId . '/cfd_tunnel',
+				array('per_page' => 1)
+			);
+			$zoneRead   = $this->client->probe(
+				$cfAccountId,
+				$token,
+				'/zones',
+				array('account.id' => $cfAccountId, 'per_page' => 5)
+			);
 		} catch (ApiException $e) {
 			$class  = $e->getErrorClass();
 			$status = self::statusFor($class);
@@ -437,7 +447,14 @@ final class AccountService {
 	/**
 	 * @param array<string, bool>|null $permissions written only when both probes ran
 	 */
-	private function record(Account $account, int $now, string $status, string $message, ?array $permissions, string $detail): Account {
+	private function record(
+		Account $account,
+		int $now,
+		string $status,
+		string $message,
+		?array $permissions,
+		string $detail
+	): Account {
 		$row = array(
 			'status'          => $status,
 			'status_message'  => $message,

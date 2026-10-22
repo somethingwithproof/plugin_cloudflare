@@ -41,7 +41,11 @@ final class OutboundPolicy {
 	public function __construct(array $origins) {
 		foreach ($origins as $origin) {
 			$parts = self::parse($origin);
-			if ($parts === null || isset($parts['query']) || (isset($parts['path']) && $parts['path'] !== '' && $parts['path'] !== '/')) {
+			if (
+				$parts === null
+				|| isset($parts['query'])
+				|| (isset($parts['path']) && $parts['path'] !== '' && $parts['path'] !== '/')
+			) {
 				throw new TransportException(TransportException::CONFIG, 'invalid_origin');
 			}
 
@@ -64,7 +68,11 @@ final class OutboundPolicy {
 		}
 
 		foreach ($this->origins as $origin) {
-			if ($origin['scheme'] === $parts['scheme'] && $origin['host'] === $parts['host'] && $origin['port'] === $parts['port']) {
+			if (
+				$origin['scheme'] === $parts['scheme']
+				&& $origin['host'] === $parts['host']
+				&& $origin['port'] === $parts['port']
+			) {
 				return;
 			}
 		}

@@ -72,7 +72,9 @@ final class AccountRepository {
 	public function all(): array {
 		$accounts = array();
 
-		foreach ($this->db->fetchAll('SELECT ' . self::READ_COLUMNS . ' FROM ' . self::TABLE . ' ORDER BY name, id') as $row) {
+		foreach ($this->db->fetchAll(
+			'SELECT ' . self::READ_COLUMNS . ' FROM ' . self::TABLE . ' ORDER BY name, id'
+		) as $row) {
 			$accounts[] = Account::fromRow($row);
 		}
 
@@ -86,7 +88,13 @@ final class AccountRepository {
 		$columns = self::columns($row);
 
 		$this->db->execute(
-			'INSERT INTO ' . self::TABLE . ' (' . implode(', ', $columns) . ') VALUES (' . implode(', ', array_fill(0, count($columns), '?')) . ')',
+			'INSERT INTO ' .
+				self::TABLE .
+				' (' .
+				implode(', ', $columns) .
+				') VALUES (' .
+				implode(', ', array_fill(0, count($columns), '?')) .
+				')',
 			array_values($row)
 		);
 

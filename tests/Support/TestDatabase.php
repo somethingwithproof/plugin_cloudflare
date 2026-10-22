@@ -44,6 +44,9 @@ final class TestDatabase {
 	 */
 	private static $open = array();
 
+	/** @var int */
+	private static $peakThreads = 0;
+
 	public static function pdo(): PDO {
 		$pdo = new PDO(self::dsn(), self::user(), self::pass(), array(
 			self::foundRowsAttr() => true,
@@ -91,13 +94,19 @@ final class TestDatabase {
 	/**
 	 * Kills every handle from pdo() that something still references, so a
 	 * stray global or cache cannot hold a connection past its test class.
+	 *
+	 * @return int handles that were still referenced
 	 */
-	public static function closeAll(): void {
+	public static function closeAll(): int {
+		$live = 0;
+
 		foreach (self::$open as $ref) {
 			$pdo = $ref->get();
 			if ($pdo === null) {
 				continue;
 			}
+
+			$live++;
 
 			try {
 				$res = $pdo->query('SELECT CONNECTION_ID()');
@@ -110,6 +119,26 @@ final class TestDatabase {
 		}
 
 		self::$open = array();
+
+		return $live;
+	}
+
+	/* Samples only once a test has reached the database, so a skipped run records nothing. */
+	public static function recordThreads(): void {
+		if (self::$unavailable !== '') {
+			return;
+		}
+
+		$res = self::pdo()->query("SHOW STATUS LIKE 'Threads_connected'");
+		$row = $res === false ? false : $res->fetch(PDO::FETCH_NUM);
+
+		if (is_array($row)) {
+			self::$peakThreads = max(self::$peakThreads, (int) $row[1]);
+		}
+	}
+
+	public static function peakThreads(): int {
+		return self::$peakThreads;
 	}
 
 	public static function reset(): void {

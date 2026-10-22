@@ -20,13 +20,15 @@
 
 namespace Cacti\PluginCloudflare\Tests\Guard;
 
+use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
 use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
 use PHPUnit\Framework\TestCase;
 
 /**
  * phpunit.xml.dist lists this directory after tests/Integration, so it runs
- * once every integration class has finished. Leaked handles on finished test
- * instances pushed the suite to 145 of MariaDB's default 151 connections.
+ * once every integration class has finished. The end state alone proves
+ * nothing, because closeAll() kills leftovers at each class boundary; the
+ * per-test peak and the leak count are what catch a handle left behind.
  */
 final class ConnectionBudgetTest extends TestCase {
 	private const BUDGET = 50;
@@ -38,5 +40,13 @@ final class ConnectionBudgetTest extends TestCase {
 
 		$this->assertIsArray($row);
 		$this->assertLessThan(self::BUDGET, (int) $row[1]);
+	}
+
+	public function testNoTestHeldItsHandlesPastTearDown(): void {
+		$this->assertSame(0, IntegrationTestCase::leakedHandles(), 'handles were still referenced at the end of a class');
+	}
+
+	public function testPeakStayedUnderBudget(): void {
+		$this->assertLessThan(self::BUDGET, TestDatabase::peakThreads());
 	}
 }

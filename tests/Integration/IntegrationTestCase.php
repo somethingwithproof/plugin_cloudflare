@@ -30,9 +30,17 @@ use ReflectionClass;
  * annotations so a subclass tearDown() does not have to call the parent.
  */
 abstract class IntegrationTestCase extends TestCase {
+	/** @var int */
+	private static $leakedHandles = 0;
+
+	public static function leakedHandles(): int {
+		return self::$leakedHandles;
+	}
+
 	/**
 	 * Clears every property the concrete class declares: repositories and
-	 * services hold the Database too, not only the PDO properties.
+	 * services hold the Database too, not only the PDO properties. The sample
+	 * taken afterwards is what the guard in tests/Guard checks.
 	 *
 	 * @after
 	 */
@@ -56,12 +64,16 @@ abstract class IntegrationTestCase extends TestCase {
 
 			$class = $class->getParentClass();
 		}
+
+		TestDatabase::recordThreads();
 	}
 
 	/**
+	 * Anything closeAll() still finds alive here escaped releaseConnections().
+	 *
 	 * @afterClass
 	 */
 	final public static function closeConnections(): void {
-		TestDatabase::closeAll();
+		self::$leakedHandles += TestDatabase::closeAll();
 	}
 }

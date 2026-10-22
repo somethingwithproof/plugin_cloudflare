@@ -78,8 +78,7 @@ final class TestDatabaseTest extends IntegrationTestCase {
 	public function testCloseAllKillsHandlesStillReferenced(): void {
 		$held = TestDatabase::pdo();
 
-		TestDatabase::closeAll();
-
+		$this->assertSame(1, TestDatabase::closeAll());
 		$this->assertFalse(@$held->query('SELECT 1'));
 		$this->assertNotFalse(TestDatabase::pdo()->query('SELECT 1'));
 	}

@@ -1,0 +1,35 @@
+{
+  "success": true,
+  "errors": [],
+  "messages": [],
+  "result": [
+    {
+      "arch": "linux_amd64",
+      "config_version": 1,
+      "conns": [
+        {
+          "client_id": "1bedc50d-42b3-473c-b108-ff3d10c0d925",
+          "client_version": "2022.7.1",
+          "colo_name": "DFW",
+          "id": "1bedc50d-42b3-473c-b108-ff3d10c0d925",
+          "is_pending_reconnect": false,
+          "opened_at": "2021-01-25T18:22:34.317854Z",
+          "origin_ip": "10.1.0.137",
+          "uuid": "1bedc50d-42b3-473c-b108-ff3d10c0d925"
+        }
+      ],
+      "features": [
+        "ha-origin"
+      ],
+      "id": "1bedc50d-42b3-473c-b108-ff3d10c0d925",
+      "run_at": "2009-11-10T23:00:00Z",
+      "version": "2022.7.1"
+    }
+  ],
+  "result_info": {
+    "page": 1,
+    "per_page": 20,
+    "count": 1,
+    "total_count": 1
+  }
+}

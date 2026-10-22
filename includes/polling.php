@@ -60,6 +60,8 @@ function cloudflare_poller_bottom() : void {
 		return;
 	}
 
+	/* 1.2.25 interpolates $args as a string (lib/poller.php:132); arrays are 1.2.31 only. */
+	// nosemgrep: php.lang.security.exec-use.exec-use -- admin-set PHP binary, fixed escaped script path
 	exec_background(
 		read_config_option('path_php_binary'),
 		'-q ' . escapeshellarg(dirname(__DIR__) . '/poller_cloudflare.php')

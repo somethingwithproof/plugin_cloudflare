@@ -172,6 +172,9 @@ function cloudflare_account_service() : AccountService {
  * The collector runs detached from poller.php, so it may wait out a 429's
  * retry-after up to 30 seconds; the 50 second run budget still bounds it.
  * Runs in system context: there is no user, so no Authorizer.
+ * The enabled check reads plugin_config each time: api_plugin_is_enabled()
+ * caches its first answer for the process (lib/plugins.php:886), which would
+ * hide a disable made while the collector runs.
  */
 function cloudflare_discovery_service() : DiscoveryService {
 	$db       = cloudflare_db();
@@ -190,11 +193,20 @@ function cloudflare_discovery_service() : DiscoveryService {
 		new JobRepository($db, $clock),
 		$db,
 		$clock,
-		function () : bool {
-			return cloudflare_plugin_enabled();
+		function () use ($db) : bool {
+			return cloudflare_plugin_status_enabled($db);
 		},
 		function (string $line) : void {
 			cacti_log($line, false, 'CLOUDFLARE', POLLER_VERBOSITY_MEDIUM);
 		}
 	);
+}
+
+/* A read failure counts as disabled, so the run stops instead of carrying on blind. */
+function cloudflare_plugin_status_enabled(Database $db) : bool {
+	try {
+		return (int) $db->fetchCell('SELECT status FROM plugin_config WHERE directory = ?', array('cloudflare')) === 1;
+	} catch (DatabaseException $e) {
+		return false;
+	}
 }

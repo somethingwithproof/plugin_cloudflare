@@ -20,7 +20,9 @@
 
 namespace Cacti\PluginCloudflare\Tests\Unit\Glue;
 
+use PDO;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 final class PollingContractTest extends TestCase {
 	private const ROOT = __DIR__ . '/../../..';
@@ -37,7 +39,13 @@ final class PollingContractTest extends TestCase {
 	}
 
 	protected function tearDown(): void {
-		unset($GLOBALS['config'], $GLOBALS['database_sessions']);
+		unset(
+			$GLOBALS['config'],
+			$GLOBALS['database_sessions'],
+			$GLOBALS['database_hostname'],
+			$GLOBALS['database_port'],
+			$GLOBALS['database_default']
+		);
 	}
 
 	/**
@@ -68,7 +76,7 @@ final class PollingContractTest extends TestCase {
 		$GLOBALS['config']                     = array('poller_id' => 1);
 		cloudflare_poller_bottom();
 
-		$GLOBALS['cloudflare_glue']['enabled'] = true;
+		cloudflare_glue_reset();
 		foreach (array(2, '3') as $remote) {
 			$GLOBALS['config'] = array('poller_id' => $remote);
 			cloudflare_poller_bottom();
@@ -95,7 +103,7 @@ final class PollingContractTest extends TestCase {
 		$code   = substr($source, (int) strpos($source, "*/\n") + 3);
 
 		$this->assertMatchesRegularExpression(
-			'#^\s*if \(php_sapi_name\(\) !== \'cli\'\) \{\s*exit;\s*\}#',
+			'#^\s*if \(php_sapi_name\(\) !== \'cli\'\) \{\s*http_response_code\(404\);\s*exit;\s*\}#',
 			$code,
 			'the SAPI check is the first statement'
 		);
@@ -120,6 +128,40 @@ final class PollingContractTest extends TestCase {
 			array('CLOUDFLARE: collector failed (Cacti\PluginCloudflare\Storage\DatabaseException)'),
 			self::loggedLines()
 		);
+	}
+
+	/* Enough of Cacti's handle for the collector to take the lock and find no accounts. */
+	private static function lockingSqlite(): PDO {
+		$pdo = new PDO('sqlite::memory:', null, null, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+		$pdo->sqliteCreateFunction('GET_LOCK', function (): int {
+			return 1;
+		}, 2);
+		$pdo->sqliteCreateFunction('RELEASE_LOCK', function (): int {
+			return 1;
+		}, 1);
+		$pdo->exec('CREATE TABLE plugin_cloudflare_accounts (id INTEGER, enabled INTEGER, collect_tunnels INTEGER)');
+
+		return $pdo;
+	}
+
+	public function testCollectorFailureLogOmitsTheExceptionMessage(): void {
+		if (!extension_loaded('pdo_sqlite')) {
+			$this->markTestSkipped('pdo_sqlite is not loaded');
+		}
+
+		$secret = 'cfut_' . str_repeat('s', 40);
+		$GLOBALS['database_hostname'] = 'cacti-db';
+		$GLOBALS['database_port']     = '3306';
+		$GLOBALS['database_default']  = 'cacti';
+		$GLOBALS['database_sessions'] = array('cacti-db:3306:cacti' => self::lockingSqlite());
+
+		$status = cloudflare_collector_main(function () use ($secret) {
+			throw new RuntimeException('token ' . $secret . ' rejected');
+		});
+
+		$this->assertSame(1, $status);
+		$this->assertSame(array('CLOUDFLARE: collector failed (RuntimeException)'), self::loggedLines());
+		$this->assertStringNotContainsString($secret, implode("\n", self::loggedLines()));
 	}
 
 	public function testCollectorExitsQuietlyWhenDisabled(): void {

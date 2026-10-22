@@ -61,6 +61,10 @@ final class PollingTest extends IntegrationTestCase {
 		$this->pdo = TestDatabase::pdo();
 		$this->db  = new Database($this->pdo);
 
+		/* The collector reads Cacti's plugin_config itself; temporary, so it lives on this handle only. */
+		$this->pdo->exec('CREATE TEMPORARY TABLE plugin_config (directory VARCHAR(32) NOT NULL, status TINYINT NOT NULL)');
+		$this->pdo->exec("INSERT INTO plugin_config VALUES ('cloudflare', 1), ('thold', 1)");
+
 		$GLOBALS['database_hostname'] = 'cacti-db';
 		$GLOBALS['database_port']     = '3306';
 		$GLOBALS['database_default']  = 'cacti';
@@ -136,6 +140,7 @@ final class PollingTest extends IntegrationTestCase {
 		}, cloudflare_glue_calls('cacti_log'));
 	}
 
+	/* In-process by design (R9); the real script's subprocess path is covered by the Task 10 smoke stack. */
 	public function testSecondCollectorExitsWhenLockHeld(): void {
 		$this->migrate();
 		$this->account('a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1');
@@ -182,6 +187,45 @@ final class PollingTest extends IntegrationTestCase {
 
 		$this->assertTrue($this->lockIsFree());
 		$this->assertSame(array(), cloudflare_glue_calls('db_connect_real'));
+	}
+
+	/*
+	 * api_plugin_is_enabled() caches its first answer for the process, so a
+	 * disable made while the collector runs is only visible in plugin_config.
+	 */
+	public function testDisableBetweenAccountsStopsTheRun(): void {
+		$this->migrate();
+		$pdo = $this->pdo;
+		$this->assertNotNull($pdo);
+
+		$first  = $this->account('a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1');
+		$second = $this->account('b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2');
+		cloudflare_collector_ensure_jobs($this->db());
+
+		/* The first account fails on its absent token file; disable the plugin right after. */
+		$GLOBALS['cloudflare_glue']['on_log'] = function (string $line) use ($pdo): void {
+			if (strpos($line, 'token unavailable') !== false) {
+				$pdo->exec("UPDATE plugin_config SET status = 0 WHERE directory = 'cloudflare'");
+			}
+		};
+
+		$outcomes = cloudflare_discovery_service()->runDue(50);
+
+		$this->assertSame(array($first), array_keys($outcomes));
+		$this->assertContains('Cloudflare discovery: plugin disabled, stopping accounts=1', self::loggedLines());
+		$this->assertSame('never', $this->db()->fetchCell(
+			'SELECT last_status FROM plugin_cloudflare_jobs WHERE account_id = ?',
+			array($second)
+		));
+	}
+
+	public function testMissingPluginRowStopsTheRunBeforeAnyAccount(): void {
+		$this->migrate();
+		$this->account('a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1');
+		cloudflare_collector_ensure_jobs($this->db());
+		$this->db()->execute('DELETE FROM plugin_config WHERE directory = ?', array('cloudflare'));
+
+		$this->assertSame(array(), cloudflare_discovery_service()->runDue(50));
 	}
 
 	public function testCollectorReleasesTheLockWhenDiscoveryFails(): void {

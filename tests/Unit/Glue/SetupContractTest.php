@@ -73,9 +73,12 @@ final class SetupContractTest extends TestCase {
 		$this->assertTrue(cloudflare_plugin_enabled());
 
 		$GLOBALS['cloudflare_glue']['enabled'] = false;
-		$this->assertFalse(cloudflare_plugin_enabled());
-
+		$this->assertTrue(cloudflare_plugin_enabled(), 'Cacti answers from a per-process cache');
 		$this->assertSame(array(array('cloudflare'), array('cloudflare')), cloudflare_glue_calls('api_plugin_is_enabled'));
+
+		cloudflare_glue_reset();
+		$GLOBALS['cloudflare_glue']['enabled'] = false;
+		$this->assertFalse(cloudflare_plugin_enabled());
 	}
 
 	public function testDisabledPluginAddsNoMenuOrNavigation(): void {
@@ -109,7 +112,8 @@ final class SetupContractTest extends TestCase {
 		$this->assertArrayHasKey('cloudflare_key_file', $GLOBALS['settings']['cloudflare']);
 		$this->assertSame(array(), cloudflare_glue_calls('db_fetch_cell_prepared'));
 
-		$GLOBALS['cloudflare_glue']['enabled'] = true;
+		cloudflare_glue_reset();
+		$GLOBALS['cloudflare_glue']['page'] = 'settings.php';
 		cloudflare_config_settings();
 		$this->assertCount(1, cloudflare_glue_calls('db_fetch_cell_prepared'));
 	}

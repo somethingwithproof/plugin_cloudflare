@@ -53,7 +53,9 @@ function cloudflare_glue_reset(): void {
 		'connect'  => false,
 		'enabled'  => true,
 		'page'     => 'index.php',
+		'on_log'   => null,
 	);
+	$GLOBALS['cloudflare_glue_enabled_cache'] = array();
 }
 
 /**
@@ -156,14 +158,20 @@ if (!function_exists('api_plugin_register_realm')) {
 }
 
 if (!function_exists('api_plugin_is_enabled')) {
-	/* lib/plugins.php:885 */
+	/* lib/plugins.php:885. The real function caches the first answer in a
+	 * static for the life of the process; cloudflare_glue_reset() stands in
+	 * for a new process. */
 	/**
 	 * @param mixed $plugin
 	 */
 	function api_plugin_is_enabled($plugin): bool {
 		cloudflare_glue_record(__FUNCTION__, array($plugin));
 
-		return cloudflare_glue_state('enabled') === true;
+		if (!isset($GLOBALS['cloudflare_glue_enabled_cache'][$plugin])) {
+			$GLOBALS['cloudflare_glue_enabled_cache'][$plugin] = cloudflare_glue_state('enabled') === true;
+		}
+
+		return $GLOBALS['cloudflare_glue_enabled_cache'][$plugin];
 	}
 }
 
@@ -227,6 +235,12 @@ if (!function_exists('cacti_log')) {
 	 */
 	function cacti_log($string, $output = false, $environ = 'CMDPHP', $level = ''): bool {
 		cloudflare_glue_record(__FUNCTION__, array($string, $output, $environ, $level));
+
+		/* Lets a test act at a known point inside a run, such as between accounts. */
+		$on_log = cloudflare_glue_state('on_log');
+		if (is_callable($on_log)) {
+			$on_log((string) $string);
+		}
 
 		return true;
 	}

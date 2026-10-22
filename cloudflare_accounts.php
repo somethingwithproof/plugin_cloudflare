@@ -441,16 +441,16 @@ function cloudflare_accounts_list() : void {
 	<tr class='even'>
 		<td>
 			<form id='form_cloudflare_accounts' action='cloudflare_accounts.php'>
-			<table class='filterTable'>
+			<table class='filterTable' role='presentation'>
 				<tr>
 					<td>
-						<?php print __('Search', 'cloudflare');?>
+						<label for='filter'><?php print __('Search', 'cloudflare');?></label>
 					</td>
 					<td>
 						<input type='text' class='ui-state-default ui-corner-all' id='filter' size='25' value='<?php print html_escape_request_var('filter');?>'>
 					</td>
 					<td>
-						<?php print __('Accounts', 'cloudflare');?>
+						<label for='rows'><?php print __('Accounts', 'cloudflare');?></label>
 					</td>
 					<td>
 						<select id='rows'>

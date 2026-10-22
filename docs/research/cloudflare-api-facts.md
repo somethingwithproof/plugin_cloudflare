@@ -159,6 +159,11 @@ UNVERIFIED item above.
   | `httpRequests1hGroups` | true | 259200 (3 d) | 262800 | |
   | `firewallEventsAdaptiveGroups` | **false** | 0 | 0 | |
 
-  Security analytics are therefore not available on Free zones. This
-  contradicts the "every plan" claim above, so availability must be probed
-  for each zone and never assumed.
+  | `firewallEventsAdaptive` | true | 2592000 | 2678400 | |
+  | `firewallEventsAdaptiveByTimeGroups` | true | 2592000 | 2678400 | |
+
+  Security event analytics are available on Free zones through
+  `firewallEventsAdaptiveByTimeGroups` (time-bucketed counts) and
+  `firewallEventsAdaptive` (raw events), but not through
+  `firewallEventsAdaptiveGroups`. Availability differs by dataset name, so
+  the collector probes the exact dataset it queries, per zone.

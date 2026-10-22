@@ -271,27 +271,30 @@ final class SetupContractTest extends TestCase {
 	}
 
 	public function testAccountsPageChecksRealmOnEveryMutation(): void {
-		$source = (string) file_get_contents(self::ROOT . '/cloudflare_accounts.php');
+		$source   = (string) file_get_contents(self::ROOT . '/cloudflare_accounts.php');
+		$handlers = (string) file_get_contents(self::ROOT . '/includes/accounts_page.php');
 
 		$this->assertMatchesRegularExpression('#^chdir\(\'\.\./\.\./\'\);\s*include\(\'\./include/auth\.php\'\);#m', $source);
 
 		foreach (array('save', 'actions') as $action) {
-			$this->assertSame(1, preg_match('#case \'' . $action . '\':\s*(\w+)\(\);#', $source, $match), 'case ' . $action);
+			$this->assertSame(1, preg_match('#case \'' . $action . '\':\s*\$redirect = (\w+)\(\);#', $source, $match), 'case ' . $action);
 
-			$body = self::functionBody($source, $match[1]);
-			$this->assertStringContainsString('cloudflare_require_post()', $body, $match[1]);
+			/* The method check is the handler's first statement. */
+			$body = self::functionBody($handlers, $match[1]);
+			$this->assertMatchesRegularExpression('#^function \w+\(\) : \??string \{\s*if \(!cloudflare_request_is_post\(\)\) \{\s*return \'\';#', $body, $match[1]);
 			$this->assertStringContainsString('cloudflare_account_service()', $body, $match[1]);
 		}
 
 		/* Writes go through AccountService, whose Authorizer re-checks the realm. */
-		$this->assertDoesNotMatchRegularExpression('#AccountRepository|db_execute|->(insert|update)\(#', $source);
+		$this->assertDoesNotMatchRegularExpression('#AccountRepository|db_execute|->(insert|update)\(#', $source . $handlers);
 
 		$bootstrap = (string) file_get_contents(self::ROOT . '/includes/bootstrap.php');
 		$this->assertStringContainsString('api_user_realm_auth(\'cloudflare_accounts.php\')', $bootstrap);
 	}
 
 	public function testAccountsPageEscapesAccountFields(): void {
-		$source = (string) file_get_contents(self::ROOT . '/cloudflare_accounts.php');
+		$source = (string) file_get_contents(self::ROOT . '/cloudflare_accounts.php')
+			. (string) file_get_contents(self::ROOT . '/includes/accounts_page.php');
 
 		$this->assertSame(0, preg_match_all('#\becho\b#', $source));
 		$this->assertGreaterThan(0, preg_match_all('#->(name|cfAccountId|tokenFile|statusMessage|status)\(\)#', $source));

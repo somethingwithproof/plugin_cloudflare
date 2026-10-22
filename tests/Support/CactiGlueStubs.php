@@ -393,9 +393,8 @@ if (!function_exists('__esc')) {
 }
 
 /*
- * Page rendering helpers. The account page is only analysed, never run, in
- * the test suite, so these record nothing; they exist so PHPStan checks each
- * call against the 1.2.31 parameter list.
+ * Page rendering helpers. They print nothing and record their arguments, so
+ * a handler test can assert what reached each one.
  */
 
 if (!defined('MAX_DISPLAY_PAGES')) {
@@ -442,12 +441,14 @@ if (!function_exists('__n')) {
 if (!function_exists('top_header')) {
 	/* lib/functions.php:4853 */
 	function top_header(): void {
+		cloudflare_glue_record(__FUNCTION__, array());
 	}
 }
 
 if (!function_exists('bottom_footer')) {
 	/* lib/functions.php:4826 */
 	function bottom_footer(): void {
+		cloudflare_glue_record(__FUNCTION__, array());
 	}
 }
 
@@ -483,6 +484,7 @@ if (!function_exists('validate_store_request_vars')) {
 	 * @param mixed $sess_prefix
 	 */
 	function validate_store_request_vars($filters, $sess_prefix = ''): void {
+		cloudflare_glue_record(__FUNCTION__, array($filters, $sess_prefix));
 	}
 }
 
@@ -542,6 +544,7 @@ if (!function_exists('html_start_box')) {
 	 * @param mixed $add_label
 	 */
 	function html_start_box($title, $width, $div, $cell_padding, $align, $add_text, $add_label = false): void {
+		cloudflare_glue_record(__FUNCTION__, array($title, $width, $div, $cell_padding, $align, $add_text, $add_label));
 	}
 }
 
@@ -552,6 +555,7 @@ if (!function_exists('html_end_box')) {
 	 * @param mixed $div
 	 */
 	function html_end_box($trailing_br = true, $div = false): void {
+		cloudflare_glue_record(__FUNCTION__, array($trailing_br, $div));
 	}
 }
 
@@ -570,6 +574,8 @@ if (!function_exists('html_nav_bar')) {
 	 * @param mixed $page_count
 	 */
 	function html_nav_bar($base_url, $max_pages, $current_page, $rows_per_page, $total_rows, $colspan = 30, $object = '', $page_var = 'page', $return_to = '', $page_count = true): string {
+		cloudflare_glue_record(__FUNCTION__, array($base_url, $max_pages, $current_page, $rows_per_page, $total_rows, $colspan, $object, $page_var, $return_to, $page_count));
+
 		return '';
 	}
 }
@@ -586,6 +592,7 @@ if (!function_exists('html_header_sort_checkbox')) {
 	 * @param mixed $prefix
 	 */
 	function html_header_sort_checkbox($header_items, $sort_column, $sort_direction, $include_form = true, $form_action = '', $return_to = '', $prefix = 'chk'): void {
+		cloudflare_glue_record(__FUNCTION__, array($header_items, $sort_column, $sort_direction, $include_form, $form_action, $return_to, $prefix));
 	}
 }
 
@@ -596,6 +603,7 @@ if (!function_exists('draw_actions_dropdown')) {
 	 * @param mixed $delete_action
 	 */
 	function draw_actions_dropdown($actions_array, $delete_action = 1): void {
+		cloudflare_glue_record(__FUNCTION__, array($actions_array, $delete_action));
 	}
 }
 
@@ -607,6 +615,7 @@ if (!function_exists('form_alternate_row')) {
 	 * @param mixed $disabled
 	 */
 	function form_alternate_row($row_id = '', $light = false, $disabled = false): void {
+		cloudflare_glue_record(__FUNCTION__, array($row_id, $light, $disabled));
 	}
 }
 
@@ -620,6 +629,7 @@ if (!function_exists('form_selectable_cell')) {
 	 * @param mixed $title
 	 */
 	function form_selectable_cell($contents, $id, $width = '', $style_or_class = '', $title = ''): void {
+		cloudflare_glue_record(__FUNCTION__, array($contents, $id, $width, $style_or_class, $title));
 	}
 }
 
@@ -631,12 +641,14 @@ if (!function_exists('form_checkbox_cell')) {
 	 * @param mixed $disabled
 	 */
 	function form_checkbox_cell($title, $id, $disabled = false): void {
+		cloudflare_glue_record(__FUNCTION__, array($title, $id, $disabled));
 	}
 }
 
 if (!function_exists('form_end_row')) {
 	/* lib/html_utility.php:277 */
 	function form_end_row(): void {
+		cloudflare_glue_record(__FUNCTION__, array());
 	}
 }
 
@@ -646,6 +658,7 @@ if (!function_exists('draw_edit_form')) {
 	 * @param mixed $array
 	 */
 	function draw_edit_form($array): void {
+		cloudflare_glue_record(__FUNCTION__, array($array));
 	}
 }
 
@@ -658,6 +671,7 @@ if (!function_exists('form_save_button')) {
 	 * @param mixed $ajax
 	 */
 	function form_save_button($cancel_url, $force_type = '', $key_field = 'id', $ajax = true): void {
+		cloudflare_glue_record(__FUNCTION__, array($cancel_url, $force_type, $key_field, $ajax));
 	}
 }
 
@@ -669,6 +683,7 @@ if (!function_exists('form_start')) {
 	 * @param mixed $multipart
 	 */
 	function form_start($action, $id = '', $multipart = false): void {
+		cloudflare_glue_record(__FUNCTION__, array($action, $id, $multipart));
 	}
 }
 
@@ -678,5 +693,6 @@ if (!function_exists('form_end')) {
 	 * @param mixed $ajax
 	 */
 	function form_end($ajax = true): void {
+		cloudflare_glue_record(__FUNCTION__, array($ajax));
 	}
 }

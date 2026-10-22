@@ -1,0 +1,104 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+name: SonarQube
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sonar-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: SonarQube analysis
+    if: >-
+      github.repository == 'somethingwithproof/plugin_cloudflare' &&
+      github.actor != 'dependabot[bot]' &&
+      (github.event_name != 'pull_request' ||
+       github.event.pull_request.head.repo.full_name == github.repository) &&
+      (github.event_name != 'workflow_dispatch' ||
+       github.ref == 'refs/heads/main')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    services:
+      db:
+        image: mariadb:10.11@sha256:0d0945c57f75b3a3b9ebe71aedaaad005fa5305054e8fca3d2e42a8c92b43b5e
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: cacti_cf_test
+          MARIADB_USER: cacti
+          MARIADB_PASSWORD: cacti
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=30
+    env:
+      CF_TEST_DSN: 'mysql:host=127.0.0.1;port=3306;dbname=cacti_cf_test;charset=utf8'
+      CF_TEST_DB_USER: cacti
+      CF_TEST_DB_PASS: cacti
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify analysis credential
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          if [[ -z "$SONAR_TOKEN" ]]; then
+            echo '::error::SONAR_TOKEN must be configured in repository Actions secrets.'
+            exit 1
+          fi
+      - name: Set up PHP 8.3 with pcov
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: '8.3'
+          extensions: curl, openssl, pdo_mysql
+          coverage: pcov
+          tools: composer:v2
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+      - name: Unit and integration tests with coverage
+        run: make coverage
+      # workflow_dispatch does not automatically infer the selected branch.
+      # Validate context before passing it to the scanner argument parser.
+      - name: Select branch or pull request context
+        id: context
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref_name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_HEAD: ${{ github.event.pull_request.head.ref }}
+          PR_BASE: ${{ github.event.pull_request.base.ref }}
+        run: |
+          set -euo pipefail
+          if [[ "$EVENT_NAME" == pull_request ]]; then
+            [[ "$PR_NUMBER" =~ ^[0-9]+$ ]]
+            [[ "$PR_HEAD" =~ ^[A-Za-z0-9._/-]+$ ]]
+            [[ "$PR_BASE" =~ ^[A-Za-z0-9._/-]+$ ]]
+            args="-Dsonar.pullrequest.key=$PR_NUMBER -Dsonar.pullrequest.branch=$PR_HEAD -Dsonar.pullrequest.base=$PR_BASE"
+          else
+            case "$REF_NAME" in main) ;; *) exit 1 ;; esac
+            args="-Dsonar.branch.name=$REF_NAME"
+          fi
+          echo "args=$args" >> "$GITHUB_OUTPUT"
+      - name: Analyze and wait for the quality gate
+        uses: SonarSource/sonarqube-scan-action@d209202bc7d53ff1cc128f7f907dac145c9d6ae9 # v8.3.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >-
+            -Dsonar.qualitygate.wait=true
+            -Dsonar.qualitygate.timeout=600
+            ${{ steps.context.outputs.args }}

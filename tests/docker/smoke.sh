@@ -297,6 +297,7 @@ http "${admin_jar}" "${work}/confirm.html" \
 	"${page}" >/dev/null
 grep -qF 'Verify the following Cloudflare Account' "${work}/confirm.html" || die 'no verify confirmation page'
 csrf="$(csrf_from "${work}/confirm.html")"
+[ -n "${csrf}" ] || die 'no __csrf_magic token on the verify confirmation page'
 http "${admin_jar}" "${work}/verify.html" \
 	--data-urlencode 'action=actions' \
 	--data-urlencode 'drp_action=2' \
@@ -332,7 +333,7 @@ found -F 'CLOUDFLARE' "${captures}/cacti-logs" || die 'cacti.log has no CLOUDFLA
 no_token "${captures}/cacti-logs" 'the Cacti log directory'
 capture container-logs "${dc[@]}" logs --no-color web gateway
 no_token "${captures}/container-logs" 'the Apache logs'
-if grep -rqF --exclude-dir=captures -- "${token}" "${work}"; then
+if found -rF --exclude-dir=captures -- "${token}" "${work}"; then
 	die 'token leaked into a saved HTTP response'
 fi
 capture db-dump "${dc[@]}" exec -T db mariadb-dump --user=root --password=smoke-root --all-databases

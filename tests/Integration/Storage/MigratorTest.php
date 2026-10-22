@@ -226,7 +226,13 @@ final class MigratorTest extends TestCase {
 			$this->migrator()->dropAll();
 			$this->fail('Expected DatabaseException');
 		} catch (DatabaseException $e) {
-			$this->assertSame('23000', $e->getSqlState());
+			// MariaDB refuses the drop with 23000/1451; MySQL 8 reports
+			// ER_FK_CANNOT_DROP_PARENT as HY000/3730.
+			$this->assertContains(
+				$e->getSqlState() . '/' . $e->getDriverCode(),
+				array('23000/1451', 'HY000/3730'),
+				$e->getMessage()
+			);
 		}
 
 		foreach (array('jobs', 'accounts', 'migrations') as $suffix) {

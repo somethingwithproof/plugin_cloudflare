@@ -28,14 +28,17 @@ use InvalidArgumentException;
 use LogicException;
 
 final class FakeTransport implements HttpTransport {
-	/** @var array<int, Response|TransportException> */
+	/** @var array<int, Response|TransportException|callable(Request): Response> */
 	private $queue = array();
 
 	/** @var array<int, Request> */
 	private $requests = array();
 
 	/**
-	 * @param Response|TransportException $next
+	 * A callable runs when its request arrives, so a test can move the clock
+	 * or change the database mid-run; it returns the response or throws.
+	 *
+	 * @param Response|TransportException|callable(Request): Response $next
 	 */
 	public function queue($next): void {
 		$this->queue[] = $next;
@@ -50,6 +53,9 @@ final class FakeTransport implements HttpTransport {
 		}
 		if ($next instanceof TransportException) {
 			throw $next;
+		}
+		if (!$next instanceof Response) {
+			return $next($r);
 		}
 
 		return $next;

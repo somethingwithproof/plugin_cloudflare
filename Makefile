@@ -8,7 +8,7 @@ SMOKE := docker compose -p cf-smoke -f tests/docker/compose.cacti.yml
 # interleave their resets.
 .NOTPARALLEL:
 
-.PHONY: test test-integration bdd stan cs lint74 db-up db-down ci coverage package cacti-src smoke smoke-up smoke-down screenshots
+.PHONY: test test-integration bdd stan cs lint74 db-up db-down ci coverage package templates cacti-src smoke smoke-up smoke-down screenshots
 
 test:
 	$(PHPUNIT) --testsuite unit
@@ -48,6 +48,11 @@ coverage:
 
 package:
 	bash tests/build/package.sh
+
+# Regenerates the committed Cacti templates from the metric catalog;
+# TemplatesTest fails when they drift.
+templates:
+	php tests/build/generate_templates.php templates
 
 cacti-src:
 	mkdir -p tests/docker/build

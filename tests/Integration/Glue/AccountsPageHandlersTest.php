@@ -515,6 +515,23 @@ final class AccountsPageHandlersTest extends TestCase {
 		$this->assertUnreadableReported('confirmation');
 	}
 
+	public function testEditWithANonNumericIdStopsBeforeAnyOutput(): void {
+		$_REQUEST = array('id' => '1 OR 1=1');
+
+		ob_start();
+
+		try {
+			cloudflare_accounts_edit();
+			$this->fail('get_filter_request_var accepted a non-numeric id');
+		} catch (\RuntimeException $e) {
+			$this->assertSame('die_html_input_error(id)', $e->getMessage());
+		} finally {
+			$this->assertSame('', (string) ob_get_clean());
+		}
+
+		$this->assertSame(array(), cloudflare_glue_calls('top_header'));
+	}
+
 	public function testEditOfAMissingAccountReturnsToTheList(): void {
 		$_REQUEST = array('id' => '999');
 

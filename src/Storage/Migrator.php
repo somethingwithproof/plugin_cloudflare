@@ -121,8 +121,8 @@ final class Migrator {
 	public function dropAll(): void {
 		$rows = $this->db->fetchAll(
 			'SELECT table_name AS name FROM information_schema.tables
-			WHERE table_schema = DATABASE() AND table_name LIKE ?',
-			array('plugin\\_cloudflare\\_%')
+			WHERE table_schema = DATABASE() AND table_name LIKE ? ESCAPE \'!\'',
+			array('plugin!_cloudflare!_%')
 		);
 
 		$present = array();

@@ -47,6 +47,7 @@ final class MigratorTest extends TestCase {
 	private function cleanup(): void {
 		TestDatabase::reset();
 		TestDatabase::pdo()->exec('DROP TABLE IF EXISTS host_unrelated');
+		TestDatabase::pdo()->exec('DROP TABLE IF EXISTS pluginxcloudflarexlookalike');
 	}
 
 	private function migrator(int $lockTimeout = 10): Migrator {
@@ -183,6 +184,8 @@ final class MigratorTest extends TestCase {
 		$this->migrator()->migrate();
 		$this->db->execute('CREATE TABLE plugin_cloudflare_later (id INT UNSIGNED NOT NULL PRIMARY KEY) ENGINE=InnoDB');
 		$this->db->execute('CREATE TABLE host_unrelated (id INT UNSIGNED NOT NULL PRIMARY KEY) ENGINE=InnoDB');
+		// An unescaped _ in the LIKE pattern would match this name.
+		$this->db->execute('CREATE TABLE pluginxcloudflarexlookalike (id INT UNSIGNED NOT NULL PRIMARY KEY) ENGINE=InnoDB');
 
 		$this->migrator()->dropAll();
 
@@ -191,6 +194,7 @@ final class MigratorTest extends TestCase {
 		}
 
 		$this->assertTrue($this->tableExists('host_unrelated'));
+		$this->assertTrue($this->tableExists('pluginxcloudflarexlookalike'));
 	}
 
 	public function testRerunAfterLostVersionRowIsIdempotent(): void {

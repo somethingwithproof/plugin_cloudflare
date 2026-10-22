@@ -449,7 +449,11 @@ if (!function_exists('bottom_footer')) {
 }
 
 if (!function_exists('get_filter_request_var')) {
-	/* lib/html_utility.php:426 */
+	/*
+	 * lib/html_utility.php:426, for the filter_var() filters only. Where the
+	 * real function calls die_html_input_error() and exits, this throws, so
+	 * a test cannot pass input the real page would refuse.
+	 */
 	/**
 	 * @param mixed $name
 	 * @param mixed $filter
@@ -457,7 +461,41 @@ if (!function_exists('get_filter_request_var')) {
 	 * @return mixed
 	 */
 	function get_filter_request_var($name, $filter = FILTER_VALIDATE_INT, $options = array()) {
-		return $_REQUEST[$name] ?? '';
+		if (!isset($_REQUEST[$name])) {
+			if (isset($options['default'])) {
+				$_REQUEST[$name] = $options['default'];
+
+				return $options['default'];
+			}
+
+			return null;
+		}
+
+		$raw = $_REQUEST[$name];
+
+		if (empty($raw)) {
+			return $raw;
+		}
+
+		if ($raw == 'undefined') {
+			$_REQUEST[$name] = $options['default'] ?? '';
+
+			return $_REQUEST[$name];
+		}
+
+		if (!is_int($filter) || !in_array($filter, array(FILTER_VALIDATE_INT, FILTER_DEFAULT, FILTER_CALLBACK, FILTER_VALIDATE_REGEXP, FILTER_VALIDATE_FLOAT, FILTER_VALIDATE_BOOLEAN), true)) {
+			throw new LogicException('get_filter_request_var stub does not model filter ' . var_export($filter, true));
+		}
+
+		$value = is_array($options) && count($options) ? filter_var($raw, $filter, $options) : filter_var($raw, $filter);
+
+		if ($value === false) {
+			throw new RuntimeException('die_html_input_error(' . $name . ')');
+		}
+
+		$_REQUEST[$name] = $value;
+
+		return $value;
 	}
 }
 

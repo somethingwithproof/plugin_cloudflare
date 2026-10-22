@@ -212,4 +212,61 @@ final class AccountsPageTest extends TestCase {
 
 		return $ids;
 	}
+
+	/**
+	 * @return array<string, array{0: string, 1: mixed}>
+	 */
+	public static function acceptedIds(): array {
+		return array(
+			'integer'  => array('12', 12),
+			'zero'     => array('0', '0'),
+			'empty'    => array('', ''),
+			'negative' => array('-1', -1),
+		);
+	}
+
+	/**
+	 * The stub must accept and reject what lib/html_utility.php:426 does, or
+	 * a handler test could pass input the real page dies on.
+	 *
+	 * @dataProvider acceptedIds
+	 *
+	 * @param mixed $expected
+	 */
+	public function testFilterRequestVarAcceptsWhatCactiAccepts(string $raw, $expected): void {
+		$_REQUEST = array('id' => $raw);
+
+		$this->assertSame($expected, get_filter_request_var('id'));
+		$this->assertSame($expected, $_REQUEST['id']);
+	}
+
+	/**
+	 * @return array<string, array{0: string}>
+	 */
+	public static function rejectedIds(): array {
+		return array(
+			'text'     => array('abc'),
+			'fraction' => array('1.5'),
+			'suffix'   => array('12abc'),
+			'sql'      => array('1 OR 1=1'),
+		);
+	}
+
+	/**
+	 * @dataProvider rejectedIds
+	 */
+	public function testFilterRequestVarDiesOnInvalidInputLikeCacti(string $raw): void {
+		$_REQUEST = array('id' => $raw);
+
+		$this->expectException(\RuntimeException::class);
+		$this->expectExceptionMessage('die_html_input_error(id)');
+
+		get_filter_request_var('id');
+	}
+
+	public function testFilterRequestVarUsesTheDefaultWhenAbsent(): void {
+		$this->assertNull(get_filter_request_var('id'));
+		$this->assertSame('5', get_filter_request_var('rows', FILTER_VALIDATE_INT, array('default' => '5')));
+		$this->assertSame('5', $_REQUEST['rows']);
+	}
 }

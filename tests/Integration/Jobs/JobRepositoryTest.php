@@ -25,6 +25,7 @@ use Cacti\PluginCloudflare\Jobs\JobRepository;
 use Cacti\PluginCloudflare\Jobs\Lease;
 use Cacti\PluginCloudflare\Jobs\LeaseLost;
 use Cacti\PluginCloudflare\Storage\Database;
+use Cacti\PluginCloudflare\Storage\DatabaseException;
 use Cacti\PluginCloudflare\Storage\Migrator;
 use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
 use Cacti\PluginCloudflare\Tests\Support\FrozenClock;
@@ -85,6 +86,18 @@ final class JobRepositoryTest extends IntegrationTestCase {
 		return $row;
 	}
 
+	/* Lease expiry follows the database clock, not the FrozenClock the repository is given. */
+	private function dbNow(): int {
+		return (int) $this->db->fetchCell('SELECT UNIX_TIMESTAMP()');
+	}
+
+	private function setLeaseUntil(int $id, int $offset): void {
+		$this->db->execute(
+			'UPDATE plugin_cloudflare_jobs SET lease_until = UNIX_TIMESTAMP() + ? WHERE id = ?',
+			array($offset, $id)
+		);
+	}
+
 	private function leased(JobRepository $repo, int $jobId, string $owner, int $ttl = 60): Lease {
 		$lease = $repo->lease($jobId, $owner, $ttl);
 		$this->assertInstanceOf(Lease::class, $lease);
@@ -105,6 +118,43 @@ final class JobRepositoryTest extends IntegrationTestCase {
 		$this->assertSame('never', $this->job($id)['last_status']);
 	}
 
+	public function testEnsureMissingAccountThrows(): void {
+		$this->expectException(DatabaseException::class);
+		$this->repo()->ensure('discovery', $this->accountId + 1000);
+	}
+
+	/**
+	 * @dataProvider invalidTypes
+	 */
+	public function testEnsureRejectsOverlongType(string $type): void {
+		try {
+			$this->repo()->ensure($type, $this->accountId);
+			$this->fail('ensure() accepted ' . $type);
+		} catch (InvalidArgumentException $e) {
+			$this->assertSame(0, (int) $this->db->fetchCell('SELECT COUNT(*) FROM plugin_cloudflare_jobs'));
+		}
+	}
+
+	/**
+	 * @return array<string, array{0: string}>
+	 */
+	public function invalidTypes(): array {
+		return array(
+			'33 characters' => array(str_repeat('a', 33)),
+			'40 characters' => array(str_repeat('discover', 5)),
+			'empty'         => array(''),
+			'upper case'    => array('Discovery'),
+			'hyphen'        => array('tunnel-discovery'),
+			'digit'         => array('discovery2'),
+		);
+	}
+
+	public function testEnsureAcceptsLongestType(): void {
+		$this->repo()->ensure(str_repeat('a', 32), $this->accountId);
+
+		$this->assertNotSame(0, $this->jobId($this->accountId, str_repeat('a', 32)));
+	}
+
 	public function testLeaseIsExclusive(): void {
 		$this->repo()->ensure('discovery', $this->accountId);
 		$id = $this->jobId($this->accountId);
@@ -112,17 +162,20 @@ final class JobRepositoryTest extends IntegrationTestCase {
 		$first = $this->repo(self::T0, new Database(TestDatabase::pdo()));
 		$second = $this->repo(self::T0, new Database(TestDatabase::pdo()));
 
+		$before = $this->dbNow();
 		$lease = $this->leased($first, $id, 'host-a:1', 60);
+		$after = $this->dbNow();
 
 		$this->assertNull($second->lease($id, 'host-b:2', 60));
 		$this->assertNull($first->lease($id, 'host-a:1', 60));
 		$this->assertSame($id, $lease->jobId());
 		$this->assertSame('host-a:1', $lease->owner());
-		$this->assertSame(self::T0 + 60, $lease->leaseUntil());
+		$this->assertGreaterThanOrEqual($before + 60, $lease->leaseUntil());
+		$this->assertLessThanOrEqual($after + 60, $lease->leaseUntil());
 
 		$row = $this->job($id);
 		$this->assertSame('host-a:1', $row['lease_owner']);
-		$this->assertSame(self::T0 + 60, (int) $row['lease_until']);
+		$this->assertSame($lease->leaseUntil(), (int) $row['lease_until']);
 		$this->assertSame(self::T0, (int) $row['last_started_at']);
 	}
 
@@ -142,19 +195,33 @@ final class JobRepositoryTest extends IntegrationTestCase {
 		$id = $this->jobId($this->accountId);
 		$this->leased($this->repo(self::T0), $id, 'host-a:1', 60);
 
-		$this->assertNull($this->repo(self::T0 + 60)->lease($id, 'host-b:2', 60));
+		$this->setLeaseUntil($id, 5);
+		$this->assertNull($this->repo(self::T0 + 61)->lease($id, 'host-b:2', 60));
 
-		$lease = $this->leased($this->repo(self::T0 + 61), $id, 'host-b:2', 60);
+		$this->setLeaseUntil($id, -1);
+		$this->leased($this->repo(self::T0 + 61), $id, 'host-b:2', 60);
 
-		$this->assertSame(self::T0 + 121, $lease->leaseUntil());
 		$this->assertSame('host-b:2', $this->job($id)['lease_owner']);
 		$this->assertSame(self::T0 + 61, (int) $this->job($id)['last_started_at']);
+	}
+
+	public function testLeaseExpiryIgnoresTheHostClock(): void {
+		$this->repo()->ensure('discovery', $this->accountId);
+		$id = $this->jobId($this->accountId);
+		$this->leased($this->repo(self::T0), $id, 'host-a:1', 60);
+
+		/* A poller whose clock runs a day ahead of the leaseholder's must not see the lease as expired. */
+		$skewed = $this->repo(self::T0 + 86400);
+
+		$this->assertNull($skewed->lease($id, 'host-b:2', 60));
+		$this->assertSame(array(), $skewed->due('discovery', 10));
 	}
 
 	public function testStaleLeaseCannotOverwrite(): void {
 		$this->repo()->ensure('discovery', $this->accountId);
 		$id = $this->jobId($this->accountId);
-		$stale = $this->leased($this->repo(self::T0), $id, 'host-a:1', 60);
+		$stale = $this->leased($this->repo(self::T0), $id, 'host-a:1', 1);
+		$this->setLeaseUntil($id, -1);
 		$this->leased($this->repo(self::T0 + 61), $id, 'host-b:2', 60);
 		$before = $this->job($id);
 
@@ -168,6 +235,9 @@ final class JobRepositoryTest extends IntegrationTestCase {
 			},
 			function () use ($late, $stale): void {
 				$late->release($stale);
+			},
+			function () use ($late, $stale): void {
+				$late->touch($stale);
 			},
 		);
 
@@ -184,11 +254,48 @@ final class JobRepositoryTest extends IntegrationTestCase {
 	public function testSameOwnerCannotReuseAnEarlierLease(): void {
 		$this->repo()->ensure('discovery', $this->accountId);
 		$id = $this->jobId($this->accountId);
-		$stale = $this->leased($this->repo(self::T0), $id, 'host-a:1', 60);
+		$stale = $this->leased($this->repo(self::T0), $id, 'host-a:1', 1);
+		$this->setLeaseUntil($id, -1);
 		$this->leased($this->repo(self::T0 + 61), $id, 'host-a:1', 60);
 
 		$this->expectException(LeaseLost::class);
 		$this->repo(self::T0 + 90)->succeed($stale, self::T0 + 900);
+	}
+
+	public function testTouchConfirmsAHeldLease(): void {
+		$this->repo()->ensure('discovery', $this->accountId);
+		$id = $this->jobId($this->accountId);
+		$lease = $this->leased($this->repo(self::T0), $id, 'host-a:1');
+		$before = $this->job($id);
+
+		$this->repo(self::T0 + 5)->touch($lease);
+
+		$this->assertSame($before, $this->job($id));
+	}
+
+	public function testLostLeaseRollsBackWritesInTheSameTransaction(): void {
+		$this->repo()->ensure('discovery', $this->accountId);
+		$id = $this->jobId($this->accountId);
+		$stale = $this->leased($this->repo(self::T0), $id, 'host-a:1', 1);
+		$this->setLeaseUntil($id, -1);
+		$this->leased($this->repo(self::T0 + 61), $id, 'host-b:2', 60);
+		$repo = $this->repo(self::T0 + 90);
+
+		try {
+			$this->db->transactional(function () use ($repo, $stale): void {
+				$this->db->execute(
+					"UPDATE plugin_cloudflare_accounts SET name = 'changed' WHERE id = ?",
+					array($this->accountId)
+				);
+				$repo->touch($stale);
+			});
+			$this->fail('touch() accepted a stale lease');
+		} catch (LeaseLost $e) {
+			$this->assertSame('acme', $this->db->fetchCell(
+				'SELECT name FROM plugin_cloudflare_accounts WHERE id = ?',
+				array($this->accountId)
+			));
+		}
 	}
 
 	public function testFailIncrementsAndSucceedResets(): void {
@@ -269,9 +376,10 @@ final class JobRepositoryTest extends IntegrationTestCase {
 		$this->db->execute($set, array(self::T0 + 1, $ids['c3']));
 		$this->db->execute($set, array(self::T0 - 100, $ids['d4']));
 		$this->db->execute($set, array(self::T0 - 100, $ids['e5']));
-		/* e5's lease ends exactly now, so it is still held; the first job's ended a second ago. */
-		$this->leased($this->repo(self::T0 - 10), $ids['e5'], 'host-a:1', 10);
-		$this->leased($this->repo(self::T0 - 10), $first, 'host-a:1', 9);
+		/* e5's lease is still live by the database clock; the first job's ended a second ago. */
+		$this->leased($this->repo(), $ids['e5'], 'host-a:1', 60);
+		$this->leased($this->repo(), $first, 'host-a:1', 60);
+		$this->setLeaseUntil($first, -1);
 
 		$due = $this->repo()->due('discovery', 10);
 

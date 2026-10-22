@@ -32,6 +32,9 @@ final class JobRepository {
 
 	private const OWNER_MAX = 64;
 
+	/* job_type is VARCHAR(32); a longer value would be truncated in a non-strict session. */
+	private const TYPE_PATTERN = '/^[a-z_]{1,32}$/';
+
 	private const MIN_RETRY = 60;
 
 	private const MAX_BACKOFF = 3600;
@@ -60,22 +63,31 @@ final class JobRepository {
 		return substr((string) gethostname() . ':' . getmypid(), -self::OWNER_MAX);
 	}
 
+	/**
+	 * Not INSERT IGNORE: that would also turn a missing account (a foreign
+	 * key failure) into a silent no-op.
+	 */
 	public function ensure(string $type, int $accountId): void {
+		if (preg_match(self::TYPE_PATTERN, $type) !== 1) {
+			throw new InvalidArgumentException('invalid job type');
+		}
+
 		$this->db->execute(
-			'INSERT IGNORE INTO ' . self::TABLE . ' (job_type, account_id) VALUES (?, ?)',
+			'INSERT INTO ' . self::TABLE . ' (job_type, account_id) VALUES (?, ?) ON DUPLICATE KEY UPDATE id = id',
 			array($type, $accountId)
 		);
 	}
 
 	/**
+	 * next_run_at follows the Clock that nextRun() fed; lease expiry follows
+	 * the database clock, as in lease().
+	 *
 	 * @return array<int, array<string, mixed>>
 	 */
 	public function due(string $type, int $limit): array {
 		if ($limit < 1) {
 			throw new InvalidArgumentException('invalid limit');
 		}
-
-		$now = $this->clock->now();
 
 		/* $limit is a checked int. pdo_mysql emulates prepares by default and would quote a bound LIMIT. */
 		return $this->db->fetchAll(
@@ -84,28 +96,29 @@ final class JobRepository {
 			WHERE j.job_type = ? AND a.enabled = 1
 			AND (j.job_type <> ? OR a.collect_tunnels = 1)
 			AND j.next_run_at <= ?
-			AND (j.lease_until IS NULL OR j.lease_until < ?)
+			AND (j.lease_until IS NULL OR j.lease_until < UNIX_TIMESTAMP())
 			ORDER BY j.next_run_at, j.id LIMIT ' . $limit,
-			array($type, self::TYPE_DISCOVERY, $now, $now)
+			array($type, self::TYPE_DISCOVERY, $this->clock->now())
 		);
 	}
 
 	/**
 	 * One conditional UPDATE, so of two collectors racing for the job only
-	 * one matches the row.
+	 * one matches the row. Expiry is set and compared on the database clock,
+	 * so skew between pollers cannot make a live lease look expired.
 	 */
 	public function lease(int $jobId, string $owner, int $ttl): ?Lease {
 		if ($ttl < 1) {
 			throw new InvalidArgumentException('invalid lease ttl');
 		}
 
-		$now   = $this->clock->now();
-		$until = $now + $ttl;
+		$dbNow = (int) $this->db->fetchCell('SELECT UNIX_TIMESTAMP()');
+		$until = $dbNow + $ttl;
 
 		$matched = $this->db->execute(
 			'UPDATE ' . self::TABLE . ' SET lease_owner = ?, lease_until = ?, last_started_at = ?
 			WHERE id = ? AND (lease_until IS NULL OR lease_until < ?)',
-			array($owner, $until, $now, $jobId, $now)
+			array($owner, $until, $this->clock->now(), $jobId, $dbNow)
 		);
 
 		return $matched === 1 ? new Lease($jobId, $owner, $until) : null;
@@ -139,6 +152,15 @@ final class JobRepository {
 				array($lease->jobId())
 			);
 		});
+	}
+
+	/**
+	 * Writes nothing, but run inside the caller's transaction it locks the
+	 * job row and throws LeaseLost, so the caller's other writes roll back.
+	 * A no-op UPDATE still reports its row because FOUND_ROWS is on.
+	 */
+	public function touch(Lease $lease): void {
+		$this->writeHeld($lease, 'UPDATE ' . self::TABLE . ' SET lease_owner = lease_owner' . self::HELD, array());
 	}
 
 	public function release(Lease $lease): void {

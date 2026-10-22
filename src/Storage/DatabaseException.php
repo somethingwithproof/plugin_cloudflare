@@ -27,52 +27,30 @@ namespace Cacti\PluginCloudflare\Storage;
 use RuntimeException;
 
 /**
- * The message carries the SQLSTATE and the driver error code. Driver text is
- * omitted for SQLSTATE classes 22 (data exception) and 23 (integrity
- * constraint), whose messages echo the offending value, for example
- * "Duplicate entry '<value>'". For every other class the text is appended
- * after two passes, since any driver message may quote statement content and
- * emulated prepares put bound values into that content:
- *
- * 1. Each complete single-quoted, double-quoted or backtick span, with
- *    backslash escapes, becomes '?'.
- * 2. The text is cut at the first quote, backtick or backslash left over, or
- *    at the first masked span followed by anything but whitespace or the end
- *    of the text, and '?' is appended. MariaDB does not escape quotes inside its "near '...'"
- *    excerpt, so a value next to a masked span means the pairing in pass 1
- *    was misaligned.
- *
- * If either pass fails, the driver text is replaced by '?'.
+ * The message is exactly "SQLSTATE[<state>] driver error <code>". The driver
+ * text is dropped for every SQLSTATE class because MySQL echoes the statement
+ * text in it, and with emulated prepares that text holds the interpolated
+ * bound values.
  */
 final class DatabaseException extends RuntimeException {
 	/** @var string */
 	private $sqlState;
 
-	public function __construct(string $sqlState, int $driverCode, string $driverMessage) {
-		$this->sqlState = $sqlState;
+	/** @var int */
+	private $driverCode;
 
-		$message = 'SQLSTATE[' . $sqlState . '] driver error ' . $driverCode;
+	public function __construct(string $sqlState, int $driverCode) {
+		$this->sqlState   = $sqlState;
+		$this->driverCode = $driverCode;
 
-		if (!in_array(substr($sqlState, 0, 2), array('22', '23'), true)) {
-			$message .= ': ' . self::mask($driverMessage);
-		}
-
-		parent::__construct($message);
-	}
-
-	private static function mask(string $text): string {
-		$paired = preg_replace('/\'(?:[^\'\\\\]|\\\\.)*\'|"(?:[^"\\\\]|\\\\.)*"|`(?:[^`\\\\]|\\\\.)*`/s', "'?'", $text);
-
-		if ($paired === null) {
-			return '?';
-		}
-
-		$cut = preg_replace('/^(?:[^\'"`\\\\]|\'\?\'(?=\s|\z))*+\K.+/s', '?', $paired);
-
-		return $cut === null ? '?' : $cut;
+		parent::__construct('SQLSTATE[' . $sqlState . '] driver error ' . $driverCode);
 	}
 
 	public function getSqlState(): string {
 		return $this->sqlState;
+	}
+
+	public function getDriverCode(): int {
+		return $this->driverCode;
 	}
 }

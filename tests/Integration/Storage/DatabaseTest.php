@@ -27,11 +27,15 @@ namespace Cacti\PluginCloudflare\Tests\Integration\Storage;
 use Cacti\PluginCloudflare\Storage\Database;
 use Cacti\PluginCloudflare\Storage\DatabaseException;
 use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
+use Eris\Generators;
+use Eris\TestTrait;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
 final class DatabaseTest extends TestCase {
+	use TestTrait;
+
 	/** @var Database */
 	private $db;
 
@@ -217,15 +221,37 @@ final class DatabaseTest extends TestCase {
 		$this->assertSame(1, (int) $db->fetchCell('SELECT 1'));
 	}
 
-	public function testNonConstraintErrorMasksQuotedLiterals(): void {
+	public function testUnknownColumnDoesNotLeakIdentifier(): void {
 		try {
 			$this->db->fetchAll('SELECT * FROM plugin_cloudflare_probe WHERE no_such_col_s3cr3t = 1');
 			$this->fail('Expected DatabaseException');
 		} catch (DatabaseException $e) {
 			$this->assertSame('42S22', $e->getSqlState());
-			$this->assertStringContainsString('42S22', $e->getMessage());
-			$this->assertStringContainsString('Unknown column', $e->getMessage());
+			$this->assertSame(1054, $e->getDriverCode());
+			$this->assertSame('SQLSTATE[42S22] driver error 1054', $e->getMessage());
 			$this->assertStringNotContainsString('no_such_col_s3cr3t', $e->getMessage());
 		}
+	}
+
+	/* Emulated prepares interpolate the bound value, and MariaDB echoes it in the 1064 "near '...'" excerpt. */
+	public function testMessageNeverIncludesDriverText(): void {
+		$alphabet = array('a', 's', '\'', '"', '\\', '`', ' ', '?', ':');
+
+		$this->limitTo(100)
+			->forAll(
+				Generators::seq(Generators::elements($alphabet)),
+				Generators::seq(Generators::elements($alphabet))
+			)
+			->then(function (array $prefix, array $suffix): void {
+				$value = implode('', $prefix) . 'SECRET' . implode('', $suffix);
+
+				try {
+					$this->db->fetchAll('SELECT 1 FROM dual WHERE = ?', array($value));
+					$this->fail('Expected DatabaseException');
+				} catch (DatabaseException $e) {
+					$this->assertSame('SQLSTATE[42000] driver error 1064', $e->getMessage());
+					$this->assertStringNotContainsString('SECRET', $e->getMessage());
+				}
+			});
 	}
 }

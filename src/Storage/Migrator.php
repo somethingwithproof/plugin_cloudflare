@@ -83,7 +83,7 @@ final class Migrator {
 	 */
 	public function migrate(): array {
 		if (!$this->db->acquireLock(self::LOCK_NAME, $this->lockTimeout)) {
-			throw new DatabaseException('HY000', 0, 'could not acquire migration lock');
+			throw new DatabaseException('HY000', 0);
 		}
 
 		try {

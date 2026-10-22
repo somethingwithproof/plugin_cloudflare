@@ -27,6 +27,7 @@ namespace Cacti\PluginCloudflare\Tests\Support;
 use PDO;
 use PDOException;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 /**
  * Builds a PDO handle the way Cacti's db_connect_real() does (lib/database.php
@@ -58,7 +59,12 @@ final class TestDatabase {
 		);
 
 		$new_modes = array();
-		foreach (explode(',', (string) $pdo->query('SELECT @@sql_mode')->fetchColumn()) as $mode) {
+		$res = $pdo->query('SELECT @@sql_mode');
+		if ($res === false) {
+			throw new RuntimeException('Cannot read sql_mode: ' . implode(' ', $pdo->errorInfo()));
+		}
+
+		foreach (explode(',', (string) $res->fetchColumn()) as $mode) {
 			if ($mode !== '' && !in_array($mode, $bad_modes, true)) {
 				$new_modes[] = $mode;
 			}
@@ -79,7 +85,12 @@ final class TestDatabase {
 	public static function reset(): void {
 		$pdo = self::pdo();
 
-		$tables = $pdo->query("SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name LIKE 'plugin\\_cloudflare\\_%'")->fetchAll(PDO::FETCH_COLUMN);
+		$res = $pdo->query("SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name LIKE 'plugin\\_cloudflare\\_%'");
+		if ($res === false) {
+			throw new RuntimeException('Cannot list plugin tables: ' . implode(' ', $pdo->errorInfo()));
+		}
+
+		$tables = $res->fetchAll(PDO::FETCH_COLUMN);
 
 		$pdo->exec('SET FOREIGN_KEY_CHECKS = 0');
 		foreach ($tables as $table) {

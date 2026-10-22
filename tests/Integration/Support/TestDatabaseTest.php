@@ -25,6 +25,7 @@
 namespace Cacti\PluginCloudflare\Tests\Integration\Support;
 
 use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
+use PDO;
 use PHPUnit\Framework\TestCase;
 
 final class TestDatabaseTest extends TestCase {
@@ -54,12 +55,27 @@ final class TestDatabaseTest extends TestCase {
 		$this->assertSame(1, $stmt->rowCount());
 	}
 
+	public function testErrmodeIsSilent(): void {
+		$pdo = TestDatabase::pdo();
+
+		$this->assertSame(PDO::ERRMODE_SILENT, $pdo->getAttribute(PDO::ATTR_ERRMODE));
+		$this->assertFalse($pdo->query('SELECT * FROM no_such_table'));
+	}
+
+	public function testCharsetIsUtf8(): void {
+		$charset = TestDatabase::pdo()->query('SELECT @@character_set_client')->fetchColumn();
+
+		$this->assertContains($charset, array('utf8', 'utf8mb3'));
+	}
+
 	public function testResetDropsPluginTables(): void {
 		$pdo = TestDatabase::pdo();
+		$count = "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name LIKE 'plugin\\_cloudflare\\_%'";
 		$pdo->exec('CREATE TABLE plugin_cloudflare_probe (id INT)');
+		$this->assertSame(1, (int) $pdo->query($count)->fetchColumn());
 
 		TestDatabase::reset();
 
-		$this->assertSame(0, (int) $pdo->query("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name LIKE 'plugin\\_cloudflare\\_%'")->fetchColumn());
+		$this->assertSame(0, (int) $pdo->query($count)->fetchColumn());
 	}
 }

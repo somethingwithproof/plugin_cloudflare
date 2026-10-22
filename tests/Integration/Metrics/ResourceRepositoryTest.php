@@ -119,6 +119,26 @@ final class ResourceRepositoryTest extends IntegrationTestCase {
 	}
 
 	/**
+	 * An admin-deleted graph leaves its row behind, and MySQL 5.7 and older
+	 * MariaDB hand the same graph_local.id out again after a restart.
+	 */
+	public function testRecordGraphDropsAStaleRowForAReusedGraphId(): void {
+		$first  = $this->account(str_repeat('a', 32));
+		$second = $this->account(str_repeat('b', 32));
+		$health = md5('plugin_cloudflare/graph_template/health');
+		$conns  = md5('plugin_cloudflare/graph_template/connections');
+
+		$this->repository->recordGraph($first, 7, $health, 41, 100, 200);
+		$this->repository->recordGraph($first, 7, $conns, 41, 100, 201);
+		$this->repository->recordGraph($second, 9, $health, 42, 100, 202);
+
+		$this->assertSame(array(), $this->repository->graphs($first));
+		$this->assertSame(array(
+			array('tunnel_id' => 9, 'template_hash' => $health, 'host_id' => 42, 'local_graph_id' => 100, 'local_data_id' => 202, 'created_at' => self::NOW),
+		), $this->repository->graphs($second));
+	}
+
+	/**
 	 * A plain read would see the owner at once and throw
 	 * InvalidArgumentException; the locking read waits for the other
 	 * transaction instead.

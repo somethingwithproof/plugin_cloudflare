@@ -140,6 +140,11 @@ final class ResourceRepository {
 				'DELETE FROM ' . self::TABLE . ' WHERE account_id = ? AND kind = \'graph\' AND tunnel_id = ? AND template_hash = ?',
 				array($accountId, $tunnelId, $templateHash)
 			);
+			// A row left by an admin-deleted graph would block a reused id on the unique key.
+			$this->db->execute(
+				'DELETE FROM ' . self::TABLE . ' WHERE kind = \'graph\' AND local_graph_id = ?',
+				array($localGraphId)
+			);
 			$this->db->execute(
 				'INSERT INTO ' . self::TABLE . ' (account_id, kind, tunnel_id, template_hash, host_id, local_graph_id,
 				local_data_id, created_at) VALUES (?, \'graph\', ?, ?, ?, ?, ?, ?)',

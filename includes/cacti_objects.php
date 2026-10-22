@@ -283,9 +283,11 @@ function cloudflare_sync_cacti_objects(array $outcomes, int $budget_seconds = 20
 
 			/* Picks up new tunnels. $force refreshes titles, which otherwise
 			 * follow only index changes (lib/data_query.php:356-368). */
-			run_data_query($device['host_id'], $templates['data_query_id'], false, true);
-
-			$totals['reindexed']++;
+			/* Both releases return false when the reindex fails
+			 * (lib/data_query.php:129-131, :149-152). */
+			if (run_data_query($device['host_id'], $templates['data_query_id'], false, true) !== false) {
+				$totals['reindexed']++;
+			}
 
 			$totals['graphs'] += cloudflare_sync_graphs(
 				$db,
@@ -421,20 +423,20 @@ function cloudflare_sync_graphs(
 
 			/* A tunnel the reindex did not list (R3 prints an empty listing on
 			 * a fault) would get a data source without an index value. */
+			if ($index_on === null) {
+				$index_on = get_best_data_query_index_type($host_id, $data_query_id);
+			}
+
 			if ($cached === null) {
 				$cached = db_fetch_cell_prepared(
 					'SELECT snmp_index FROM host_snmp_cache
-					WHERE host_id = ? AND snmp_query_id = ? AND snmp_index = ? LIMIT 1',
-					array($host_id, $data_query_id, $index)
+					WHERE host_id = ? AND snmp_query_id = ? AND snmp_index = ? AND field_name = ? LIMIT 1',
+					array($host_id, $data_query_id, $index, $index_on)
 				) !== false;
 			}
 
 			if (!$cached) {
 				continue 2;
-			}
-
-			if ($index_on === null) {
-				$index_on = get_best_data_query_index_type($host_id, $data_query_id);
 			}
 
 			$empty = array();
@@ -490,7 +492,7 @@ function cloudflare_sync_graphs(
 	return $created;
 }
 
-// The data source an existing graph draws from, as cli/add_graphs.php:672 reads it.
+// The data source an existing graph draws from, as cli/add_graphs.php:680 reads it.
 function cloudflare_graph_data_id(int $local_graph_id) : int {
 	$id = db_fetch_cell_prepared(
 		'SELECT dtr.local_data_id

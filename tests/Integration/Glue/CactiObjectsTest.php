@@ -58,6 +58,9 @@ final class CactiObjectsTest extends IntegrationTestCase {
 	/** @var array<string, true>|null tunnel indexes in host_snmp_cache; null means every tunnel */
 	private $cachedIndexes;
 
+	/** @var array<int, string>|null fields cached for each index; null means only the index field */
+	private $cachedFields;
+
 	public static function setUpBeforeClass(): void {
 		require_once self::ROOT . '/tests/Support/CactiGlueStubs.php';
 		require_once self::ROOT . '/setup.php';
@@ -152,7 +155,13 @@ final class CactiObjectsTest extends IntegrationTestCase {
 			}
 
 			if (strpos($sql, 'FROM host_snmp_cache') !== false) {
-				$index = (string) $params[2];
+				$index  = (string) $params[2];
+				$fields = $this->cachedFields ?? array((string) $GLOBALS['cloudflare_glue']['index_type']);
+
+				// Without a field_name condition, a row cached for any field matches.
+				if (strpos($sql, 'field_name = ?') !== false && !in_array((string) $params[3], $fields, true)) {
+					return false;
+				}
 
 				return $this->cachedIndexes === null || isset($this->cachedIndexes[$index]) ? $index : false;
 			}
@@ -351,6 +360,33 @@ final class CactiObjectsTest extends IntegrationTestCase {
 
 		$this->assertSame(3, cloudflare_sync_cacti_objects(array($id => self::outcome('ok')))['graphs']);
 		$this->assertCount(6, $this->graphRows($id));
+	}
+
+	/* Create builds the data source from the index field, so that is the cache row that must exist. */
+	public function testIndexCacheCheckMatchesTheIndexField(): void {
+		$id = $this->account(sprintf('%032d', 1));
+		$this->device($id, 7);
+		$this->tunnel($id, self::uuid(1));
+		$this->cachedFields = array('tunnelName');
+
+		$this->assertSame(0, cloudflare_sync_cacti_objects(array($id => self::outcome('ok')))['graphs']);
+		$this->assertSame(array(), cloudflare_glue_calls('create_complete_graph_from_template'));
+
+		$this->cachedFields = array('tunnelName', 'tunnelId');
+
+		$this->assertSame(3, cloudflare_sync_cacti_objects(array($id => self::outcome('ok')))['graphs']);
+	}
+
+	public function testFailedReindexIsNotCounted(): void {
+		$id = $this->account(sprintf('%032d', 1), false);
+		$this->device($id, 7);
+		$GLOBALS['cloudflare_glue']['reindex'] = false;
+
+		$this->assertSame(
+			array('reindexed' => 0, 'graphs' => 0, 'skipped' => 0),
+			cloudflare_sync_cacti_objects(array($id => self::outcome('ok')))
+		);
+		$this->assertCount(1, cloudflare_glue_calls('run_data_query'));
 	}
 
 	public function testAdoptsExistingGraph(): void {

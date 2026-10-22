@@ -70,6 +70,7 @@ function cloudflare_glue_reset(): void {
 		'next_graph'       => 1,
 		'next_data'        => 1,
 		'pushed'           => array(),
+		'reindex'          => true,
 	);
 	$GLOBALS['cloudflare_glue_enabled_cache'] = array();
 }
@@ -1080,7 +1081,7 @@ if (!function_exists('run_data_query')) {
 	function run_data_query($host_id, $snmp_query_id, $automation = false, $force = false): bool {
 		cloudflare_glue_record(__FUNCTION__, array($host_id, $snmp_query_id, $automation, $force));
 
-		return true;
+		return (bool) cloudflare_glue_state('reindex');
 	}
 }
 

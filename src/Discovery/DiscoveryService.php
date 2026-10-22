@@ -156,8 +156,9 @@ final class DiscoveryService {
 
 	/**
 	 * Accounts not started before the budget ran out, or before the plugin
-	 * was disabled, are absent from the result and stay due. The budget and
-	 * the connections cap also stop an account mid-way, recorded as partial.
+	 * was disabled, or once the connections cap was spent, are absent from
+	 * the result and stay due. The budget and the cap also stop an account
+	 * mid-way, recorded as partial.
 	 *
 	 * @return array<int, array{status: string, error_class: string|null, added: int, updated: int, deleted: int}>
 	 */
@@ -170,6 +171,16 @@ final class DiscoveryService {
 		foreach ($due as $index => $job) {
 			if ($this->clock->now() >= $this->deadline) {
 				$this->say('Cloudflare discovery: run budget reached accounts=' . count($outcomes));
+
+				break;
+			}
+			/*
+			 * An account started now could refresh nothing and would be
+			 * rescheduled behind the rest. Left unleased, it keeps its
+			 * next_run_at and leads the next run.
+			 */
+			if ($this->callsLeft < 1) {
+				$this->say('Cloudflare discovery: connections cap reached accounts=' . count($outcomes));
 
 				break;
 			}
@@ -193,7 +204,7 @@ final class DiscoveryService {
 			 * An even share of what is left, so an account due early with many
 			 * tunnels cannot starve the rest. What one leaves unused carries on.
 			 */
-			$this->allowance = $this->callsLeft > 0 ? max(1, intdiv($this->callsLeft, count($due) - $index)) : 0;
+			$this->allowance = max(1, intdiv($this->callsLeft, count($due) - $index));
 
 			try {
 				$outcomes[$accountId] = $this->runAccount($lease, $accountId, $failures);

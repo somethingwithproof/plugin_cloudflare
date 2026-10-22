@@ -48,6 +48,7 @@ final class DiscoveryServiceTest extends IntegrationTestCase {
 	private const T0        = 1800000000;
 	private const CF_A      = 'a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1';
 	private const CF_B      = 'b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2';
+	private const CF_C      = 'c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3';
 	private const BLOG      = 'f70ff985-a4ef-4643-bbbc-4a0ed4fc8415';
 	private const STAGING   = '0b6a8e4c-6c3b-4f64-9d6e-2f6c1f8a1d11';
 	private const OLDOFFICE = '7d1c3f52-91a4-4a39-8a55-3e1b0c6f2b77';
@@ -762,6 +763,57 @@ final class DiscoveryServiceTest extends IntegrationTestCase {
 
 		foreach ($this->tunnels($id) as $row) {
 			$this->assertNotNull($row['connections_refreshed_at']);
+		}
+	}
+
+	/* One listing and one refresh, the most a single-tunnel account can use. */
+	private function queueSingleTunnelAccount(): void {
+		$this->transport()->queue(self::listingOf(1));
+		$this->transport()->queue(self::noConnectors());
+	}
+
+	/*
+	 * An account started after the cap is spent could refresh nothing, yet
+	 * would be rescheduled behind the others and stay last on every run.
+	 */
+	public function testSpentCapDefersRemainingAccountsToNextRun(): void {
+		$this->connectionsPerRun = 2;
+		$a                       = $this->account(self::CF_A);
+		$b                       = $this->account(self::CF_B);
+		$c                       = $this->account(self::CF_C);
+		$before                  = $this->job($c);
+		$this->queueSingleTunnelAccount();
+		$this->queueSingleTunnelAccount();
+
+		$this->assertSame(array($a => self::outcome('ok', null, 1), $b => self::outcome('ok', null, 1)), $this->runDue());
+		$this->assertCount(4, $this->transport()->requests());
+
+		$job = $this->job($c);
+		$this->assertSame($before['next_run_at'], $job['next_run_at']);
+		$this->assertNull($job['last_started_at'], 'C was never leased');
+		$this->assertSame('never', $job['last_status']);
+	}
+
+	public function testEveryAccountRefreshedAcrossRuns(): void {
+		$this->connectionsPerRun = 2;
+		$ids                     = array(
+			$this->account(self::CF_A),
+			$this->account(self::CF_B),
+			$this->account(self::CF_C),
+		);
+
+		for ($run = 1; $run <= 3; $run++) {
+			$this->queueSingleTunnelAccount();
+			$this->queueSingleTunnelAccount();
+			$this->assertCount(2, $this->runDue(), 'run ' . $run);
+			$this->clock()->advance(300);
+		}
+
+		foreach ($ids as $id) {
+			$this->assertNotNull(
+				array_values($this->tunnels($id))[0]['connections_refreshed_at'],
+				'account ' . $id . ' was never refreshed'
+			);
 		}
 	}
 

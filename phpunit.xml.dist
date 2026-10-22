@@ -17,6 +17,9 @@
 	<coverage>
 		<include>
 			<directory suffix=".php">src</directory>
+			<directory suffix=".php">includes</directory>
+			<file>setup.php</file>
+			<file>cloudflare_accounts.php</file>
 		</include>
 	</coverage>
 </phpunit>

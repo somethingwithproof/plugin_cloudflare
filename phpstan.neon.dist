@@ -4,3 +4,8 @@ parameters:
 	paths:
 		- src
 		- tests
+		- setup.php
+		- includes
+		- cloudflare_accounts.php
+	bootstrapFiles:
+		- tests/Support/CactiGlueStubs.php

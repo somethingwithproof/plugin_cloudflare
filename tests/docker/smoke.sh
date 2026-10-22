@@ -31,11 +31,11 @@ step='setup'
 teardown() {
 	local rc=$?
 
-	if [ "${rc}" -ne 0 ]; then
+	if [[ "${rc}" -ne 0 ]]; then
 		printf 'FAIL: %s\n' "${step}"
 	fi
 
-	if [ "${KEEP:-0}" = '1' ]; then
+	if [[ "${KEEP:-0}" = '1' ]]; then
 		printf 'KEEP=1: stack %s left running at %s/\n' "${project}" "${base}" >&2
 	else
 		"${dc[@]}" down --volumes --remove-orphans >/dev/null 2>&1 || true
@@ -45,7 +45,7 @@ teardown() {
 	exit "${rc}"
 }
 
-if [ -n "$("${dc[@]}" ps -q 2>/dev/null)" ]; then
+if [[ -n "$("${dc[@]}" ps -q 2>/dev/null)" ]]; then
 	printf 'FAIL: compose project %s is already running; stop it or set CF_SMOKE_PROJECT\n' "${project}" >&2
 	rm -rf "${work}"
 	exit 1
@@ -63,8 +63,10 @@ die() {
 }
 
 sql() {
+	local query="$1"
+
 	"${dc[@]}" exec -T db mariadb --user=cactiuser --password=cactiuser \
-		--batch --skip-column-names cacti --execute="$1"
+		--batch --skip-column-names cacti --execute="${query}"
 }
 
 plugin_manage() {
@@ -91,8 +93,8 @@ capture() {
 	shift
 
 	"$@" >"${captures}/${name}" 2>&1 || rc=$?
-	[ "${rc}" -eq 0 ] || die "capturing ${name} exited ${rc}" "$(tail -n 20 "${captures}/${name}")"
-	[ -s "${captures}/${name}" ] || die "capture ${name} is empty"
+	[[ "${rc}" -eq 0 ]] || die "capturing ${name} exited ${rc}" "$(tail -n 20 "${captures}/${name}")"
+	[[ -s "${captures}/${name}" ]] || die "capture ${name} is empty"
 }
 
 # found <grep args...>: 0 on a match, 1 on none; grep errors die.
@@ -100,21 +102,25 @@ found() {
 	local rc=0
 
 	grep -q "$@" || rc=$?
-	[ "${rc}" -le 1 ] || die "grep $* exited ${rc}"
+	[[ "${rc}" -le 1 ]] || die "grep $* exited ${rc}"
 
 	return "${rc}"
 }
 
 no_token() {
-	if found -F -- "${token}" "$1"; then
-		die "token leaked into $2"
+	local file="$1" label="$2"
+
+	if found -F -- "${token}" "${file}"; then
+		die "token leaked into ${label}"
 	fi
 }
 
 # A CLI run that printed a PHP error did not succeed, whatever it exits with.
 require_clean() {
-	if grep -qiE 'PHP (Fatal|Parse|Warning|Notice|Deprecated)|Fatal error|Uncaught' <<<"$1"; then
-		die 'PHP error in output:' "$1"
+	local output="$1"
+
+	if grep -qiE 'PHP (Fatal|Parse|Warning|Notice|Deprecated)|Fatal error|Uncaught' <<<"${output}"; then
+		die 'PHP error in output:' "${output}"
 	fi
 }
 
@@ -126,19 +132,21 @@ http() {
 }
 
 csrf_from() {
+	local file="$1"
+
 	# sed rather than head picks the first match: sed drains its input, so
 	# grep never dies of SIGPIPE, which pipefail would report as a failure.
-	grep -oE "name=.__csrf_magic. value=\"[^\"]+\"" "$1" | sed -n -E '1s/.*value="([^"]+)"/\1/p' || true
+	grep -oE "name=.__csrf_magic. value=\"[^\"]+\"" "${file}" | sed -n -E '1s/.*value="([^"]+)"/\1/p' || true
 }
 
 login() {
 	local user="$1" pass="$2" jar="$3" token code
 
 	code="$(http "${jar}" "${work}/login-form.html" "${base}/index.php")"
-	[ "${code}" = '200' ] || die "login form returned ${code}"
+	[[ "${code}" = '200' ]] || die "login form returned ${code}"
 
 	token="$(csrf_from "${work}/login-form.html")"
-	[ -n "${token}" ] || die 'no __csrf_magic token on the login form'
+	[[ -n "${token}" ]] || die 'no __csrf_magic token on the login form'
 
 	code="$(http "${jar}" "${work}/login-${user}.html" \
 		--data-urlencode 'action=login' \
@@ -147,7 +155,7 @@ login() {
 		--data-urlencode 'realm=local' \
 		--data-urlencode "__csrf_magic=${token}" \
 		"${base}/index.php")"
-	[ "${code}" = '200' ] || die "login POST for ${user} returned ${code}"
+	[[ "${code}" = '200' ]] || die "login POST for ${user} returned ${code}"
 
 	if grep -q 'login_username' "${work}/login-${user}.html"; then
 		die "${user} is still on the login form after posting credentials"
@@ -157,7 +165,7 @@ login() {
 require_accounts_page() {
 	local out="$1" code="$2"
 
-	[ "${code}" = '200' ] || die "accounts page returned ${code}"
+	[[ "${code}" = '200' ]] || die "accounts page returned ${code}"
 	grep -q 'Cloudflare Accounts' "${out}" || die 'accounts page lacks the "Cloudflare Accounts" title'
 	if grep -qF "${denied_marker}" "${out}"; then
 		die 'accounts page is the permission-denied page'
@@ -180,12 +188,12 @@ viewer_jar="${work}/viewer.jar"
 token="cfsmoke_$(head -c 600 /dev/urandom | LC_ALL=C tr -dc 'A-Za-z0-9' | cut -c 1-40)"
 
 step='setup: stack up'
-[ "${#token}" -eq 48 ] || die 'could not generate a test token'
+[[ "${#token}" -eq 48 ]] || die 'could not generate a test token'
 "${dc[@]}" up -d --build --wait >"${work}/up.log" 2>&1 || die "$(tail -n 40 "${work}/up.log")"
 # A device of our own, so the uninstall comparison covers a row this run
 # created and not only what the installer seeded.
 out="$("${dc[@]}" exec -T -u www-data web php cli/add_device.php --description=smoke-host --ip=192.0.2.10 --template=0 --avail=none --version=0 2>&1)" || die "${out}"
-[ "$(sql "SELECT COUNT(*) FROM host WHERE description = 'smoke-host'")" = '1' ] || die 'seed device was not added' "${out}"
+[[ "$(sql "SELECT COUNT(*) FROM host WHERE description = 'smoke-host'")" = '1' ]] || die 'seed device was not added' "${out}"
 counts_before="$(core_counts)"
 pass
 
@@ -198,29 +206,29 @@ pass
 
 step='2 plugin tables exist and plugin_config.status = 1'
 tables="$(plugin_tables)"
-[ -n "${tables}" ] || die 'no plugin_cloudflare_* tables'
-[ "$(plugin_status)" = '1' ] || die "status is $(plugin_status)"
+[[ -n "${tables}" ]] || die 'no plugin_cloudflare_* tables'
+[[ "$(plugin_status)" = '1' ]] || die "status is $(plugin_status)"
 realms="$(sql "SELECT id, file FROM plugin_realms WHERE plugin = 'cloudflare' ORDER BY id")"
-[ "$(wc -l <<<"${realms}")" -eq 2 ] || die 'expected two plugin realms' "${realms}"
+[[ "$(wc -l <<<"${realms}")" -eq 2 ]] || die 'expected two plugin realms' "${realms}"
 pass
 
 step='3 disable, re-enable and reinstall keep the tables'
 out="$(plugin_manage --disable 2>&1)" || die "${out}"
 require_clean "${out}"
-[ "$(plugin_status)" = '4' ] || die "status after disable is $(plugin_status)"
+[[ "$(plugin_status)" = '4' ]] || die "status after disable is $(plugin_status)"
 out="$(plugin_manage --enable 2>&1)" || die "${out}"
 require_clean "${out}"
-[ "$(plugin_status)" = '1' ] || die "status after enable is $(plugin_status)"
+[[ "$(plugin_status)" = '1' ]] || die "status after enable is $(plugin_status)"
 # The CLI skips an installed plugin, so call the installer plugins.php uses.
 out="$("${dc[@]}" exec -T -u www-data web php -r \
 	'chdir("/var/www/html/cacti"); include "./include/cli_check.php"; api_plugin_install("cloudflare");' 2>&1)" || die "${out}"
 require_clean "${out}"
-[ "$(plugin_status)" = '4' ] || die "status after reinstall is $(plugin_status)"
+[[ "$(plugin_status)" = '4' ]] || die "status after reinstall is $(plugin_status)"
 out="$(plugin_manage --enable 2>&1)" || die "${out}"
 require_clean "${out}"
-[ "$(plugin_status)" = '1' ] || die "status after reinstall and enable is $(plugin_status)"
-[ "$(plugin_tables)" = "${tables}" ] || die 'tables changed' "$(plugin_tables)"
-[ "$(sql "SELECT id, file FROM plugin_realms WHERE plugin = 'cloudflare' ORDER BY id")" = "${realms}" ] \
+[[ "$(plugin_status)" = '1' ]] || die "status after reinstall and enable is $(plugin_status)"
+[[ "$(plugin_tables)" = "${tables}" ]] || die 'tables changed' "$(plugin_tables)"
+[[ "$(sql "SELECT id, file FROM plugin_realms WHERE plugin = 'cloudflare' ORDER BY id")" = "${realms}" ]] \
 	|| die 'realm ids changed, which would orphan user_auth_realm grants'
 pass
 
@@ -241,7 +249,7 @@ pass
 
 step='5 a user with only Cloudflare: View is denied the accounts page'
 view_realm="$(sql "SELECT id + 100 FROM plugin_realms WHERE plugin = 'cloudflare' AND file = 'cloudflare.php'")"
-[ -n "${view_realm}" ] || die 'no realm for cloudflare.php'
+[[ -n "${view_realm}" ]] || die 'no realm for cloudflare.php'
 # shellcheck disable=SC2016 # PHP source; $argv is PHP's, not the shell's.
 viewer_hash="$("${dc[@]}" exec -T web php -r 'echo password_hash($argv[1], PASSWORD_DEFAULT);' "${viewer_pass}")"
 # Columns follow tests/e2e/docker/setup.sh in Cacti release/1.2.31. Realm 8
@@ -254,7 +262,7 @@ login viewer "${viewer_pass}" "${viewer_jar}"
 # Positive control: realm 8 grants the console, so the viewer's session is
 # good and the denial below comes from the plugin realm, not from auth.
 code="$(http "${viewer_jar}" "${work}/viewer-console.html" "${base}/index.php")"
-[ "${code}" = '200' ] || die "viewer console returned ${code}"
+[[ "${code}" = '200' ]] || die "viewer console returned ${code}"
 if grep -qF "${denied_marker}" "${work}/viewer-console.html"; then
 	die 'viewer is denied the console, so the realm 8 grant did not take'
 fi
@@ -267,7 +275,7 @@ printf '%s' "${token}" | "${dc[@]}" exec -T web sh -c \
 	'umask 077 && mkdir -p /var/lib/cf-smoke && cat > /var/lib/cf-smoke/token && chown -R www-data:www-data /var/lib/cf-smoke'
 http "${admin_jar}" "${work}/edit.html" "${page}?action=edit" >/dev/null
 csrf="$(csrf_from "${work}/edit.html")"
-[ -n "${csrf}" ] || die 'no __csrf_magic token on the edit form'
+[[ -n "${csrf}" ]] || die 'no __csrf_magic token on the edit form'
 http "${admin_jar}" "${work}/save.html" \
 	--data-urlencode 'action=save' \
 	--data-urlencode 'save_component_account=1' \
@@ -282,13 +290,13 @@ http "${admin_jar}" "${work}/save.html" \
 	--data-urlencode "__csrf_magic=${csrf}" \
 	"${page}" >/dev/null
 account_id="$(sql "SELECT id FROM plugin_cloudflare_accounts WHERE name = 'smoke'")"
-[ -n "${account_id}" ] || die 'account was not saved' "$(head -c 600 "${work}/save.html")"
+[[ -n "${account_id}" ]] || die 'account was not saved' "$(head -c 600 "${work}/save.html")"
 # The save redirects to a header=false fragment that carries no token, so
 # take it from the list page the actions form is posted from.
 http "${admin_jar}" "${work}/list.html" "${page}" >/dev/null
 grep -qF "chk_${account_id}" "${work}/list.html" || die 'saved account is not on the list page'
 csrf="$(csrf_from "${work}/list.html")"
-[ -n "${csrf}" ] || die 'no __csrf_magic token on the list page'
+[[ -n "${csrf}" ]] || die 'no __csrf_magic token on the list page'
 http "${admin_jar}" "${work}/confirm.html" \
 	--data-urlencode 'action=actions' \
 	--data-urlencode 'drp_action=2' \
@@ -297,7 +305,7 @@ http "${admin_jar}" "${work}/confirm.html" \
 	"${page}" >/dev/null
 grep -qF 'Verify the following Cloudflare Account' "${work}/confirm.html" || die 'no verify confirmation page'
 csrf="$(csrf_from "${work}/confirm.html")"
-[ -n "${csrf}" ] || die 'no __csrf_magic token on the verify confirmation page'
+[[ -n "${csrf}" ]] || die 'no __csrf_magic token on the verify confirmation page'
 http "${admin_jar}" "${work}/verify.html" \
 	--data-urlencode 'action=actions' \
 	--data-urlencode 'drp_action=2' \
@@ -318,13 +326,13 @@ step='6 uninstall drops plugin tables and settings and leaves Cacti data alone'
 sql "INSERT INTO settings (name, value) VALUES ('cloudflare_ui_timeout', '10') ON DUPLICATE KEY UPDATE value = VALUES(value)"
 out="$(plugin_manage --disable --uninstall 2>&1)" || die "${out}"
 require_clean "${out}"
-[ -z "$(plugin_tables)" ] || die 'tables remain' "$(plugin_tables)"
-[ "$(sql "SELECT COUNT(*) FROM settings WHERE name LIKE 'cloudflare!_%' ESCAPE '!'")" = '0' ] || die 'cloudflare_ settings remain'
-[ "$(plugin_status)" = 'none' ] || die "plugin_config row remains with status $(plugin_status)"
-[ "$(sql "SELECT COUNT(*) FROM plugin_realms WHERE plugin = 'cloudflare'")" = '0' ] || die 'plugin realms remain'
-[ "$(sql "SELECT COUNT(*) FROM user_auth_realm WHERE realm_id = ${view_realm}")" = '0' ] || die 'viewer realm grant remains'
+[[ -z "$(plugin_tables)" ]] || die 'tables remain' "$(plugin_tables)"
+[[ "$(sql "SELECT COUNT(*) FROM settings WHERE name LIKE 'cloudflare!_%' ESCAPE '!'")" = '0' ]] || die 'cloudflare_ settings remain'
+[[ "$(plugin_status)" = 'none' ]] || die "plugin_config row remains with status $(plugin_status)"
+[[ "$(sql "SELECT COUNT(*) FROM plugin_realms WHERE plugin = 'cloudflare'")" = '0' ]] || die 'plugin realms remain'
+[[ "$(sql "SELECT COUNT(*) FROM user_auth_realm WHERE realm_id = ${view_realm}")" = '0' ]] || die 'viewer realm grant remains'
 counts_after="$(core_counts)"
-[ "${counts_after}" = "${counts_before}" ] || die "host/graph_local/data_template counts ${counts_before} became ${counts_after}"
+[[ "${counts_after}" = "${counts_before}" ]] || die "host/graph_local/data_template counts ${counts_before} became ${counts_after}"
 pass
 
 step='7 the token appears in no log, page or database dump'

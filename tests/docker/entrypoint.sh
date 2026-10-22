@@ -31,7 +31,7 @@ as_www() {
 # here writes to the host tree. The exclusions follow .gitattributes
 # export-ignore for the trees a release archive leaves out.
 plugin_dir="${CACTI_ROOT}/plugins/cloudflare"
-if [ ! -f "${PLUGIN_SRC}/setup.php" ]; then
+if [[ ! -f "${PLUGIN_SRC}/setup.php" ]]; then
 	log "no plugin checkout at ${PLUGIN_SRC}"
 	exit 1
 fi
@@ -62,23 +62,23 @@ log "waiting for MariaDB at ${DB_HOST}:${DB_PORT}"
 attempt=0
 until sql --execute='SELECT 1' >/dev/null 2>&1; do
 	attempt=$((attempt + 1))
-	if [ "${attempt}" -ge 60 ]; then
+	if [[ "${attempt}" -ge 60 ]]; then
 		log "MariaDB not reachable after ${attempt} attempts"
 		exit 1
 	fi
 	sleep 2
 done
 
-if [ "$(sql --execute="SHOW TABLES LIKE 'version'")" = '' ]; then
+if [[ "$(sql --execute="SHOW TABLES LIKE 'version'")" = '' ]]; then
 	log "importing cacti.sql"
 	sql < "${CACTI_ROOT}/cacti.sql"
 fi
 
-if [ "$(sql --execute='SELECT cacti FROM version LIMIT 1')" = 'new_install' ]; then
+if [[ "$(sql --execute='SELECT cacti FROM version LIMIT 1')" = 'new_install' ]]; then
 	log "running cli/install_cacti.php"
 	as_www php "${CACTI_ROOT}/cli/install_cacti.php" --accept-eula --install --mode=1 >&2
 
-	if [ "$(sql --execute='SELECT cacti FROM version LIMIT 1')" = 'new_install' ]; then
+	if [[ "$(sql --execute='SELECT cacti FROM version LIMIT 1')" = 'new_install' ]]; then
 		log "installer left version at new_install"
 		exit 1
 	fi

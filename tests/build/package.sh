@@ -9,7 +9,7 @@ root="$(git rev-parse --show-toplevel)"
 cd "${root}"
 
 version="$(sed -n -E 's/^version[[:space:]]*=[[:space:]]*([0-9A-Za-z.-]+)[[:space:]]*$/\1/p' INFO)"
-[ -n "${version}" ] || { printf 'FAIL: no version in INFO\n' >&2; exit 1; }
+[[ -n "${version}" ]] || { printf 'FAIL: no version in INFO\n' >&2; exit 1; }
 
 mkdir -p build
 archive="build/cloudflare-${version}.tar.gz"
@@ -36,6 +36,6 @@ for prefix in cloudflare/tests/ cloudflare/features/ cloudflare/vendor/ cloudfla
     fi
 done
 
-[ "${status}" -eq 0 ] || exit "${status}"
+[[ "${status}" -eq 0 ]] || exit "${status}"
 
 printf '%s: %s entries\n' "${archive}" "$(wc -l <<<"${listing}" | tr -d ' ')"

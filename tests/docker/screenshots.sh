@@ -33,8 +33,10 @@ die() {
 }
 
 sql() {
+    local query="$1"
+
     "${dc[@]}" exec -T db mariadb --user=cactiuser --password=cactiuser \
-        --batch --skip-column-names cacti --execute="$1"
+        --batch --skip-column-names cacti --execute="${query}"
 }
 
 http() {
@@ -44,21 +46,23 @@ http() {
 }
 
 csrf_from() {
-    grep -oE "name=.__csrf_magic. value=\"[^\"]+\"" "$1" | sed -n -E '1s/.*value="([^"]+)"/\1/p' || true
+    local file="$1"
+
+    grep -oE "name=.__csrf_magic. value=\"[^\"]+\"" "${file}" | sed -n -E '1s/.*value="([^"]+)"/\1/p' || true
 }
 
 require_csrf() {
-    local value
+    local file="$1" value
 
-    value="$(csrf_from "$1")"
-    [ -n "${value}" ] || die "no __csrf_magic token in $(basename "$1")"
+    value="$(csrf_from "${file}")"
+    [[ -n "${value}" ]] || die "no __csrf_magic token in $(basename "${file}")"
     printf '%s' "${value}"
 }
 
-[ -n "$("${dc[@]}" ps -q web 2>/dev/null)" ] || die 'the cf-smoke stack is not running; use make screenshots'
+[[ -n "$("${dc[@]}" ps -q web 2>/dev/null)" ]] || die 'the cf-smoke stack is not running; use make screenshots'
 
 out="$("${dc[@]}" exec -T -u www-data web php cli/plugin_manage.php --plugin=cloudflare --install --enable 2>&1)" || die "${out}"
-[ "$(sql "SELECT status FROM plugin_config WHERE directory = 'cloudflare'")" = '1' ] || die 'plugin is not enabled' "${out}"
+[[ "$(sql "SELECT status FROM plugin_config WHERE directory = 'cloudflare'")" = '1' ]] || die 'plugin is not enabled' "${out}"
 
 # The key is random and dies with the stack; it only makes the vault available.
 "${dc[@]}" exec -T web sh -c \
@@ -67,7 +71,7 @@ out="$("${dc[@]}" exec -T -u www-data web php cli/plugin_manage.php --plugin=clo
 sql "DELETE FROM plugin_cloudflare_accounts WHERE cf_account_id = '${account_id}'"
 
 code="$(http "${work}/login-form.html" "${base}/index.php")"
-[ "${code}" = '200' ] || die "login form returned ${code}"
+[[ "${code}" = '200' ]] || die "login form returned ${code}"
 csrf="$(require_csrf "${work}/login-form.html")"
 http "${work}/login.html" \
     --data-urlencode 'action=login' \
@@ -81,7 +85,7 @@ if grep -q 'login_username' "${work}/login.html"; then
 fi
 
 token="$(head -c 600 /dev/urandom | LC_ALL=C tr -dc 'A-Za-z0-9' | cut -c 1-40)"
-[ "${#token}" -eq 40 ] || die 'could not generate a placeholder token'
+[[ "${#token}" -eq 40 ]] || die 'could not generate a placeholder token'
 
 http "${work}/edit.html" "${page}?action=edit" >/dev/null
 csrf="$(require_csrf "${work}/edit.html")"
@@ -100,7 +104,7 @@ http "${work}/save.html" \
     --data-urlencode "__csrf_magic=${csrf}" \
     "${page}" >/dev/null
 id="$(sql "SELECT id FROM plugin_cloudflare_accounts WHERE cf_account_id = '${account_id}'")"
-[ -n "${id}" ] || die 'the example account was not saved' "$(grep -o "<div id='message'.*" "${work}/save.html" | head -c 400)"
+[[ -n "${id}" ]] || die 'the example account was not saved' "$(grep -o "<div id='message'.*" "${work}/save.html" | head -c 400)"
 
 http "${work}/list.html" "${page}" >/dev/null
 csrf="$(require_csrf "${work}/list.html")"
@@ -118,7 +122,7 @@ http "${work}/verify.html" \
     --data-urlencode "__csrf_magic=${csrf}" \
     "${page}" >/dev/null
 status="$(sql "SELECT status FROM plugin_cloudflare_accounts WHERE id = ${id}")"
-[ "${status}" = 'unreachable' ] || die "expected status unreachable after Verify, got ${status}"
+[[ "${status}" = 'unreachable' ]] || die "expected status unreachable after Verify, got ${status}"
 
 # curl's jar is the Netscape format; Playwright wants its storage-state JSON.
 awk -F '\t' '
@@ -138,13 +142,13 @@ shoot() {
     local url="$1" file="$2" marker="$3"
 
     code="$(http "${work}/check.html" "${url}")"
-    [ "${code}" = '200' ] || die "${url} returned ${code}"
+    [[ "${code}" = '200' ]] || die "${url} returned ${code}"
     grep -qF -- "${marker}" "${work}/check.html" || die "${url} lacks \"${marker}\""
 
     npx -y "${playwright}" screenshot --browser=chromium --viewport-size=1280,800 \
         --load-storage="${work}/state.json" --wait-for-timeout=1500 \
         "${url}" "${images}/${file}" >/dev/null
-    [ -s "${images}/${file}" ] || die "no image written for ${file}"
+    [[ -s "${images}/${file}" ]] || die "no image written for ${file}"
     printf 'wrote docs/images/%s\n' "${file}"
 }
 

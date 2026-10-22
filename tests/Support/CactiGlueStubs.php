@@ -167,6 +167,18 @@ if (!function_exists('api_plugin_is_enabled')) {
 	}
 }
 
+if (!function_exists('exec_background')) {
+	/* lib/poller.php:132 */
+	/**
+	 * @param mixed $filename
+	 * @param mixed $args
+	 * @param mixed $redirect_args
+	 */
+	function exec_background($filename, $args = '', $redirect_args = ''): void {
+		cloudflare_glue_record(__FUNCTION__, array($filename, $args, $redirect_args));
+	}
+}
+
 if (!function_exists('get_current_page')) {
 	/* lib/functions.php:4080 */
 	/**

@@ -8,5 +8,6 @@ parameters:
 		- setup.php
 		- includes
 		- cloudflare_accounts.php
+		- poller_cloudflare.php
 	bootstrapFiles:
 		- tests/Support/CactiGlueStubs.php

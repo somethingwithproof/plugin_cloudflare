@@ -216,9 +216,11 @@ final class CloudflareClient {
 				$token
 			);
 		} catch (ApiException $e) {
+			$codes   = $e->getApiCodes();
 			$unknown = $e->getErrorClass() === ErrorClass::AUTH
 				&& $e->getHttpStatus() === 401
-				&& in_array(self::UNKNOWN_RESOURCE, $e->getApiCodes(), true);
+				&& isset($codes[0])
+				&& $codes[0] === self::UNKNOWN_RESOURCE;
 
 			if ($unknown) {
 				throw new ApiException(ErrorClass::NOT_FOUND, 401, $e->getApiCodes(), 'tunnel is unknown to Cloudflare');
@@ -423,22 +425,27 @@ final class CloudflareClient {
 	private static function parseTunnel($item): TunnelRecord {
 		if (
 			!is_array($item)
-			|| !isset($item['id'], $item['name'], $item['status'], $item['tun_type'])
+			|| !isset($item['id'], $item['status'])
 			|| !is_string($item['id'])
-			|| !Ids::isUuid($item['id'])
-			|| !is_string($item['name'])
 			|| !is_string($item['status'])
 			|| !in_array($item['status'], self::TUNNEL_STATUSES, true)
-			|| !is_string($item['tun_type'])
 		) {
 			throw new ApiException(ErrorClass::MALFORMED, 200, array(), 'tunnel item has an unexpected shape');
 		}
 
+		$id = strtolower($item['id']);
+		if (!Ids::isUuid($id)) {
+			throw new ApiException(ErrorClass::MALFORMED, 200, array(), 'tunnel item has an unexpected shape');
+		}
+
+		$name = isset($item['name']) && is_string($item['name']) ? self::cleanName($item['name']) : $id;
+		$type = isset($item['tun_type']) && is_string($item['tun_type']) ? self::cleanName($item['tun_type']) : '';
+
 		return new TunnelRecord(
-			$item['id'],
-			self::cleanName($item['name']),
+			$id,
+			$name,
 			$item['status'],
-			$item['tun_type'],
+			$type,
 			self::parseExpiry($item['created_at'] ?? null),
 			self::parseExpiry($item['conns_active_at'] ?? null),
 			self::parseExpiry($item['conns_inactive_at'] ?? null)
@@ -455,7 +462,7 @@ final class CloudflareClient {
 			!is_array($item)
 			|| !isset($item['id'], $item['version'], $item['arch'], $item['conns'])
 			|| !is_string($item['id'])
-			|| !Ids::isUuid($item['id'])
+			|| !Ids::isUuid(strtolower($item['id']))
 			|| !is_string($item['version'])
 			|| !is_string($item['arch'])
 			|| !is_array($item['conns'])
@@ -465,10 +472,12 @@ final class CloudflareClient {
 
 		$colos = array();
 		$ips   = array();
+		$count = 0;
 		foreach ($item['conns'] as $conn) {
 			if (!is_array($conn)) {
-				throw new ApiException(ErrorClass::MALFORMED, 200, array(), 'connector connection is not an object');
+				continue;
 			}
+			$count++;
 			if (isset($conn['colo_name']) && is_string($conn['colo_name']) && $conn['colo_name'] !== '') {
 				$colos[$conn['colo_name']] = true;
 			}
@@ -484,24 +493,34 @@ final class CloudflareClient {
 		sort($ips, SORT_STRING);
 
 		return new ConnectorRecord(
-			$item['id'],
+			strtolower($item['id']),
 			$item['version'],
 			$item['arch'],
 			self::parseExpiry($item['run_at'] ?? null),
-			count($item['conns']),
+			$count,
 			$colos,
 			$ips
 		);
 	}
 
+	/**
+	 * Strips control, format (bidi overrides, zero-width) and line/paragraph
+	 * separator characters. The u flag makes invalid UTF-8 return null, which
+	 * Cloudflare should never send.
+	 *
+	 * @throws ApiException
+	 */
 	private static function cleanName(string $name): string {
-		$name = (string) preg_replace('/[\x00-\x1f\x7f]/', '', $name);
-
-		if (function_exists('mb_substr')) {
-			return mb_substr($name, 0, self::MAX_NAME, 'UTF-8');
+		$clean = preg_replace('/[\p{Cc}\p{Cf}\x{2028}\x{2029}]/u', '', $name);
+		if ($clean === null) {
+			throw new ApiException(ErrorClass::MALFORMED, 200, array(), 'tunnel text is not valid UTF-8');
 		}
 
-		return substr($name, 0, self::MAX_NAME);
+		if (function_exists('mb_substr')) {
+			return mb_substr($clean, 0, self::MAX_NAME, 'UTF-8');
+		}
+
+		return substr($clean, 0, self::MAX_NAME);
 	}
 
 	private function requireAccountId(string $cfAccountId): void {

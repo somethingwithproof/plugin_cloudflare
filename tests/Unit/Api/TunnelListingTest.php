@@ -283,6 +283,107 @@ final class TunnelListingTest extends TestCase {
 		);
 	}
 
+	public function testNameStripsUnicodeControlAndFormatChars(): void {
+		$item         = $this->item(1);
+		$item['name'] = "a\u{202E}b\u{0085}c\u{2028}d\u{2029}e\u{200B}f";
+		$this->transport->queue($this->page(
+			array($item),
+			array('page' => 1, 'per_page' => 1000, 'count' => 1, 'total_count' => 1)
+		));
+
+		$tunnels = $this->client()->listTunnels(self::ACCOUNT, $this->token);
+
+		$this->assertSame('abcdef', $tunnels[0]->name);
+	}
+
+	public function testInvalidUtf8IsMalformed(): void {
+		$body = (string) json_encode(array(
+			'success'     => true,
+			'errors'      => array(),
+			'result'      => array($this->item(1)),
+			'result_info' => array('total_count' => 1),
+		));
+		$this->transport->queue(new Response(200, array(), str_replace('tunnel-1', "tun\xffnel", $body)));
+
+		$this->expectFailure(function (): void {
+			$this->client()->listTunnels(self::ACCOUNT, $this->token);
+		}, ErrorClass::MALFORMED);
+	}
+
+	public function testTunTypeAndNameAreOptional(): void {
+		$bare = array(
+			'id'     => '0B6A8E4C-6C3B-4F64-9D6E-2F6C1F8A1D11',
+			'status' => 'inactive',
+			'name'   => 42,
+		);
+		$noName = $this->item(2);
+		unset($noName['name'], $noName['tun_type']);
+		$ctl             = $this->item(3);
+		$ctl['tun_type'] = "cfd\u{202E}_tunnel";
+		$this->transport->queue($this->page(
+			array($bare, $noName, $ctl),
+			array('page' => 1, 'per_page' => 1000, 'count' => 3, 'total_count' => 3)
+		));
+
+		$tunnels = $this->client()->listTunnels(self::ACCOUNT, $this->token);
+
+		$this->assertSame('0b6a8e4c-6c3b-4f64-9d6e-2f6c1f8a1d11', $tunnels[0]->id);
+		$this->assertSame($tunnels[0]->id, $tunnels[0]->name);
+		$this->assertSame('', $tunnels[0]->tunType);
+		$this->assertSame($tunnels[1]->id, $tunnels[1]->name);
+		$this->assertSame('cfd_tunnel', $tunnels[2]->tunType);
+	}
+
+	public function testMissingStatusIsMalformed(): void {
+		$item = $this->item(1);
+		unset($item['status']);
+		$this->transport->queue($this->page(
+			array($item),
+			array('page' => 1, 'per_page' => 1000, 'count' => 1, 'total_count' => 1)
+		));
+
+		$this->expectFailure(function (): void {
+			$this->client()->listTunnels(self::ACCOUNT, $this->token);
+		}, ErrorClass::MALFORMED);
+	}
+
+	public function testConnectorIdIsLowercasedAndNonObjectConnsSkipped(): void {
+		$client = array(
+			'id'      => '1BEDC50D-42B3-473C-B108-FF3D10C0D925',
+			'version' => '2022.7.1',
+			'arch'    => 'linux_amd64',
+			'conns'   => array('junk', array('colo_name' => 'DFW', 'origin_ip' => '10.0.0.1'), null),
+		);
+		$this->transport->queue($this->page(array($client), null));
+
+		$connectors = $this->client()->listConnections(self::ACCOUNT, $this->token, self::TUNNEL);
+
+		$this->assertSame('1bedc50d-42b3-473c-b108-ff3d10c0d925', $connectors[0]->id);
+		$this->assertSame(1, $connectors[0]->connectionCount);
+		$this->assertSame(array('DFW'), $connectors[0]->colos);
+	}
+
+	public function testConnectorMissingConnsIsMalformed(): void {
+		$client = array('id' => self::TUNNEL, 'version' => '1', 'arch' => 'x');
+		$this->transport->queue($this->page(array($client), null));
+
+		$this->expectFailure(function (): void {
+			$this->client()->listConnections(self::ACCOUNT, $this->token, self::TUNNEL);
+		}, ErrorClass::MALFORMED);
+	}
+
+	public function testConnections401With1001NotFirstStaysAuth(): void {
+		$this->transport->queue(new Response(401, array(), (string) json_encode(array(
+			'success' => false,
+			'errors'  => array(array('code' => 10000, 'message' => 'Authentication error'), array('code' => 1001)),
+			'result'  => null,
+		))));
+
+		$this->expectFailure(function (): void {
+			$this->client()->listConnections(self::ACCOUNT, $this->token, self::TUNNEL);
+		}, ErrorClass::AUTH);
+	}
+
 	public function testConnections404IsNotFound(): void {
 		$this->transport->queue(FakeTransport::fixture('error-envelope', 404));
 

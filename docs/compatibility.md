@@ -100,7 +100,8 @@ The token permissions these requests need are in
 
 Error handling follows the live observations in the research file: HTTP 400
 with error code 6003 or 6111 means a malformed token and is classed as an
-authentication failure. A 429 is retried after the `retry-after` delay when
-that is 30 seconds or less, after the normal 1 second backoff when the header
-is absent, and not at all when the delay is longer. Requests from the web
-interface are retried at most once.
+authentication failure. Requests from the web interface, such as Verify, are
+retried at most once. A 429 there is retried after the `retry-after` delay
+when that is 2 seconds or less, after the normal 1 second backoff when the
+header is absent, and not at all when the delay is longer. The 30 second
+`retry-after` limit belongs to the collector, which ships in Milestone 2.

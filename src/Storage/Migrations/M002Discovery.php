@@ -81,7 +81,21 @@ final class M002Discovery implements Migration {
 				REFERENCES plugin_cloudflare_tunnels (id) ON DELETE CASCADE';
 		}
 
+		/* The jobs table shipped in M001; this column drives markUnavailable apart from the backoff counter. */
+		if (!$this->columnExists($db, 'plugin_cloudflare_jobs', 'outage_failures')) {
+			$statements[] = 'ALTER TABLE plugin_cloudflare_jobs
+				ADD COLUMN outage_failures INT UNSIGNED NOT NULL DEFAULT 0 AFTER consecutive_failures';
+		}
+
 		return $statements;
+	}
+
+	private function columnExists(Database $db, string $table, string $column): bool {
+		return (int) $db->fetchCell(
+			'SELECT COUNT(*) FROM information_schema.columns
+			WHERE table_schema = DATABASE() AND table_name = ? AND column_name = ?',
+			array($table, $column)
+		) > 0;
 	}
 
 	/**

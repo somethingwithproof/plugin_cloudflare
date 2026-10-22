@@ -128,6 +128,7 @@ final class JobRepository {
 		$this->writeHeld(
 			$lease,
 			'UPDATE ' . self::TABLE . " SET last_status = 'ok', last_error_class = NULL, consecutive_failures = 0,
+			outage_failures = 0,
 			last_finished_at = ?, next_run_at = ?, lease_owner = NULL, lease_until = NULL" . self::HELD,
 			array($this->clock->now(), $nextRunAt)
 		);
@@ -141,22 +142,27 @@ final class JobRepository {
 		$this->writeHeld(
 			$lease,
 			'UPDATE ' . self::TABLE . " SET last_status = 'partial', last_error_class = NULL, consecutive_failures = 0,
+			outage_failures = 0,
 			last_finished_at = ?, next_run_at = ?, lease_owner = NULL, lease_until = NULL" . self::HELD,
 			array($this->clock->now(), $nextRunAt)
 		);
 	}
 
 	/**
+	 * consecutive_failures counts every failure and feeds backoff. Only an
+	 * outage, a failure to read Cloudflare at all, also counts toward
+	 * outage_failures, which decides when tunnels become unavailable.
+	 *
 	 * @return int consecutive_failures including this one
 	 */
-	public function fail(Lease $lease, string $errorClass, int $nextRunAt): int {
-		return (int) $this->db->transactional(function () use ($lease, $errorClass, $nextRunAt) {
+	public function fail(Lease $lease, string $errorClass, int $nextRunAt, bool $outage = false): int {
+		return (int) $this->db->transactional(function () use ($lease, $errorClass, $nextRunAt, $outage) {
 			$this->writeHeld(
 				$lease,
 				'UPDATE ' . self::TABLE . " SET last_status = 'failed', last_error_class = ?,
-				consecutive_failures = consecutive_failures + 1, last_finished_at = ?, next_run_at = ?,
-				lease_owner = NULL, lease_until = NULL" . self::HELD,
-				array($errorClass, $this->clock->now(), $nextRunAt)
+				consecutive_failures = consecutive_failures + 1, outage_failures = outage_failures + ?,
+				last_finished_at = ?, next_run_at = ?, lease_owner = NULL, lease_until = NULL" . self::HELD,
+				array($errorClass, $outage ? 1 : 0, $this->clock->now(), $nextRunAt)
 			);
 
 			/* The UPDATE's row lock lasts until commit, so this reads the value it wrote. */
@@ -165,6 +171,21 @@ final class JobRepository {
 				array($lease->jobId())
 			);
 		});
+	}
+
+	/**
+	 * A complete listing shows Cloudflare is reachable, so the outage
+	 * streak restarts even if the rest of the run fails.
+	 */
+	public function listed(Lease $lease): void {
+		$this->writeHeld($lease, 'UPDATE ' . self::TABLE . ' SET outage_failures = 0' . self::HELD, array());
+	}
+
+	public function outageStreak(Lease $lease): int {
+		return (int) $this->db->fetchCell(
+			'SELECT outage_failures FROM ' . self::TABLE . ' WHERE id = ?',
+			array($lease->jobId())
+		);
 	}
 
 	/**

@@ -304,7 +304,7 @@ final class DiscoveryService {
 		}
 
 		$counts = $this->db->transactional(function () use ($lease, $accountId, $tunnels): array {
-			$this->jobs->touch($lease);
+			$this->jobs->listed($lease);
 
 			return $this->rec->applyListing($accountId, $tunnels);
 		});
@@ -369,7 +369,8 @@ final class DiscoveryService {
 	/**
 	 * fail() checks the lease, so marking unavailable in the same
 	 * transaction cannot outlive a lost lease. A failure after the listing
-	 * committed passes $outage false: Cloudflare answered that run.
+	 * committed passes $outage false: Cloudflare answered that run, so the
+	 * outage streak does not grow.
 	 *
 	 * @param array{added: int, updated: int, deleted: int} $counts
 	 *
@@ -392,9 +393,10 @@ final class DiscoveryService {
 			$failures + 1
 		);
 
+		$outage = $outage && in_array($class, self::OUTAGE_CLASSES, true);
 		$marked = $this->db->transactional(function () use ($lease, $account, $class, $next, $outage): ?int {
-			$streak = $this->jobs->fail($lease, $class, $next);
-			if (!$outage || $streak < self::MARK_UNAVAILABLE_AFTER || !in_array($class, self::OUTAGE_CLASSES, true)) {
+			$this->jobs->fail($lease, $class, $next, $outage);
+			if (!$outage || $this->jobs->outageStreak($lease) < self::MARK_UNAVAILABLE_AFTER) {
 				return null;
 			}
 

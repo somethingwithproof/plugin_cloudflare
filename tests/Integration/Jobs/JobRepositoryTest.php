@@ -298,6 +298,36 @@ final class JobRepositoryTest extends IntegrationTestCase {
 		}
 	}
 
+	public function testOutageStreakCountsOnlyOutagesAndResetsOnListing(): void {
+		$this->repo()->ensure('discovery', $this->accountId);
+		$id = $this->jobId($this->accountId);
+
+		$lease = $this->leased($this->repo(), $id, 'host-a:1');
+		$this->assertSame(1, $this->repo()->fail($lease, ErrorClass::TRANSIENT, self::T0, true));
+		$lease = $this->leased($this->repo(), $id, 'host-a:1');
+		$this->repo()->fail($lease, ErrorClass::TRANSIENT, self::T0, true);
+		$lease = $this->leased($this->repo(), $id, 'host-a:1');
+		$this->assertSame(3, $this->repo()->fail($lease, ErrorClass::RATE_LIMITED, self::T0));
+
+		$this->assertSame(2, (int) $this->job($id)['outage_failures']);
+		$this->assertSame(3, (int) $this->job($id)['consecutive_failures']);
+
+		$lease = $this->leased($this->repo(), $id, 'host-a:1');
+		$this->assertSame(2, $this->repo()->outageStreak($lease));
+		$this->repo()->listed($lease);
+		$this->assertSame(0, (int) $this->job($id)['outage_failures']);
+		$this->assertSame(3, (int) $this->job($id)['consecutive_failures'], 'backoff still sees every failure');
+		$this->assertSame('host-a:1', $this->job($id)['lease_owner'], 'listed() keeps the lease');
+
+		$this->stealAndExpectLeaseLost($id, $lease);
+	}
+
+	private function stealAndExpectLeaseLost(int $id, Lease $lease): void {
+		$this->db->execute("UPDATE plugin_cloudflare_jobs SET lease_owner = 'other' WHERE id = ?", array($id));
+		$this->expectException(LeaseLost::class);
+		$this->repo()->listed($lease);
+	}
+
 	public function testPartialResetsFailuresAndReleases(): void {
 		$this->repo()->ensure('discovery', $this->accountId);
 		$id = $this->jobId($this->accountId);

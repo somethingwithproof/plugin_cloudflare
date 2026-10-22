@@ -113,6 +113,28 @@ final class M002DiscoveryTest extends IntegrationTestCase {
 		$this->assertGreaterThan(0, $accountId);
 	}
 
+	/* plugin_cloudflare_jobs shipped in M001, so its new column arrives by a guarded ALTER. */
+	public function testUpgradeFromV1AddsOutageFailuresToJobs(): void {
+		(new Migrator($this->db, array(new M001Foundation())))->migrate();
+		$this->assertSame(0, $this->columnCount('plugin_cloudflare_jobs', 'outage_failures'));
+
+		$this->migrator()->migrate();
+		$this->assertSame(1, $this->columnCount('plugin_cloudflare_jobs', 'outage_failures'));
+
+		foreach ((new M002Discovery())->statements($this->db) as $sql) {
+			$this->db->execute($sql);
+		}
+		$this->assertSame(1, $this->columnCount('plugin_cloudflare_jobs', 'outage_failures'));
+	}
+
+	private function columnCount(string $table, string $column): int {
+		return (int) $this->db->fetchCell(
+			'SELECT COUNT(*) FROM information_schema.columns
+			WHERE table_schema = DATABASE() AND table_name = ? AND column_name = ?',
+			array($table, $column)
+		);
+	}
+
 	public function testM002Idempotent(): void {
 		$this->migrator()->migrate();
 		$this->db->execute('DELETE FROM plugin_cloudflare_migrations WHERE version = 2');

@@ -394,6 +394,86 @@ final class DiscoveryServiceTest extends IntegrationTestCase {
 	}
 
 	/* A response we cannot parse says nothing about whether Cloudflare is up. */
+	public function testPostListingFailuresNeverBuildOutageStreak(): void {
+		$id = $this->account(self::CF_A);
+
+		for ($run = 1; $run <= 3; $run++) {
+			$this->makeDue($id);
+			$this->transport()->queue(FakeTransport::fixture('tunnel-list'));
+			$this->transport()->queue(FakeTransport::fixture('error-envelope', 429, array('Retry-After' => '600')));
+			$this->runDue();
+		}
+
+		$this->makeDue($id);
+		$this->queueTransient();
+		$this->assertSame(ErrorClass::TRANSIENT, $this->runDue()[$id]['error_class']);
+
+		$job = $this->job($id);
+		$this->assertSame('4', (string) $job['consecutive_failures']);
+		$this->assertSame('1', (string) $job['outage_failures']);
+		$this->assertSame(
+			array('active', 'active', 'active'),
+			array_values(array_column($this->tunnels($id), 'lifecycle'))
+		);
+	}
+
+	public function testLocalFaultsDoNotBuildOutageStreak(): void {
+		$id = $this->account(self::CF_A);
+		$this->discoverOnce($id);
+		$this->failTunnelWritesFor($id);
+
+		for ($run = 1; $run <= 3; $run++) {
+			$this->makeDue($id);
+			$this->transport()->queue(FakeTransport::fixture('tunnel-list'));
+			$this->runDue();
+		}
+
+		$this->makeDue($id);
+		$this->queueTransient();
+		$this->runDue();
+
+		$this->assertSame('4', (string) $this->job($id)['consecutive_failures']);
+		$this->assertSame('1', (string) $this->job($id)['outage_failures']);
+		$this->assertSame(
+			array('active', 'active', 'active'),
+			array_values(array_column($this->tunnels($id), 'lifecycle'))
+		);
+	}
+
+	/* A successful listing between outages restarts the count, even when its connections failed. */
+	public function testThreeListingOutagesStillMarkUnavailable(): void {
+		$id = $this->account(self::CF_A);
+		$this->discoverOnce($id);
+
+		$outage = function () use ($id): void {
+			$this->makeDue($id);
+			$this->queueTransient();
+			$this->runDue();
+		};
+
+		$outage();
+		$outage();
+		$this->makeDue($id);
+		$this->transport()->queue(FakeTransport::fixture('tunnel-list'));
+		$this->transport()->queue(FakeTransport::fixture('error-envelope', 429, array('Retry-After' => '600')));
+		$this->runDue();
+		$this->assertSame('0', (string) $this->job($id)['outage_failures']);
+
+		$outage();
+		$outage();
+		$this->assertSame(
+			array('active', 'active', 'active'),
+			array_values(array_column($this->tunnels($id), 'lifecycle'))
+		);
+
+		$outage();
+		$this->assertSame('3', (string) $this->job($id)['outage_failures']);
+		$this->assertSame(
+			array('unavailable', 'unavailable', 'unavailable'),
+			array_values(array_column($this->tunnels($id), 'lifecycle'))
+		);
+	}
+
 	public function testMalformedFailuresNeverMarkUnavailable(): void {
 		$id = $this->account(self::CF_A);
 		$this->discoverOnce($id);

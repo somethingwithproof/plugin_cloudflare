@@ -88,22 +88,29 @@ plugin has no runtime Composer dependencies.
   `tunnels`, `connectors`, and the `outage_failures` and `last_success_at`
   columns on `jobs`. Migration 3 (M3): `resources`, `metric_mappings`, and the
   `connections_error_class` and `create_graphs` columns on `tunnels` and
-  `accounts`. This spreads the tables over three migrations, so the upgrade path gets
-  exercised during development.
+  `accounts`.
 - Core Cacti never calls an upgrade function (agent survey of
   `lib/plugins.php`). `plugin_cloudflare_upgrade()` compares the INFO version
   with `plugin_config.version`, runs pending migrations, and writes the new
   version. It is called from the `config_settings` hook and at the top of
-  every plugin page, the same way Thold does it.
+  every plugin page, the same way Thold does it. Until then the collector
+  exits at once with one LOW log line, because the account read needs the new
+  columns. `poller_bottom` still launches it, so that line reaches the log.
 
 ## Uninstall and retention
 
 Uninstall drops the plugin's own tables, which hold inventory, job state and
 encrypted credentials. All of it can be rediscovered or re-entered.
 Uninstall does not remove Cacti devices, graphs, data sources, RRD files,
-templates or the copied data query XML created for Cloudflare. Those hold historical monitoring data, and
-removing them stays an explicit administrator action in Cacti. The README
-says this.
+templates or the copied data query XML created for Cloudflare. Those hold
+historical monitoring data, and removing them stays an explicit administrator
+action in Cacti.
+
+Without its resources row, which uninstall drops and an account delete
+cascades, the kept device belongs to no account. Its graphs keep their history
+but print `U`. Create Cacti Device makes a new device and does not adopt the
+old host: matching by hostname would let a re-created account claim a host it
+never made.
 
 ## Credentials
 

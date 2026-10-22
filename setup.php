@@ -59,8 +59,9 @@ function plugin_cloudflare_install() : void {
 /**
  * Cacti removes hooks, realms and plugin_config itself after this returns
  * (lib/plugins.php:801). Devices, graphs, RRD files, the imported templates
- * and resource/script_server/cloudflare_tunnels.xml are left alone, so
- * existing graphs keep working after a reinstall.
+ * and resource/script_server/cloudflare_tunnels.xml are left alone. The old
+ * device keeps its history, but no account owns it after a reinstall, so its
+ * data sources print U, and Create Cacti Device makes a new device.
  */
 function plugin_cloudflare_uninstall() : void {
 	try {

@@ -72,8 +72,8 @@ The checks run in that order and the first one that fails gives the reason:
    gives `never_collected`, even when `connections_refreshed_at` is set. A
    Cloudflare status outside the health table gives `malformed` for health
    only; the other metrics are unaffected. `versions` counts connector rows,
-   so it has no null state of its own: when the counts are null but a refresh
-   time is set, which discovery never stores, it would print 0.
+   which discovery stores together with `connector_count`, so a null
+   `connector_count` also makes `versions` unknown with `never_collected`.
 
 A failing job comes first because it explains the rest. Discovery marks
 tunnels `unavailable` after repeated outages, so the job's error class is the
@@ -119,8 +119,8 @@ reader rejects anything that is not a lowercase UUID before querying.
 
 Cacti samples the latest observation on every poll. Discovery runs once per
 interval, so a gauge repeats the same value between discoveries. The RRD
-timestamp is the poll time, which can be up to one discovery interval after
-`observed_at`.
+timestamp is the poll time, which can be up to the full window,
+`2 * discovery_interval + 60` seconds, after `observed_at`.
 
 ## Schema version
 

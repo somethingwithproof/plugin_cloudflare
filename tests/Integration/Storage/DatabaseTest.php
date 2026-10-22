@@ -216,4 +216,16 @@ final class DatabaseTest extends TestCase {
 
 		$this->assertSame(1, (int) $db->fetchCell('SELECT 1'));
 	}
+
+	public function testNonConstraintErrorMasksQuotedLiterals(): void {
+		try {
+			$this->db->fetchAll('SELECT * FROM plugin_cloudflare_probe WHERE no_such_col_s3cr3t = 1');
+			$this->fail('Expected DatabaseException');
+		} catch (DatabaseException $e) {
+			$this->assertSame('42S22', $e->getSqlState());
+			$this->assertStringContainsString('42S22', $e->getMessage());
+			$this->assertStringContainsString('Unknown column', $e->getMessage());
+			$this->assertStringNotContainsString('no_such_col_s3cr3t', $e->getMessage());
+		}
+	}
 }

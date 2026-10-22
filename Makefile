@@ -8,7 +8,7 @@ SMOKE := docker compose -p cf-smoke -f tests/docker/compose.cacti.yml
 # interleave their resets.
 .NOTPARALLEL:
 
-.PHONY: test test-integration bdd stan cs lint74 db-up db-down ci coverage package cacti-src smoke smoke-up smoke-down
+.PHONY: test test-integration bdd stan cs lint74 db-up db-down ci coverage package cacti-src smoke smoke-up smoke-down screenshots
 
 test:
 	$(PHPUNIT) --testsuite unit
@@ -59,3 +59,8 @@ smoke-up: cacti-src
 smoke-down:
 	$(SMOKE) down -v --remove-orphans
 
+# Brings up the smoke-up stack, captures docs/images/*.png, and
+# takes the stack down again whether or not the capture succeeds.
+screenshots: smoke-up
+	bash tests/docker/screenshots.sh || { $(SMOKE) down -v --remove-orphans; exit 1; }
+	$(SMOKE) down -v --remove-orphans

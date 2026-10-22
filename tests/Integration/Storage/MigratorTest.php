@@ -172,7 +172,10 @@ final class MigratorTest extends TestCase {
 			$pdo->query("SELECT RELEASE_LOCK('plugin_cloudflare_migrate')");
 		}
 
-		$this->assertSame(1, $this->migrator()->currentVersion());
+		$latest = max(array_map(function ($m) {
+			return $m->version();
+		}, Migrator::defaultMigrations()));
+		$this->assertSame($latest, $this->migrator()->currentVersion());
 	}
 
 	public function testAccountIdUniqueConstraint(): void {

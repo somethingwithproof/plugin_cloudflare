@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 200" width="220" height="200" role="img" aria-labelledby="title desc">
   <title id="title">Cacti Cloudflare plugin logo</title>
-  <desc id="desc">A hand-drawn green saguaro cactus beside a stone tunnel portal with a road running into it. A smiling white cloud sits on the portal and drips raindrops toward the cactus.</desc>
+  <desc id="desc">A cheerful hand-drawn saguaro peers through a brass telescope at a smiling cloud, which looks back at it. Beside them a road runs into a stone tunnel.</desc>
   <defs>
     <linearGradient id="skin" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#c3ec6d"/>
@@ -15,71 +15,95 @@
       <stop offset="0" stop-color="#1c2430"/>
       <stop offset="1" stop-color="#3b4656"/>
     </linearGradient>
+    <linearGradient id="brass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f6d77a"/>
+      <stop offset="1" stop-color="#c58b26"/>
+    </linearGradient>
   </defs>
 
-  <g stroke="#111" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round">
-    <!-- tunnel portal -->
-    <path d="M22 186 V96 C22 38 150 38 150 96 V186 Z" fill="url(#stone)"/>
-    <path d="M46 186 V102 C46 66 126 66 126 102 V186 Z" fill="url(#depth)"/>
+  <!-- ground -->
+  <ellipse cx="110" cy="190" rx="104" ry="7" fill="#e8d7b0"/>
 
-    <!-- road into the tunnel -->
-    <path d="M58 186 L114 186 L96 120 L76 120 Z" fill="#59626e" stroke-width="2.5"/>
+  <!-- tunnel portal and road -->
+  <g stroke="#111" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M128 189 V134 C128 98 212 98 212 134 V189 Z" fill="url(#stone)"/>
+    <path d="M144 189 V138 C144 116 196 116 196 138 V189 Z" fill="url(#depth)"/>
+    <path d="M150 189 L190 189 L176 142 L164 142 Z" fill="#59626e" stroke-width="2.5"/>
   </g>
   <g fill="#f4f1e8">
-    <rect x="84.5" y="170" width="3" height="12" rx="1"/>
-    <rect x="85" y="150" width="2.4" height="9" rx="1"/>
-    <rect x="85.3" y="134" width="1.8" height="7" rx="0.9"/>
+    <rect x="168.5" y="174" width="3" height="10" rx="1"/>
+    <rect x="169" y="158" width="2.2" height="7" rx="1"/>
+    <rect x="169.3" y="146" width="1.6" height="5" rx="0.8"/>
   </g>
 
-  <!-- a friendly cloud resting on the portal; the outline comes from a
-       thicker black copy of the same circles drawn underneath -->
+  <!-- cloud: the outline is a thicker black copy of the same circles -->
   <g fill="#111">
-    <circle cx="36" cy="44" r="16"/>
-    <circle cx="56" cy="30" r="21"/>
-    <circle cx="80" cy="33" r="18"/>
-    <circle cx="97" cy="46" r="14"/>
-    <circle cx="66" cy="50" r="17"/>
-    <circle cx="46" cy="53" r="14"/>
-    <circle cx="86" cy="54" r="12"/>
+    <circle cx="148" cy="38" r="15"/>
+    <circle cx="166" cy="26" r="20"/>
+    <circle cx="189" cy="30" r="17"/>
+    <circle cx="204" cy="42" r="12"/>
+    <circle cx="176" cy="46" r="16"/>
+    <circle cx="157" cy="48" r="13"/>
+    <circle cx="195" cy="50" r="11"/>
   </g>
   <g fill="#ffffff">
-    <circle cx="36" cy="44" r="12.5"/>
-    <circle cx="56" cy="30" r="17.5"/>
-    <circle cx="80" cy="33" r="14.5"/>
-    <circle cx="97" cy="46" r="10.5"/>
-    <circle cx="66" cy="50" r="13.5"/>
-    <circle cx="46" cy="53" r="10.5"/>
-    <circle cx="86" cy="54" r="8.5"/>
+    <circle cx="148" cy="38" r="11.5"/>
+    <circle cx="166" cy="26" r="16.5"/>
+    <circle cx="189" cy="30" r="13.5"/>
+    <circle cx="204" cy="42" r="8.5"/>
+    <circle cx="176" cy="46" r="12.5"/>
+    <circle cx="157" cy="48" r="9.5"/>
+    <circle cx="195" cy="50" r="7.5"/>
   </g>
-  <path d="M30 52 C40 62 84 64 100 52 C96 60 84 64 66 64 C48 64 36 60 30 52 Z" fill="#cfe3f7"/>
-  <!-- face -->
-  <ellipse cx="58" cy="41" rx="3" ry="4" fill="#111"/>
-  <ellipse cx="76" cy="41" rx="3" ry="4" fill="#111"/>
-  <circle cx="59" cy="39.5" r="1.1" fill="#fff"/>
-  <circle cx="77" cy="39.5" r="1.1" fill="#fff"/>
-  <path d="M61 49 Q67 55 73 49" fill="none" stroke="#111" stroke-width="2.5" stroke-linecap="round"/>
-  <circle cx="51" cy="48" r="3.5" fill="#f7a9b8" opacity="0.8"/>
-  <circle cx="83" cy="48" r="3.5" fill="#f7a9b8" opacity="0.8"/>
+  <path d="M142 47 C152 57 194 59 208 47 C204 55 192 59 176 59 C160 59 148 55 142 47 Z" fill="#cfe3f7"/>
+  <!-- the cloud looks down at the telescope -->
+  <ellipse cx="166" cy="36" rx="3.2" ry="4.2" fill="#111"/>
+  <ellipse cx="184" cy="36" rx="3.2" ry="4.2" fill="#111"/>
+  <circle cx="165" cy="38.5" r="1.1" fill="#fff"/>
+  <circle cx="183" cy="38.5" r="1.1" fill="#fff"/>
+  <path d="M168 44 Q175 51 182 44" fill="none" stroke="#111" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="159" cy="44" r="3.5" fill="#f7a9b8" opacity="0.85"/>
+  <circle cx="191" cy="44" r="3.5" fill="#f7a9b8" opacity="0.85"/>
+  <!-- sparkle -->
+  <path d="M128 18 L130 24 L136 26 L130 28 L128 34 L126 28 L120 26 L126 24 Z" fill="#ffd54f" stroke="#111" stroke-width="1.5" stroke-linejoin="round"/>
 
-  <!-- raindrops for the cactus -->
-  <g fill="#7cc4f2" stroke="#111" stroke-width="2" stroke-linejoin="round">
-    <path d="M108 62 C108 62 102 70 102 74 A6 6 0 0 0 114 74 C114 70 108 62 108 62 Z"/>
-    <path d="M120 68 C120 68 116 73 116 76 A4 4 0 0 0 124 76 C124 73 120 68 120 68 Z"/>
+  <!-- telescope tripod -->
+  <g stroke="#111" stroke-width="6" stroke-linecap="round">
+    <line x1="100" y1="72" x2="84" y2="188"/>
+    <line x1="100" y1="72" x2="100" y2="188"/>
+    <line x1="100" y1="72" x2="116" y2="188"/>
+  </g>
+  <g stroke="#a1887f" stroke-width="3" stroke-linecap="round">
+    <line x1="100" y1="72" x2="84" y2="188"/>
+    <line x1="100" y1="72" x2="100" y2="188"/>
+    <line x1="100" y1="72" x2="116" y2="188"/>
+  </g>
+
+  <!-- telescope: eyepiece by the cactus, objective aimed at the cloud -->
+  <g transform="translate(66 92) rotate(-32)" stroke="#111" stroke-width="3" stroke-linejoin="round">
+    <rect x="-9" y="-4.5" width="12" height="9" rx="2" fill="#5d4037"/>
+    <rect x="0" y="-7.5" width="70" height="15" rx="3" fill="url(#brass)"/>
+    <rect x="62" y="-11" width="20" height="22" rx="4" fill="url(#brass)"/>
+    <line x1="22" y1="-7.5" x2="22" y2="7.5" stroke-width="2"/>
+    <line x1="44" y1="-7.5" x2="44" y2="7.5" stroke-width="2"/>
+    <ellipse cx="82" cy="0" rx="3" ry="9" fill="#9fd3f5" stroke-width="2"/>
   </g>
 
   <!-- saguaro -->
   <g fill="url(#skin)" stroke="#111" stroke-width="3.5" stroke-linejoin="round">
-    <path d="M131 141 C118 141 104 137 104 121 L104 99 C104 85 120 85 120 99 L120 120 C120 125 124 127 131 127 Z"/>
-    <path d="M160 119 C168 119 172 116 172 110 L172 82 C172 68 188 68 188 82 L188 112 C188 129 175 134 160 134 Z"/>
-    <path d="M132 192 C129 150 127 104 129 76 C130 56 160 54 161 76 C163 104 162 150 159 192 Z"/>
+    <path d="M42 140 C29 140 16 136 16 120 L16 92 C16 78 32 78 32 92 L32 118 C32 124 36 126 42 126 Z"/>
+    <path d="M44 189 C41 150 39 104 41 76 C42 56 72 54 73 76 C75 104 74 150 71 189 Z"/>
   </g>
-
-  <!-- ribs -->
   <g stroke="#e6f7c0" stroke-width="1.6" stroke-linecap="round" fill="none" opacity="0.7">
-    <path d="M138 70 C136 100 136 150 138 186"/>
-    <path d="M145 64 C145 100 145 150 145 188"/>
-    <path d="M152 70 C154 100 154 150 152 186"/>
-    <path d="M112 94 V122"/>
-    <path d="M180 78 V114"/>
+    <path d="M50 102 C49 130 49 160 50 184"/>
+    <path d="M57 104 C57 130 57 160 57 186"/>
+    <path d="M64 102 C66 130 66 160 64 184"/>
+    <path d="M24 90 V120"/>
   </g>
+  <!-- face: one eye squeezed shut, the other at the eyepiece -->
+  <path d="M46 82 Q50 78 54 82" fill="none" stroke="#111" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="61" cy="82" r="3.4" fill="#111"/>
+  <circle cx="62" cy="80.8" r="1.1" fill="#fff"/>
+  <path d="M48 93 Q54 99 60 93" fill="none" stroke="#111" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="45" cy="89" r="3" fill="#f7a9b8" opacity="0.75"/>
 </svg>

@@ -5,6 +5,10 @@
 [![License: GPL-2.0-or-later](https://img.shields.io/badge/license-GPL--2.0--or--later-blue.svg)](LICENSE)
 ![PHP >= 7.4](https://img.shields.io/badge/php-%3E%3D7.4-777bb4.svg)
 ![Cacti >= 1.2.25](https://img.shields.io/badge/cacti-%3E%3D1.2.25-2e7d32.svg)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=somethingwithproof_plugin_cloudflare&metric=coverage)](https://sonarcloud.io/summary/new_code?id=somethingwithproof_plugin_cloudflare)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=somethingwithproof_plugin_cloudflare&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=somethingwithproof_plugin_cloudflare)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=somethingwithproof_plugin_cloudflare&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=somethingwithproof_plugin_cloudflare)
+![Cloudflare API: read-only](https://img.shields.io/badge/cloudflare%20api-read--only-f38020.svg)
 
 A Cacti 1.2 plugin that is being built to monitor Cloudflare Tunnels and
 zone analytics. It reads from the Cloudflare API with scoped API tokens,
@@ -21,6 +25,67 @@ create graphs or collect analytics yet.
 | Add, edit, delete, enable and disable Cloudflare accounts | GraphQL analytics and Thold alerts (Milestone 4) |
 | Store a token in a file or encrypted in the Cacti database | |
 | Verify a token and check its tunnel and zone read permissions | |
+
+## Why this plugin
+
+Cacti operators who publish services through Cloudflare Tunnel have no view
+of the tunnel inside Cacti. A tunnel can lose all of its connectors while
+the origin hosts still answer SNMP, so the existing graphs stay green while
+users see errors. The goal of this plugin is to put tunnel health and zone
+traffic next to the device graphs operators already watch, without giving
+Cacti any ability to change Cloudflare.
+
+Three constraints shape the design:
+
+- **Read-only.** The plugin only calls `GET` endpoints and the GraphQL
+  Analytics API. It needs no edit permission on any Cloudflare resource.
+- **Optional.** Cloudflare outages, expired tokens and rate limits must not
+  slow the Cacti UI or stall polling of other devices. All API calls have
+  hard timeouts, and collection (Milestone 2) runs in a background process
+  launched by the poller.
+- **No core changes.** The plugin uses only the Cacti 1.2 plugin hooks and
+  its own tables, so Cacti upgrades and other plugins are unaffected.
+
+## How it works
+
+```mermaid
+flowchart LR
+    subgraph Cacti["Cacti 1.2"]
+        UI["Accounts page<br/>(Configure realm)"]
+        Poller["poller.php<br/>poller_bottom hook"]
+        DB[("plugin_cloudflare_*<br/>tables")]
+    end
+    subgraph Plugin["plugin src/"]
+        Svc["AccountService<br/>authorization, validation"]
+        Vault["TokenVault / TokenFile"]
+        Client["CloudflareClient<br/>error classes, bounded retries"]
+        Transport["CurlTransport<br/>allowlist, TLS, timeouts"]
+    end
+    CF["api.cloudflare.com"]
+
+    UI --> Svc
+    Svc --> Vault
+    Svc --> DB
+    Svc --> Client
+    Client --> Transport --> CF
+    Poller -. "Milestone 2" .-> Client
+```
+
+- **Cacti glue** (`setup.php`, `includes/`, the page scripts) registers
+  hooks and realms, renders pages with Cacti's own helpers, and delegates
+  every action to the library in `src/`.
+- **The library** (`src/`, namespace `Cacti\PluginCloudflare\`) has no
+  dependency on Cacti globals, so it is tested against a real database and
+  a fake HTTP transport without a running Cacti.
+- **One outbound path.** `CurlTransport` is the only code that touches the
+  network, and it accepts only `https://api.cloudflare.com`. Each failure
+  is mapped to one error class (`auth`, `permission`, `rate_limited`,
+  `transient`, ...), which drives the status shown in the UI.
+- **Storage** goes through Cacti's own PDO connection with prepared
+  statements. Schema changes are numbered, idempotent migrations.
+
+The design decisions and their reasons are in
+[docs/design.md](docs/design.md).
 
 ## Screenshots
 
@@ -145,6 +210,31 @@ remove the key file, token files, or any Cacti devices, graphs, data sources,
 RRD files or templates. Those hold historical monitoring data, and removing
 them is an explicit administrator action in Cacti.
 
+## Security
+
+- Global API Keys are refused; only scoped API tokens are accepted.
+- Tokens are stored in a file you provision or encrypted with AES-256-GCM
+  under a key file that never enters the database. They are never shown
+  in a page, written to a log, or included in an error message.
+- Database errors carry only the SQLSTATE and the driver error code, never
+  the statement's values.
+- Every change is a POST protected by Cacti's CSRF token, and is checked
+  against the Cloudflare: Configure permission. A disabled plugin refuses
+  its pages.
+
+Details and known limitations are in [docs/security.md](docs/security.md).
+Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
+
+## Roadmap
+
+| Milestone | Scope | State |
+|---|---|---|
+| 1. Foundation | Plugin lifecycle, permissions, account configuration, connection test | In review ([#1](https://github.com/somethingwithproof/plugin_cloudflare/pull/1)) |
+| 2. Discovery | Tunnel and connector discovery in a background collector, Overview, Tunnels and Connectors pages | Planned |
+| 3. Metrics | Tunnel health data sources, graph templates, outage handling that never records a fabricated zero | Planned |
+| 4. Analytics and alerting | Plan-aware GraphQL analytics per zone, Thold thresholds with outage suppression | Planned |
+| 5. Hardening | Fault injection, TLA+ models of discovery and collection, full documentation | Planned |
+
 ## Development
 
 The tools need PHP 8.x and Composer; the plugin code itself stays PHP 7.4
@@ -164,6 +254,14 @@ make db-down
 to its path. The integration tests read `CF_TEST_DSN`, `CF_TEST_DB_USER`
 and `CF_TEST_DB_PASS`, and skip when the database is unreachable unless `CI`
 is set.
+
+## Contributing
+
+Pull requests are welcome. Each commit needs a DCO sign-off
+(`git commit -s`). Write the test first; `make ci` must pass, and changes
+to the Cacti glue should also pass `make smoke`. Plugin code must stay PHP
+7.4 compatible and follow Cacti's code style (tabs, single quotes, braces
+on the same line).
 
 ## Documentation
 

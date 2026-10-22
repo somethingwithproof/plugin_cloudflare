@@ -454,7 +454,9 @@ final class CloudflareClient {
 		}
 
 		$name = isset($item['name']) && is_string($item['name']) ? self::cleanName($item['name']) : $id;
-		$type = isset($item['tun_type']) && is_string($item['tun_type']) ? self::clip(self::cleanName($item['tun_type']), self::MAX_SHORT) : '';
+		$type = isset($item['tun_type']) && is_string($item['tun_type'])
+			? self::clip(self::cleanName($item['tun_type']), self::MAX_SHORT)
+			: '';
 
 		return new TunnelRecord(
 			$id,

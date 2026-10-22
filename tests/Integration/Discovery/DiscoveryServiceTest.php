@@ -430,6 +430,38 @@ final class DiscoveryServiceTest extends IntegrationTestCase {
 		), $this->leveled);
 	}
 
+	/* A default install logs at LOW, so one line per failing tunnel would be up to 200 lines a run. */
+	public function testConnectionsFailuresLogOncePerClassAtLowPlusATally(): void {
+		$id  = $this->account(self::CF_A);
+		$ids = array();
+		for ($i = 1; $i <= 5; $i++) {
+			$ids[] = sprintf('00000000-0000-4000-8000-%012x', $i);
+		}
+		$this->transport()->queue(self::listingPage($ids, 5));
+		for ($i = 0; $i < 5; $i++) {
+			$this->queueTransient();
+		}
+
+		$this->assertSame('ok', $this->runDue()[$id]['status']);
+
+		$failure = 'CLOUDFLARE: discovery connections failed account=' . $id . ' class=' . ErrorClass::TRANSIENT;
+		$this->assertSame(array(
+			array(DiscoveryService::LOG_LOW, $failure),
+			array(DiscoveryService::LOG_MEDIUM, $failure),
+			array(DiscoveryService::LOG_MEDIUM, $failure),
+			array(DiscoveryService::LOG_MEDIUM, $failure),
+			array(DiscoveryService::LOG_MEDIUM, $failure),
+			array(
+				DiscoveryService::LOG_LOW,
+				'CLOUDFLARE: discovery account=' . $id . ' connections failed class=' . ErrorClass::TRANSIENT . ' tunnels=5',
+			),
+			array(
+				DiscoveryService::LOG_MEDIUM,
+				'CLOUDFLARE: discovery ok account=' . $id . ' added=5 updated=0 deleted=0 connection_failures=5',
+			),
+		), $this->leveled);
+	}
+
 	public function testThreeFailuresMarkUnavailable(): void {
 		$id = $this->account(self::CF_A);
 		$this->discoverOnce($id);

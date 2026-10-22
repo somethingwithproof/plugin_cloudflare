@@ -349,6 +349,7 @@ final class DiscoveryService {
 
 		$skipped = 0;
 		$partial = false;
+		$failed  = array();
 
 		/* One row past the allowance tells a finished account from a cut-off one. */
 		$repo  = new TunnelRepository($this->db);
@@ -378,8 +379,19 @@ final class DiscoveryService {
 					continue;
 				}
 
-				$this->say('CLOUDFLARE: discovery connections failed account=' . $accountId . ' class=' . $class, self::LOG_LOW);
+				/*
+				 * Every tunnel can fail the same way, and a default install logs
+				 * at LOW, so only the first of each class goes out at LOW. The
+				 * tally after the loop carries the count.
+				 */
+				$this->say(
+					'CLOUDFLARE: discovery connections failed account=' . $accountId . ' class=' . $class,
+					isset($failed[$class]) ? self::LOG_MEDIUM : self::LOG_LOW
+				);
+				$failed[$class] = ($failed[$class] ?? 0) + 1;
 				if (in_array($class, self::STOP_CLASSES, true)) {
+					$this->tallyConnectionFailures($accountId, $failed);
+
 					return $this->failed($lease, $account, $failures, $class, $e->getRetryAfter(), $counts, false);
 				}
 
@@ -393,6 +405,8 @@ final class DiscoveryService {
 				$this->rec->applyConnections($tunnelRowId, $connectors);
 			});
 		}
+
+		$this->tallyConnectionFailures($accountId, $failed);
 
 		/* A cut-off run resumes on the normal schedule; the stalest tunnels go first next time. */
 		$next   = JobRepository::nextRun($this->clock->now(), $account->discoveryInterval(), null, null, 0);
@@ -472,6 +486,19 @@ final class DiscoveryService {
 			'updated'     => $counts['updated'],
 			'deleted'     => $counts['deleted'],
 		);
+	}
+
+	/**
+	 * @param array<string, int> $failed error class => tunnels that failed with it
+	 */
+	private function tallyConnectionFailures(int $accountId, array $failed): void {
+		foreach ($failed as $class => $tunnels) {
+			$this->say(
+				'CLOUDFLARE: discovery account=' . $accountId . ' connections failed class=' . $class
+				. ' tunnels=' . $tunnels,
+				self::LOG_LOW
+			);
+		}
 	}
 
 	private function say(string $line, int $level): void {

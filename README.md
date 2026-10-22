@@ -260,13 +260,17 @@ failed listing never deletes one. A failure to read Cloudflare at all
 (`transient`, `rate_limited`, `auth` or `permission`) counts toward an outage;
 after three in a row, before any complete listing, the account's active
 tunnels become `unavailable`. The next complete listing restores them and
-resets the count.
+resets the count. A tunnel that Cloudflare no longer knows when its
+connections are read is skipped without failing the account.
 
 In `cacti.log`, discovery lines start with `CLOUDFLARE: discovery` and the run
-summary with `CLOUDFLARE: collector`. Failures and lifecycle changes, such as a failed listing or tunnels marked
-`unavailable`, are logged at Cacti's default `LOW` level; each account's
-result and the run summary are logged at `MEDIUM`. A tunnel that Cloudflare no longer knows when its
-connections are read is skipped without failing the account.
+summary with `CLOUDFLARE: collector`. Failures and lifecycle changes, such as
+a failed listing or tunnels marked `unavailable`, are logged at Cacti's
+default `LOW` level; each account's result and the run summary are logged at
+`MEDIUM`. Connection reads can fail on every tunnel, so for each account only
+the first failure of each error class is logged at `LOW`, the rest at
+`MEDIUM`, followed by one `LOW` line per class with the number of tunnels that
+failed.
 
 Management > Cloudflare Tunnels needs the Cloudflare: View permission and is
 read-only:

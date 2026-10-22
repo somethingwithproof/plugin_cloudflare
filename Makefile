@@ -38,8 +38,10 @@ db-down:
 ci: test test-integration bdd stan cs lint74
 
 # Needs pcov or xdebug and the test database; Sonar reads the clover file.
+# phpunit.xml.dist names the measured files. pcov instruments only src/ by
+# default, which left the glue at zero, so it is pointed at the whole tree.
 coverage:
-	php -d memory_limit=-1 $(PHPUNIT) --coverage-filter src --coverage-filter includes --coverage-clover build/coverage/clover.xml
+	php -d memory_limit=-1 -d pcov.directory=. -d 'pcov.exclude=~/(vendor|tests)/~' $(PHPUNIT) --coverage-clover build/coverage/clover.xml
 
 package:
 	bash tests/build/package.sh

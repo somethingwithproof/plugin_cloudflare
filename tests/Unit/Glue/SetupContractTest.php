@@ -238,6 +238,53 @@ final class SetupContractTest extends TestCase {
 		$this->assertSame(array('cloudflare'), $queries[0][1]);
 	}
 
+	public function testCheckConfigUsesTheRealExtensionList(): void {
+		$expected = extension_loaded('curl') && extension_loaded('openssl') && extension_loaded('pdo_mysql');
+
+		$this->assertSame($expected, plugin_cloudflare_check_config());
+	}
+
+	public function testUninstallStillClearsSettingsWhenTheDatabaseIsUnreachable(): void {
+		unset($GLOBALS['database_sessions']);
+
+		plugin_cloudflare_uninstall();
+
+		$this->assertSame(array('CLOUDFLARE: dropping plugin tables failed: SQLSTATE[HY000] driver error 2002'), self::loggedLines());
+		$this->assertSame(array(
+			array('DELETE FROM settings WHERE name LIKE ? ESCAPE \'!\'', array('cloudflare!_%')),
+		), cloudflare_glue_calls('db_execute_prepared'));
+	}
+
+	/**
+	 * @return array<string, array{0: mixed, 1: int}>
+	 */
+	public static function settingValues(): array {
+		return array(
+			'unset'          => array('', 10),
+			'in range'       => array('30', 30),
+			'lower bound'    => array('5', 5),
+			'upper bound'    => array('60', 60),
+			'below range'    => array('4', 10),
+			'above range'    => array('61', 10),
+			'not a number'   => array('ten', 10),
+			'fraction'       => array('12.5', 10),
+			'padded'         => array(' 12 ', 12),
+			'leading zero'   => array('012', 10),
+			'exponent'       => array('1e1', 10),
+		);
+	}
+
+	/**
+	 * @dataProvider settingValues
+	 *
+	 * @param mixed $stored
+	 */
+	public function testIntegerSettingFallsBackWhenUnusable($stored, int $expected): void {
+		$GLOBALS['cloudflare_glue']['settings']['cloudflare_ui_timeout'] = $stored;
+
+		$this->assertSame($expected, cloudflare_setting_int('cloudflare_ui_timeout', 10, 5, 60));
+	}
+
 	public function testUpgradeSkipsWhenPluginIsNotInstalled(): void {
 		$this->assertFalse(plugin_cloudflare_upgrade());
 		$this->assertSame(array(), cloudflare_glue_calls('db_execute_prepared'));

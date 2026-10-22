@@ -26,9 +26,7 @@
  * The release archive ships no vendor/ tree, so src/ is loaded by this
  * PSR-4 loader. A development checkout uses Composer's autoloader instead.
  */
-if (is_file(dirname(__DIR__) . '/vendor/autoload.php')) {
-	require_once dirname(__DIR__) . '/vendor/autoload.php';
-} elseif (!function_exists('cloudflare_autoload')) {
+if (!function_exists('cloudflare_autoload')) {
 	function cloudflare_autoload(string $class) : void {
 		$prefix = 'Cacti\\PluginCloudflare\\';
 
@@ -48,6 +46,12 @@ if (is_file(dirname(__DIR__) . '/vendor/autoload.php')) {
 			require_once $file;
 		}
 	}
+}
 
-	spl_autoload_register('cloudflare_autoload');
+if (is_file(dirname(__DIR__) . '/vendor/autoload.php')) {
+	require_once dirname(__DIR__) . '/vendor/autoload.php';
+} else {
+	/* The test suite always runs from a checkout with vendor/; the install
+	 * smoke runs this branch from a copy without it. */
+	spl_autoload_register('cloudflare_autoload'); // @codeCoverageIgnore
 }

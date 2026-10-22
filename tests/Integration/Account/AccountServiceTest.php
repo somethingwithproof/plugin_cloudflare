@@ -612,4 +612,63 @@ final class AccountServiceTest extends TestCase {
 
 		$this->service()->setEnabled(999, true);
 	}
+
+	public function testNewCredentialsResetAVerifiedStatus(): void {
+		$id = $this->service()->save(null, $this->input());
+		$this->queueVerifyOk();
+		$this->service()->verify($id);
+
+		$this->service()->save($id, $this->input(array('token' => '', 'name' => 'Renamed')));
+		$this->assertSame('ok', $this->rawRow($id)['status'], 'a rename keeps the verify result');
+
+		$this->service()->save($id, $this->input(array('token' => 'cfut_' . bin2hex(random_bytes(20)))));
+
+		$row = $this->rawRow($id);
+		$this->assertSame('unknown', $row['status']);
+		$this->assertSame('', $row['status_message']);
+		$this->assertNull($row['permissions']);
+		$this->assertStringContainsString('ok -> unknown [credentials changed]', (string) end($this->logged));
+		$this->assertNotLeaked($this->token, implode("\n", $this->logged), 'log');
+	}
+
+	public function testOmittedFlagsKeepTheStoredValues(): void {
+		$id    = $this->service()->save(null, $this->input(array('enabled' => 0, 'collect_tunnels' => 0, 'collect_analytics' => 1)));
+		$input = $this->input(array('token' => '', 'name' => 'Renamed'));
+		unset($input['enabled'], $input['collect_tunnels'], $input['collect_analytics']);
+
+		$this->service()->save($id, $input);
+
+		$row = $this->rawRow($id);
+		$this->assertSame(array(0, 0, 1), array((int) $row['enabled'], (int) $row['collect_tunnels'], (int) $row['collect_analytics']));
+	}
+
+	public function testVerifyOfAVaultTokenWithoutTheVaultMarksError(): void {
+		$id = $this->service()->save(null, $this->input());
+
+		$account = $this->service(null)->verify($id);
+
+		$this->assertSame('error', $account->status());
+		$this->assertSame('Stored token cannot be decrypted', $account->statusMessage());
+		$this->assertSame(array(), $this->transport->requests());
+	}
+
+	public function testVerifyOfAVaultAccountWithNoCiphertextMarksError(): void {
+		$id = $this->service()->save(null, $this->input());
+		$this->db->execute('UPDATE plugin_cloudflare_accounts SET token_ciphertext = NULL WHERE id = ?', array($id));
+
+		$this->assertSame('error', $this->service()->verify($id)->status());
+		$this->assertSame(array(), $this->transport->requests());
+	}
+
+	public function testVerifyThatStaysRateLimitedRecordsIt(): void {
+		$id = $this->service()->save(null, $this->input());
+		for ($i = 0; $i < 3; $i++) {
+			$this->transport->queue(new Response(429, array(), '{"success":false,"errors":[]}'));
+		}
+
+		$account = $this->service()->verify($id);
+
+		$this->assertSame('rate_limited', $account->status());
+		$this->assertNull($account->lastVerifiedAt());
+	}
 }

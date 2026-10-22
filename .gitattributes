@@ -1,0 +1,15 @@
+* text=auto eol=lf
+*.png binary
+/tests export-ignore
+/docs/superpowers export-ignore
+/.superpowers export-ignore
+/.github export-ignore
+/vendor export-ignore
+/.gitattributes export-ignore
+/.gitignore export-ignore
+/composer.json export-ignore
+/composer.lock export-ignore
+/Makefile export-ignore
+/phpunit.xml.dist export-ignore
+/phpstan.neon.dist export-ignore
+/.php-cs-fixer.dist.php export-ignore

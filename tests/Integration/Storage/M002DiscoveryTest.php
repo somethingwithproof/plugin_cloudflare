@@ -26,9 +26,9 @@ use Cacti\PluginCloudflare\Storage\Migrations\M001Foundation;
 use Cacti\PluginCloudflare\Storage\Migrations\M002Discovery;
 use Cacti\PluginCloudflare\Storage\Migrator;
 use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
-use PHPUnit\Framework\TestCase;
+use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
 
-final class M002DiscoveryTest extends TestCase {
+final class M002DiscoveryTest extends IntegrationTestCase {
 	const TUNNEL_UUID = '11111111-2222-3333-4444-555555555555';
 	const CONNECTOR_UUID = '66666666-7777-8888-9999-000000000000';
 

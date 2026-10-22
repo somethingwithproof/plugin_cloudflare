@@ -24,13 +24,13 @@ use Cacti\PluginCloudflare\Storage\DatabaseException;
 use Cacti\PluginCloudflare\Storage\Migrator;
 use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
 use PDO;
-use PHPUnit\Framework\TestCase;
+use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
 
 /**
  * Runs the lifecycle functions against real MariaDB through the same
  * $database_sessions slot Cacti fills in lib/database.php.
  */
-final class SetupDatabaseTest extends TestCase {
+final class SetupDatabaseTest extends IntegrationTestCase {
 	private const ROOT    = __DIR__ . '/../../..';
 	private const SESSION = 'cacti-db:3306:cacti';
 

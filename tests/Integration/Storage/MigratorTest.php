@@ -29,9 +29,9 @@ use Cacti\PluginCloudflare\Tests\Support\ReleaseLockFailingStatement;
 use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
 use PDO;
 use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
+use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
 
-final class MigratorTest extends TestCase {
+final class MigratorTest extends IntegrationTestCase {
 	/** @var Database */
 	private $db;
 

@@ -24,6 +24,7 @@ use PDO;
 use PDOException;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
+use WeakReference;
 
 /**
  * Builds a PDO handle the way Cacti's db_connect_real() does (lib/database.php
@@ -35,6 +36,13 @@ final class TestDatabase {
 
 	/** @var string|null */
 	private static $unavailable = null;
+
+	/**
+	 * Weak, so the registry never keeps a handle alive on its own.
+	 *
+	 * @var array<int, WeakReference<PDO>>
+	 */
+	private static $open = array();
 
 	public static function pdo(): PDO {
 		$pdo = new PDO(self::dsn(), self::user(), self::pass(), array(
@@ -75,7 +83,33 @@ final class TestDatabase {
 		$stmt = $pdo->prepare('SET SESSION sql_mode = ?');
 		$stmt->execute(array(implode(',', $new_modes)));
 
+		self::$open[] = WeakReference::create($pdo);
+
 		return $pdo;
+	}
+
+	/**
+	 * Kills every handle from pdo() that something still references, so a
+	 * stray global or cache cannot hold a connection past its test class.
+	 */
+	public static function closeAll(): void {
+		foreach (self::$open as $ref) {
+			$pdo = $ref->get();
+			if ($pdo === null) {
+				continue;
+			}
+
+			try {
+				$res = $pdo->query('SELECT CONNECTION_ID()');
+				if ($res !== false) {
+					$pdo->exec('KILL CONNECTION ' . (int) $res->fetchColumn());
+				}
+			} catch (PDOException $e) {
+				// Already gone, or the KILL reported its own connection closing.
+			}
+		}
+
+		self::$open = array();
 	}
 
 	public static function reset(): void {

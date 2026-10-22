@@ -23,14 +23,14 @@ namespace Cacti\PluginCloudflare\Tests\Integration\Glue;
 use Cacti\PluginCloudflare\Tests\Support\SecretAssertions;
 use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
 use PDO;
-use PHPUnit\Framework\TestCase;
+use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
 
 /**
  * Drives the cloudflare_accounts.php handlers through the glue stubs, with
  * the real AccountService on the test database. No case reaches the
  * Cloudflare API: verify runs only on file accounts whose file is absent.
  */
-final class AccountsPageHandlersTest extends TestCase {
+final class AccountsPageHandlersTest extends IntegrationTestCase {
 	use SecretAssertions;
 
 	private const ROOT    = __DIR__ . '/../../..';

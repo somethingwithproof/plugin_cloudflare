@@ -29,9 +29,9 @@ use Cacti\PluginCloudflare\Storage\Migrator;
 use Cacti\PluginCloudflare\Tests\Support\FrozenClock;
 use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
 use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
+use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
 
-final class TunnelRepositoryTest extends TestCase {
+final class TunnelRepositoryTest extends IntegrationTestCase {
 	const T0 = 1800000000;
 
 	/** @var Database */

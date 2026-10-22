@@ -29,9 +29,9 @@ use Cacti\PluginCloudflare\Storage\Migrator;
 use Cacti\PluginCloudflare\Tests\Support\SecretAssertions;
 use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
 use OutOfBoundsException;
-use PHPUnit\Framework\TestCase;
+use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
 
-final class CredentialResolverTest extends TestCase {
+final class CredentialResolverTest extends IntegrationTestCase {
 	use SecretAssertions;
 
 	private const ACCOUNT = 'ed17574386854bf78a67040be0a770b0';
@@ -73,9 +73,6 @@ final class CredentialResolverTest extends TestCase {
 		}
 
 		TestDatabase::reset();
-
-		/* PHPUnit keeps every TestCase alive; the server's connection limit is close to the suite size. */
-		$this->db = null;
 	}
 
 	private function secretFile(string $name, string $contents): string {

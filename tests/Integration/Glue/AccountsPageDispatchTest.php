@@ -21,7 +21,7 @@
 namespace Cacti\PluginCloudflare\Tests\Integration\Glue;
 
 use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
-use PHPUnit\Framework\TestCase;
+use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
 
 /**
  * Includes cloudflare_accounts.php itself from a stand-in Cacti tree whose
@@ -31,7 +31,7 @@ use PHPUnit\Framework\TestCase;
  * @runTestsInSeparateProcesses
  * @preserveGlobalState disabled
  */
-final class AccountsPageDispatchTest extends TestCase {
+final class AccountsPageDispatchTest extends IntegrationTestCase {
 	private const ROOT = __DIR__ . '/../../..';
 
 	/** @var string|null */

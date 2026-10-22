@@ -30,9 +30,9 @@ use Cacti\PluginCloudflare\Tests\Support\FrozenClock;
 use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
 use Eris\Generators;
 use Eris\TestTrait;
-use PHPUnit\Framework\TestCase;
+use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
 
-final class ReconcilerTest extends TestCase {
+final class ReconcilerTest extends IntegrationTestCase {
 	use TestTrait;
 
 	const T0 = 1800000000;

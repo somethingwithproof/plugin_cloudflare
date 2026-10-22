@@ -1,0 +1,20 @@
+{
+  "data": {
+    "viewer": {
+      "zones": [
+        {
+          "settings": {
+            "firewallEventsAdaptive": {
+              "enabled": true,
+              "maxDuration": 259200,
+              "maxNumberOfFields": 30,
+              "maxPageSize": 10000,
+              "notOlderThan": 2678400
+            }
+          }
+        }
+      ]
+    }
+  },
+  "errors": null
+}

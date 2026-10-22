@@ -1,0 +1,22 @@
+{
+  "data": {
+    "viewer": {
+      "zones": [
+        {
+          "httpRequestsAdaptiveGroups": [
+            {
+              "dimensions": {
+                "datetimeHour": "2022-07-21T10:00:00Z"
+              },
+              "sum": {
+                "edgeResponseBytes": 19849385,
+                "visits": 4383
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "errors": null
+}

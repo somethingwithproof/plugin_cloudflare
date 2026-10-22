@@ -1,0 +1,13 @@
+{
+  "data": null,
+  "errors": [
+    {
+      "extensions": {
+        "code": "budget",
+        "timestamp": "2026-01-01T01:01:01Z"
+      },
+      "message": "Account <ACCOUNT_TAG> has exceeded its rate limit. Please try again after 5 minutes. Refer to this page for more details about rate limits: https://developers.cloudflare.com/analytics/graphql-api/limits/",
+      "path": null
+    }
+  ]
+}

@@ -62,6 +62,7 @@ function cloudflare_glue_reset(): void {
 		'invalid'          => false,
 		'template_queries' => array(),
 		'host_queries'     => array(),
+		'remove_fails'     => false,
 	);
 	$GLOBALS['cloudflare_glue_enabled_cache'] = array();
 }
@@ -1197,5 +1198,26 @@ if (!function_exists('api_device_save')) {
 		}
 
 		return $device_id;
+	}
+}
+
+if (!function_exists('api_device_remove')) {
+	/*
+	 * lib/api_device.php:45, identical in 1.2.25 and 1.2.31. It deletes the
+	 * host row (poller 1) and its host_snmp_query, cache, poller and graph
+	 * rows, and returns nothing. 'remove_fails' leaves the host in place,
+	 * as a failed DELETE would; real Cacti reports that only in its log.
+	 */
+	/**
+	 * @param mixed $device_id
+	 */
+	function api_device_remove($device_id): void {
+		cloudflare_glue_record(__FUNCTION__, array($device_id));
+
+		if (cloudflare_glue_state('remove_fails') === true) {
+			return;
+		}
+
+		unset($GLOBALS['cloudflare_glue']['hosts'][(int) $device_id], $GLOBALS['cloudflare_glue']['host_queries'][(int) $device_id]);
 	}
 }

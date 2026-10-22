@@ -20,9 +20,11 @@
 
 namespace Cacti\PluginCloudflare\Tests\Integration\Glue;
 
+use Cacti\PluginCloudflare\Tests\Support\ReleaseLockFailingStatement;
 use Cacti\PluginCloudflare\Tests\Support\SecretAssertions;
 use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
 use PDO;
+use PDOStatement;
 use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
 
 /**
@@ -1024,5 +1026,102 @@ final class AccountsPageHandlersTest extends IntegrationTestCase {
 		$fields = cloudflare_glue_calls('draw_edit_form')[0][0]['fields'];
 		$this->assertSame('checkbox', $fields['create_graphs']['method']);
 		$this->assertSame('', $fields['create_graphs']['value']);
+	}
+
+	/**
+	 * Another account already holds host 1, the id the next save returns,
+	 * so recordDevice() refuses the new device.
+	 */
+	private function hostOneTaken(): void {
+		$other = $this->fileAccount('Other', self::OTHER);
+		$this->pdo->exec('INSERT INTO plugin_cloudflare_resources (account_id, kind, host_id, created_at) VALUES (' . $other . ', \'device\', 1, 1)');
+	}
+
+	/**
+	 * @return array<int, string>
+	 */
+	private static function logLines(): array {
+		return array_map(function (array $call): string {
+			return (string) $call[0];
+		}, cloudflare_glue_calls('cacti_log'));
+	}
+
+	public function testUnrecordedDeviceIsRemoved(): void {
+		$this->hostOneTaken();
+		$id = $this->fileAccount('Prod', self::ACCOUNT);
+		$this->cactiForDevices();
+
+		$this->assertSame('failed', cloudflare_create_device($this->account($id)));
+
+		$this->assertSame(array(array(1)), cloudflare_glue_calls('api_device_remove'));
+		$this->assertArrayNotHasKey(1, $GLOBALS['cloudflare_glue']['hosts']);
+		$this->assertArrayNotHasKey($id, $this->deviceRows());
+		$this->assertContains(
+			'CLOUDFLARE: account ' . $id . ' device not recorded (InvalidArgumentException); removing host 1',
+			self::logLines()
+		);
+		$this->assertSame(array(POLLER_VERBOSITY_LOW), array_values(array_unique(array_column(cloudflare_glue_calls('cacti_log'), 3))));
+	}
+
+	public function testFailedRemovalLeavesTheHostAndLogsTheOrphan(): void {
+		$this->hostOneTaken();
+		$id = $this->fileAccount('Prod', self::ACCOUNT);
+		$this->cactiForDevices();
+		$GLOBALS['cloudflare_glue']['remove_fails'] = true;
+
+		$this->assertSame('failed', cloudflare_create_device($this->account($id)));
+
+		$this->assertSame(array(array(1)), cloudflare_glue_calls('api_device_remove'));
+		$this->assertArrayHasKey(1, $GLOBALS['cloudflare_glue']['hosts']);
+		$this->assertContains('CLOUDFLARE: account ' . $id . ' device left orphan host 1; remove it in Devices', self::logLines());
+	}
+
+	public function testHostsOfOtherAccountsAreNeverRemoved(): void {
+		$id = $this->fileAccount('Prod', self::ACCOUNT);
+		$this->cactiForDevices();
+
+		$this->assertSame('created', cloudflare_create_device($this->account($id)));
+		$this->assertSame('exists', cloudflare_create_device($this->account($id)));
+		$this->assertSame(array(), cloudflare_glue_calls('api_device_remove'));
+	}
+
+	public function testFailedLockReleaseKeepsTheResult(): void {
+		$id = $this->fileAccount('Prod', self::ACCOUNT);
+		$this->cactiForDevices();
+		$this->pdo->setAttribute(PDO::ATTR_STATEMENT_CLASS, array(ReleaseLockFailingStatement::class));
+
+		try {
+			$this->assertSame('created', cloudflare_create_device($this->account($id)));
+		} finally {
+			$this->pdo->setAttribute(PDO::ATTR_STATEMENT_CLASS, array(PDOStatement::class));
+		}
+
+		$logged = cloudflare_glue_calls('cacti_log');
+		$this->assertSame(
+			array('CLOUDFLARE: account ' . $id . ' device lock release failed (Cacti\PluginCloudflare\Storage\DatabaseException)', false, 'CLOUDFLARE', POLLER_VERBOSITY_LOW),
+			end($logged)
+		);
+		$this->assertSame(array($id => 1), $this->deviceRows());
+	}
+
+	public function testDropdownOffersCreateDeviceOnlyWithTheHostRealm(): void {
+		$this->fileAccount('Prod', self::ACCOUNT);
+		$_REQUEST = array('filter' => '', 'rows' => '-1', 'page' => '1', 'sort_column' => 'name', 'sort_direction' => 'ASC');
+		$GLOBALS['cloudflare_glue']['realm'] = function (string $file): bool {
+			return $file === 'cloudflare_accounts.php';
+		};
+
+		self::capture('cloudflare_accounts_list');
+
+		$offered = cloudflare_glue_calls('draw_actions_dropdown')[0][0];
+		$this->assertArrayNotHasKey(5, $offered);
+		$this->assertSame(array(1, 2, 3, 4), array_keys($offered));
+
+		$GLOBALS['cloudflare_glue']['realm'] = true;
+		$GLOBALS['cloudflare_glue']['calls'] = array();
+
+		self::capture('cloudflare_accounts_list');
+
+		$this->assertSame(cloudflare_account_actions(), cloudflare_glue_calls('draw_actions_dropdown')[0][0]);
 	}
 }

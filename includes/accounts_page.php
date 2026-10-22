@@ -46,6 +46,22 @@ function cloudflare_account_actions() : array {
 	);
 }
 
+/**
+ * The dropdown hides Create Cacti Device from a user without host.php;
+ * cloudflare_accounts_create_devices() still refuses it on the server.
+ *
+ * @return array<int, string>
+ */
+function cloudflare_accounts_offered_actions() : array {
+	$actions = cloudflare_account_actions();
+
+	if (!cloudflare_device_permitted()) {
+		unset($actions[5]);
+	}
+
+	return $actions;
+}
+
 /*
  * csrf-magic only checks POST bodies, so a mutation reachable by GET would
  * bypass it. Both mutating actions send any other method back to the list
@@ -140,7 +156,8 @@ function cloudflare_accounts_save() : string {
 
 	try {
 		$service = cloudflare_account_service();
-		$id      = $service->save($id > 0 ? $id : null, cloudflare_account_graphs_guard($service, $id, cloudflare_account_input()));
+		$input   = cloudflare_account_graphs_guard($service, $id, cloudflare_account_input());
+		$id      = $service->save($id > 0 ? $id : null, $input);
 
 		raise_message(1);
 	} catch (ValidationException $e) {
@@ -797,7 +814,7 @@ function cloudflare_accounts_list() : void {
 		print $nav;
 	}
 
-	draw_actions_dropdown(cloudflare_account_actions());
+	draw_actions_dropdown(cloudflare_accounts_offered_actions());
 
 	form_end();
 

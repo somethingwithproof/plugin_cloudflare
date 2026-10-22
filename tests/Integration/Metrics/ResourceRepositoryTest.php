@@ -23,6 +23,7 @@ namespace Cacti\PluginCloudflare\Tests\Integration\Metrics;
 use Cacti\PluginCloudflare\Account\AccountRepository;
 use Cacti\PluginCloudflare\Metrics\ResourceRepository;
 use Cacti\PluginCloudflare\Storage\Database;
+use Cacti\PluginCloudflare\Storage\DatabaseException;
 use Cacti\PluginCloudflare\Storage\Migrator;
 use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
 use Cacti\PluginCloudflare\Tests\Support\FrozenClock;
@@ -115,6 +116,39 @@ final class ResourceRepositoryTest extends IntegrationTestCase {
 		// The device row is not a graph.
 		$this->assertSame(41, $this->repository->device($account)['host_id'] ?? null);
 		$this->assertSame(array(), $this->repository->graphs($this->account(str_repeat('b', 32))));
+	}
+
+	/**
+	 * A plain read would see the owner at once and throw
+	 * InvalidArgumentException; the locking read waits for the other
+	 * transaction instead.
+	 */
+	public function testSharedHostCheckLocksTheRowsItReads(): void {
+		$pdo        = TestDatabase::pdo();
+		$repository = new ResourceRepository(new Database($pdo), $this->clock);
+		$first      = $this->account(str_repeat('a', 32));
+		$second     = $this->account(str_repeat('b', 32));
+		$this->repository->recordDevice($first, 41);
+
+		$pdo->exec('SET SESSION innodb_lock_wait_timeout = 1');
+
+		$other = TestDatabase::pdo();
+		$other->beginTransaction();
+		$other->query('SELECT host_id FROM plugin_cloudflare_resources WHERE host_id = 41 FOR UPDATE');
+
+		try {
+			$repository->recordDevice($second, 41);
+			$this->fail('the shared-host check did not wait for the locked row');
+		} catch (DatabaseException $e) {
+			$this->assertSame(1205, $e->getDriverCode(), 'lock wait timeout');
+		} finally {
+			$other->rollBack();
+			$other      = null;
+			$repository = null;
+			$pdo        = null;
+		}
+
+		$this->assertNull($this->repository->device($second));
 	}
 
 	public function testDeletingTheAccountRemovesItsResources(): void {

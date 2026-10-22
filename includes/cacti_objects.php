@@ -69,11 +69,16 @@ function cloudflare_create_device(Account $account, int $lock_timeout = 30) : st
 		return 'failed';
 	}
 
+	$result = cloudflare_create_device_locked(new ResourceRepository($db, new SystemClock()), $account, $templates);
+
+	// GET_LOCK ends with the session anyway, so a failed release must not hide the result.
 	try {
-		return cloudflare_create_device_locked(new ResourceRepository($db, new SystemClock()), $account, $templates);
-	} finally {
 		$db->releaseLock($lock);
+	} catch (Throwable $e) {
+		cloudflare_device_log($account, 'lock release failed (' . get_class($e) . ')');
 	}
+
+	return $result;
 }
 
 /**
@@ -137,8 +142,14 @@ function cloudflare_create_device_locked(ResourceRepository $resources, Account 
 
 	try {
 		$resources->recordDevice($account->id(), $host_id);
-	} catch (InvalidArgumentException $e) {
-		cloudflare_device_log($account, 'not recorded; host ' . $host_id . ' belongs to another account');
+	} catch (Throwable $e) {
+		cloudflare_device_log($account, 'not recorded (' . get_class($e) . '); removing host ' . $host_id);
+
+		cloudflare_remove_unrecorded_host($account, $host_id);
+
+		if (!$e instanceof InvalidArgumentException) {
+			throw $e;
+		}
 
 		return 'failed';
 	}
@@ -146,6 +157,31 @@ function cloudflare_create_device_locked(ResourceRepository $resources, Account 
 	cloudflare_device_log($account, 'created as host ' . $host_id);
 
 	return 'created';
+}
+
+/**
+ * Removes a host this request created but could not record, so no device
+ * is left that the plugin does not know about. $host_id is only ever the
+ * id api_device_save() just returned. api_device_remove() returns nothing
+ * (lib/api_device.php:45 in 1.2.25 and 1.2.31), so success is read back
+ * from the host table.
+ */
+function cloudflare_remove_unrecorded_host(Account $account, int $host_id) : void {
+	try {
+		api_device_remove($host_id);
+	} catch (Throwable $e) {
+		cloudflare_device_log($account, 'host ' . $host_id . ' removal failed (' . get_class($e) . ')');
+	}
+
+	try {
+		$left = cloudflare_host_exists($host_id);
+	} catch (Throwable $e) {
+		$left = true;
+	}
+
+	if ($left) {
+		cloudflare_device_log($account, 'left orphan host ' . $host_id . '; remove it in Devices');
+	}
 }
 
 function cloudflare_host_exists(int $host_id) : bool {

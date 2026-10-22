@@ -21,6 +21,7 @@
 namespace Cacti\PluginCloudflare\Metrics;
 
 use Cacti\PluginCloudflare\Storage\Database;
+use Cacti\PluginCloudflare\Storage\DatabaseException;
 use Cacti\PluginCloudflare\Support\Clock;
 use InvalidArgumentException;
 
@@ -61,11 +62,14 @@ final class ResourceRepository {
 	 * one data query, so a host another account holds is refused.
 	 *
 	 * @throws InvalidArgumentException when another account already owns $hostId
+	 * @throws DatabaseException including a lock wait timeout on the shared-host check
 	 */
 	public function recordDevice(int $accountId, int $hostId): void {
 		$this->db->transactional(function () use ($accountId, $hostId): void {
+			// Locks the matching rows, and the index gap when there are none, until commit.
 			$owner = $this->db->fetchCell(
-				'SELECT account_id FROM ' . self::TABLE . ' WHERE kind = \'device\' AND host_id = ? AND account_id <> ?',
+				'SELECT account_id FROM ' . self::TABLE . ' WHERE kind = \'device\' AND host_id = ? AND account_id <> ?
+				FOR UPDATE',
 				array($hostId, $accountId)
 			);
 
@@ -124,7 +128,14 @@ final class ResourceRepository {
 		int $localGraphId,
 		int $localDataId
 	): void {
-		$this->db->transactional(function () use ($accountId, $tunnelId, $templateHash, $hostId, $localGraphId, $localDataId): void {
+		$this->db->transactional(function () use (
+			$accountId,
+			$tunnelId,
+			$templateHash,
+			$hostId,
+			$localGraphId,
+			$localDataId
+		): void {
 			$this->db->execute(
 				'DELETE FROM ' . self::TABLE . ' WHERE account_id = ? AND kind = \'graph\' AND tunnel_id = ? AND template_hash = ?',
 				array($accountId, $tunnelId, $templateHash)

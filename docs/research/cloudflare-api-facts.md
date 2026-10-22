@@ -167,3 +167,24 @@ UNVERIFIED item above.
   `firewallEventsAdaptive` (raw events), but not through
   `firewallEventsAdaptiveGroups`. Availability differs by dataset name, so
   the collector probes the exact dataset it queries, per zone.
+
+### Pro-plan zone (2026-10-21)
+
+The same `settings` probe was run against one zone after it was upgraded to
+Pro.
+
+| Dataset | `enabled` | `maxDuration` | `notOlderThan` | Free-zone result |
+|---|---|---|---|---|
+| `httpRequestsAdaptiveGroups` | true | 2592000 | 2678400 | same |
+| `httpRequests1hGroups` | true | 259200 | 608400 | `notOlderThan` 262800 |
+| `httpRequests1mGroups` | true | 54000 | 90000 | not probed |
+| `firewallEventsAdaptive` | true | 2592000 | 2678400 | same |
+| `firewallEventsAdaptiveByTimeGroups` | true | 2592000 | 2678400 | same |
+| `firewallEventsAdaptiveGroups` | true | 86400 | 259200 | **disabled** |
+| `healthCheckEventsAdaptiveGroups` | true | 262800 | 262800 | not probed |
+| `loadBalancingRequestsAdaptiveGroups` | true | 604800 | 262800 | not probed |
+| `cacheReserveRequestsAdaptiveGroups` | false | 2764800 | 2764800 | not probed |
+
+The token used here cannot read the account subscriptions endpoint
+(`GET /accounts/{id}/subscriptions` returns code 10000), because billing
+permission is not part of the token's scope.

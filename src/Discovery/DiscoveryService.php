@@ -107,13 +107,17 @@ final class DiscoveryService {
 	/** @var int connections calls left in the run in progress */
 	private $callsLeft = 0;
 
+	/** @var int connections calls the current account may still make */
+	private $allowance = 0;
+
 	/**
 	 * @param callable(): bool            $stillEnabled false once the plugin has been disabled
 	 * @param callable(string): void|null $log
 	 * @param int                         $leaseTtl          seconds. touch() neither extends nor checks expiry,
 	 *                                                       so this is no stop; the collector's GET_LOCK is
 	 *                                                       the fence against a second run.
-	 * @param int                         $connectionsPerRun connections calls allowed in one runDue()
+	 * @param int                         $connectionsPerRun connections calls allowed in one runDue(), shared
+	 *                                                       evenly across the accounts due in it
 	 */
 	public function __construct(
 		AccountRepository $accounts,
@@ -162,7 +166,8 @@ final class DiscoveryService {
 		$this->callsLeft = $this->connectionsPerRun;
 		$outcomes        = array();
 
-		foreach ($this->jobs->due(JobRepository::TYPE_DISCOVERY, self::DUE_LIMIT) as $job) {
+		$due = $this->jobs->due(JobRepository::TYPE_DISCOVERY, self::DUE_LIMIT);
+		foreach ($due as $index => $job) {
 			if ($this->clock->now() >= $this->deadline) {
 				$this->say('Cloudflare discovery: run budget reached accounts=' . count($outcomes));
 
@@ -183,6 +188,12 @@ final class DiscoveryService {
 			}
 
 			$failures = (int) $job['consecutive_failures'];
+
+			/*
+			 * An even share of what is left, so an account due early with many
+			 * tunnels cannot starve the rest. What one leaves unused carries on.
+			 */
+			$this->allowance = $this->callsLeft > 0 ? max(1, intdiv($this->callsLeft, count($due) - $index)) : 0;
 
 			try {
 				$outcomes[$accountId] = $this->runAccount($lease, $accountId, $failures);
@@ -312,16 +323,17 @@ final class DiscoveryService {
 		$skipped = 0;
 		$partial = false;
 
-		/* One row past the remaining cap tells a finished account from a cut-off one. */
+		/* One row past the allowance tells a finished account from a cut-off one. */
 		$repo  = new TunnelRepository($this->db);
-		$queue = $repo->activeForRefresh($accountId, $this->callsLeft + 1);
+		$queue = $repo->activeForRefresh($accountId, $this->allowance + 1);
 		foreach ($queue as $row) {
-			if ($this->callsLeft < 1 || $this->clock->now() >= $this->deadline) {
+			if ($this->allowance < 1 || $this->clock->now() >= $this->deadline) {
 				$partial = true;
 
 				break;
 			}
 
+			$this->allowance--;
 			$this->callsLeft--;
 			$tunnelRowId = (int) $row['id'];
 			$cfTunnelId  = (string) $row['cf_tunnel_id'];

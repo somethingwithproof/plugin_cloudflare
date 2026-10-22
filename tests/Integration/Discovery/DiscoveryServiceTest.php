@@ -688,22 +688,55 @@ final class DiscoveryServiceTest extends IntegrationTestCase {
 		$this->assertNull($tunnels[self::STAGING]['connections_refreshed_at']);
 	}
 
-	/* The cap covers the whole run, so a later account lists its tunnels but refreshes none. */
+	/* The cap covers the whole run and is split across the accounts due in it. */
 	public function testConnectionsCapPerRun(): void {
 		$this->connectionsPerRun = 2;
 		$a                       = $this->account(self::CF_A);
 		$b                       = $this->account(self::CF_B);
 		$this->transport()->queue(FakeTransport::fixture('tunnel-list'));
 		$this->transport()->queue(self::noConnectors());
-		$this->transport()->queue(self::noConnectors());
 		$this->transport()->queue(FakeTransport::fixture('tunnel-list'));
+		$this->transport()->queue(self::noConnectors());
 
 		$this->assertSame(
 			array($a => self::outcome('partial', null, 3), $b => self::outcome('partial', null, 3)),
 			$this->runDue()
 		);
-		$this->assertSame(array(self::BLOG, self::STAGING), $this->connectionTargets());
+		$this->assertSame(array(self::BLOG, self::BLOG), $this->connectionTargets());
 		$this->assertCount(4, $this->transport()->requests());
+	}
+
+	/* A, due first with more tunnels than the cap, must not leave B with nothing. */
+	public function testCapIsSharedFairlyAcrossAccounts(): void {
+		$this->connectionsPerRun = 6;
+		$a                       = $this->account(self::CF_A);
+		$b                       = $this->account(self::CF_B);
+
+		for ($run = 1; $run <= 2; $run++) {
+			$this->makeDue($a);
+			$this->makeDue($b);
+			$this->clock()->advance(10);
+			/* Half of 6 for A, which leaves 3 for B: one listing and three refreshes each. */
+			$this->transport()->queue(self::listingOf(10));
+			for ($i = 0; $i < 3; $i++) {
+				$this->transport()->queue(self::noConnectors());
+			}
+			$this->transport()->queue(self::listingOf(3));
+			for ($i = 0; $i < 3; $i++) {
+				$this->transport()->queue(self::noConnectors());
+			}
+
+			$outcomes = $this->runDue();
+			$this->assertSame('partial', $outcomes[$a]['status'], 'run ' . $run);
+			$this->assertSame('ok', $outcomes[$b]['status'], 'run ' . $run);
+			$this->assertCount(8 * $run, $this->transport()->requests(), 'run ' . $run);
+		}
+
+		$refreshed = function (int $accountId): int {
+			return count(array_filter(array_column($this->tunnels($accountId), 'connections_refreshed_at')));
+		};
+		$this->assertSame(3, $refreshed($b));
+		$this->assertSame(6, $refreshed($a), 'A gets its share on each run');
 	}
 
 	public function testPartialRunsCoverTheTailOverSuccessiveRuns(): void {

@@ -109,6 +109,20 @@ final class ReconcilerTest extends IntegrationTestCase {
 	}
 
 	/**
+	 * last_seen_at moves on every listing; everything else must not.
+	 *
+	 * @return array<int, array<string, mixed>>
+	 */
+	private function tunnelsWithoutLastSeen(): array {
+		$rows = $this->tunnels();
+		foreach ($rows as $i => $row) {
+			unset($rows[$i]['last_seen_at']);
+		}
+
+		return $rows;
+	}
+
+	/**
 	 * @return array<string, array<string, mixed>>
 	 */
 	private function tunnelsByUuid(): array {
@@ -176,7 +190,7 @@ final class ReconcilerTest extends IntegrationTestCase {
 
 		// The size cap bounds the generated listing at 30 tunnels.
 		$this->limitTo(25)
-			->forAll(Generators::seq($tunnel), Generators::choose(1, 4))
+			->forAll(Generators::seq($tunnel), Generators::choose(2, 4))
 			->withMaxSize(30)
 			->then(function (array $specs, int $repeats): void {
 				$this->db->execute('DELETE FROM plugin_cloudflare_tunnels');
@@ -194,18 +208,24 @@ final class ReconcilerTest extends IntegrationTestCase {
 					);
 				}
 
-				$reconciler = $this->reconciler();
-				$first = $reconciler->applyListing($this->accountId, $listing);
+				$clock      = new FrozenClock(self::T0);
+				$reconciler = new Reconciler($this->db, $clock);
+				$first      = $reconciler->applyListing($this->accountId, $listing);
 				$this->assertSame(array('added' => count($listing), 'updated' => 0, 'deleted' => 0), $first);
 
-				$snapshot = $this->tunnels();
+				$snapshot = $this->tunnelsWithoutLastSeen();
 				$this->assertCount(count($listing), $snapshot);
 
 				for ($run = 1; $run < $repeats; $run++) {
+					$clock->advance(60);
 					$again = $reconciler->applyListing($this->accountId, $listing);
 
 					$this->assertSame(array('added' => 0, 'updated' => count($listing), 'deleted' => 0), $again);
-					$this->assertSame($snapshot, $this->tunnels(), 'run ' . $run);
+					$this->assertSame($snapshot, $this->tunnelsWithoutLastSeen(), 'run ' . $run);
+					$this->assertSame(
+						array_fill(0, count($listing), (string) $clock->now()),
+						array_map('strval', array_column($this->tunnels(), 'last_seen_at'))
+					);
 				}
 			});
 	}

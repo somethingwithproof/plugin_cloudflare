@@ -1,8 +1,5 @@
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/images/logo-dark.svg">
-    <img src="docs/images/logo.svg" width="240" height="216" alt="Plugin logo: a green cactus in front of a sky-blue cloud with a rising line chart, above the text Cloudflare plugin for Cacti">
-  </picture>
+  <img src="docs/images/logo.png" width="220" height="220" alt="Plugin logo: a green cactus in front of an orange cloud with a rising line chart, above the text CACTI Cloudflare Monitor">
 </p>
 
 # Cloudflare plugin for Cacti
@@ -286,5 +283,5 @@ GPL-2.0-or-later. See [LICENSE](LICENSE).
 This is an independent project. It is not affiliated with or endorsed by
 Cloudflare, Inc. or the Cacti Group. Cloudflare is a trademark of
 Cloudflare, Inc. and is used here only to name the service the plugin reads
-from. The logo is original artwork; see
-[docs/images/README-logo.md](docs/images/README-logo.md).
+from. See [docs/images/README-logo.md](docs/images/README-logo.md) for the
+logo.

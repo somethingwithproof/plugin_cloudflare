@@ -228,4 +228,30 @@ final class TunnelRepositoryTest extends IntegrationTestCase {
 		$this->assertSame(1, $this->repo->count($this->otherId, array('lifecycle' => 'active')));
 		$this->assertSame(0, $this->repo->markAccountUnavailable($this->accountId, self::T0 + 120));
 	}
+
+	public function testActiveForRefreshPutsTheStalestFirst(): void {
+		$rec = new Reconciler($this->db, new FrozenClock(self::T0 + 100));
+		$rec->applyConnections($this->id(2), array());
+		$rec->applyConnections($this->id(4), array());
+		(new Reconciler($this->db, new FrozenClock(self::T0 + 50)))->applyConnections($this->id(5), array());
+
+		$this->assertSame(
+			array(self::uuid(1), self::uuid(3), self::uuid(5), self::uuid(2)),
+			self::uuids($this->repo->activeForRefresh($this->accountId, 4)),
+			'never refreshed first by id, then the oldest refresh; deleted and other accounts excluded'
+		);
+		$this->assertCount(5, $this->repo->activeForRefresh($this->accountId, 50));
+	}
+
+	public function testActiveForRefreshRejectsBadLimit(): void {
+		$this->expectException(InvalidArgumentException::class);
+		$this->repo->activeForRefresh($this->accountId, 0);
+	}
+
+	private function id(int $n): int {
+		return (int) $this->db->fetchCell(
+			'SELECT id FROM plugin_cloudflare_tunnels WHERE account_id = ? AND cf_tunnel_id = ?',
+			array($this->accountId, self::uuid($n))
+		);
+	}
 }

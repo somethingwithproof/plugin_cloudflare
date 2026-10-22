@@ -134,6 +134,19 @@ final class JobRepository {
 	}
 
 	/**
+	 * The listing succeeded but the budget or the connections cap stopped
+	 * the run. Cloudflare answered, so the failure streak resets as on success.
+	 */
+	public function partial(Lease $lease, int $nextRunAt): void {
+		$this->writeHeld(
+			$lease,
+			'UPDATE ' . self::TABLE . " SET last_status = 'partial', last_error_class = NULL, consecutive_failures = 0,
+			last_finished_at = ?, next_run_at = ?, lease_owner = NULL, lease_until = NULL" . self::HELD,
+			array($this->clock->now(), $nextRunAt)
+		);
+	}
+
+	/**
 	 * @return int consecutive_failures including this one
 	 */
 	public function fail(Lease $lease, string $errorClass, int $nextRunAt): int {

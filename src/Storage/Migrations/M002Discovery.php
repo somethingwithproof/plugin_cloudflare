@@ -43,12 +43,14 @@ final class M002Discovery implements Migration {
 				conns_inactive_at INT UNSIGNED NULL,
 				connector_count INT UNSIGNED NULL,
 				connection_count INT UNSIGNED NULL,
+				connections_refreshed_at INT UNSIGNED NULL,
 				first_seen_at INT UNSIGNED NOT NULL,
 				last_seen_at INT UNSIGNED NOT NULL,
 				lifecycle_changed_at INT UNSIGNED NOT NULL,
 				PRIMARY KEY (id),
 				UNIQUE KEY account_tunnel (account_id, cf_tunnel_id),
-				KEY lifecycle (lifecycle)
+				KEY lifecycle (lifecycle),
+				KEY account_refresh (account_id, lifecycle, connections_refreshed_at)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci',
 		);
 

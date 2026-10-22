@@ -189,8 +189,9 @@ final class Reconciler {
 			$this->db->execute($sql, $params);
 
 			$this->db->execute(
-				'UPDATE plugin_cloudflare_tunnels SET connector_count = ?, connection_count = ? WHERE id = ?',
-				array(count($byId), $connections, $tunnelRowId)
+				'UPDATE plugin_cloudflare_tunnels SET connector_count = ?, connection_count = ?,
+				connections_refreshed_at = ? WHERE id = ?',
+				array(count($byId), $connections, $now, $tunnelRowId)
 			);
 		});
 	}

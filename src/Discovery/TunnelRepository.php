@@ -76,6 +76,27 @@ final class TunnelRepository {
 	}
 
 	/**
+	 * A run that cannot refresh every tunnel starts from these, so
+	 * successive runs work through the whole account. MySQL sorts NULL
+	 * first, so tunnels never refreshed lead.
+	 *
+	 * @return array<int, array<string, mixed>> id and cf_tunnel_id
+	 */
+	public function activeForRefresh(int $accountId, int $limit): array {
+		if ($accountId < 1 || $limit < 1) {
+			throw new InvalidArgumentException('invalid refresh query');
+		}
+
+		/* $limit is a checked int. pdo_mysql emulates prepares by default and would quote a bound LIMIT. */
+		return $this->db->fetchAll(
+			'SELECT id, cf_tunnel_id FROM ' . self::TABLE . "
+			WHERE account_id = ? AND lifecycle = 'active'
+			ORDER BY connections_refreshed_at, id LIMIT " . $limit,
+			array($accountId)
+		);
+	}
+
+	/**
 	 * Deleted rows stay deleted: the account being unreachable says nothing
 	 * about a tunnel that was already gone.
 	 *

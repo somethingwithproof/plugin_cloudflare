@@ -404,6 +404,18 @@ final class ReconcilerTest extends IntegrationTestCase {
 		$this->assertNull($this->tunnelsByUuid()[self::uuid(2)]['connector_count']);
 	}
 
+	public function testConnectionsStampRefreshTime(): void {
+		$this->reconciler()->applyListing($this->accountId, array(self::tunnel(1), self::tunnel(2)));
+		$this->assertNull($this->tunnelsByUuid()[self::uuid(1)]['connections_refreshed_at']);
+
+		$this->reconciler(self::T0 + 60)->applyConnections($this->tunnelId(1), array(self::connector(1, 4)));
+		$this->reconciler(self::T0 + 90)->applyListing($this->accountId, array(self::tunnel(1), self::tunnel(2)));
+
+		$rows = $this->tunnelsByUuid();
+		$this->assertSame((string) (self::T0 + 60), (string) $rows[self::uuid(1)]['connections_refreshed_at']);
+		$this->assertNull($rows[self::uuid(2)]['connections_refreshed_at']);
+	}
+
 	public function testDuplicateIdsInListingCountOnce(): void {
 		$counts = $this->reconciler()->applyListing(
 			$this->accountId,

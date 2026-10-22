@@ -298,6 +298,29 @@ final class JobRepositoryTest extends IntegrationTestCase {
 		}
 	}
 
+	public function testPartialResetsFailuresAndReleases(): void {
+		$this->repo()->ensure('discovery', $this->accountId);
+		$id = $this->jobId($this->accountId);
+
+		$lease = $this->leased($this->repo(self::T0), $id, 'host-a:1');
+		$this->repo(self::T0)->fail($lease, ErrorClass::TRANSIENT, self::T0 + 600);
+
+		$lease = $this->leased($this->repo(self::T0 + 10), $id, 'host-a:1');
+		$this->repo(self::T0 + 15)->partial($lease, self::T0 + 315);
+
+		$row = $this->job($id);
+		$this->assertSame('partial', $row['last_status']);
+		$this->assertNull($row['last_error_class']);
+		$this->assertSame(0, (int) $row['consecutive_failures']);
+		$this->assertSame(self::T0 + 15, (int) $row['last_finished_at']);
+		$this->assertSame(self::T0 + 315, (int) $row['next_run_at']);
+		$this->assertNull($row['lease_owner']);
+		$this->assertNull($row['lease_until']);
+
+		$this->expectException(LeaseLost::class);
+		$this->repo()->partial($lease, self::T0 + 900);
+	}
+
 	public function testFailIncrementsAndSucceedResets(): void {
 		$this->repo()->ensure('discovery', $this->accountId);
 		$id = $this->jobId($this->accountId);

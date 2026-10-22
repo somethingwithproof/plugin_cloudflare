@@ -69,6 +69,9 @@ For `index` and `query`, the same failures give an empty listing, and
 `num_indexes` and an empty listing for `index` and `query`; a listing line
 of `U` would read as a tunnel named `U`. Exceptions are logged at
 `POLLER_VERBOSITY_HIGH` with the class name only, never the message.
+If `query tunnelName` throws after `index` succeeds in the same reindex,
+Cacti drops the cached names until the next reindex, and no data source is
+orphaned.
 
 ## Tables read
 

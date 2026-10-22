@@ -274,14 +274,31 @@ final class ScriptServerHandlersTest extends IntegrationTestCase {
 		$this->assertSame(array(), cloudflare_glue_calls('cacti_log'), 'bad input is not a failure');
 	}
 
-	/* Cacti's handle can drop between polls; the next call must print U, not throw. */
-	public function testClosedConnectionPrintsU(): void {
+	/**
+	 * Cacti sets ERRMODE_SILENT on its handle (lib/database.php:113 in 1.2.31);
+	 * exception mode covers a handle opened elsewhere.
+	 *
+	 * @return array<string, array{int}>
+	 */
+	public function errorModes(): array {
+		return array(
+			'silent'    => array(PDO::ERRMODE_SILENT),
+			'exception' => array(PDO::ERRMODE_EXCEPTION),
+		);
+	}
+
+	/**
+	 * Cacti's handle can drop between polls; the next call must print U, not throw.
+	 *
+	 * @dataProvider errorModes
+	 */
+	public function testClosedConnectionPrintsU(int $mode): void {
 		$this->tunnel(1);
 
 		$dead = TestDatabase::pdo();
 		$id   = (int) $dead->query('SELECT CONNECTION_ID()')->fetchColumn();
 		$this->db->execute('KILL CONNECTION ' . $id);
-		$dead->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		$dead->setAttribute(PDO::ATTR_ERRMODE, $mode);
 
 		$GLOBALS['database_hostname'] = 'cacti-db';
 		$GLOBALS['database_port']     = '3306';
@@ -295,7 +312,7 @@ final class ScriptServerHandlersTest extends IntegrationTestCase {
 		$logged = cloudflare_glue_calls('cacti_log');
 		$this->assertCount(3, $logged);
 		foreach ($logged as $call) {
-			$this->assertMatchesRegularExpression('/^CLOUDFLARE: script server failed \([A-Za-z\\\\]+\)$/', (string) $call[0]);
+			$this->assertSame('CLOUDFLARE: script server failed (Cacti\PluginCloudflare\Storage\DatabaseException)', $call[0]);
 			$this->assertSame(POLLER_VERBOSITY_HIGH, $call[3]);
 		}
 	}

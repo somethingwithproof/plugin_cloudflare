@@ -303,7 +303,7 @@ final class AccountService {
 		$now      = $this->clock->now();
 
 		try {
-			$token = $this->credentials->resolve($id);
+			$token = $this->credentials->resolveMaterial($material);
 		} catch (SecretException $e) {
 			if ($material['source'] === 'file') {
 				$message = self::MESSAGE_FILE;

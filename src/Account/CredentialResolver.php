@@ -56,8 +56,21 @@ final class CredentialResolver {
 	 * @throws OutOfBoundsException when $accountId names no account
 	 */
 	public function resolve(int $accountId): string {
-		$material = $this->repo->tokenMaterial($accountId);
+		return $this->resolveMaterial($this->repo->tokenMaterial($accountId));
+	}
 
+	/**
+	 * For a caller that already holds the material and must act on the same
+	 * read, rather than on a second one that may see a changed row.
+	 *
+	 * @param array{source: string, ciphertext: string|null, file: string|null, cf_account_id: string} $material
+	 *
+	 * @throws SecretException
+	 */
+	public function resolveMaterial(
+		#[\SensitiveParameter]
+		array $material
+	): string {
 		if ($material['source'] === 'file') {
 			$token = TokenFile::read((string) $material['file']);
 		} elseif ($this->vault === null) {

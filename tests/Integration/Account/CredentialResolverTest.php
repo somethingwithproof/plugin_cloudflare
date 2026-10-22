@@ -167,6 +167,26 @@ final class CredentialResolverTest extends IntegrationTestCase {
 		}));
 	}
 
+	/* No account row exists, so a pass shows the material alone is used and nothing is read again. */
+	public function testResolvesGivenMaterialWithoutReadingTheAccount(): void {
+		$material = array(
+			'source'        => 'vault',
+			'ciphertext'    => $this->vault->encrypt($this->token, TokenVault::aadFor(self::ACCOUNT)),
+			'file'          => null,
+			'cf_account_id' => self::ACCOUNT,
+		);
+
+		$this->assertSecretEquals($this->token, $this->resolver($this->vault)->resolveMaterial($material));
+
+		$path = $this->secretFile('token', $this->token);
+		$this->assertSecretEquals($this->token, $this->resolver(null)->resolveMaterial(array(
+			'source'        => 'file',
+			'ciphertext'    => null,
+			'file'          => $path,
+			'cf_account_id' => self::ACCOUNT,
+		)));
+	}
+
 	public function testUnknownAccountThrowsOutOfBounds(): void {
 		$this->expectException(OutOfBoundsException::class);
 

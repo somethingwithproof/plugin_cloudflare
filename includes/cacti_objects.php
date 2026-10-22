@@ -69,13 +69,15 @@ function cloudflare_create_device(Account $account, int $lock_timeout = 30) : st
 		return 'failed';
 	}
 
-	$result = cloudflare_create_device_locked(new ResourceRepository($db, new SystemClock()), $account, $templates);
-
-	// GET_LOCK ends with the session anyway, so a failed release must not hide the result.
 	try {
-		$db->releaseLock($lock);
-	} catch (Throwable $e) {
-		cloudflare_device_log($account, 'lock release failed (' . get_class($e) . ')');
+		$result = cloudflare_create_device_locked(new ResourceRepository($db, new SystemClock()), $account, $templates);
+	} finally {
+		// GET_LOCK ends with the session anyway, so a failed release must not hide the result.
+		try {
+			$db->releaseLock($lock);
+		} catch (Throwable $e) {
+			cloudflare_device_log($account, 'lock release failed (' . get_class($e) . ')');
+		}
 	}
 
 	return $result;

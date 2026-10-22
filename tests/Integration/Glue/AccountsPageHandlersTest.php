@@ -1104,6 +1104,29 @@ final class AccountsPageHandlersTest extends IntegrationTestCase {
 		$this->assertSame(array($id => 1), $this->deviceRows());
 	}
 
+	public function testDatabaseErrorRecordingTheDeviceRemovesTheHostAndReleasesTheLock(): void {
+		$id = $this->fileAccount('Prod', self::ACCOUNT);
+		$this->cactiForDevices();
+		$this->pdo->exec(
+			"CREATE TRIGGER cf_test_reject BEFORE INSERT ON plugin_cloudflare_resources FOR EACH ROW
+			SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'rejected'"
+		);
+
+		try {
+			cloudflare_create_device($this->account($id));
+			$this->fail('the DatabaseException must propagate');
+		} catch (\Cacti\PluginCloudflare\Storage\DatabaseException $e) {
+			$this->assertSame(\Cacti\PluginCloudflare\Storage\DatabaseException::class, get_class($e));
+		}
+
+		$this->assertSame(array(array(1)), cloudflare_glue_calls('api_device_remove'));
+		$this->assertArrayNotHasKey(1, $GLOBALS['cloudflare_glue']['hosts']);
+		$this->assertSame(
+			'1',
+			(string) $this->pdo->query('SELECT IS_FREE_LOCK(' . $this->pdo->quote('plugin_cloudflare_device_' . $id) . ')')->fetchColumn()
+		);
+	}
+
 	public function testDropdownOffersCreateDeviceOnlyWithTheHostRealm(): void {
 		$this->fileAccount('Prod', self::ACCOUNT);
 		$_REQUEST = array('filter' => '', 'rows' => '-1', 'page' => '1', 'sort_column' => 'name', 'sort_direction' => 'ASC');

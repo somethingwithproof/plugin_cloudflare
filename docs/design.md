@@ -6,11 +6,16 @@ come from `docs/research/cloudflare-api-facts.md`, which cites its sources.
 
 ## Runtime floor
 
-- Plugin code must parse and run on PHP 7.4. Cacti 1.2.31 ships a PHP 7.4
-  e2e image (`tests/e2e/Dockerfile`) and its source says 1.2.x targets 7.4
-  (`lib/functions.php:7452`). No enums, readonly properties, `match`,
-  constructor promotion, named arguments, union types, `mixed`, or
-  `str_contains`.
+- Plugin code must parse and run on PHP 7.4. INFO says `compat = 1.2.25`,
+  and Cacti 1.2.25 through 1.2.30 ship no Composer platform check, so they
+  can run on PHP 7.4. No enums, readonly properties, `match`, constructor
+  promotion, named arguments, union types, `mixed`, or `str_contains`.
+- Cacti 1.2.31 itself needs PHP 8.0 or later. Its `composer.json` requires
+  `php >=8.0`, and `include/vendor/composer/platform_check.php` stops on
+  anything older; `include/global.php:555` loads it through the Composer
+  autoloader. The plugin's 7.4 floor therefore matters only for 1.2.25
+  through 1.2.30. The install smoke runs on `php:8.0-apache`, the lowest
+  PHP that 1.2.31 accepts, and `php -l` under PHP 7.4 checks the floor.
 - INFO `compat = 1.2.25`. Helpers added after 1.2.25 (for example
   `cacti_redact_sensitive`, `cacti_plugin_path`) are not called; the plugin
   carries its own redaction.
@@ -91,8 +96,8 @@ Uninstall drops the plugin's own tables, which hold inventory, job state and
 encrypted credentials. All of it can be rediscovered or re-entered.
 Uninstall does not remove Cacti devices, graphs, data sources, RRD files or
 templates created for Cloudflare. Those hold historical monitoring data, and
-removing them stays an explicit administrator action in Cacti. README and
-`docs/installation.md` say this.
+removing them stays an explicit administrator action in Cacti. The README
+says this.
 
 ## Credentials
 
@@ -102,9 +107,15 @@ removing them stays an explicit administrator action in Cacti. README and
 - Two token sources:
   - `file`: an absolute path to a file containing only the token. This is the
     externally provisioned option, and it works for both the web server and
-    the poller user. The file must be a regular file of no more than 4 KiB.
-    It must not be world-readable; that is rejected at save time and at read
-    time.
+    the poller user. The file must be a regular file of no more than 4 KiB,
+    must not be a symbolic link, and must not be readable or writable by
+    others. These checks run when the file is read (at Verify, and in the
+    collector from Milestone 2), not when the account is saved. The web
+    server user and the poller user can differ, so a check made by the web
+    server at save time could pass for a file the poller cannot read, or
+    fail for one it can. Save checks only that the path is absolute. A bad
+    file therefore shows up at the first Verify, as "Token file is missing
+    or insecure".
   - `vault`: AES-256-GCM via `openssl_encrypt`, with a 12-byte random nonce
     and a 16-byte tag. The additional authenticated data is
     `plugin_cloudflare:account:<cf_account_id>`, so a ciphertext cannot be
@@ -113,8 +124,8 @@ removing them stays an explicit administrator action in Cacti. README and
     the file named in the `cloudflare_key_file` setting (default
     `/etc/cacti/cloudflare.key`, raw 32 bytes or 64 hex characters). If the
     key is missing, vault storage is disabled and only `file` is offered.
-    The plugin never generates or writes the key; the Diagnostics page shows
-    the command to create it.
+    The plugin never generates or writes the key; the README shows the
+    command to create it.
 - Tokens are never rendered back to any page, never logged, and never put in
   exception messages. The edit form shows only whether a token is set.
 - A save that leaves the token field blank keeps the existing token.

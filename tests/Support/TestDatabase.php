@@ -81,9 +81,14 @@ final class TestDatabase {
 	public static function reset(): void {
 		$pdo = self::pdo();
 
-		$res = $pdo->query("SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name LIKE 'plugin\\_cloudflare\\_%'");
+		// ESCAPE '!' keeps the pattern valid under NO_BACKSLASH_ESCAPES.
+		$res = $pdo->prepare("SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name LIKE ? ESCAPE '!'");
 		if ($res === false) {
 			throw new RuntimeException('Cannot list plugin tables: ' . implode(' ', $pdo->errorInfo()));
+		}
+
+		if (!$res->execute(array('plugin!_cloudflare!_%'))) {
+			throw new RuntimeException('Cannot list plugin tables: ' . implode(' ', $res->errorInfo()));
 		}
 
 		$tables = $res->fetchAll(PDO::FETCH_COLUMN);

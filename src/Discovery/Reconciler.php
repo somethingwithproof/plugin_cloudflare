@@ -119,11 +119,11 @@ final class Reconciler {
 			$deleted = 0;
 			if ($absent !== array()) {
 				$params = $absent;
-				array_unshift($params, $now);
+				array_unshift($params, $now, $accountId);
 
 				$deleted = $this->db->execute(
 					"UPDATE plugin_cloudflare_tunnels SET lifecycle = 'deleted', lifecycle_changed_at = ?
-					WHERE id IN (" . implode(', ', array_fill(0, count($absent), '?')) . ')',
+					WHERE account_id = ? AND id IN (" . implode(', ', array_fill(0, count($absent), '?')) . ')',
 					$params
 				);
 			}

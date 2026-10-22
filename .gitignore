@@ -1,0 +1,5 @@
+/vendor/
+/.superpowers/
+/tests/docker/build/
+.phpunit.result.cache
+.php-cs-fixer.cache

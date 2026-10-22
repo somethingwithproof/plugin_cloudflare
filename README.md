@@ -18,17 +18,20 @@ A Cacti 1.2 plugin that is being built to monitor Cloudflare Tunnels and
 zone analytics. It reads from the Cloudflare API with scoped API tokens,
 never changes anything in Cloudflare, and keeps its data in its own tables.
 
-**Status: Milestone 1.** This release provides Cloudflare account
-configuration and a connection test only. It does not discover tunnels,
-create graphs or collect analytics yet.
+**Status: Milestone 2.** The plugin configures Cloudflare accounts, tests
+their tokens, and discovers their tunnels and connectors. It does not create
+graphs or collect analytics yet.
 
 | Available now | Planned |
 |---|---|
-| Install, upgrade, disable and uninstall through Cacti's plugin manager | Tunnel and connector discovery (Milestone 2) |
-| Cloudflare: View and Cloudflare: Configure permissions | Tunnel health data sources and graph templates (Milestone 3) |
-| Add, edit, delete, enable and disable Cloudflare accounts | GraphQL analytics and Thold alerts (Milestone 4) |
+| Install, upgrade, disable and uninstall through Cacti's plugin manager | Tunnel health data sources and graph templates (Milestone 3) |
+| Cloudflare: View and Cloudflare: Configure permissions | GraphQL analytics and Thold alerts (Milestone 4) |
+| Add, edit, delete, enable and disable Cloudflare accounts | |
 | Store a token in a file or encrypted in the Cacti database | |
 | Verify a token and check its tunnel and zone read permissions | |
+| Tunnel and connector discovery in a background collector started by the main poller | |
+| Overview, Tunnels and Connectors pages under Management > Cloudflare Tunnels | |
+| Lifecycle tracking: `active`, `unavailable` and `deleted` | |
 
 ## Why this plugin
 
@@ -45,8 +48,8 @@ Three constraints shape the design:
   Analytics API. It needs no edit permission on any Cloudflare resource.
 - **Optional.** Cloudflare outages, expired tokens and rate limits must not
   slow the Cacti UI or stall polling of other devices. All API calls have
-  hard timeouts, and collection (Milestone 2) runs in a background process
-  launched by the poller.
+  hard timeouts, and collection runs in a background process launched by
+  the poller.
 - **No core changes.** The plugin uses only the Cacti 1.2 plugin hooks and
   its own tables, so Cacti upgrades and other plugins are unaffected.
 
@@ -57,6 +60,8 @@ flowchart LR
     subgraph Cacti["Cacti 1.2"]
         UI["Accounts page<br/>(Configure realm)"]
         Poller["poller.php<br/>poller_bottom hook"]
+        Viewer["Overview, Tunnels, Connectors<br/>(View realm)"]
+        Collector["poller_cloudflare.php<br/>background collector"]
         DB[("plugin_cloudflare_*<br/>tables")]
     end
     subgraph Plugin["plugin src/"]
@@ -64,6 +69,7 @@ flowchart LR
         Vault["TokenVault / TokenFile"]
         Client["CloudflareClient<br/>error classes, bounded retries"]
         Transport["CurlTransport<br/>allowlist, TLS, timeouts"]
+        Disc["DiscoveryService"]
     end
     CF["api.cloudflare.com"]
 
@@ -72,7 +78,10 @@ flowchart LR
     Svc --> DB
     Svc --> Client
     Client --> Transport --> CF
-    Poller -. "Milestone 2" .-> Client
+    Viewer --> DB
+    Poller -- "exec_background" --> Collector --> Disc
+    Disc --> DB
+    Disc --> Client
 ```
 
 - **Cacti glue** (`setup.php`, `includes/`, the page scripts) registers
@@ -93,21 +102,36 @@ The design decisions and their reasons are in
 
 ## Screenshots
 
-![The Cloudflare Accounts list with one account, "Example account", whose status is unreachable.](docs/images/accounts-list.png)
+The screenshots come from a test stack, not a live Cloudflare account. The
+stack runs Cacti 1.2.31 against a fake Cloudflare API that returns fixture
+data, so the account, its ID and the three tunnels are placeholders.
 
-*The Cloudflare Accounts list. The screenshots come from a test stack with no
-internet access, so Verify reports `unreachable`. The account ID is a
-placeholder.*
+![The Cloudflare Accounts list with one account, "Example account", whose status is ok.](docs/images/accounts-list.png)
+
+*The Cloudflare Accounts list. The fake API accepts the token, so Verify
+reports `ok`.*
 
 ![The account edit form with name, account ID, encrypted token storage, collection options and the Connection Status table.](docs/images/account-edit.png)
 
 *Editing an account. The token fields are always empty; the stored token is
 never sent back to the browser. Connection Status shows the result of the
-last Verify.*
+last Verify: `ok`, tunnel read granted and zone read missing.*
 
 ![The Cloudflare tab under Cacti Settings with the key file path, two timeouts and the log level.](docs/images/settings-cloudflare.png)
 
 *Settings > Cloudflare.*
+
+![The Overview tab with one row for Example account: status Down, 3 active tunnels, none unavailable or deleted, the time of the last successful discovery and 0 consecutive failures.](docs/images/overview.png)
+
+*Management > Cloudflare Tunnels > Overview. The status is the worst Cloudflare
+status among the account's active tunnels, here `down` because one fixture
+tunnel is down.*
+
+![The Tunnels tab listing three tunnels from Example account: blog (healthy), old-office (down) and staging (inactive), all active.](docs/images/tunnels-list.png)
+
+*The Tunnels tab. Connectors and Connections show `-` for old-office, because
+the fake API answers its connections request as an unknown tunnel and nothing
+was stored, and 0 for staging, which has no running connector.*
 
 ## Requirements
 
@@ -192,6 +216,48 @@ Verify sets the account's status:
 
 The edit page also shows whether tunnel read and zone read were granted.
 
+## Tunnel discovery
+
+After each polling cycle on the main poller, the `poller_bottom` hook starts
+a background collector with `exec_background` when at least one enabled
+account has Collect Tunnels on. The collector never runs in the poller's
+process, so a slow Cloudflare API does not delay `poller.php`. Remote pollers
+never start it.
+
+For each account that is due, the collector lists the account's tunnels, then
+reads the connections of its active tunnels, which gives each tunnel's
+connectors, their versions, data centers and origin addresses. Accounts are
+due every Discovery Interval (default 300 seconds). A run stops after 50
+seconds or 200 connection requests, whichever comes first, and the next run
+continues with the tunnels attempted least recently. A run cut short this way
+is recorded as `partial`.
+
+A tunnel has a lifecycle, kept apart from the status Cloudflare reports
+(`healthy`, `degraded`, `down` or `inactive`):
+
+| Lifecycle | Meaning |
+|---|---|
+| `active` | The tunnel was in the last complete listing |
+| `deleted` | A complete listing did not include it, which includes an empty listing. The row and its history stay, and the tunnel becomes `active` again if it reappears |
+| `unavailable` | Cloudflare could not be read for three runs in a row, so the tunnel's state is unknown |
+
+Only a complete, successful listing changes a tunnel's state. A failed
+listing leaves every tunnel as it was. A failure to read Cloudflare at all
+(`transient`, `rate_limited`, `auth` or `permission`) counts toward an outage;
+after three in a row the account's active tunnels become `unavailable`. An
+outage never deletes anything, and the next complete listing restores the
+tunnels and resets the count. A tunnel that Cloudflare no longer knows when its
+connections are read is skipped without failing the account.
+
+Management > Cloudflare Tunnels needs the Cloudflare: View permission and is
+read-only:
+
+- **Overview** lists each account with its status, tunnel counts by lifecycle,
+  the last successful discovery and the number of consecutive failures.
+- **Tunnels** lists tunnels across accounts or for one account, with filters
+  for account, lifecycle, status and name, and sortable columns.
+- **Connectors** shows the connectors of the tunnel chosen on the Tunnels tab.
+
 ## Settings
 
 Settings > Cloudflare holds:
@@ -200,18 +266,19 @@ Settings > Cloudflare holds:
 - **Interactive Request Timeout**: total seconds for a request made from the
   web interface, such as Verify. Default 10; values outside 5 to 60 fall
   back to 10.
-- **Collector Request Timeout** and **Log Level**: stored for the collector,
-  which arrives in Milestone 2. Nothing reads them yet.
+- **Collector Request Timeout**: total seconds for a request made by the
+  background collector. Default 20; values outside 5 to 60 fall back to 20.
+- **Log Level**: stored. Nothing reads it yet.
 
-The account form's Collect Tunnels, Collect Analytics and Discovery Interval
-fields are stored for the same reason and have no effect in this release.
+On the account form, Collect Tunnels and Discovery Interval control discovery.
+Collect Analytics is stored and has no effect in this release.
 
 ## Uninstall and data retention
 
 Uninstall drops the plugin's own tables, which hold accounts, encrypted
-tokens and job state, and deletes its `cloudflare_` settings. It does not
-remove the key file, token files, or any Cacti devices, graphs, data sources,
-RRD files or templates. Those hold historical monitoring data, and removing
+tokens, discovered tunnels and job state, and deletes its `cloudflare_`
+settings. It does not remove the key file, token files, or any Cacti devices,
+graphs, data sources, RRD files or templates. Those hold historical monitoring data, and removing
 them is an explicit administrator action in Cacti.
 
 ## Security
@@ -238,7 +305,7 @@ every milestone below.
 | Milestone | Scope | State |
 |---|---|---|
 | 1. Foundation | Plugin lifecycle, permissions, account configuration, connection test | In review ([#1](https://github.com/somethingwithproof/plugin_cloudflare/pull/1)) |
-| 2. Discovery | Tunnel and connector discovery in a background collector, Overview, Tunnels and Connectors pages | Planned |
+| 2. Discovery | Tunnel and connector discovery in a background collector, Overview, Tunnels and Connectors pages | Implemented, unreleased |
 | 3. Metrics | Tunnel health data sources, graph templates, outage handling that never records a fabricated zero | Planned |
 | 4. Analytics and alerting | Plan-aware GraphQL analytics per zone, Thold thresholds with outage suppression | Planned |
 | 5. Hardening | Fault injection, TLA+ models of discovery and collection, full documentation | Planned |

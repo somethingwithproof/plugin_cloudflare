@@ -49,11 +49,11 @@ Keys: primary `id`; unique `cf_account_id`.
 | next_run_at | INT UNSIGNED | Default 0 |
 | last_started_at | INT UNSIGNED NULL | |
 | last_finished_at | INT UNSIGNED NULL | |
-| last_success_at | INT UNSIGNED NULL | Added by migration 2; set when a run finishes `ok` or `partial`, kept on failure |
+| last_success_at | INT UNSIGNED NULL | Added by migration 2, after `last_finished_at`. Set when a run finishes `ok` or `partial`, and kept when a run fails |
 | last_status | VARCHAR(20) | Default `never` |
 | last_error_class | VARCHAR(20) NULL | |
 | consecutive_failures | INT UNSIGNED | Default 0 |
-| outage_failures | INT UNSIGNED | Added by migration 2; default 0 |
+| outage_failures | INT UNSIGNED | Added by migration 2, after `consecutive_failures`. Default 0. Counts runs that failed with `transient`, `rate_limited`, `auth` or `permission` before a complete listing; three make the account's active tunnels `unavailable`. A complete listing, a `partial` run or an `ok` run resets it to 0 |
 
 Keys: primary `id`; unique `(job_type, account_id)`; foreign key
 `fk_cf_jobs_account`.
@@ -77,16 +77,21 @@ is Cloudflare's raw health (`healthy`, `degraded`, `down`, `inactive`).
 | conns_inactive_at | INT UNSIGNED NULL | |
 | connector_count | INT UNSIGNED NULL | |
 | connection_count | INT UNSIGNED NULL | |
+| connections_refreshed_at | INT UNSIGNED NULL | Last time the tunnel's connections were read and stored |
+| connections_attempted_at | INT UNSIGNED NULL | Last time reading them was tried, whether or not it succeeded. Orders the next run's work, with never-tried tunnels first |
 | first_seen_at | INT UNSIGNED | |
 | last_seen_at | INT UNSIGNED | |
 | lifecycle_changed_at | INT UNSIGNED | |
 
 Keys: primary `id`; unique `(account_id, cf_tunnel_id)`; key `lifecycle`;
+key `account_refresh` on `(account_id, lifecycle, connections_attempted_at)`;
 foreign key `fk_cf_tunnels_account`.
 
 ## plugin_cloudflare_connectors
 
-Added by migration 2.
+Added by migration 2. A connector row exists only while Cloudflare lists the
+connector; the next read of the tunnel's connections removes rows it no longer
+reports.
 
 | Column | Type | Notes |
 |---|---|---|
@@ -96,9 +101,9 @@ Added by migration 2.
 | version | VARCHAR(32) | |
 | arch | VARCHAR(32) | |
 | run_at | INT UNSIGNED NULL | |
-| connection_count | INT UNSIGNED | |
-| colos | VARCHAR(255) | Comma-joined `colo_name`, sorted |
-| origin_ips | VARCHAR(255) | |
+| connection_count | INT UNSIGNED | Number of connections the connector reported |
+| colos | VARCHAR(255) | Distinct `colo_name` values, sorted and comma-joined. Whole entries only, so a long list is cut at an entry boundary |
+| origin_ips | VARCHAR(255) | Distinct valid `origin_ip` values, sorted, comma-joined and cut the same way |
 | last_seen_at | INT UNSIGNED | |
 
 Keys: primary `id`; unique `(tunnel_id, cf_connector_id)`; foreign key

@@ -1,6 +1,6 @@
 # Security
 
-This page describes the security controls in Milestone 1 as implemented,
+This page describes the security controls as implemented through Milestone 2,
 with the code that enforces each one. To report a vulnerability, see
 [SECURITY.md](../SECURITY.md).
 
@@ -138,7 +138,7 @@ shutdown handler disables a plugin whose page dies with one.
 | Realm | Page | Default |
 |---|---|---|
 | Cloudflare: Configure | `cloudflare_accounts.php` | Granted to admin at install |
-| Cloudflare: View | `cloudflare.php` | Not granted; the page ships in Milestone 2 |
+| Cloudflare: View | `cloudflare.php` | Not granted at install |
 
 `include/auth.php` enforces the realm by page name. `AccountService` checks
 again before every change, every Verify and every credential lookup, through
@@ -146,6 +146,12 @@ again before every change, every Verify and every credential lookup, through
 otherwise. The install smoke checks that a user with only Cloudflare: View
 is denied the accounts page. The BDD features check that a user without the
 configure right can neither change an account nor call `credentialDetails()`.
+The viewer pages (`cloudflare.php`) only read. They need the Cloudflare: View
+realm, which Cacti enforces from the page name, and they accept no POST
+actions. Tunnel and connector text comes from Cloudflare, so every value is
+printed through `html_escape()`. The Tunnels filter and sort values are
+checked against fixed lists before they reach a query.
+
 `list()` stays unguarded because the `Account` read model it returns holds no
 token, ciphertext, token source or file path; an integration test checks
 that a dump of the list contains none of them.
@@ -160,15 +166,64 @@ page goes through `html_escape()` or `__esc()`. The page's script is a static fi
 `js/cloudflare_accounts.js`, loaded with Cacti's CSP nonce when Cacti
 provides one; the plugin adds no inline script.
 
+## Collector
+
+Tunnel discovery runs in a separate PHP process, `poller_cloudflare.php`.
+
+- **CLI only.** The script answers 404 and exits when `php_sapi_name()` is not
+  `cli`, so it cannot be requested over HTTP.
+- **Launch.** `cloudflare_poller_bottom()` starts it through
+  `exec_background()` from the `poller_bottom` hook, on the main poller only.
+  The PHP binary is Cacti's `path_php_binary` setting and the script path is
+  escaped; no request data reaches the command line.
+- **One process at a time.** The collector takes
+  `GET_LOCK('plugin_cloudflare_collector', 0)`. With a timeout of 0, a second
+  collector exits at once, and MySQL releases the lock when the connection
+  ends. Each job row also holds a lease, and every write for an account
+  shares a transaction with a check of that lease.
+- **Bounded run.** The collector starts no new account after 50 seconds and
+  makes at most 200 connection requests per run. Each request has a 5 second
+  connect timeout and the Collector Request Timeout (default 20 seconds), so
+  a slow Cloudflare API ends the run at its next check and never holds up the
+  poller cycle.
+- **Disable check.** Before each account it reads `plugin_config.status`
+  directly. `api_plugin_is_enabled()` caches its answer for the process, so it
+  would miss a plugin disabled during the run. A failed read counts as
+  disabled.
+- **Credentials.** Tokens are resolved per account from the same file or vault
+  as Verify, with the same checks, and wiped after use when sodium is loaded.
+  A token that cannot be read is logged as a reason code only.
+- **Logging.** A fault outside the Cloudflare client is logged as the
+  exception class name and nothing else, because a message or trace can quote
+  Cloudflare text or a token. Run lines carry the numeric account row ID, an
+  error class and counts, at Cacti's medium verbosity.
+
 ## Disabled plugin
 
 Cacti keeps a disabled plugin's realms loaded and its `config_arrays` hook
 active. The plugin therefore checks `api_plugin_is_enabled()` itself. While it
-is disabled, the menu entry and breadcrumbs are hidden and
-`cloudflare_accounts.php` answers as Cacti's permission-denied page. The
+is disabled, the menu entries and breadcrumbs are hidden, and
+`cloudflare_accounts.php` and `cloudflare.php` answer as Cacti's
+permission-denied page. The collector checks `plugin_config.status` itself
+and exits without work. The
 Settings > Cloudflare tab stays visible so the key path can be set before
 the plugin is enabled. The install smoke checks the denial and the recovery
 after re-enabling.
+
+## Test stack
+
+The install smoke runs Cacti against a fake Cloudflare API. The fake answers
+as `api.cloudflare.com` inside the stack's Docker network, with a certificate
+signed by a CA that it mints when its container starts. That CA is valid for
+two days and limited by a name constraint to `api.cloudflare.com`. Only the
+Cacti web container installs it, in its system certificate store. The smoke
+checks that the gateway container does not trust it and that any other name is
+refused.
+
+The plugin has no CA setting and no origin override. `CurlTransport` sets no
+CA option, so production uses the operating system's store, and
+`OutboundPolicy::production()` allows `https://api.cloudflare.com` and
+nothing else. The test CA exists only in the smoke stack.
 
 ## Uninstall
 
@@ -192,6 +247,15 @@ files.
 - File permission problems surface at Verify, not at save.
 - `TokenFile` refuses a symbolic link at the final path component only; it
   does not check parent directories.
+- Cacti disables a plugin whose code ends in a true fatal error, such as
+  running out of memory, exceeding `max_execution_time` or a compile error.
+  No `catch` can intercept these, and the plugin cannot prevent them; an
+  administrator has to enable it again. The pages catch `Throwable` and log the
+  class name, so an ordinary exception such as a missing table shows a fixed
+  message and does not reach Cacti's shutdown handler.
+- Three consecutive outage-class failures mark an account's active tunnels
+  `unavailable`, including when the cause is a long rate limit. The next
+  complete listing restores them.
 - Verify runs inside the web request. One Verify can make up to four
   requests (account verify, user verify, tunnel probe, zone probe), each
   bounded by the timeouts above and retried at most once.

@@ -20,6 +20,7 @@
 
 require_once __DIR__ . '/bootstrap.php';
 require_once __DIR__ . '/accounts.php';
+require_once __DIR__ . '/cacti_objects.php';
 
 use Cacti\PluginCloudflare\Jobs\JobRepository;
 use Cacti\PluginCloudflare\Storage\Database;
@@ -93,6 +94,8 @@ function cloudflare_collector_main(callable $service_factory) : int {
 			$outcomes = $service_factory()->runDue(CLOUDFLARE_COLLECTOR_BUDGET);
 
 			cacti_log(cloudflare_collector_summary($outcomes), false, 'CLOUDFLARE', POLLER_VERBOSITY_MEDIUM);
+
+			cloudflare_collector_sync($outcomes);
 		} finally {
 			$db->releaseLock(CLOUDFLARE_COLLECTOR_LOCK);
 		}
@@ -103,6 +106,20 @@ function cloudflare_collector_main(callable $service_factory) : int {
 	}
 
 	return 0;
+}
+
+/**
+ * Discovery has already recorded its results, so a failed sync is logged
+ * and leaves the collector's exit status alone.
+ *
+ * @param array<int, array{status: string}> $outcomes from DiscoveryService::runDue()
+ */
+function cloudflare_collector_sync(array $outcomes) : void {
+	try {
+		cloudflare_sync_cacti_objects($outcomes);
+	} catch (Throwable $e) {
+		cacti_log('CLOUDFLARE: graph sync failed (' . get_class($e) . ')', false, 'CLOUDFLARE', POLLER_VERBOSITY_LOW);
+	}
 }
 
 // Nothing else creates discovery jobs, so an account added since the last run gets one here.

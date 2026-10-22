@@ -63,6 +63,13 @@ function cloudflare_glue_reset(): void {
 		'template_queries' => array(),
 		'host_queries'     => array(),
 		'remove_fails'     => false,
+		'index_type'       => 'tunnelId',
+		'data_template_id' => 0,
+		'graph_local'      => array(),
+		'data_local'       => array(),
+		'next_graph'       => 1,
+		'next_data'        => 1,
+		'pushed'           => array(),
 	);
 	$GLOBALS['cloudflare_glue_enabled_cache'] = array();
 }
@@ -1219,5 +1226,127 @@ if (!function_exists('api_device_remove')) {
 		}
 
 		unset($GLOBALS['cloudflare_glue']['hosts'][(int) $device_id], $GLOBALS['cloudflare_glue']['host_queries'][(int) $device_id]);
+	}
+}
+
+/*
+ * Graph creation. graph_local and data_local are modelled in the glue
+ * state, so a test can see which graphs exist and which data source each
+ * one uses, and answer the glue's graph_local lookups from them.
+ */
+
+if (!function_exists('get_best_data_query_index_type')) {
+	/*
+	 * lib/data_query.php:2318 (1.2.25: :2285), identical in both: the
+	 * host's sort_field, else the XML's first index_order field.
+	 */
+	/**
+	 * @param mixed $host_id
+	 * @param mixed $data_query_id
+	 * @return mixed
+	 */
+	function get_best_data_query_index_type($host_id, $data_query_id) {
+		cloudflare_glue_record(__FUNCTION__, array($host_id, $data_query_id));
+
+		return cloudflare_glue_state('index_type');
+	}
+}
+
+if (!function_exists('create_complete_graph_from_template')) {
+	/*
+	 * lib/template.php:1480 in 1.2.25 and 1.2.31, $suggested_vals by
+	 * reference. Returns false or array('local_graph_id' => id,
+	 * 'local_data_id' => array(data_template_id => id)) (:1845). Modelled:
+	 * data_source_exists() (:2194, called at :1594; 1.2.25 :1596) finds the
+	 * data source of the same host, data template, query and index, and
+	 * :1613 reuses it, which is how a tunnel's graphs share one RRD.
+	 */
+	/**
+	 * @param mixed $graph_template_id
+	 * @param mixed $host_id
+	 * @param mixed $snmp_query_array
+	 * @param mixed $suggested_vals
+	 * @return mixed
+	 */
+	function create_complete_graph_from_template($graph_template_id, $host_id, $snmp_query_array, &$suggested_vals) {
+		cloudflare_glue_record(__FUNCTION__, array($graph_template_id, $host_id, $snmp_query_array, $suggested_vals));
+
+		if (empty($graph_template_id)) {
+			return false;
+		}
+
+		$data_template_id = (int) cloudflare_glue_state('data_template_id');
+		$local_data_id    = 0;
+		$key              = array(
+			$data_template_id,
+			(int) $host_id,
+			(int) $snmp_query_array['snmp_query_id'],
+			(string) $snmp_query_array['snmp_index'],
+		);
+
+		foreach (cloudflare_glue_state('data_local') as $id => $row) {
+			if ($row === $key) {
+				$local_data_id = (int) $id;
+
+				break;
+			}
+		}
+
+		if ($local_data_id === 0) {
+			$local_data_id = (int) cloudflare_glue_state('next_data');
+
+			$GLOBALS['cloudflare_glue']['next_data']++;
+			$GLOBALS['cloudflare_glue']['data_local'][$local_data_id] = $key;
+		}
+
+		$local_graph_id = (int) cloudflare_glue_state('next_graph');
+
+		$GLOBALS['cloudflare_glue']['next_graph']++;
+		$GLOBALS['cloudflare_glue']['graph_local'][$local_graph_id] = array(
+			'graph_template_id'   => (int) $graph_template_id,
+			'host_id'             => (int) $host_id,
+			'snmp_query_id'       => (int) $snmp_query_array['snmp_query_id'],
+			'snmp_query_graph_id' => (int) $snmp_query_array['snmp_query_graph_id'],
+			'snmp_index'          => (string) $snmp_query_array['snmp_index'],
+			'local_data_id'       => $local_data_id,
+		);
+
+		return array('local_graph_id' => $local_graph_id, 'local_data_id' => array($data_template_id => $local_data_id));
+	}
+}
+
+if (!function_exists('push_out_host')) {
+	/* lib/utility.php:834 (1.2.25: :687), same signature in both. */
+	/**
+	 * @param mixed $host_id
+	 * @param mixed $local_data_id
+	 * @param mixed $data_template_id
+	 */
+	function push_out_host($host_id, $local_data_id = 0, $data_template_id = 0): void {
+		cloudflare_glue_record(__FUNCTION__, array($host_id, $local_data_id, $data_template_id));
+	}
+}
+
+if (!function_exists('api_graph_remove')) {
+	/* lib/api_graph.php:109 in 1.2.25 and 1.2.31; recorded so a test can prove it is never called. */
+	/**
+	 * @param mixed $local_graph_id
+	 */
+	function api_graph_remove($local_graph_id): void {
+		cloudflare_glue_record(__FUNCTION__, array($local_graph_id));
+
+		unset($GLOBALS['cloudflare_glue']['graph_local'][(int) $local_graph_id]);
+	}
+}
+
+if (!function_exists('api_data_source_remove')) {
+	/* lib/api_data_source.php:57 in 1.2.25 and 1.2.31; recorded so a test can prove it is never called. */
+	/**
+	 * @param mixed $local_data_id
+	 */
+	function api_data_source_remove($local_data_id): void {
+		cloudflare_glue_record(__FUNCTION__, array($local_data_id));
+
+		unset($GLOBALS['cloudflare_glue']['data_local'][(int) $local_data_id]);
 	}
 }

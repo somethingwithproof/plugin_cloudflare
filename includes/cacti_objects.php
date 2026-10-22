@@ -23,6 +23,7 @@ require_once __DIR__ . '/templates.php';
 
 use Cacti\PluginCloudflare\Account\Account;
 use Cacti\PluginCloudflare\Metrics\ResourceRepository;
+use Cacti\PluginCloudflare\Storage\Database;
 use Cacti\PluginCloudflare\Storage\DatabaseException;
 use Cacti\PluginCloudflare\Support\SystemClock;
 
@@ -215,4 +216,291 @@ function cloudflare_device_libraries() : void {
 
 function cloudflare_device_log(Account $account, string $what) : void {
 	cacti_log('CLOUDFLARE: account ' . $account->id() . ' device ' . $what, false, 'CLOUDFLARE', POLLER_VERBOSITY_LOW);
+}
+
+/**
+ * Runs in the collector after DiscoveryService::runDue(), under its lock,
+ * for each account whose discovery ended ok or partial and that has a
+ * device. It reindexes the device and, when the account asks for graphs,
+ * creates or adopts the missing ones. It never removes a Cacti object, and
+ * a graph the plugin recorded is never made again, so a graph the admin
+ * deleted stays deleted. $outcomes is keyed by account id, as runDue()
+ * returns it.
+ *
+ * @param  array<int, array{status: string}>                $outcomes
+ * @return array{reindexed: int, graphs: int, skipped: int}
+ */
+function cloudflare_sync_cacti_objects(array $outcomes, int $budget_seconds = 20, int $max_graphs = 50) : array {
+	$totals   = array('reindexed' => 0, 'graphs' => 0, 'skipped' => 0);
+	$deadline = time() + $budget_seconds;
+	$accounts = array();
+
+	foreach ($outcomes as $account_id => $outcome) {
+		if ($outcome['status'] === 'ok' || $outcome['status'] === 'partial') {
+			$accounts[] = (int) $account_id;
+		}
+	}
+
+	if (!cacti_sizeof($accounts)) {
+		return $totals;
+	}
+
+	$db        = cloudflare_db();
+	$resources = new ResourceRepository($db, new SystemClock());
+	$templates = null;
+
+	foreach ($accounts as $account_id) {
+		if (time() >= $deadline || $totals['graphs'] >= $max_graphs) {
+			cacti_log('CLOUDFLARE: graph sync budget reached', false, 'CLOUDFLARE', POLLER_VERBOSITY_MEDIUM);
+
+			break;
+		}
+
+		try {
+			$device = $resources->device($account_id);
+
+			if ($device === null) {
+				continue;
+			}
+
+			if (!cloudflare_sync_host_present($account_id, $device['host_id'])) {
+				$totals['skipped']++;
+
+				continue;
+			}
+
+			if ($templates === null) {
+				$templates = cloudflare_templates_ready();
+
+				if ($templates === null) {
+					cacti_log('CLOUDFLARE: graph sync skipped; templates missing', false, 'CLOUDFLARE', POLLER_VERBOSITY_MEDIUM);
+
+					break;
+				}
+
+				cloudflare_device_libraries();
+			}
+
+			/* Picks up new tunnels. $force refreshes titles, which otherwise
+			 * follow only index changes (lib/data_query.php:356-368). */
+			run_data_query($device['host_id'], $templates['data_query_id'], false, true);
+
+			$totals['reindexed']++;
+
+			$totals['graphs'] += cloudflare_sync_graphs(
+				$db,
+				$resources,
+				$account_id,
+				$device['host_id'],
+				$templates,
+				$deadline,
+				$max_graphs - $totals['graphs']
+			);
+		} catch (Throwable $e) {
+			cacti_log(
+				'CLOUDFLARE: account ' . $account_id . ' graph sync failed (' . get_class($e) . ')',
+				false,
+				'CLOUDFLARE',
+				POLLER_VERBOSITY_LOW
+			);
+		}
+	}
+
+	return $totals;
+}
+
+/**
+ * A device the admin deleted is never made again here; only Create Cacti
+ * device replaces it. The setting keeps the log to one line per host.
+ */
+function cloudflare_sync_host_present(int $account_id, int $host_id) : bool {
+	$id = db_fetch_cell_prepared('SELECT id FROM host WHERE id = ? AND deleted = \'\'', array($host_id));
+
+	if (is_numeric($id) && (int) $id === $host_id) {
+		return true;
+	}
+
+	$setting = 'cloudflare_missing_host_' . $account_id;
+
+	if ((string) read_config_option($setting, true) !== (string) $host_id) {
+		cacti_log(
+			'CLOUDFLARE: account ' . $account_id . ' device host ' . $host_id
+				. ' is gone; not synced until Create Cacti device replaces it',
+			false,
+			'CLOUDFLARE',
+			POLLER_VERBOSITY_LOW
+		);
+
+		set_config_option($setting, (string) $host_id);
+	}
+
+	return false;
+}
+
+/**
+ * Creates or adopts each missing graph of the account's active tunnels,
+ * as cli/add_graphs.php:629-716 does, and returns how many it created.
+ * Graph rows recorded against another host are left from a replaced
+ * device: they neither block nor cause graphs on the current host.
+ *
+ * @param array{
+ *         data_query_id: int,
+ *         graphs: array<string, array{graph_template_id: int, snmp_query_graph_id: int}>
+ *         } $templates
+ */
+function cloudflare_sync_graphs(
+	Database $db,
+	ResourceRepository $resources,
+	int $account_id,
+	int $host_id,
+	array $templates,
+	int $deadline,
+	int $graphs_left
+) : int {
+	$create = $db->fetchCell('SELECT create_graphs FROM plugin_cloudflare_accounts WHERE id = ?', array($account_id));
+
+	if ((int) $create !== 1) {
+		return 0;
+	}
+
+	$recorded = array();
+
+	foreach ($resources->graphs($account_id) as $graph) {
+		if ($graph['host_id'] === $host_id) {
+			$recorded[$graph['tunnel_id']][$graph['template_hash']] = true;
+		}
+	}
+
+	$tunnels = $db->fetchAll(
+		'SELECT id, cf_tunnel_id FROM plugin_cloudflare_tunnels WHERE account_id = ? AND lifecycle = \'active\' ORDER BY id',
+		array($account_id)
+	);
+
+	$data_query_id = $templates['data_query_id'];
+	$index_on      = null;
+	$created       = 0;
+	$adopted       = 0;
+
+	foreach ($tunnels as $tunnel) {
+		$tunnel_id = (int) $tunnel['id'];
+		$index     = (string) $tunnel['cf_tunnel_id'];
+		$cached    = null;
+
+		foreach ($templates['graphs'] as $key => $graph) {
+			$hash = cloudflare_template_hash('graph_template/' . $key);
+
+			if (isset($recorded[$tunnel_id][$hash])) {
+				continue;
+			}
+
+			if ($created >= $graphs_left || time() >= $deadline) {
+				break 2;
+			}
+
+			$local_graph_id = db_fetch_cell_prepared(
+				'SELECT id FROM graph_local
+				WHERE host_id = ? AND snmp_query_id = ? AND snmp_index = ? AND graph_template_id = ?
+				ORDER BY id LIMIT 1',
+				array($host_id, $data_query_id, $index, $graph['graph_template_id'])
+			);
+
+			if (is_numeric($local_graph_id) && (int) $local_graph_id > 0) {
+				$resources->recordGraph(
+					$account_id,
+					$tunnel_id,
+					$hash,
+					$host_id,
+					(int) $local_graph_id,
+					cloudflare_graph_data_id((int) $local_graph_id)
+				);
+
+				$adopted++;
+
+				continue;
+			}
+
+			/* A tunnel the reindex did not list (R3 prints an empty listing on
+			 * a fault) would get a data source without an index value. */
+			if ($cached === null) {
+				$cached = db_fetch_cell_prepared(
+					'SELECT snmp_index FROM host_snmp_cache
+					WHERE host_id = ? AND snmp_query_id = ? AND snmp_index = ? LIMIT 1',
+					array($host_id, $data_query_id, $index)
+				) !== false;
+			}
+
+			if (!$cached) {
+				continue 2;
+			}
+
+			if ($index_on === null) {
+				$index_on = get_best_data_query_index_type($host_id, $data_query_id);
+			}
+
+			$empty = array();
+
+			/* Every graph maps all six fields, so data_source_exists() hands
+			 * the tunnel's later graphs its data source (lib/template.php:1613). */
+			$made = create_complete_graph_from_template(
+				$graph['graph_template_id'],
+				$host_id,
+				array(
+					'snmp_query_id'       => $data_query_id,
+					'snmp_index_on'       => $index_on,
+					'snmp_query_graph_id' => $graph['snmp_query_graph_id'],
+					'snmp_index'          => $index,
+				),
+				$empty
+			);
+
+			if (!is_array($made) || empty($made['local_graph_id'])) {
+				cacti_log(
+					'CLOUDFLARE: account ' . $account_id . ' graph not created for tunnel ' . $tunnel_id,
+					false,
+					'CLOUDFLARE',
+					POLLER_VERBOSITY_LOW
+				);
+
+				break 2;
+			}
+
+			$local_data_id = 0;
+
+			foreach ($made['local_data_id'] ?? array() as $id) {
+				push_out_host($host_id, (int) $id);
+
+				$local_data_id = (int) $id;
+			}
+
+			$resources->recordGraph($account_id, $tunnel_id, $hash, $host_id, (int) $made['local_graph_id'], $local_data_id);
+
+			$created++;
+		}
+	}
+
+	if ($created > 0 || $adopted > 0) {
+		cacti_log(
+			'CLOUDFLARE: account ' . $account_id . ' graphs created=' . $created . ' adopted=' . $adopted,
+			false,
+			'CLOUDFLARE',
+			POLLER_VERBOSITY_MEDIUM
+		);
+	}
+
+	return $created;
+}
+
+// The data source an existing graph draws from, as cli/add_graphs.php:672 reads it.
+function cloudflare_graph_data_id(int $local_graph_id) : int {
+	$id = db_fetch_cell_prepared(
+		'SELECT dtr.local_data_id
+		FROM graph_templates_item AS gti
+		INNER JOIN data_template_rrd AS dtr
+		ON gti.task_item_id = dtr.id
+		WHERE gti.local_graph_id = ?
+		LIMIT 1',
+		array($local_graph_id)
+	);
+
+	return is_numeric($id) ? (int) $id : 0;
 }

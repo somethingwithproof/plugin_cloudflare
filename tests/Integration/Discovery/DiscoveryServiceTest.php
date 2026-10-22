@@ -69,6 +69,9 @@ final class DiscoveryServiceTest extends IntegrationTestCase {
 	/** @var array<int, string> */
 	private $logs = array();
 
+	/** @var array<int, array{0: int, 1: string}> */
+	private $leveled = array();
+
 	/** @var bool */
 	private $enabled = true;
 
@@ -171,8 +174,9 @@ final class DiscoveryServiceTest extends IntegrationTestCase {
 
 				return $this->enabled;
 			},
-			function (string $line): void {
-				$this->logs[] = $line;
+			function (string $line, int $level): void {
+				$this->logs[]    = $line;
+				$this->leveled[] = array($level, $line);
 			},
 			120,
 			$this->connectionsPerRun
@@ -402,6 +406,28 @@ final class DiscoveryServiceTest extends IntegrationTestCase {
 		$this->assertSame(array($id => self::outcome('failed', ErrorClass::MALFORMED)), $this->runDue());
 		$this->assertSame($tunnels, $this->tunnels($id));
 		$this->assertSame($connectors, $this->connectors());
+	}
+
+	/* Cacti's default log_verbosity is LOW, so a failure logged any higher would never reach cacti.log. */
+	public function testFailuresLogAtLowAndOutcomesAtMedium(): void {
+		$id = $this->account(self::CF_A);
+		$this->queueTransient();
+		$this->runDue();
+
+		$this->makeDue($id);
+		$this->queueFullDiscovery();
+		$this->runDue();
+
+		$this->assertSame(array(
+			array(
+				DiscoveryService::LOG_LOW,
+				'CLOUDFLARE: discovery listing failed account=' . $id . ' class=' . ErrorClass::TRANSIENT,
+			),
+			array(
+				DiscoveryService::LOG_MEDIUM,
+				'CLOUDFLARE: discovery ok account=' . $id . ' added=3 updated=0 deleted=0 connection_failures=0',
+			),
+		), $this->leveled);
 	}
 
 	public function testThreeFailuresMarkUnavailable(): void {

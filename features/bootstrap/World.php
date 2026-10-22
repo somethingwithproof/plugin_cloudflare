@@ -193,7 +193,7 @@ final class World {
 			function (): bool {
 				return true;
 			},
-			function (string $line): void {
+			function (string $line, int $level): void {
 				$this->logged[] = $line;
 			}
 		);

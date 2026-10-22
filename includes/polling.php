@@ -97,7 +97,7 @@ function cloudflare_collector_main(callable $service_factory) : int {
 			$db->releaseLock(CLOUDFLARE_COLLECTOR_LOCK);
 		}
 	} catch (Throwable $e) {
-		cacti_log('CLOUDFLARE: collector failed (' . get_class($e) . ')', false, 'CLOUDFLARE');
+		cacti_log('CLOUDFLARE: collector failed (' . get_class($e) . ')', false, 'CLOUDFLARE', POLLER_VERBOSITY_LOW);
 
 		return 1;
 	}

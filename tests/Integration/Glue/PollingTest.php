@@ -180,10 +180,16 @@ final class PollingTest extends IntegrationTestCase {
 			'CLOUDFLARE: collector ok=0 partial=0 failed=1 skipped=0 lease_lost=0',
 			self::loggedLines()
 		);
+		$levels = array();
 		foreach (cloudflare_glue_calls('cacti_log') as $call) {
 			$this->assertSame('CLOUDFLARE', $call[2]);
-			$this->assertSame(POLLER_VERBOSITY_MEDIUM, $call[3]);
+			$levels[(string) $call[0]] = $call[3];
 		}
+		$failure = 'CLOUDFLARE: discovery token unavailable account=' . $collecting . ' reason=file_unavailable';
+		$this->assertSame(array(
+			$failure                                                               => POLLER_VERBOSITY_LOW,
+			'CLOUDFLARE: collector ok=0 partial=0 failed=1 skipped=0 lease_lost=0' => POLLER_VERBOSITY_MEDIUM,
+		), $levels);
 
 		$this->assertTrue($this->lockIsFree());
 		$this->assertSame(array(), cloudflare_glue_calls('db_connect_real'));
@@ -212,7 +218,7 @@ final class PollingTest extends IntegrationTestCase {
 		$outcomes = cloudflare_discovery_service()->runDue(50);
 
 		$this->assertSame(array($first), array_keys($outcomes));
-		$this->assertContains('Cloudflare discovery: plugin disabled, stopping accounts=1', self::loggedLines());
+		$this->assertContains('CLOUDFLARE: discovery plugin disabled, stopping accounts=1', self::loggedLines());
 		$this->assertSame('never', $this->db()->fetchCell(
 			'SELECT last_status FROM plugin_cloudflare_jobs WHERE account_id = ?',
 			array($second)
@@ -237,6 +243,7 @@ final class PollingTest extends IntegrationTestCase {
 
 		$this->assertSame(1, $status);
 		$this->assertSame(array('CLOUDFLARE: collector failed (RuntimeException)'), self::loggedLines());
+		$this->assertSame(POLLER_VERBOSITY_LOW, cloudflare_glue_calls('cacti_log')[0][3]);
 		$this->assertTrue($this->lockIsFree());
 	}
 

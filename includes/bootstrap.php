@@ -196,8 +196,8 @@ function cloudflare_discovery_service() : DiscoveryService {
 		function () use ($db) : bool {
 			return cloudflare_plugin_status_enabled($db);
 		},
-		function (string $line) : void {
-			cacti_log($line, false, 'CLOUDFLARE', POLLER_VERBOSITY_MEDIUM);
+		function (string $line, int $level) : void {
+			cacti_log($line, false, 'CLOUDFLARE', $level);
 		}
 	);
 }

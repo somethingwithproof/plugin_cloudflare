@@ -45,6 +45,15 @@ use Throwable;
  * own text, which may echo tunnel names.
  */
 final class DiscoveryService {
+	/*
+	 * The values of Cacti's POLLER_VERBOSITY_LOW and _MEDIUM, so the glue can
+	 * pass them to cacti_log() unchanged. Cacti installs at LOW by default and
+	 * drops any line above the configured level, so failures and lifecycle
+	 * changes go out at LOW and routine outcomes at MEDIUM.
+	 */
+	public const LOG_LOW    = 2;
+	public const LOG_MEDIUM = 3;
+
 	private const DUE_LIMIT = 500;
 
 	private const MARK_UNAVAILABLE_AFTER = 3;
@@ -89,7 +98,7 @@ final class DiscoveryService {
 	/** @var callable(): bool */
 	private $stillEnabled;
 
-	/** @var callable(string): void|null */
+	/** @var callable(string, int): void|null */
 	private $log;
 
 	/** @var int */
@@ -112,7 +121,7 @@ final class DiscoveryService {
 
 	/**
 	 * @param callable(): bool            $stillEnabled false once the plugin has been disabled
-	 * @param callable(string): void|null $log
+	 * @param callable(string, int): void|null $log  receives the line and LOG_LOW or LOG_MEDIUM
 	 * @param int                         $leaseTtl          seconds. touch() neither extends nor checks expiry,
 	 *                                                       so this is no stop; the collector's GET_LOCK is
 	 *                                                       the fence against a second run.
@@ -170,7 +179,7 @@ final class DiscoveryService {
 		$due = $this->jobs->due(JobRepository::TYPE_DISCOVERY, self::DUE_LIMIT);
 		foreach ($due as $index => $job) {
 			if ($this->clock->now() >= $this->deadline) {
-				$this->say('Cloudflare discovery: run budget reached accounts=' . count($outcomes));
+				$this->say('CLOUDFLARE: discovery run budget reached accounts=' . count($outcomes), self::LOG_MEDIUM);
 
 				break;
 			}
@@ -180,12 +189,12 @@ final class DiscoveryService {
 			 * next_run_at and leads the next run.
 			 */
 			if ($this->callsLeft < 1) {
-				$this->say('Cloudflare discovery: connections cap reached accounts=' . count($outcomes));
+				$this->say('CLOUDFLARE: discovery connections cap reached accounts=' . count($outcomes), self::LOG_MEDIUM);
 
 				break;
 			}
 			if (!($this->stillEnabled)()) {
-				$this->say('Cloudflare discovery: plugin disabled, stopping accounts=' . count($outcomes));
+				$this->say('CLOUDFLARE: discovery plugin disabled, stopping accounts=' . count($outcomes), self::LOG_MEDIUM);
 
 				break;
 			}
@@ -231,7 +240,7 @@ final class DiscoveryService {
 	 *         null when even the release failed and the connection is likely gone
 	 */
 	private function fault(Lease $lease, int $accountId, int $failures, Throwable $e): ?array {
-		$this->say('Cloudflare discovery: local fault account=' . $accountId . ' error=' . get_class($e));
+		$this->say('CLOUDFLARE: discovery local fault account=' . $accountId . ' error=' . get_class($e), self::LOG_LOW);
 
 		$next = JobRepository::nextRun(
 			$this->clock->now(),
@@ -249,7 +258,8 @@ final class DiscoveryService {
 			return self::outcome('lease_lost');
 		} catch (Throwable $failError) {
 			$this->say(
-				'Cloudflare discovery: fault not recorded account=' . $accountId . ' error=' . get_class($failError)
+				'CLOUDFLARE: discovery fault not recorded account=' . $accountId . ' error=' . get_class($failError),
+				self::LOG_LOW
 			);
 		}
 
@@ -258,7 +268,7 @@ final class DiscoveryService {
 		} catch (LeaseLost $lost) {
 			return self::outcome('lease_lost');
 		} catch (Throwable $releaseError) {
-			$this->say('Cloudflare discovery: stopping, lease not released account=' . $accountId);
+			$this->say('CLOUDFLARE: discovery stopping, lease not released account=' . $accountId, self::LOG_LOW);
 
 			return null;
 		}
@@ -283,7 +293,10 @@ final class DiscoveryService {
 			try {
 				$token = $this->creds->resolve($accountId);
 			} catch (SecretException $e) {
-				$this->say('Cloudflare discovery: token unavailable account=' . $accountId . ' reason=' . $e->getReason());
+				$this->say(
+					'CLOUDFLARE: discovery token unavailable account=' . $accountId . ' reason=' . $e->getReason(),
+					self::LOG_LOW
+				);
 
 				return $this->failed($lease, $account, $failures, ErrorClass::CONFIG, null, $counts);
 			}
@@ -296,7 +309,7 @@ final class DiscoveryService {
 				}
 			}
 		} catch (LeaseLost $e) {
-			$this->say('Cloudflare discovery: lease lost account=' . $accountId);
+			$this->say('CLOUDFLARE: discovery lease lost account=' . $accountId, self::LOG_LOW);
 
 			return self::outcome('lease_lost', null, $counts);
 		}
@@ -320,7 +333,10 @@ final class DiscoveryService {
 		try {
 			$tunnels = $this->client->listTunnels($account->cfAccountId(), $token);
 		} catch (ApiException $e) {
-			$this->say('Cloudflare discovery: listing failed account=' . $accountId . ' class=' . $e->getErrorClass());
+			$this->say(
+				'CLOUDFLARE: discovery listing failed account=' . $accountId . ' class=' . $e->getErrorClass(),
+				self::LOG_LOW
+			);
 
 			return $this->failed($lease, $account, $failures, $e->getErrorClass(), $e->getRetryAfter(), $counts);
 		}
@@ -362,7 +378,7 @@ final class DiscoveryService {
 					continue;
 				}
 
-				$this->say('Cloudflare discovery: connections failed account=' . $accountId . ' class=' . $class);
+				$this->say('CLOUDFLARE: discovery connections failed account=' . $accountId . ' class=' . $class, self::LOG_LOW);
 				if (in_array($class, self::STOP_CLASSES, true)) {
 					return $this->failed($lease, $account, $failures, $class, $e->getRetryAfter(), $counts, false);
 				}
@@ -388,8 +404,9 @@ final class DiscoveryService {
 		}
 
 		$this->say(
-			'Cloudflare discovery: ' . $status . ' account=' . $accountId . ' added=' . $counts['added'] . ' updated='
-			. $counts['updated'] . ' deleted=' . $counts['deleted'] . ' connection_failures=' . $skipped
+			'CLOUDFLARE: discovery ' . $status . ' account=' . $accountId . ' added=' . $counts['added'] . ' updated='
+			. $counts['updated'] . ' deleted=' . $counts['deleted'] . ' connection_failures=' . $skipped,
+			self::LOG_MEDIUM
 		);
 
 		return self::outcome($status, null, $counts);
@@ -433,7 +450,10 @@ final class DiscoveryService {
 		});
 
 		if ($marked !== null) {
-			$this->say('Cloudflare discovery: marked unavailable account=' . $account->id() . ' tunnels=' . $marked);
+			$this->say(
+				'CLOUDFLARE: discovery marked unavailable account=' . $account->id() . ' tunnels=' . $marked,
+				self::LOG_LOW
+			);
 		}
 
 		return self::outcome('failed', $class, $counts);
@@ -454,9 +474,9 @@ final class DiscoveryService {
 		);
 	}
 
-	private function say(string $line): void {
+	private function say(string $line, int $level): void {
 		if ($this->log !== null) {
-			($this->log)($line);
+			($this->log)($line, $level);
 		}
 	}
 }

@@ -105,10 +105,10 @@ final class M002DiscoveryTest extends IntegrationTestCase {
 
 		$accountId = $this->insertAccount();
 
-		$this->assertSame(array(2), $this->migrator()->migrate());
+		$this->assertSame(array(2, 3), $this->migrator()->migrate());
 		$this->assertTrue($this->tableExists('plugin_cloudflare_tunnels'));
 		$this->assertTrue($this->tableExists('plugin_cloudflare_connectors'));
-		$this->assertSame(2, $this->migrator()->currentVersion());
+		$this->assertSame(3, $this->migrator()->currentVersion());
 		$this->assertSame(1, $this->rows('plugin_cloudflare_accounts'));
 		$this->assertGreaterThan(0, $accountId);
 	}

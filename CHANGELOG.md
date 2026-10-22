@@ -11,6 +11,7 @@ included.
 * feature: Management > Cloudflare Tunnels with Overview, Tunnels and Connectors pages for the Cloudflare: View realm
 * feature: Collector Request Timeout setting now applies to the background collector
 * feature: Upgrade from 0.1.0 adds the tunnel and connector tables and registers the poller_bottom hook with the plugin's current enabled state
+* feature: After replacing the files, open Console > Configuration > Plugins or Cloudflare Accounts once as an admin, so the migration runs and the poller hook is registered; until then nothing is collected
 
 --- 0.1.0 (unreleased) ---
 

@@ -125,7 +125,9 @@ last Verify: `ok`, tunnel read granted and zone read missing.*
 
 *Management > Cloudflare Tunnels > Overview. The status is the worst Cloudflare
 status among the account's active tunnels, here `down` because one fixture
-tunnel is down.*
+tunnel is down. `Disabled`, `Not collected`, `Collection failing` and `Not yet
+collected` take precedence over tunnel health, in that order, so an account
+whose last run failed shows `Collection failing` whatever its tunnels report.*
 
 ![The Tunnels tab listing three tunnels from Example account: blog (healthy), old-office (down) and staging (inactive), all active.](docs/images/tunnels-list.png)
 
@@ -199,6 +201,17 @@ The file is checked when it is read, at Verify, not when you save. Symbolic
 links, files over 4 KiB and files readable or writable by others are
 refused.
 
+## Upgrade
+
+1. Replace the files in `plugins/cloudflare` with the new release, keeping
+   the directory name.
+2. Open Console > Configuration > Plugins, or Console > Configuration >
+   Cloudflare Accounts, once as an admin. That runs the plugin's migrations
+   and, on an upgrade from 0.1.0, registers the `poller_bottom` hook.
+
+`poller.php` does not run the plugin's upgrade, so until step 2 the
+new schema is missing and nothing is collected.
+
 ## Account status
 
 Verify sets the account's status:
@@ -227,10 +240,11 @@ never start it.
 For each account that is due, the collector lists the account's tunnels, then
 reads the connections of its active tunnels, which gives each tunnel's
 connectors, their versions, data centers and origin addresses. Accounts are
-due every Discovery Interval (default 300 seconds). A run stops after 50
-seconds or 200 connection requests, whichever comes first, and the next run
-continues with the tunnels attempted least recently. A run cut short this way
-is recorded as `partial`.
+due every Discovery Interval (default 300 seconds). A run starts no new
+account after 50 seconds and makes at most 200 connection requests. Either
+limit can also stop an account part way through reading its connections; that
+account is recorded as `partial`, and the next run continues with the tunnels
+attempted least recently. Accounts not started stay due for the next run.
 
 A tunnel has a lifecycle, kept apart from the status Cloudflare reports
 (`healthy`, `degraded`, `down` or `inactive`):
@@ -241,12 +255,17 @@ A tunnel has a lifecycle, kept apart from the status Cloudflare reports
 | `deleted` | A complete listing did not include it, which includes an empty listing. The row and its history stay, and the tunnel becomes `active` again if it reappears |
 | `unavailable` | Cloudflare could not be read for three runs in a row, so the tunnel's state is unknown |
 
-Only a complete, successful listing changes a tunnel's state. A failed
-listing leaves every tunnel as it was. A failure to read Cloudflare at all
+Only a complete, successful listing adds, updates or deletes tunnels, and a
+failed listing never deletes one. A failure to read Cloudflare at all
 (`transient`, `rate_limited`, `auth` or `permission`) counts toward an outage;
-after three in a row the account's active tunnels become `unavailable`. An
-outage never deletes anything, and the next complete listing restores the
-tunnels and resets the count. A tunnel that Cloudflare no longer knows when its
+after three in a row, before any complete listing, the account's active
+tunnels become `unavailable`. The next complete listing restores them and
+resets the count.
+
+In `cacti.log`, discovery lines start with `CLOUDFLARE: discovery` and the run
+summary with `CLOUDFLARE: collector`. Failures and lifecycle changes, such as a failed listing or tunnels marked
+`unavailable`, are logged at Cacti's default `LOW` level; each account's
+result and the run summary are logged at `MEDIUM`. A tunnel that Cloudflare no longer knows when its
 connections are read is skipped without failing the account.
 
 Management > Cloudflare Tunnels needs the Cloudflare: View permission and is

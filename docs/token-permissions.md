@@ -34,9 +34,9 @@ permission:
   tunnel's connectors
 
 Discovery needs no permission beyond the tunnel read permission that Verify
-already checks. If Cloudflare refuses the token during a run, the run fails
-as `auth` or `permission`; three failed runs in a row mark the account's
-active tunnels `unavailable` until a listing succeeds again.
+already checks. If Cloudflare refuses the tunnel listing during a run, the
+run fails as `auth` or `permission`; three failed runs in a row mark the
+account's active tunnels `unavailable` until a listing succeeds again.
 
 Token verification (`/tokens/verify`) needs no permission. Both account-owned
 and user-owned tokens work. A user-owned token gets HTTP 401 from the account

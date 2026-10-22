@@ -52,8 +52,8 @@ realms in `plugin_cloudflare_install()`:
 
 Version 0.2.0 added the `poller_bottom` hook. `api_plugin_register_hook()`
 inserts a hook that is not a configuration hook with status 0, which is
-disabled, unless the caller asks for it to be enabled (`lib/plugins.php:1028`
-through `lib/plugins.php:1046`). Cacti does not enable a plugin again when it is
+disabled, unless the caller asks for it to be enabled (`lib/plugins.php:1030`,
+with the `$enable` branch at `lib/plugins.php:1048`). Cacti does not enable a plugin again when it is
 already enabled, so an upgrade from 0.1.0 would leave the new hook off and the
 collector would never start. `plugin_cloudflare_upgrade()` therefore registers
 the hook, for an installation older than 0.2.0, with the plugin's current
@@ -67,7 +67,7 @@ anything when `poller_id` is not 1. INFO declares `remote_collect:0`.
 Core Cacti never calls a plugin upgrade function, so
 `plugin_cloudflare_upgrade()` runs from `plugin_cloudflare_check_config()`,
 from the `config_settings` hook on `settings.php` and `plugins.php`, and at
-the top of `cloudflare_accounts.php`.
+the top of `cloudflare_accounts.php` and `cloudflare.php`.
 
 Every Cacti function and hook above exists in `release/1.2.25`. The page
 calls `CactiSecureHeaders::getNonceAttribute()` only when that class exists,

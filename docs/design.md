@@ -200,11 +200,20 @@ permissions needed to verify it; a 401 records `auth_failed`.
   account the collector reads `plugin_config.status` directly and stops when
   the plugin is disabled. `api_plugin_is_enabled()` is not used there because
   it caches its first answer for the life of the process.
-- An account's tunnels come from one complete listing: a failed or
-  incomplete page leaves every stored row unchanged. Rows are upserted on
+- An account's tunnels come from one complete listing. A failed or
+  incomplete listing never deletes a tunnel and leaves every tunnel row
+  unchanged; three consecutive outage-class failures before a complete
+  listing mark the account's active tunnels `unavailable`, and the next
+  complete listing restores them. Rows are upserted on
   `(account_id, cf_tunnel_id)` and never deleted and re-inserted, so a tunnel
   keeps its row id. A tunnel absent from a complete listing becomes
   `deleted`, and one that returns becomes `active`.
+- The listing pins page 1's `total_count`, and a later page that reports a
+  different total fails the run as `malformed`, so a tunnel deleted between
+  pages cannot shift the next page and hide another tunnel. A delete and a
+  create between pages keep the total unchanged, so on an account with more
+  than 1000 tunnels that pair can still hide one tunnel and mark it `deleted`
+  for one cycle; the next complete listing makes it `active` again.
 - The lifecycle is `active`, `unavailable` or `deleted`. Cloudflare's own
   health is stored apart from it as `cf_status`.
 - Connections are read per tunnel. Cloudflare answers an unknown tunnel with

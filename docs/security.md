@@ -182,7 +182,8 @@ Tunnel discovery runs in a separate PHP process, `poller_cloudflare.php`.
   ends. Each job row also holds a lease, and every write for an account
   shares a transaction with a check of that lease.
 - **Bounded run.** The collector starts no new account after 50 seconds and
-  makes at most 200 connection requests per run. Each request has a 5 second
+  makes at most 200 connection requests per run. Either limit can also stop
+  an account part way through its connection reads, recorded as `partial`. Each request has a 5 second
   connect timeout and the Collector Request Timeout (default 20 seconds), so
   a slow Cloudflare API ends the run at its next check and never holds up the
   poller cycle.

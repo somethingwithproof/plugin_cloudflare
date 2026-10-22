@@ -31,7 +31,8 @@ use RuntimeException;
  * omitted for SQLSTATE classes 22 (data exception) and 23 (integrity
  * constraint), whose messages echo the offending value, for example
  * "Duplicate entry '<value>'". For every other class the text is appended with
- * each quoted literal replaced by '?', since any driver message may quote
+ * each quoted literal replaced by '?' (an unterminated quote masks to the end
+ * of the text, as in truncated "near '...'" output), since any driver message may quote
  * statement content. Bound values are never passed in.
  */
 final class DatabaseException extends RuntimeException {
@@ -44,7 +45,7 @@ final class DatabaseException extends RuntimeException {
 		$message = 'SQLSTATE[' . $sqlState . '] driver error ' . $driverCode;
 
 		if (!in_array(substr($sqlState, 0, 2), array('22', '23'), true)) {
-			$masked = preg_replace('/\'(?:[^\'\\\\]|\\\\.)*\'|"(?:[^"\\\\]|\\\\.)*"/s', "'?'", $driverMessage);
+			$masked = preg_replace('/\'(?:[^\'\\\\]|\\\\.)*(?:\'|\z)|"(?:[^"\\\\]|\\\\.)*(?:"|\z)|`[^`]*(?:`|\z)/s', "'?'", $driverMessage);
 			$message .= ': ' . ($masked === null ? '?' : $masked);
 		}
 

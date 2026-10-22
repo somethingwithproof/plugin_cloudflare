@@ -300,6 +300,32 @@ final class ViewerPageHandlersTest extends IntegrationTestCase {
 		$this->assertSame('4', $rows[0][4]);
 	}
 
+	public function testConnectorsOfANonActiveTunnelAreLabelledLastSeen(): void {
+		list($prod) = $this->seed();
+
+		$tunnelId = (int) $this->db->fetchCell(
+			'SELECT id FROM plugin_cloudflare_tunnels WHERE account_id = ? AND name = ?',
+			array($prod, 'web')
+		);
+		$reconciler = new Reconciler($this->db, new FrozenClock(self::T0));
+		$reconciler->applyConnections($tunnelId, array(
+			new ConnectorRecord(self::uuid(1001), '2026.1.0', 'linux_amd64', null, 4, array('LHR'), array('192.0.2.1')),
+		));
+
+		$_REQUEST = array('tunnel_id' => (string) $tunnelId);
+		$label    = 'These connectors were last seen while the tunnel was active.';
+
+		$this->assertStringNotContainsString($label, self::capture('cloudflare_viewer_connectors'));
+
+		$reconciler->markUnavailable($prod);
+		cloudflare_glue_reset();
+		$_REQUEST = array('tunnel_id' => (string) $tunnelId);
+		$output   = self::capture('cloudflare_viewer_connectors');
+
+		$this->assertStringContainsString('This tunnel is unavailable. ' . $label, $output);
+		$this->assertCount(1, self::rows(), 'the stored connector is still listed');
+	}
+
 	public function testConnectorsForAMissingTunnelSayNotFound(): void {
 		$this->seed();
 

@@ -345,6 +345,34 @@ final class ViewerPageTest extends TestCase {
 		$this->assertStringContainsString('cloudflare.php?action=connectors&amp;tunnel_id=9', $trace);
 	}
 
+	/* The Reconciler leaves the last counts on a tunnel that stops being active; they are no longer current. */
+	public function testNonActiveTunnelsShowNoCounts(): void {
+		$tunnels = array();
+		foreach (array('active', 'unavailable', 'deleted') as $n => $lifecycle) {
+			$tunnels[] = array(
+				'id'               => $n + 1,
+				'account_id'       => 1,
+				'name'             => '<b>t' . $n . '</b>',
+				'cf_status'        => 'healthy',
+				'tun_type'         => 'cfd_tunnel',
+				'lifecycle'        => $lifecycle,
+				'connector_count'  => 2,
+				'connection_count' => 4,
+				'last_seen_at'     => 1800000000,
+			);
+		}
+
+		self::capture(function () use ($tunnels): void {
+			cloudflare_viewer_tunnel_table($tunnels, array(), false);
+		});
+
+		$rows = self::rows();
+		$this->assertSame(array('active', '2', '4'), array($rows[0][2], $rows[0][4], $rows[0][5]));
+		$this->assertSame(array('unavailable', '-', '-'), array($rows[1][2], $rows[1][4], $rows[1][5]));
+		$this->assertSame(array('deleted', '-', '-'), array($rows[2][2], $rows[2][4], $rows[2][5]));
+		$this->assertStringNotContainsString('<b>', var_export($GLOBALS['cloudflare_glue']['calls'], true));
+	}
+
 	public function testDisabledPluginDenied(): void {
 		list($output, $calls) = $this->runPage(false, array('action' => 'tunnels'));
 

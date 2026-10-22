@@ -559,8 +559,10 @@ function cloudflare_viewer_tunnel_table(array $tunnels, array $accounts, bool $a
 		form_selectable_cell(html_escape((string) $tunnel['cf_status']), $id);
 		form_selectable_cell(html_escape((string) $tunnel['lifecycle']), $id);
 		form_selectable_cell(html_escape((string) $tunnel['tun_type']), $id);
-		form_selectable_cell(cloudflare_viewer_count($tunnel['connector_count']), $id, '', 'right');
-		form_selectable_cell(cloudflare_viewer_count($tunnel['connection_count']), $id, '', 'right');
+		/* The Reconciler keeps the last counts on a tunnel that stops being active, so they are not current. */
+		$current = (string) $tunnel['lifecycle'] === 'active';
+		form_selectable_cell(cloudflare_viewer_count($current ? $tunnel['connector_count'] : null), $id, '', 'right');
+		form_selectable_cell(cloudflare_viewer_count($current ? $tunnel['connection_count'] : null), $id, '', 'right');
 		form_selectable_cell(html_escape(cloudflare_viewer_time($last_seen)), $id);
 		form_end_row();
 	}
@@ -613,6 +615,15 @@ function cloudflare_viewer_connectors() : void {
 	html_header($display_text);
 
 	if (cacti_sizeof($connectors)) {
+		if ((string) $tunnel['lifecycle'] !== 'active') {
+			print "<tr class='tableRow'><td colspan='" . cacti_sizeof($display_text) . "'><em>" .
+				__esc(
+					'This tunnel is %s. These connectors were last seen while the tunnel was active.',
+					(string) $tunnel['lifecycle'],
+					'cloudflare'
+				) . "</em></td></tr>\n";
+		}
+
 		cloudflare_viewer_connector_table($connectors);
 	} else {
 		print "<tr class='tableRow'><td colspan='" . cacti_sizeof($display_text) . "'><em>" .

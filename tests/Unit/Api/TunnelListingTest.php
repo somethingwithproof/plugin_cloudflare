@@ -297,6 +297,42 @@ final class TunnelListingTest extends TestCase {
 		$this->assertNull($tunnels[0]->connsInactiveAt);
 	}
 
+	/**
+	 * The columns are INT UNSIGNED and Cacti's session is not strict, so an
+	 * out-of-range value would be clamped and shown as a real date.
+	 *
+	 * @return array<string, array{0: string, 1: int|null}>
+	 */
+	public function timestampRange(): array {
+		return array(
+			'before the epoch' => array('1969-12-31T23:59:59Z', null),
+			'past 32 bits'     => array('2106-02-07T06:28:16Z', null),
+			'Go zero time'     => array('0001-01-01T00:00:00Z', null),
+			'epoch'            => array('1970-01-01T00:00:00Z', 0),
+			'last 32-bit'      => array('2106-02-07T06:28:15Z', 4294967295),
+		);
+	}
+
+	/**
+	 * @dataProvider timestampRange
+	 */
+	public function testTimestampsOutsideTheColumnRangeBecomeNull(string $value, ?int $expected): void {
+		$item                      = $this->item(1);
+		$item['created_at']        = $value;
+		$item['conns_active_at']   = $value;
+		$item['conns_inactive_at'] = $value;
+		$this->transport->queue($this->page(
+			array($item),
+			array('page' => 1, 'per_page' => 1000, 'count' => 1, 'total_count' => 1)
+		));
+
+		$tunnels = $this->client()->listTunnels(self::ACCOUNT, $this->token);
+
+		$this->assertSame($expected, $tunnels[0]->createdAt);
+		$this->assertSame($expected, $tunnels[0]->connsActiveAt);
+		$this->assertSame($expected, $tunnels[0]->connsInactiveAt);
+	}
+
 	public function testConnections1001IsNotFound(): void {
 		$this->transport->queue(FakeTransport::fixture('connections-1001', 401));
 

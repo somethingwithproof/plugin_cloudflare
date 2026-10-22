@@ -39,6 +39,7 @@ final class CloudflareClient {
 	private const MAX_NAME          = 255;
 	private const MAX_SHORT         = 32;
 	private const MAX_LIST          = 255;
+	private const MAX_TIMESTAMP     = 4294967295;
 	private const TUNNEL_STATUSES   = array('healthy', 'degraded', 'down', 'inactive');
 
 	/** @var HttpTransport */
@@ -580,9 +581,16 @@ final class CloudflareClient {
 		}
 
 		try {
-			return (new DateTimeImmutable($value))->getTimestamp();
+			$timestamp = (new DateTimeImmutable($value))->getTimestamp();
 		} catch (Exception $e) {
 			return null;
 		}
+
+		/*
+		 * The columns are INT UNSIGNED and Cacti clears STRICT modes from its
+		 * session, so a value outside the range would be clamped silently and
+		 * shown as a real date. Go's zero time lands here too.
+		 */
+		return $timestamp >= 0 && $timestamp <= self::MAX_TIMESTAMP ? $timestamp : null;
 	}
 }

@@ -131,6 +131,11 @@ jobs:
           tools: composer:v2
       - name: Install dependencies
         run: composer install --no-interaction --no-progress --prefer-dist
+      # MySQL 8.4 has binary logging on, which refuses the triggers the
+      # fault-injection tests create (error 1419) unless this is set.
+      - name: Allow test triggers on MySQL
+        if: startsWith(matrix.db.name, 'MySQL')
+        run: mysql -h 127.0.0.1 -uroot -proot -e 'SET GLOBAL log_bin_trust_function_creators = 1'
       # CI=true makes an unreachable database fail the suite instead of
       # skipping it (tests/Support/TestDatabase.php).
       - name: PHPUnit integration suite

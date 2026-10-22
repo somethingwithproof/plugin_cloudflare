@@ -7,7 +7,7 @@ services:
       MARIADB_USER: cacti
       MARIADB_PASSWORD: cacti
     ports:
-      - "33061:3306"
+      - "127.0.0.1:33061:3306"
     tmpfs:
       - /var/lib/mysql
     healthcheck:

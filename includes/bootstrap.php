@@ -1,0 +1,153 @@
+<?php
+/*
+ +-------------------------------------------------------------------------+
+ | Copyright (C) 2026 The Cacti Group                                      |
+ |                                                                         |
+ | This program is free software; you can redistribute it and/or           |
+ | modify it under the terms of the GNU General Public License             |
+ | as published by the Free Software Foundation; either version 2          |
+ | of the License, or (at your option) any later version.                  |
+ |                                                                         |
+ | This program is distributed in the hope that it will be useful,         |
+ | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
+ | GNU General Public License for more details.                            |
+ +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDTool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
+ +-------------------------------------------------------------------------+
+ | http://www.cacti.net/                                                   |
+ +-------------------------------------------------------------------------+
+*/
+
+require_once __DIR__ . '/autoload.php';
+
+use Cacti\PluginCloudflare\Account\AccountRepository;
+use Cacti\PluginCloudflare\Account\AccountService;
+use Cacti\PluginCloudflare\Api\CloudflareClient;
+use Cacti\PluginCloudflare\Api\RetryPolicy;
+use Cacti\PluginCloudflare\Auth\CallbackAuthorizer;
+use Cacti\PluginCloudflare\Http\CurlTransport;
+use Cacti\PluginCloudflare\Http\OutboundPolicy;
+use Cacti\PluginCloudflare\Secret\SecretException;
+use Cacti\PluginCloudflare\Secret\TokenVault;
+use Cacti\PluginCloudflare\Storage\Database;
+use Cacti\PluginCloudflare\Storage\DatabaseException;
+use Cacti\PluginCloudflare\Support\SystemClock;
+use Cacti\PluginCloudflare\Support\SystemSleeper;
+
+if (!defined('CLOUDFLARE_DEFAULT_KEY_FILE')) {
+	define('CLOUDFLARE_DEFAULT_KEY_FILE', '/etc/cacti/cloudflare.key');
+	define('CLOUDFLARE_CONNECT_TIMEOUT', 5);
+}
+
+/**
+ * Wraps Cacti's own handle rather than opening a second connection, so the
+ * plugin shares Cacti's credentials, TLS settings and session sql_mode.
+ */
+function cloudflare_db() : Database {
+	global $database_sessions, $database_hostname, $database_username, $database_password,
+		$database_default, $database_type, $database_port, $database_retries,
+		$database_ssl, $database_ssl_key, $database_ssl_cert, $database_ssl_ca;
+
+	$session = "$database_hostname:$database_port:$database_default";
+
+	if (isset($database_sessions[$session]) && $database_sessions[$session] instanceof PDO) {
+		return new Database($database_sessions[$session]);
+	}
+
+	/* Same arguments include/global.php:363 passes. db_connect_real() stores
+	 * the handle in $database_sessions, so later calls take the branch above. */
+	$handle = db_connect_real(
+		$database_hostname,
+		$database_username,
+		$database_password,
+		$database_default,
+		isset($database_type) ? $database_type : 'mysql',
+		$database_port,
+		isset($database_retries) ? $database_retries : 2,
+		isset($database_ssl) ? $database_ssl : false,
+		isset($database_ssl_key) ? $database_ssl_key : '',
+		isset($database_ssl_cert) ? $database_ssl_cert : '',
+		isset($database_ssl_ca) ? $database_ssl_ca : ''
+	);
+
+	if (!$handle instanceof PDO) {
+		throw new DatabaseException('HY000', 2002);
+	}
+
+	return new Database($handle);
+}
+
+/**
+ * Returns null when the key file is missing or unusable; the account page
+ * then offers only the token file source.
+ */
+function cloudflare_vault() : ?TokenVault {
+	$path = trim((string) read_config_option('cloudflare_key_file'));
+
+	if ($path === '') {
+		$path = CLOUDFLARE_DEFAULT_KEY_FILE;
+	}
+
+	try {
+		return TokenVault::fromKeyFile($path);
+	} catch (SecretException $e) {
+		if ($e->getReason() === 'key_unavailable') {
+			return null;
+		}
+
+		throw $e;
+	}
+}
+
+/**
+ * Reads an integer setting, falling back to $default when it is unset or
+ * outside [$min, $max].
+ */
+function cloudflare_setting_int(string $name, int $default, int $min, int $max) : int {
+	$value = read_config_option($name);
+
+	if (!is_numeric($value) || (string) (int) $value !== trim((string) $value)) {
+		return $default;
+	}
+
+	$value = (int) $value;
+
+	return ($value < $min || $value > $max) ? $default : $value;
+}
+
+function cloudflare_client(int $connect, int $total, int $retries = 2) : CloudflareClient {
+	$clock = new SystemClock();
+
+	return new CloudflareClient(
+		new CurlTransport(OutboundPolicy::production()),
+		new RetryPolicy($clock, new SystemSleeper(), $retries),
+		'https://api.cloudflare.com/client/v4',
+		$connect,
+		$total
+	);
+}
+
+/**
+ * The UI client retries once at most (docs/design.md, Outbound HTTP) so a
+ * verify cannot hold the page for several total timeouts.
+ */
+function cloudflare_account_service() : AccountService {
+	$db = cloudflare_db();
+
+	return new AccountService(
+		new AccountRepository($db),
+		new CallbackAuthorizer(function () : bool {
+			return api_user_realm_auth('cloudflare_accounts.php') === true;
+		}),
+		cloudflare_client(CLOUDFLARE_CONNECT_TIMEOUT, cloudflare_setting_int('cloudflare_ui_timeout', 10, 5, 60), 1),
+		cloudflare_vault(),
+		new SystemClock(),
+		function (string $line) : void {
+			cacti_log($line, false, 'CLOUDFLARE');
+		}
+	);
+}

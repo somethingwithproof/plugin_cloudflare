@@ -313,7 +313,8 @@ final class DiscoveryService {
 		$partial = false;
 
 		/* One row past the remaining cap tells a finished account from a cut-off one. */
-		$queue = (new TunnelRepository($this->db))->activeForRefresh($accountId, $this->callsLeft + 1);
+		$repo  = new TunnelRepository($this->db);
+		$queue = $repo->activeForRefresh($accountId, $this->callsLeft + 1);
 		foreach ($queue as $row) {
 			if ($this->callsLeft < 1 || $this->clock->now() >= $this->deadline) {
 				$partial = true;
@@ -328,6 +329,11 @@ final class DiscoveryService {
 			try {
 				$connectors = $this->client->listConnections($account->cfAccountId(), $token, $cfTunnelId);
 			} catch (ApiException $e) {
+				$this->db->transactional(function () use ($lease, $repo, $tunnelRowId): void {
+					$this->jobs->touch($lease);
+					$repo->markConnectionsAttempted($tunnelRowId, $this->clock->now());
+				});
+
 				$class = $e->getErrorClass();
 				if ($class === ErrorClass::NOT_FOUND) {
 					continue;

@@ -77,8 +77,10 @@ final class TunnelRepository {
 
 	/**
 	 * A run that cannot refresh every tunnel starts from these, so
-	 * successive runs work through the whole account. MySQL sorts NULL
-	 * first, so tunnels never refreshed lead.
+	 * successive runs work through the whole account. Ordering by the last
+	 * attempt, not the last success, keeps a tunnel that always fails from
+	 * holding the head of the queue. MySQL sorts NULL first, so tunnels
+	 * never tried lead.
 	 *
 	 * @return array<int, array<string, mixed>> id and cf_tunnel_id
 	 */
@@ -91,8 +93,21 @@ final class TunnelRepository {
 		return $this->db->fetchAll(
 			'SELECT id, cf_tunnel_id FROM ' . self::TABLE . "
 			WHERE account_id = ? AND lifecycle = 'active'
-			ORDER BY connections_refreshed_at, id LIMIT " . $limit,
+			ORDER BY connections_attempted_at, id LIMIT " . $limit,
 			array($accountId)
+		);
+	}
+
+	/**
+	 * For an attempt that failed; a successful one is stamped by
+	 * Reconciler::applyConnections() with the refresh.
+	 *
+	 * @return int Rows changed.
+	 */
+	public function markConnectionsAttempted(int $tunnelId, int $now): int {
+		return $this->db->execute(
+			'UPDATE ' . self::TABLE . ' SET connections_attempted_at = ? WHERE id = ?',
+			array($now, $tunnelId)
 		);
 	}
 

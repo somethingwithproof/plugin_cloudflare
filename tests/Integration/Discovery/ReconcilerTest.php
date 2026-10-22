@@ -413,7 +413,9 @@ final class ReconcilerTest extends IntegrationTestCase {
 
 		$rows = $this->tunnelsByUuid();
 		$this->assertSame((string) (self::T0 + 60), (string) $rows[self::uuid(1)]['connections_refreshed_at']);
+		$this->assertSame((string) (self::T0 + 60), (string) $rows[self::uuid(1)]['connections_attempted_at']);
 		$this->assertNull($rows[self::uuid(2)]['connections_refreshed_at']);
+		$this->assertNull($rows[self::uuid(2)]['connections_attempted_at']);
 	}
 
 	public function testDuplicateIdsInListingCountOnce(): void {

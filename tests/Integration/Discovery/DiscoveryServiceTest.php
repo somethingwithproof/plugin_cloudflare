@@ -732,6 +732,44 @@ final class DiscoveryServiceTest extends IntegrationTestCase {
 		}
 	}
 
+	public function testFailingTunnelsDoNotStallTheQueue(): void {
+		$this->connectionsPerRun = 2;
+		$id                      = $this->account(self::CF_A);
+		$healthy                 = array(self::uuid(4), self::uuid(5));
+
+		/* Tunnels 1 to 3 answer 404 or a malformed 400 on every attempt. */
+		$answer = function (Request $r) use ($healthy): Response {
+			foreach ($healthy as $uuid) {
+				if (strpos($r->url(), $uuid) !== false) {
+					return self::noConnectors();
+				}
+			}
+			if (strpos($r->url(), self::uuid(2)) !== false) {
+				return new Response(400, array(), '{"success":false,"errors":[{"code":1}]}');
+			}
+
+			return FakeTransport::fixture('error-envelope', 404);
+		};
+
+		for ($run = 1; $run <= 3; $run++) {
+			$this->makeDue($id);
+			$this->clock()->advance(10);
+			$this->transport()->queue(self::listingOf(5));
+			$this->transport()->queue($answer);
+			$this->transport()->queue($answer);
+			$this->assertSame('partial', $this->runDue()[$id]['status'], 'run ' . $run);
+		}
+
+		$tunnels = $this->tunnels($id);
+		foreach ($healthy as $uuid) {
+			$this->assertNotNull($tunnels[$uuid]['connections_refreshed_at'], $uuid . ' was never refreshed');
+		}
+		for ($n = 1; $n <= 3; $n++) {
+			$this->assertNull($tunnels[self::uuid($n)]['connections_refreshed_at']);
+			$this->assertNotNull($tunnels[self::uuid($n)]['connections_attempted_at']);
+		}
+	}
+
 	public function testLostLeaseRollsBackListing(): void {
 		$id = $this->account(self::CF_A);
 		$this->transport()->queue(function () use ($id): Response {

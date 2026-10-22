@@ -243,6 +243,20 @@ final class TunnelRepositoryTest extends IntegrationTestCase {
 		$this->assertCount(5, $this->repo->activeForRefresh($this->accountId, 50));
 	}
 
+	/* A failed attempt refreshes nothing but still sends the tunnel to the back of the queue. */
+	public function testAttemptedTunnelMovesToTheBack(): void {
+		$this->assertSame(1, $this->repo->markConnectionsAttempted($this->id(1), self::T0 + 200));
+
+		$this->assertSame(
+			array(self::uuid(2), self::uuid(3), self::uuid(4), self::uuid(5), self::uuid(1)),
+			self::uuids($this->repo->activeForRefresh($this->accountId, 10))
+		);
+		$row = $this->db->fetchRow('SELECT * FROM plugin_cloudflare_tunnels WHERE id = ?', array($this->id(1)));
+		$this->assertIsArray($row);
+		$this->assertSame((string) (self::T0 + 200), (string) $row['connections_attempted_at']);
+		$this->assertNull($row['connections_refreshed_at']);
+	}
+
 	public function testActiveForRefreshRejectsBadLimit(): void {
 		$this->expectException(InvalidArgumentException::class);
 		$this->repo->activeForRefresh($this->accountId, 0);

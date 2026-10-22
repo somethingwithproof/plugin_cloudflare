@@ -3,6 +3,9 @@ PHPUNIT := vendor/bin/phpunit
 CACTI_REPO ?= $(HOME)/Developer/github.com/somethingwithproof/cacti
 CACTI_REF ?= release/1.2.31
 SMOKE := docker compose -p cf-smoke -f tests/docker/compose.cacti.yml
+# Tags the smoke image by Cacti version, so a run against another
+# CACTI_REF never replaces the 1.2.31 image under its name.
+export CF_SMOKE_CACTI_TAG := $(notdir $(CACTI_REF))
 
 # test-integration and bdd share one test database, so a -j run would
 # interleave their resets.

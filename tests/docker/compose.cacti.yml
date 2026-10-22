@@ -1,4 +1,5 @@
-# Cacti 1.2.31 with a copy of the plugin, for tests/docker/smoke.sh.
+# Cacti (1.2.31 unless CACTI_REF says otherwise) with a copy of the plugin,
+# for tests/docker/smoke.sh.
 # `make smoke-up` runs it as project cf-smoke on port 8090; smoke.sh uses
 # cf-smoke-run on 8091. Neither touches the compose.db.yml database on 33061.
 #
@@ -35,7 +36,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.cacti
-    image: cf-smoke-cacti:1.2.31
+    image: cf-smoke-cacti:${CF_SMOKE_CACTI_TAG:-1.2.31}
     depends_on:
       db:
         condition: service_healthy
@@ -68,7 +69,7 @@ services:
     # base. web is the only service that builds it; `up --build` finishes
     # every build before it creates any container, and pull_policy: never
     # stops compose from looking for this local tag on a registry.
-    image: cf-smoke-cacti:1.2.31
+    image: cf-smoke-cacti:${CF_SMOKE_CACTI_TAG:-1.2.31}
     pull_policy: never
     entrypoint: ["bash", "/opt/fake-cloudflare/start.sh"]
     # Lets www-data bind 443 inside this container's own network namespace.

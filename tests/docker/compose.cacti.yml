@@ -1,15 +1,15 @@
 # Cacti 1.2.31 with the plugin mounted read-only, for tests/docker/smoke.sh.
-# Run with the project name cf-smoke (see the Makefile) so it never touches
-# the compose.db.yml test database on port 33061.
+# `make smoke-up` runs it as project cf-smoke on port 8090; smoke.sh uses
+# cf-smoke-run on 8091. Neither touches the compose.db.yml database on 33061.
 #
 # web and db sit on an internal network with no route out, so a Verify
 # fails fast as unreachable instead of calling the real Cloudflare API. The
 # gateway is the only container on a routable network; it proxies
-# 127.0.0.1:${CF_SMOKE_PORT:-8090} to web.
+# 127.0.0.1:${CF_SMOKE_PORT} (default 8090) to web.
 
 services:
   db:
-    image: mariadb:10.11
+    image: mariadb:10.11@sha256:0d0945c57f75b3a3b9ebe71aedaaad005fa5305054e8fca3d2e42a8c92b43b5e
     environment:
       MARIADB_ROOT_PASSWORD: smoke-root
       MARIADB_DATABASE: cacti
@@ -56,7 +56,7 @@ services:
       - smoke
 
   gateway:
-    image: mirror.gcr.io/library/httpd:2.4
+    image: mirror.gcr.io/library/httpd:2.4@sha256:c842ac797bd1fe8b3cd26d002ac9d948aa2814097544600600b35aef42e6785a
     depends_on:
       web:
         condition: service_healthy

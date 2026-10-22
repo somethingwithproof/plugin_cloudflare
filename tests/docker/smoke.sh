@@ -9,8 +9,10 @@
 set -euo pipefail
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-project="${CF_SMOKE_PROJECT:-cf-smoke}"
-port="${CF_SMOKE_PORT:-8090}"
+# Distinct from `make smoke-up` (cf-smoke on 8090) so a run never tears
+# down a stack someone is using.
+project="${CF_SMOKE_PROJECT:-cf-smoke-run}"
+port="${CF_SMOKE_PORT:-8091}"
 admin_pass="${CF_SMOKE_ADMIN_PASS:-smoke-admin}"
 viewer_pass='smoke-viewer'
 base="http://127.0.0.1:${port}/cacti"
@@ -22,6 +24,8 @@ export CF_SMOKE_ADMIN_PASS="${admin_pass}"
 
 dc=(docker compose -p "${project}" -f "${here}/compose.cacti.yml")
 work="$(mktemp -d)"
+captures="${work}/captures"
+mkdir "${captures}"
 step='setup'
 
 teardown() {
@@ -40,6 +44,13 @@ teardown() {
 	rm -rf "${work}"
 	exit "${rc}"
 }
+
+if [ -n "$("${dc[@]}" ps -q 2>/dev/null)" ]; then
+	printf 'FAIL: compose project %s is already running; stop it or set CF_SMOKE_PROJECT\n' "${project}" >&2
+	rm -rf "${work}"
+	exit 1
+fi
+
 trap teardown EXIT
 
 pass() {
@@ -70,6 +81,34 @@ plugin_tables() {
 
 core_counts() {
 	sql "SELECT (SELECT COUNT(*) FROM host), (SELECT COUNT(*) FROM graph_local), (SELECT COUNT(*) FROM data_template)"
+}
+
+# capture <name> <command...>: saves stdout and stderr under ${captures}.
+# A failed command or empty output dies, so a dead container or a broken
+# dump can never pass a later search as "no match".
+capture() {
+	local name="$1" rc=0
+	shift
+
+	"$@" >"${captures}/${name}" 2>&1 || rc=$?
+	[ "${rc}" -eq 0 ] || die "capturing ${name} exited ${rc}" "$(tail -n 20 "${captures}/${name}")"
+	[ -s "${captures}/${name}" ] || die "capture ${name} is empty"
+}
+
+# found <grep args...>: 0 on a match, 1 on none; grep errors die.
+found() {
+	local rc=0
+
+	grep -q "$@" || rc=$?
+	[ "${rc}" -le 1 ] || die "grep $* exited ${rc}"
+
+	return "${rc}"
+}
+
+no_token() {
+	if found -F -- "${token}" "$1"; then
+		die "token leaked into $2"
+	fi
 }
 
 # A CLI run that printed a PHP error did not succeed, whatever it exits with.
@@ -143,6 +182,10 @@ token="cfsmoke_$(head -c 600 /dev/urandom | LC_ALL=C tr -dc 'A-Za-z0-9' | cut -c
 step='setup: stack up'
 [ "${#token}" -eq 48 ] || die 'could not generate a test token'
 "${dc[@]}" up -d --build --wait >"${work}/up.log" 2>&1 || die "$(tail -n 40 "${work}/up.log")"
+# A device of our own, so the uninstall comparison covers a row this run
+# created and not only what the installer seeded.
+out="$("${dc[@]}" exec -T -u www-data web php cli/add_device.php --description=smoke-host --ip=192.0.2.10 --template=0 --avail=none --version=0 2>&1)" || die "${out}"
+[ "$(sql "SELECT COUNT(*) FROM host WHERE description = 'smoke-host'")" = '1' ] || die 'seed device was not added' "${out}"
 counts_before="$(core_counts)"
 pass
 
@@ -208,6 +251,13 @@ sql "INSERT INTO user_auth (username, password, realm, full_name, must_change_pa
 viewer_id="$(sql "SELECT id FROM user_auth WHERE username = 'viewer'")"
 sql "INSERT INTO user_auth_realm (realm_id, user_id) VALUES (8, ${viewer_id}), (${view_realm}, ${viewer_id})"
 login viewer "${viewer_pass}" "${viewer_jar}"
+# Positive control: realm 8 grants the console, so the viewer's session is
+# good and the denial below comes from the plugin realm, not from auth.
+code="$(http "${viewer_jar}" "${work}/viewer-console.html" "${base}/index.php")"
+[ "${code}" = '200' ] || die "viewer console returned ${code}"
+if grep -qF "${denied_marker}" "${work}/viewer-console.html"; then
+	die 'viewer is denied the console, so the realm 8 grant did not take'
+fi
 http "${viewer_jar}" "${work}/viewer-accounts.html" "${page}" >/dev/null
 require_denied "${work}/viewer-accounts.html"
 pass
@@ -277,26 +327,26 @@ counts_after="$(core_counts)"
 pass
 
 step='7 the token appears in no log, page or database dump'
-"${dc[@]}" exec -T web grep -q 'CLOUDFLARE' log/cacti.log || die 'cacti.log has no CLOUDFLARE lines, so the search below proves nothing'
-if "${dc[@]}" exec -T web grep -rqF "${token}" log/; then
-	die 'token found under log/'
+capture cacti-logs "${dc[@]}" exec -T web sh -c 'find log -type f -exec cat {} +'
+found -F 'CLOUDFLARE' "${captures}/cacti-logs" || die 'cacti.log has no CLOUDFLARE lines, so the search below proves nothing'
+no_token "${captures}/cacti-logs" 'the Cacti log directory'
+capture container-logs "${dc[@]}" logs --no-color web gateway
+no_token "${captures}/container-logs" 'the Apache logs'
+if grep -rqF --exclude-dir=captures -- "${token}" "${work}"; then
+	die 'token leaked into a saved HTTP response'
 fi
-if "${dc[@]}" logs --no-color web gateway 2>&1 | grep -qF "${token}"; then
-	die 'token found in the Apache logs'
-fi
-if grep -rqF "${token}" "${work}"; then
-	die 'token found in a saved HTTP response'
-fi
-if "${dc[@]}" exec -T db mariadb-dump --user=root --password=smoke-root --all-databases 2>/dev/null | grep -qF "${token}"; then
-	die 'token found in the database'
-fi
+capture db-dump "${dc[@]}" exec -T db mariadb-dump --user=root --password=smoke-root --all-databases
+found -F 'CREATE TABLE' "${captures}/db-dump" || die 'database dump has no CREATE TABLE'
+no_token "${captures}/db-dump" 'the database'
 pass
 
 step='8 no PHP errors in cacti.log or the Apache error log'
-if "${dc[@]}" exec -T web grep -E 'ERROR PHP|PHP (Fatal|Parse|Warning|Notice|Deprecated)' log/cacti.log; then
-	die 'cacti.log has PHP errors'
+capture cacti-logs-final "${dc[@]}" exec -T web cat log/cacti.log
+if found -E 'ERROR PHP|PHP (Fatal|Parse|Warning|Notice|Deprecated)' "${captures}/cacti-logs-final"; then
+	die 'cacti.log has PHP errors' "$(grep -E 'ERROR PHP|PHP (Fatal|Parse|Warning|Notice|Deprecated)' "${captures}/cacti-logs-final")"
 fi
-if "${dc[@]}" logs --no-color web 2>&1 | grep -E 'PHP (Fatal|Parse|Warning|Notice|Deprecated)'; then
-	die 'the Apache error log has PHP errors'
+capture web-logs "${dc[@]}" logs --no-color web
+if found -E 'PHP (Fatal|Parse|Warning|Notice|Deprecated)' "${captures}/web-logs"; then
+	die 'the Apache error log has PHP errors' "$(grep -E 'PHP (Fatal|Parse|Warning|Notice|Deprecated)' "${captures}/web-logs")"
 fi
 pass

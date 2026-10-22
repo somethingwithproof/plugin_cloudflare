@@ -40,6 +40,7 @@ use Cacti\PluginCloudflare\Tests\Support\FrozenClock;
 use Cacti\PluginCloudflare\Tests\Support\RecordingSleeper;
 use Cacti\PluginCloudflare\Tests\Support\SecretAssertions;
 use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
+use OutOfBoundsException;
 use PHPUnit\Framework\TestCase;
 
 final class AccountServiceTest extends TestCase {
@@ -535,5 +536,52 @@ final class AccountServiceTest extends TestCase {
 		$all = implode("\n", $this->logged);
 		$this->assertNotLeaked($this->token, $all, 'log');
 		$this->assertStringNotContainsString('v1:', $all);
+	}
+
+	public function testSetEnabledChangesOnlyTheFlag(): void {
+		$id     = $this->service()->save(null, $this->input());
+		$before = $this->rawRow($id);
+
+		$this->service(false, self::NOW + 60)->setEnabled($id, false);
+		$after = $this->rawRow($id);
+
+		$this->assertSame('0', (string) $after['enabled']);
+		$this->assertSame((string) (self::NOW + 60), (string) $after['updated_at']);
+		$this->assertSame($before['token_ciphertext'], $after['token_ciphertext']);
+		unset($before['enabled'], $before['updated_at'], $after['enabled'], $after['updated_at']);
+		$this->assertSame($before, $after);
+
+		$this->service()->setEnabled($id, true);
+		$this->assertSame('1', (string) $this->rawRow($id)['enabled']);
+	}
+
+	public function testSetEnabledWorksWithoutTheVault(): void {
+		$id = $this->service()->save(null, $this->input());
+
+		$this->service(null)->setEnabled($id, false);
+
+		$this->assertSame('0', (string) $this->rawRow($id)['enabled']);
+	}
+
+	public function testUnauthorizedSetEnabledDenied(): void {
+		$id     = $this->service()->save(null, $this->input());
+		$before = $this->allRows();
+
+		$this->allowed = false;
+
+		try {
+			$this->service()->setEnabled($id, false);
+			$this->fail('no AccessDenied thrown');
+		} catch (AccessDenied $e) {
+			$this->assertSame('Not authorized to configure Cloudflare accounts', $e->getMessage());
+		}
+
+		$this->assertSame($before, $this->allRows());
+	}
+
+	public function testSetEnabledOnMissingAccountThrows(): void {
+		$this->expectException(OutOfBoundsException::class);
+
+		$this->service()->setEnabled(999, true);
 	}
 }

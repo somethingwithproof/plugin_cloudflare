@@ -262,11 +262,26 @@ final class AccountService {
 	 * Job rows go with it through the ON DELETE CASCADE foreign key.
 	 *
 	 * @throws AccessDenied
+	 * @throws DatabaseException
 	 */
 	public function delete(int $id): void {
 		$this->requireConfigure();
 
 		$this->repo->delete($id);
+	}
+
+	/**
+	 * Touches only the flag, so it works for a vault account while the key
+	 * file is missing and never invalidates a verify result.
+	 *
+	 * @throws AccessDenied
+	 * @throws OutOfBoundsException
+	 * @throws DatabaseException
+	 */
+	public function setEnabled(int $id, bool $on): void {
+		$this->requireConfigure();
+		$this->requireAccount($id);
+		$this->repo->update($id, array('enabled' => $on ? 1 : 0, 'updated_at' => $this->clock->now()));
 	}
 
 	/**
@@ -276,6 +291,7 @@ final class AccountService {
 	 *
 	 * @throws AccessDenied
 	 * @throws OutOfBoundsException
+	 * @throws DatabaseException
 	 */
 	public function verify(int $id): Account {
 		$this->requireConfigure();

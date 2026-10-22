@@ -98,8 +98,20 @@ final class SetupContractTest extends TestCase {
 		cloudflare_config_arrays();
 		$nav = cloudflare_draw_navigation_text(array());
 
-		$this->assertSame(array('Configuration' => array('plugins/cloudflare/cloudflare_accounts.php' => 'Cloudflare Accounts')), $GLOBALS['menu']);
-		$this->assertSame(array('cloudflare_accounts.php:', 'cloudflare_accounts.php:edit', 'cloudflare_accounts.php:actions'), array_keys($nav));
+		$this->assertSame(array(
+			'Configuration' => array('plugins/cloudflare/cloudflare_accounts.php' => 'Cloudflare Accounts'),
+			'Management'    => array('plugins/cloudflare/cloudflare.php' => 'Cloudflare Tunnels'),
+		), $GLOBALS['menu']);
+		$this->assertSame(array(
+			'cloudflare_accounts.php:',
+			'cloudflare_accounts.php:edit',
+			'cloudflare_accounts.php:actions',
+			'cloudflare.php:',
+			'cloudflare.php:overview',
+			'cloudflare.php:tunnels',
+			'cloudflare.php:connectors',
+		), array_keys($nav));
+		$this->assertSame('index.php:,cloudflare.php:', $nav['cloudflare.php:tunnels']['mapping']);
 	}
 
 	public function testSettingsTabStaysButUpgradeWaitsWhileDisabled(): void {

@@ -79,6 +79,39 @@ final class JobRepository {
 	}
 
 	/**
+	 * Read-only state of every job of one type, for the viewer.
+	 *
+	 * @return array<int, array{
+	 *         last_status: string,
+	 *         last_finished_at: int|null,
+	 *         last_error_class: string|null,
+	 *         consecutive_failures: int
+	 *         }> keyed by account id
+	 */
+	public function summaries(string $type): array {
+		if (preg_match(self::TYPE_PATTERN, $type) !== 1) {
+			throw new InvalidArgumentException('invalid job type');
+		}
+
+		$summaries = array();
+
+		foreach ($this->db->fetchAll(
+			'SELECT account_id, last_status, last_finished_at, last_error_class, consecutive_failures
+			FROM ' . self::TABLE . ' WHERE job_type = ?',
+			array($type)
+		) as $row) {
+			$summaries[(int) $row['account_id']] = array(
+				'last_status'          => (string) $row['last_status'],
+				'last_finished_at'     => $row['last_finished_at'] === null ? null : (int) $row['last_finished_at'],
+				'last_error_class'     => $row['last_error_class'] === null ? null : (string) $row['last_error_class'],
+				'consecutive_failures' => (int) $row['consecutive_failures'],
+			);
+		}
+
+		return $summaries;
+	}
+
+	/**
 	 * next_run_at follows the Clock that nextRun() fed; lease expiry follows
 	 * the database clock, as in lease().
 	 *

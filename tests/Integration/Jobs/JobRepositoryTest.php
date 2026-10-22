@@ -384,6 +384,39 @@ final class JobRepositoryTest extends IntegrationTestCase {
 		$this->assertNull($row['lease_until']);
 	}
 
+	public function testSummariesAreKeyedByAccountForOneType(): void {
+		$other = $this->insertAccount('b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2');
+		$this->repo()->ensure('discovery', $this->accountId);
+		$this->repo()->ensure('discovery', $other);
+		$this->repo()->ensure('analytics', $this->accountId);
+
+		$lease = $this->leased($this->repo(self::T0), $this->jobId($this->accountId), 'host-a:1');
+		$this->repo(self::T0 + 5)->fail($lease, ErrorClass::TRANSIENT, self::T0 + 600);
+
+		$summaries = $this->repo()->summaries('discovery');
+		ksort($summaries);
+
+		$this->assertSame(array($this->accountId, $other), array_keys($summaries));
+		$this->assertSame(array(
+			'last_status'          => 'failed',
+			'last_finished_at'     => self::T0 + 5,
+			'last_error_class'     => 'transient',
+			'consecutive_failures' => 1,
+		), $summaries[$this->accountId]);
+		$this->assertSame(array(
+			'last_status'          => 'never',
+			'last_finished_at'     => null,
+			'last_error_class'     => null,
+			'consecutive_failures' => 0,
+		), $summaries[$other]);
+		$this->assertSame(array(), $this->repo()->summaries('zones'));
+	}
+
+	public function testSummariesRejectAnInvalidType(): void {
+		$this->expectException(InvalidArgumentException::class);
+		$this->repo()->summaries('Discovery; --');
+	}
+
 	public function testReleaseFreesTheJobWithoutRecordingARun(): void {
 		$this->repo()->ensure('discovery', $this->accountId);
 		$id = $this->jobId($this->accountId);

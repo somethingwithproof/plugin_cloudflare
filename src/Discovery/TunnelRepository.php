@@ -26,9 +26,27 @@ use InvalidArgumentException;
 final class TunnelRepository {
 	private const TABLE = 'plugin_cloudflare_tunnels';
 
-	private const LIFECYCLES = array('active', 'unavailable', 'deleted');
+	public const LIFECYCLES = array('active', 'unavailable', 'deleted');
 
-	private const CF_STATUSES = array('healthy', 'degraded', 'down', 'inactive');
+	public const CF_STATUSES = array('healthy', 'degraded', 'down', 'inactive');
+
+	/**
+	 * The only columns a caller may sort by; anything else sorts by name.
+	 * lifecycle is an ENUM, so it sorts active, unavailable, deleted.
+	 */
+	public const SORT_COLUMNS = array(
+		'name',
+		'cf_status',
+		'lifecycle',
+		'tun_type',
+		'connector_count',
+		'connection_count',
+		'last_seen_at',
+	);
+
+	/* Worst first. An inactive tunnel has no connector running, which may be
+	 * deliberate, so it ranks below a healthy one rather than above it. */
+	private const HEALTH_RANK = array('down' => 0, 'degraded' => 1, 'healthy' => 2, 'inactive' => 3);
 
 	/** @var Database */
 	private $db;
@@ -38,21 +56,97 @@ final class TunnelRepository {
 	}
 
 	/**
-	 * @param array<string, mixed> $filters lifecycle, cf_status, search
+	 * @param int                  $accountId 0 lists every account
+	 * @param array<string, mixed> $filters   lifecycle, cf_status, search
+	 * @param string               $sort      one of SORT_COLUMNS; anything else sorts by name
+	 * @param string               $direction ASC or DESC; anything else is ASC
 	 * @return array<int, array<string, mixed>>
 	 */
-	public function forAccount(int $accountId, array $filters = array(), int $limit = 50, int $offset = 0): array {
+	public function forAccount(
+		int $accountId,
+		array $filters = array(),
+		int $limit = 50,
+		int $offset = 0,
+		string $sort = 'name',
+		string $direction = 'ASC'
+	): array {
 		if ($limit < 1 || $offset < 0) {
 			throw new InvalidArgumentException('invalid page');
 		}
 
 		list($where, $params) = $this->where($accountId, $filters);
 
+		/* The column and direction come from fixed lists, never from the
+		 * caller's string. Name then id keeps paging stable on ties. */
+		$column = in_array($sort, self::SORT_COLUMNS, true) ? $sort : 'name';
+		$order  = $column . (strtoupper($direction) === 'DESC' ? ' DESC' : ' ASC');
+		$order .= ($column === 'name' ? '' : ', name') . ', id';
+
 		/* Both are checked ints. pdo_mysql emulates prepares by default and would quote a bound LIMIT. */
 		return $this->db->fetchAll(
-			'SELECT * FROM ' . self::TABLE . $where . ' ORDER BY name, id LIMIT ' . $limit . ' OFFSET ' . $offset,
+			'SELECT * FROM ' . self::TABLE . $where . ' ORDER BY ' . $order . ' LIMIT ' . $limit . ' OFFSET ' . $offset,
 			$params
 		);
+	}
+
+	/**
+	 * @return array<string, mixed>|null
+	 */
+	public function find(int $id): ?array {
+		return $this->db->fetchRow('SELECT * FROM ' . self::TABLE . ' WHERE id = ?', array($id));
+	}
+
+	/**
+	 * Per-account lifecycle counts, the worst Cloudflare status among active
+	 * tunnels (null when none is active), and the latest last_seen_at. Every
+	 * complete listing stamps last_seen_at on each tunnel it returns, so that
+	 * is when the account was last listed, or earlier if that listing was empty.
+	 *
+	 * @return array<int, array{
+	 *         active: int,
+	 *         unavailable: int,
+	 *         deleted: int,
+	 *         health: string|null,
+	 *         last_seen_at: int|null
+	 *         }>
+	 */
+	public function summary(): array {
+		$summary = array();
+
+		foreach ($this->db->fetchAll(
+			'SELECT account_id, lifecycle, cf_status, COUNT(*) AS tunnels, MAX(last_seen_at) AS last_seen_at
+			FROM ' . self::TABLE . '
+			GROUP BY account_id, lifecycle, cf_status
+			ORDER BY account_id'
+		) as $row) {
+			$id = (int) $row['account_id'];
+
+			if (!isset($summary[$id])) {
+				$summary[$id] = array('active' => 0, 'unavailable' => 0, 'deleted' => 0, 'health' => null, 'last_seen_at' => null);
+			}
+
+			$lifecycle = (string) $row['lifecycle'];
+			if (in_array($lifecycle, self::LIFECYCLES, true)) {
+				$summary[$id][$lifecycle] += (int) $row['tunnels'];
+			}
+
+			$status = (string) $row['cf_status'];
+			$health = $summary[$id]['health'];
+			if (
+				$lifecycle === 'active'
+				&& isset(self::HEALTH_RANK[$status])
+				&& ($health === null || self::HEALTH_RANK[$status] < self::HEALTH_RANK[$health])
+			) {
+				$summary[$id]['health'] = $status;
+			}
+
+			$seen = (int) $row['last_seen_at'];
+			if ($summary[$id]['last_seen_at'] === null || $seen > $summary[$id]['last_seen_at']) {
+				$summary[$id]['last_seen_at'] = $seen;
+			}
+		}
+
+		return $summary;
 	}
 
 	/**

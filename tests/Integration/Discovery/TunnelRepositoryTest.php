@@ -128,6 +128,98 @@ final class TunnelRepositoryTest extends IntegrationTestCase {
 		$this->assertSame(array(), $this->repo->forAccount($this->accountId, array(), 50, 6));
 	}
 
+	public function testForAccountZeroSpansAccounts(): void {
+		$rows = $this->repo->forAccount(0);
+
+		$this->assertCount(7, $rows);
+		$accounts = array_values(array_unique(array_map('intval', array_column($rows, 'account_id'))));
+		sort($accounts);
+		$this->assertSame(array($this->accountId, $this->otherId), $accounts);
+		$this->assertSame(
+			array(self::uuid(1), self::uuid(7)),
+			self::uuids($this->repo->forAccount(0, array('search' => 'web')))
+		);
+		$this->assertSame($this->repo->count(0), count($rows));
+	}
+
+	public function testForAccountRejectsANegativeAccount(): void {
+		$this->expectException(InvalidArgumentException::class);
+		$this->repo->forAccount(-1);
+	}
+
+	public function testSortUsesTheColumnAllowList(): void {
+		$this->assertSame(
+			array(self::uuid(1), self::uuid(6), self::uuid(2), self::uuid(5), self::uuid(4), self::uuid(3)),
+			self::uuids($this->repo->forAccount($this->accountId, array(), 50, 0, 'name', 'DESC')),
+			'names descend; equal names keep id order'
+		);
+		$this->assertSame(
+			array(self::uuid(2), self::uuid(3), self::uuid(4), self::uuid(6), self::uuid(1), self::uuid(5)),
+			self::uuids($this->repo->forAccount($this->accountId, array(), 50, 0, 'cf_status', 'ASC')),
+			'status, then name, then id'
+		);
+		$this->assertSame(
+			array(self::uuid(6), self::uuid(3), self::uuid(4), self::uuid(2), self::uuid(5), self::uuid(1)),
+			self::uuids($this->repo->forAccount($this->accountId, array(), 50, 0, 'lifecycle', 'DESC'))
+		);
+
+		$byName = self::uuids($this->repo->forAccount($this->accountId));
+		foreach (array('id', 'name; DROP TABLE plugin_cloudflare_tunnels', 'NAME', '') as $column) {
+			$this->assertSame($byName, self::uuids($this->repo->forAccount($this->accountId, array(), 50, 0, $column)), $column);
+		}
+
+		foreach (array('sideways', 'ASC; --', '') as $direction) {
+			$this->assertSame(
+				$byName,
+				self::uuids($this->repo->forAccount($this->accountId, array(), 50, 0, 'name', $direction)),
+				$direction
+			);
+		}
+
+		$this->assertSame(
+			self::uuids($this->repo->forAccount($this->accountId, array(), 50, 0, 'name', 'DESC')),
+			self::uuids($this->repo->forAccount($this->accountId, array(), 50, 0, 'name', 'desc')),
+			'direction is case-insensitive'
+		);
+	}
+
+	public function testSummaryCountsLifecyclesAndTheWorstActiveStatus(): void {
+		$this->repo->markAccountUnavailable($this->otherId, self::T0 + 70);
+
+		$summary = $this->repo->summary();
+
+		$this->assertSame(array($this->accountId, $this->otherId), array_keys($summary));
+		$this->assertSame(
+			array('active' => 5, 'unavailable' => 0, 'deleted' => 1, 'health' => 'down', 'last_seen_at' => self::T0 + 60),
+			$summary[$this->accountId]
+		);
+		$this->assertSame(
+			array('active' => 0, 'unavailable' => 1, 'deleted' => 0, 'health' => null, 'last_seen_at' => self::T0),
+			$summary[$this->otherId]
+		);
+	}
+
+	public function testSummaryRanksHealthyAboveInactive(): void {
+		$reconciler = new Reconciler($this->db, new FrozenClock(self::T0 + 120));
+		$reconciler->applyListing($this->accountId, array(self::tunnel(1, 'web', 'healthy'), self::tunnel(5, 'api', 'inactive')));
+		$this->assertSame('healthy', $this->repo->summary()[$this->accountId]['health']);
+
+		$reconciler->applyListing($this->accountId, array(self::tunnel(5, 'api', 'inactive')));
+		$this->assertSame('inactive', $this->repo->summary()[$this->accountId]['health']);
+
+		$reconciler->applyListing($this->accountId, array(self::tunnel(2, 'api', 'degraded'), self::tunnel(5, 'api', 'inactive')));
+		$this->assertSame('degraded', $this->repo->summary()[$this->accountId]['health']);
+	}
+
+	public function testFindReturnsOneTunnel(): void {
+		$row = $this->repo->find($this->id(3));
+
+		$this->assertIsArray($row);
+		$this->assertSame('50%_off', $row['name']);
+		$this->assertSame((string) $this->accountId, (string) $row['account_id']);
+		$this->assertNull($this->repo->find($this->id(3) + 1000));
+	}
+
 	public function testRejectsBadPaging(): void {
 		$this->expectException(InvalidArgumentException::class);
 		$this->repo->forAccount($this->accountId, array(), 0);

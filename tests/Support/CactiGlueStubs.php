@@ -200,6 +200,7 @@ if (!function_exists('get_current_page')) {
 if (!function_exists('raise_ajax_permission_denied')) {
 	/* lib/functions.php:7599 */
 	function raise_ajax_permission_denied(): void {
+		cloudflare_glue_record(__FUNCTION__, array());
 	}
 }
 
@@ -538,13 +539,101 @@ if (!function_exists('set_default_action')) {
 }
 
 if (!function_exists('validate_store_request_vars')) {
-	/* lib/html_utility.php:628 */
+	/*
+	 * lib/html_utility.php:628, for the filter_var() filters only. Session
+	 * fallback, defaults, 'clear' and the page reset on a changed pageset
+	 * filter follow Cacti; where it calls die_html_input_error() and exits,
+	 * this throws, so a test cannot pass input the real page would refuse.
+	 */
 	/**
 	 * @param mixed $filters
 	 * @param mixed $sess_prefix
 	 */
 	function validate_store_request_vars($filters, $sess_prefix = ''): void {
 		cloudflare_glue_record(__FUNCTION__, array($filters, $sess_prefix));
+
+		$changed = 0;
+
+		foreach ($filters as $variable => $options) {
+			$session_variable = '';
+
+			if ($sess_prefix != '') {
+				if (isset($options['session'])) {
+					$session_variable = $options['session'];
+				} elseif ($variable != 'rows') {
+					$session_variable = $sess_prefix . '_' . $variable;
+				} else {
+					$session_variable = 'sess_default_rows';
+				}
+
+				if (isset($_REQUEST['clear'])) {
+					unset($_SESSION[$session_variable], $_REQUEST[$variable]);
+				} elseif (isset($_REQUEST['reset'])) {
+					unset($_SESSION[$session_variable]);
+				} elseif (!empty($options['pageset']) && isset($_REQUEST[$variable], $_SESSION[$session_variable])
+					&& $_REQUEST[$variable] != $_SESSION[$session_variable]) {
+					$changed++;
+				}
+			}
+
+			if (!isset($_REQUEST[$variable])) {
+				if ($session_variable !== '' && isset($_SESSION[$session_variable])) {
+					$_REQUEST[$variable] = $_SESSION[$session_variable];
+				} else {
+					$_REQUEST[$variable] = $options['default'] ?? '';
+				}
+			} else {
+				$raw = $_REQUEST[$variable];
+
+				if ($raw == '0') {
+					$value = '0';
+				} elseif ($raw == 'undefined') {
+					$value = $options['default'] ?? '';
+				} elseif (empty($raw)) {
+					$value = '';
+				} elseif (!in_array($options['filter'], array(FILTER_VALIDATE_INT, FILTER_DEFAULT, FILTER_CALLBACK, FILTER_VALIDATE_REGEXP), true)) {
+					throw new LogicException('validate_store_request_vars stub does not model filter ' . var_export($options['filter'], true));
+				} elseif (!isset($options['options'])) {
+					$value = filter_var($raw, $options['filter']);
+				} else {
+					$value = filter_var($raw, $options['filter'], $options['options']);
+				}
+
+				if ($value === false) {
+					throw new RuntimeException('die_html_input_error(' . $variable . ')');
+				}
+
+				$_REQUEST[$variable] = $value;
+			}
+
+			if ($session_variable !== '') {
+				$_SESSION[$session_variable] = $_REQUEST[$variable];
+			}
+		}
+
+		if ($changed) {
+			$_REQUEST['page']                = 1;
+			$_REQUEST['changed']             = 1;
+			$_SESSION[$sess_prefix . '_page'] = 1;
+		}
+	}
+}
+
+if (!function_exists('sanitize_search_string')) {
+	/* lib/functions.php:4474 */
+	/**
+	 * @param mixed $string
+	 * @return mixed
+	 */
+	function sanitize_search_string($string) {
+		static $drop_char_match   = array('(', ')', '^', '$', '<', '>', '`', '\'', '"', '|', ',', '?', '+', '[', ']', '{', '}', '#', ';', '!', '=', '*');
+		static $drop_char_replace = array('', '', ' ', ' ', ' ', ' ', '', '', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+
+		$string = preg_replace('/[\n\r]/is', ' ', $string);
+		$string = preg_replace('/\b&[a-z]+;\b/', ' ', $string);
+		$string = preg_replace('/\b[a-z0-9]+:\/\/[a-z0-9\.\-]+(\/[a-z0-9\?\.%_\-\+=&\/]+)?/', ' ', $string);
+
+		return str_replace($drop_char_match, $drop_char_replace, $string);
 	}
 }
 
@@ -637,6 +726,32 @@ if (!function_exists('html_nav_bar')) {
 		cloudflare_glue_record(__FUNCTION__, array($base_url, $max_pages, $current_page, $rows_per_page, $total_rows, $colspan, $object, $page_var, $return_to, $page_count));
 
 		return '';
+	}
+}
+
+if (!function_exists('html_header')) {
+	/* lib/html.php:1018 */
+	/**
+	 * @param mixed $header_items
+	 * @param mixed $last_item_colspan
+	 */
+	function html_header($header_items, $last_item_colspan = 1): void {
+		cloudflare_glue_record(__FUNCTION__, array($header_items, $last_item_colspan));
+	}
+}
+
+if (!function_exists('html_header_sort')) {
+	/* lib/html.php:665 */
+	/**
+	 * @param mixed $header_items
+	 * @param mixed $sort_column
+	 * @param mixed $sort_direction
+	 * @param mixed $last_item_colspan
+	 * @param mixed $url
+	 * @param mixed $return_to
+	 */
+	function html_header_sort($header_items, $sort_column, $sort_direction, $last_item_colspan = 1, $url = '', $return_to = ''): void {
+		cloudflare_glue_record(__FUNCTION__, array($header_items, $sort_column, $sort_direction, $last_item_colspan, $url, $return_to));
 	}
 }
 

@@ -126,9 +126,9 @@ function cloudflare_accounts_save() : string {
 		return '';
 	}
 
-	/* ================= input validation ================= */
+	// ================= input validation =================
 	get_filter_request_var('id');
-	/* ==================================================== */
+	// ====================================================
 
 	if (!isset_request_var('save_component_account')) {
 		return '';
@@ -185,7 +185,7 @@ function cloudflare_accounts_execute(int $action, array $ids) : void {
 						break;
 				}
 			} catch (OutOfBoundsException $e) {
-				/* Removed by someone else since the list was drawn. */
+				// Removed by someone else since the list was drawn.
 			}
 		}
 	} catch (AccessDenied $e) {
@@ -233,9 +233,9 @@ function cloudflare_accounts_actions() : ?string {
 
 	$cloudflare_account_actions = cloudflare_account_actions();
 
-	/* ================= input validation ================= */
+	// ================= input validation =================
 	get_filter_request_var('drp_action');
-	/* ==================================================== */
+	// ====================================================
 
 	$action = (int) get_request_var('drp_action');
 
@@ -352,9 +352,9 @@ function cloudflare_accounts_actions() : ?string {
  *                     been printed
  */
 function cloudflare_accounts_edit() : ?string {
-	/* ================= input validation ================= */
+	// ================= input validation =================
 	get_filter_request_var('id');
-	/* ==================================================== */
+	// ====================================================
 
 	$id          = (int) get_request_var('id');
 	$account     = null;
@@ -428,7 +428,7 @@ function cloudflare_accounts_time(?int $timestamp) : string {
 function cloudflare_accounts_status(Account $account) : void {
 	$permissions = $account->permissions();
 
-	/* Labels and values are escaped here, once, and printed as built. */
+	// Labels and values are escaped here, once, and printed as built.
 	$rows = array(
 		__esc('Status', 'cloudflare')        => html_escape($account->status()),
 		__esc('Message', 'cloudflare')       => html_escape($account->statusMessage()),
@@ -475,7 +475,7 @@ function cloudflare_accounts_script() : void {
 function cloudflare_accounts_list() : void {
 	global $item_rows;
 
-	/* ================= input validation and session storage ================= */
+	// ================= input validation and session storage =================
 	$filters = array(
 		'rows' => array(
 			'filter'  => FILTER_VALIDATE_INT,
@@ -504,9 +504,10 @@ function cloudflare_accounts_list() : void {
 	);
 
 	validate_store_request_vars($filters, 'sess_cf_accounts');
-	/* ================= input validation ================= */
+	// ================= input validation =================
 
 	$rows = (int) get_request_var('rows');
+
 	if ($rows < 1) {
 		$rows = max(1, (int) read_config_option('num_rows_table'));
 	}
@@ -530,19 +531,19 @@ function cloudflare_accounts_list() : void {
 			<table class='filterTable' role='presentation'>
 				<tr>
 					<td>
-						<label for='filter'><?php print __('Search', 'cloudflare');?></label>
+						<label for='filter'><?php print __('Search', 'cloudflare'); ?></label>
 					</td>
 					<td>
 						<input type='text' class='ui-state-default ui-corner-all' id='filter' size='25'
-							value='<?php print html_escape_request_var('filter');?>'>
+							value='<?php print html_escape_request_var('filter'); ?>'>
 					</td>
 					<td>
-						<label for='rows'><?php print __('Accounts', 'cloudflare');?></label>
+						<label for='rows'><?php print __('Accounts', 'cloudflare'); ?></label>
 					</td>
 					<td>
 						<select id='rows'>
-							<option value='-1'<?php print (get_request_var('rows') == '-1' ? ' selected>':'>') .
-								__('Default', 'cloudflare');?></option>
+							<option value='-1'<?php print (get_request_var('rows') == '-1' ? ' selected>' : '>') .
+								__('Default', 'cloudflare'); ?></option>
 							<?php
 							if (cacti_sizeof($item_rows)) {
 								foreach ($item_rows as $key => $value) {
@@ -561,11 +562,11 @@ function cloudflare_accounts_list() : void {
 					<td>
 						<span>
 							<input type='button' class='ui-button ui-corner-all ui-widget' id='refresh'
-								value='<?php print __esc('Go', 'cloudflare');?>'
-								title='<?php print __esc('Set/Refresh Filters', 'cloudflare');?>'>
+								value='<?php print __esc('Go', 'cloudflare'); ?>'
+								title='<?php print __esc('Set/Refresh Filters', 'cloudflare'); ?>'>
 							<input type='button' class='ui-button ui-corner-all ui-widget' id='clear'
-								value='<?php print __esc('Clear', 'cloudflare');?>'
-								title='<?php print __esc('Clear Filters', 'cloudflare');?>'>
+								value='<?php print __esc('Clear', 'cloudflare'); ?>'
+								title='<?php print __esc('Clear Filters', 'cloudflare'); ?>'>
 						</span>
 					</td>
 				</tr>
@@ -600,23 +601,23 @@ function cloudflare_accounts_list() : void {
 	$display_text = array(
 		'name'            => array(
 			'display' => __('Name', 'cloudflare'),
-			'align' => 'left',
-			'sort' => 'ASC',
-			'tip' => __('The name of this account in Cacti.', 'cloudflare')
+			'align'   => 'left',
+			'sort'    => 'ASC',
+			'tip'     => __('The name of this account in Cacti.', 'cloudflare')
 		),
 		'cf_account_id'   => array('display' => __('Account ID', 'cloudflare'), 'align' => 'left', 'sort' => 'ASC'),
 		'has_token'       => array(
 			'display' => __('Token Stored', 'cloudflare'),
-			'align' => 'left',
-			'sort' => 'DESC',
-			'tip' => __('Whether an API token is configured. The edit page shows where it is kept.', 'cloudflare')
+			'align'   => 'left',
+			'sort'    => 'DESC',
+			'tip'     => __('Whether an API token is configured. The edit page shows where it is kept.', 'cloudflare')
 		),
 		'enabled'         => array('display' => __('Enabled', 'cloudflare'), 'align' => 'left', 'sort' => 'DESC'),
 		'status'          => array(
 			'display' => __('Status', 'cloudflare'),
-			'align' => 'left',
-			'sort' => 'ASC',
-			'tip' => __('The result of the last Verify.', 'cloudflare')
+			'align'   => 'left',
+			'sort'    => 'ASC',
+			'tip'     => __('The result of the last Verify.', 'cloudflare')
 		),
 		'last_checked_at' => array('display' => __('Last Checked', 'cloudflare'), 'align' => 'left', 'sort' => 'DESC'),
 		'id'              => array('display' => __('ID', 'cloudflare'), 'align' => 'right', 'sort' => 'ASC')

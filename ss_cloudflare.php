@@ -45,6 +45,6 @@ if (!isset($called_by_script_server)) {
  * @param mixed $arg1
  * @param mixed $arg2
  */
-function ss_cloudflare($host_id = '', $cmd = '', $arg1 = '', $arg2 = ''): string {
+function ss_cloudflare($host_id = '', $cmd = '', $arg1 = '', $arg2 = '') : string {
 	return cloudflare_ss((string) $host_id, (string) $cmd, (string) $arg1, (string) $arg2);
 }

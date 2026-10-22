@@ -56,7 +56,7 @@ function cloudflare_viewer_time(?int $timestamp) : string {
 	return $timestamp === null ? __('Never', 'cloudflare') : date('Y-m-d H:i:s', $timestamp);
 }
 
-/* A one-line box, for the cases where there is no table to draw. */
+// A one-line box, for the cases where there is no table to draw.
 function cloudflare_viewer_notice(string $title, string $text) : void {
 	html_start_box(html_escape($title), '100%', '', '3', 'center', '');
 
@@ -65,7 +65,7 @@ function cloudflare_viewer_notice(string $title, string $text) : void {
 	html_end_box();
 }
 
-/* Same markup as thold_tabs() in thold_functions.php. */
+// Same markup as thold_tabs() in thold_functions.php.
 function cloudflare_viewer_tabs(string $current) : void {
 	global $config;
 
@@ -289,7 +289,7 @@ function cloudflare_viewer_tunnel_request() : array {
 		}, $values)) . ')$/';
 	};
 
-	/* ================= input validation and session storage ================= */
+	// ================= input validation and session storage =================
 	$filters = array(
 		'rows' => array(
 			'filter'  => FILTER_VALIDATE_INT,
@@ -337,9 +337,10 @@ function cloudflare_viewer_tunnel_request() : array {
 	);
 
 	validate_store_request_vars($filters, 'sess_cf_tunnels');
-	/* ================= input validation ================= */
+	// ================= input validation =================
 
 	$rows = (int) get_request_var('rows');
+
 	if ($rows < 1) {
 		$rows = max(1, (int) read_config_option('num_rows_table'));
 	}
@@ -349,14 +350,17 @@ function cloudflare_viewer_tunnel_request() : array {
 	 * one it would reject is dropped rather than thrown from the page. */
 	$query_filters = array();
 	$allowed       = array('lifecycle' => TunnelRepository::LIFECYCLES, 'cf_status' => TunnelRepository::CF_STATUSES);
+
 	foreach ($allowed as $name => $values) {
 		$value = (string) get_request_var($name);
+
 		if (in_array($value, $values, true)) {
 			$query_filters[$name] = $value;
 		}
 	}
 
 	$search = (string) get_request_var('filter');
+
 	if ($search !== '') {
 		$query_filters['search'] = $search;
 	}
@@ -402,16 +406,19 @@ function cloudflare_viewer_tunnel_filter(array $accounts, array $query) : void {
 	global $item_rows;
 
 	$lifecycles = array('' => __('Any', 'cloudflare'));
+
 	foreach (TunnelRepository::LIFECYCLES as $lifecycle) {
 		$lifecycles[$lifecycle] = ucfirst($lifecycle);
 	}
 
 	$statuses = array('' => __('Any', 'cloudflare'));
+
 	foreach (TunnelRepository::CF_STATUSES as $status) {
 		$statuses[$status] = ucfirst($status);
 	}
 
 	$rows = array('-1' => __('Default', 'cloudflare'));
+
 	if (is_array($item_rows)) {
 		foreach ($item_rows as $key => $value) {
 			$rows[$key] = (string) $value;
@@ -559,7 +566,7 @@ function cloudflare_viewer_tunnel_table(array $tunnels, array $accounts, bool $a
 		form_selectable_cell(html_escape((string) $tunnel['cf_status']), $id);
 		form_selectable_cell(html_escape((string) $tunnel['lifecycle']), $id);
 		form_selectable_cell(html_escape((string) $tunnel['tun_type']), $id);
-		/* The Reconciler keeps the last counts on a tunnel that stops being active, so they are not current. */
+		// The Reconciler keeps the last counts on a tunnel that stops being active, so they are not current.
 		$current = (string) $tunnel['lifecycle'] === 'active';
 		form_selectable_cell(cloudflare_viewer_count($current ? $tunnel['connector_count'] : null), $id, '', 'right');
 		form_selectable_cell(cloudflare_viewer_count($current ? $tunnel['connection_count'] : null), $id, '', 'right');
@@ -569,9 +576,9 @@ function cloudflare_viewer_tunnel_table(array $tunnels, array $accounts, bool $a
 }
 
 function cloudflare_viewer_connectors() : void {
-	/* ================= input validation ================= */
+	// ================= input validation =================
 	get_filter_request_var('tunnel_id');
-	/* ==================================================== */
+	// ====================================================
 
 	$tunnel_id = (int) get_request_var('tunnel_id');
 	$title     = __('Connectors', 'cloudflare');

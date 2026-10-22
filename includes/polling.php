@@ -60,7 +60,7 @@ function cloudflare_poller_bottom() : void {
 		return;
 	}
 
-	/* 1.2.25 interpolates $args as a string (lib/poller.php:132); arrays are 1.2.31 only. */
+	// 1.2.25 interpolates $args as a string (lib/poller.php:132); arrays are 1.2.31 only.
 	// nosemgrep: php.lang.security.exec-use.exec-use -- admin-set PHP binary, fixed escaped script path
 	exec_background(
 		read_config_option('path_php_binary'),
@@ -105,7 +105,7 @@ function cloudflare_collector_main(callable $service_factory) : int {
 	return 0;
 }
 
-/* Nothing else creates discovery jobs, so an account added since the last run gets one here. */
+// Nothing else creates discovery jobs, so an account added since the last run gets one here.
 function cloudflare_collector_ensure_jobs(Database $db) : void {
 	$jobs = new JobRepository($db, new SystemClock());
 	$rows = $db->fetchAll(
@@ -130,6 +130,7 @@ function cloudflare_collector_summary(array $outcomes) : string {
 	}
 
 	$parts = array();
+
 	foreach ($counts as $status => $count) {
 		$parts[] = $status . '=' . $count;
 	}

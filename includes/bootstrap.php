@@ -202,7 +202,7 @@ function cloudflare_discovery_service() : DiscoveryService {
 	);
 }
 
-/* A read failure counts as disabled, so the run stops instead of carrying on blind. */
+// A read failure counts as disabled, so the run stops instead of carrying on blind.
 function cloudflare_plugin_status_enabled(Database $db) : bool {
 	try {
 		return (int) $db->fetchCell('SELECT status FROM plugin_config WHERE directory = ?', array('cloudflare')) === 1;

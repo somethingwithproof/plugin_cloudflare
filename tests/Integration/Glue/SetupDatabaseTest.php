@@ -266,6 +266,25 @@ final class SetupDatabaseTest extends IntegrationTestCase {
 		$this->assertSame(array(), $this->loggedLines());
 	}
 
+	public function testFailedImportOnUpgradeStillRecordsTheVersion(): void {
+		(new Migrator(new Database($this->pdo), array(new M001Foundation(), new M002Discovery())))->migrate();
+		$this->cactiTree('0.2.0');
+		$GLOBALS['cloudflare_glue']['import'] = array(
+			'data_query' => array(array('type' => 'new', 'title' => 'Cloudflare Tunnels', 'result' => 'fail')),
+		);
+
+		$this->assertTrue(plugin_cloudflare_upgrade());
+
+		$this->assertTrue($this->tableExists('plugin_cloudflare_metric_mappings'));
+		$this->assertCount(1, cloudflare_glue_calls('import_xml_data'));
+		$this->assertSame(array(), cloudflare_glue_calls('set_config_option'));
+		$this->assertArrayNotHasKey('cloudflare_templates_sha256', $GLOBALS['cloudflare_glue']['settings']);
+		$this->assertSame(array('CLOUDFLARE: template import failed (data_query)'), $this->loggedLines());
+		$this->assertSame(array(
+			array('UPDATE plugin_config SET version = ? WHERE directory = ?', array('0.3.0', 'cloudflare')),
+		), cloudflare_glue_calls('db_execute_prepared'));
+	}
+
 	public function testInstallImportsTemplatesAfterTheSchema(): void {
 		$resource = $this->cactiTree('');
 

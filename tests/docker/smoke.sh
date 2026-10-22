@@ -378,8 +378,10 @@ pass
 step='2b install imported the templates and copied the data query XML'
 [[ "$(template_objects)" = '6' ]] || die "found $(template_objects) of 6 template objects"
 resource_matches || die 'resource/script_server/cloudflare_tunnels.xml is missing or differs'
-[[ "$(sql "SELECT LENGTH(value) FROM settings WHERE name = 'cloudflare_templates_sha256'")" = '64' ]] \
-	|| die 'the template hash was not recorded'
+shipped_sha="$("${dc[@]}" exec -T web sha256sum plugins/cloudflare/templates/cloudflare_templates.xml | cut -d ' ' -f 1)"
+[[ "${#shipped_sha}" -eq 64 ]] || die 'could not hash the shipped templates in the container'
+recorded_sha="$(sql "SELECT value FROM settings WHERE name = 'cloudflare_templates_sha256'")"
+[[ "${recorded_sha}" = "${shipped_sha}" ]] || die "recorded template hash '${recorded_sha}' is not ${shipped_sha}"
 [[ "$(sql "SELECT COUNT(*) FROM plugin_cloudflare_metric_mappings")" = '6' ]] || die 'metric mappings were not recorded'
 pass
 

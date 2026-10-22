@@ -48,6 +48,7 @@ function cloudflare_glue_reset(): void {
 	$GLOBALS['cloudflare_glue'] = array(
 		'calls'    => array(),
 		'settings' => array(),
+		'cached'   => array(),
 		'cell'     => false,
 		'realm'    => true,
 		'connect'  => false,
@@ -255,16 +256,29 @@ if (!function_exists('cacti_log')) {
 }
 
 if (!function_exists('read_config_option')) {
-	/* lib/functions.php:680 */
+	/*
+	 * lib/functions.php:680. 'settings' is the settings table and 'cached'
+	 * the per-request copy Cacti keeps in $config['config_options_array'] or
+	 * the session (:686-697): a value read once is served from the copy
+	 * until $force asks for the table again (:704, :743-748).
+	 */
 	/**
 	 * @param mixed $config_name
 	 * @param mixed $force
 	 * @return mixed
 	 */
 	function read_config_option($config_name, $force = false) {
-		$settings = cloudflare_glue_state('settings');
+		if (!isset($GLOBALS['cloudflare_glue'])) {
+			cloudflare_glue_reset();
+		}
 
-		return $settings[$config_name] ?? '';
+		if ($force || !array_key_exists($config_name, $GLOBALS['cloudflare_glue']['cached'])) {
+			$settings = cloudflare_glue_state('settings');
+
+			$GLOBALS['cloudflare_glue']['cached'][$config_name] = $settings[$config_name] ?? '';
+		}
+
+		return $GLOBALS['cloudflare_glue']['cached'][$config_name];
 	}
 }
 
@@ -289,16 +303,22 @@ if (!function_exists('db_fetch_cell_prepared')) {
 }
 
 if (!function_exists('set_config_option')) {
-	/* lib/functions.php:418 (1.2.25: :419). Later reads see the new value. */
+	/*
+	 * lib/functions.php:418 (1.2.25: :419). It writes the table, then
+	 * overwrites the whole per-request copy with the scalar value (:475-479),
+	 * so every later read goes back to the table.
+	 */
 	/**
 	 * @param mixed $config_name
 	 * @param mixed $value
 	 * @param mixed $remote
+	 * @return void
 	 */
-	function set_config_option($config_name, $value, $remote = false): void {
+	function set_config_option($config_name, $value, $remote = false) {
 		cloudflare_glue_record(__FUNCTION__, array($config_name, $value, $remote));
 
 		$GLOBALS['cloudflare_glue']['settings'][$config_name] = $value;
+		$GLOBALS['cloudflare_glue']['cached']                 = array();
 	}
 }
 

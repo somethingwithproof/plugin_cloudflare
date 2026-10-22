@@ -115,8 +115,11 @@ function cloudflare_templates_install_locked(Database $db, string $target) : boo
 	$sha = hash('sha256', $xml);
 
 	/* Forced: Cacti caches settings per request, and another process may
-	 * have imported while this one waited for the lock. */
-	if ((string) read_config_option('cloudflare_templates_sha256', true) !== $sha) {
+	 * have imported while this one waited for the lock. A missing object
+	 * means an admin deleted it, and importing again restores it. */
+	$recorded = (string) read_config_option('cloudflare_templates_sha256', true);
+
+	if ($recorded !== $sha || cloudflare_templates_ready() === null) {
 		if (!cloudflare_templates_import($xml)) {
 			return false;
 		}
@@ -143,7 +146,9 @@ function cloudflare_templates_copy_resource(string $target) : bool {
 		return false;
 	}
 
-	if (is_file($target) && @hash_file('sha256', $target) === $sha) {
+	/* A link is always replaced: rename() swaps the link itself, and a link
+	 * leaving resource/ would fail the realpath() check anyway. */
+	if (!is_link($target) && is_file($target) && @hash_file('sha256', $target) === $sha) {
 		return true;
 	}
 

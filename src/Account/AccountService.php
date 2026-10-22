@@ -320,6 +320,26 @@ final class AccountService {
 	}
 
 	/**
+	 * Where an account's token lives, never the token or its ciphertext.
+	 *
+	 * @return array{token_source: string, token_file: string|null, has_token: bool}
+	 *
+	 * @throws AccessDenied
+	 * @throws OutOfBoundsException
+	 */
+	public function credentialDetails(int $id): array {
+		$this->requireConfigure();
+
+		$account = $this->requireAccount($id);
+
+		return array(
+			'token_source' => $account->tokenSource(),
+			'token_file'   => $account->tokenFile(),
+			'has_token'    => $account->hasToken(),
+		);
+	}
+
+	/**
 	 * Needs no configure right: an Account carries no credential.
 	 *
 	 * @return array<int, Account>

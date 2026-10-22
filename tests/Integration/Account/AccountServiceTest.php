@@ -317,6 +317,34 @@ final class AccountServiceTest extends TestCase {
 		$this->assertSame(array(), $this->transport->requests());
 	}
 
+	public function testCredentialDetailsRequiresConfigure(): void {
+		$id = $this->service()->save(null, $this->input());
+
+		$this->allowed = false;
+
+		try {
+			$this->service()->credentialDetails($id);
+			$this->fail('no AccessDenied thrown');
+		} catch (AccessDenied $e) {
+			$this->assertSame('Not authorized to configure Cloudflare accounts', $e->getMessage());
+		}
+	}
+
+	public function testCredentialDetailsNeverReturnsSecret(): void {
+		$id      = $this->service()->save(null, $this->input());
+		$details = $this->service()->credentialDetails($id);
+
+		$this->assertSame(array('token_source' => 'vault', 'token_file' => null, 'has_token' => true), $details);
+
+		$dump = var_export($details, true);
+		$this->assertNotLeaked($this->token, $dump, 'credential details');
+		$this->assertStringNotContainsString('v1:', $dump);
+		$this->assertStringNotContainsString('ciphertext', $dump);
+
+		$this->expectException(OutOfBoundsException::class);
+		$this->service()->credentialDetails($id + 1);
+	}
+
 	public function testDeleteRemovesAccountAndJobs(): void {
 		$id = $this->service()->save(null, $this->input());
 		$this->db->execute('INSERT INTO plugin_cloudflare_jobs (job_type, account_id) VALUES (?, ?)', array('discovery', $id));

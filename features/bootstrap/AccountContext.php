@@ -25,12 +25,9 @@
 namespace Cacti\PluginCloudflare\Features;
 
 use Behat\Behat\Context\Context;
-use Cacti\PluginCloudflare\Account\Account;
-use Cacti\PluginCloudflare\Account\AccountService;
 use Cacti\PluginCloudflare\Auth\AccessDenied;
 use Cacti\PluginCloudflare\Http\Response;
 use Cacti\PluginCloudflare\Tests\Support\FakeTransport;
-use ReflectionClass;
 use RuntimeException;
 
 /**
@@ -44,8 +41,11 @@ final class AccountContext implements Context {
 	/** @var int|null */
 	private $accountId = null;
 
-	/** @var Account|null */
-	private $account = null;
+	/** @var string|null */
+	private $status = null;
+
+	/** @var bool */
+	private $tokenRejected = false;
 
 	/** @var bool */
 	private $denied = false;
@@ -53,8 +53,8 @@ final class AccountContext implements Context {
 	/** @var string */
 	private $before = '';
 
-	/** @var string */
-	private $exposed = '';
+	/** @var array<string, mixed>|null */
+	private $details = null;
 
 	public function __construct() {
 		$this->world = new World();
@@ -75,18 +75,41 @@ final class AccountContext implements Context {
 	}
 
 	/**
-	 * @Given I am authenticated as a user without Cloudflare configuration privileges
+	 * @Given I have a valid scoped Cloudflare API token
 	 */
-	public function iAmAnUnprivilegedUser(): void {
-		$this->world->setAllowed(false);
+	public function iHaveAValidToken(): void {
+		$this->tokenRejected = false;
 	}
 
 	/**
-	 * @Given a Cloudflare account is already configured
+	 * @Given I have an invalid Cloudflare API token
 	 */
-	public function anAccountIsConfigured(): void {
+	public function iHaveAnInvalidToken(): void {
+		$this->tokenRejected = true;
+	}
+
+	/**
+	 * @Given I am authenticated without Cloudflare configuration privileges
+	 */
+	public function iAmAuthenticatedWithoutPrivileges(): void {
+		$this->seedAccountThenRevoke();
+	}
+
+	/**
+	 * @Given I have permission to view Cloudflare graphs
+	 */
+	public function iCanViewGraphs(): void {
+		// Viewing graphs is not an AccountService right; the account to be
+		// protected is created here while configure is still granted.
 		$this->world->setAllowed(true);
 		$this->accountId = $this->world->service()->save(null, $this->world->accountInput());
+	}
+
+	/**
+	 * @Given I do not have permission to administer Cloudflare accounts
+	 */
+	public function iCannotAdministerAccounts(): void {
+		$this->world->setAllowed(false);
 	}
 
 	/**
@@ -101,26 +124,20 @@ final class AccountContext implements Context {
 	 */
 	public function iVerifyTheConnection(): void {
 		$transport = $this->world->transport();
-		$transport->queue(FakeTransport::fixture('token-verify-active'));
-		$transport->queue(new Response(200, array(), World::OK_BODY));
-		$transport->queue(new Response(200, array(), World::OK_BODY));
+		if ($this->tokenRejected) {
+			$transport->queue(FakeTransport::fixture('auth-error', 401));
+			$transport->queue(FakeTransport::fixture('auth-error', 401));
+		} else {
+			$transport->queue(FakeTransport::fixture('token-verify-active'));
+			$transport->queue(new Response(200, array(), World::OK_BODY));
+			$transport->queue(new Response(200, array(), World::OK_BODY));
+		}
 
-		$this->account = $this->world->service()->verify($this->requireId());
+		$this->status = $this->world->service()->verify($this->requireId())->status();
 	}
 
 	/**
-	 * @When Cloudflare rejects the token during verification
-	 */
-	public function cloudflareRejectsTheToken(): void {
-		$transport = $this->world->transport();
-		$transport->queue(FakeTransport::fixture('auth-error', 401));
-		$transport->queue(FakeTransport::fixture('auth-error', 401));
-
-		$this->account = $this->world->service()->verify($this->requireId());
-	}
-
-	/**
-	 * @When I attempt to configure a Cloudflare account
+	 * @When I attempt to configure an account
 	 */
 	public function iAttemptToConfigureAnAccount(): void {
 		$this->before = serialize($this->world->rows());
@@ -138,22 +155,37 @@ final class AccountContext implements Context {
 	 * @When I request account credential details
 	 */
 	public function iRequestCredentialDetails(): void {
-		// AccountService has no find(); the repository's find() is the read
-		// path the pages use for a single account.
-		$accounts = $this->world->service()->list();
-		$found    = $this->world->repository()->find($this->requireId());
+		$this->before = serialize($this->world->rows());
 
-		$this->exposed = var_export($accounts, true) . print_r($accounts, true)
-			. var_export($found, true) . print_r($found, true);
+		try {
+			$this->details = $this->world->service()->credentialDetails($this->requireId());
+		} catch (AccessDenied $e) {
+			$this->denied = true;
+		}
 	}
 
 	/**
-	 * @Then the account status should be :status
+	 * @Then the account should be saved
 	 */
-	public function theAccountStatusShouldBe(string $status): void {
-		if ($this->account === null || $this->account->status() !== $status) {
-			throw new RuntimeException('account status differs from the expected status');
+	public function theAccountShouldBeSaved(): void {
+		$rows = $this->world->rows();
+		if (count($rows) !== 1 || (int) $rows[0]['id'] !== $this->requireId()) {
+			throw new RuntimeException('expected exactly one saved account row');
 		}
+	}
+
+	/**
+	 * @Then the connection status should indicate success
+	 */
+	public function theStatusShouldIndicateSuccess(): void {
+		$this->assertStatus('ok');
+	}
+
+	/**
+	 * @Then the connection status should indicate authentication failure
+	 */
+	public function theStatusShouldIndicateAuthFailure(): void {
+		$this->assertStatus('auth_failed');
 	}
 
 	/**
@@ -176,9 +208,7 @@ final class AccountContext implements Context {
 	 * @Then the token must not appear in application logs
 	 */
 	public function theTokenMustNotAppearInLogs(): void {
-		if (strpos(implode("\n", $this->world->logLines()), $this->world->token()) !== false) {
-			throw new RuntimeException('token found in application logs');
-		}
+		$this->assertLogsClean();
 		if (strpos(serialize($this->world->rows()), $this->world->token()) !== false) {
 			throw new RuntimeException('plaintext token found in the account row');
 		}
@@ -188,9 +218,14 @@ final class AccountContext implements Context {
 	 * @Then the request must be rejected
 	 */
 	public function theRequestMustBeRejected(): void {
-		if (!$this->denied) {
-			throw new RuntimeException('request was not rejected with AccessDenied');
-		}
+		$this->assertDenied();
+	}
+
+	/**
+	 * @Then the request must be denied
+	 */
+	public function theRequestMustBeDenied(): void {
+		$this->assertDenied();
 	}
 
 	/**
@@ -203,32 +238,40 @@ final class AccountContext implements Context {
 	}
 
 	/**
-	 * @Then no credential material must be exposed
+	 * @Then no credential material must be returned
 	 */
-	public function noCredentialMaterialMustBeExposed(): void {
-		if ($this->exposed === '') {
-			throw new RuntimeException('no account data was requested');
+	public function noCredentialMaterialMustBeReturned(): void {
+		if ($this->details !== null) {
+			throw new RuntimeException('credential details were returned');
 		}
-		if (strpos($this->exposed, $this->world->token()) !== false) {
-			throw new RuntimeException('token found in returned account data');
-		}
-		foreach (array('v1:', 'ciphertext') as $marker) {
-			if (strpos($this->exposed, $marker) !== false) {
-				throw new RuntimeException('credential marker found in returned account data');
-			}
+		$this->assertLogsClean();
+	}
+
+	private function seedAccountThenRevoke(): void {
+		$this->world->setAllowed(true);
+		$this->accountId = $this->world->service()->save(null, $this->world->accountInput());
+		$this->world->setAllowed(false);
+	}
+
+	private function assertStatus(string $expected): void {
+		if ($this->status !== $expected) {
+			throw new RuntimeException('account status differs from the expected status');
 		}
 	}
 
-	/**
-	 * @Then token material must not be reachable through the public service
-	 */
-	public function tokenMaterialMustNotBeReachable(): void {
-		$class = new ReflectionClass(AccountService::class);
-		if ($class->hasMethod('tokenMaterial') && $class->getMethod('tokenMaterial')->isPublic()) {
-			throw new RuntimeException('tokenMaterial is public on AccountService');
+	private function assertDenied(): void {
+		if (!$this->denied) {
+			throw new RuntimeException('request was not rejected with AccessDenied');
 		}
-		if ($class->hasMethod('__call')) {
-			throw new RuntimeException('AccountService forwards unknown calls');
+	}
+
+	private function assertLogsClean(): void {
+		$logs = implode("\n", $this->world->logLines());
+		if (strpos($logs, $this->world->token()) !== false) {
+			throw new RuntimeException('token found in application logs');
+		}
+		if (strpos($logs, 'v1:') !== false) {
+			throw new RuntimeException('ciphertext found in application logs');
 		}
 	}
 

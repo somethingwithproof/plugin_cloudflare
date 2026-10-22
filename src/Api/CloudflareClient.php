@@ -33,6 +33,11 @@ final class CloudflareClient {
 	private const AUTH_CODE         = 10000;
 	private const BAD_HEADER_CODES  = array(6003, 6111);
 	private const MAX_API_MESSAGES  = 3;
+	private const UNKNOWN_RESOURCE  = 1001;
+	private const PAGE_SIZE         = 1000;
+	private const MAX_PAGES         = 50;
+	private const MAX_NAME          = 255;
+	private const TUNNEL_STATUSES   = array('healthy', 'degraded', 'down', 'inactive');
 
 	/** @var HttpTransport */
 	private $transport;
@@ -124,6 +129,115 @@ final class CloudflareClient {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Lists every non-deleted tunnel, or throws. A partial listing is never
+	 * returned: callers treat the result as the complete account state.
+	 *
+	 * @return array<int, TunnelRecord>
+	 *
+	 * @throws ApiException
+	 */
+	public function listTunnels(
+		string $cfAccountId,
+		#[\SensitiveParameter]
+		string $token
+	): array {
+		$this->requireAccountId($cfAccountId);
+
+		$tunnels = array();
+		$seen    = array();
+
+		for ($page = 1; $page <= self::MAX_PAGES; $page++) {
+			$envelope = $this->request('GET', '/accounts/' . $cfAccountId . '/cfd_tunnel', $token, array(
+				'is_deleted' => 'false',
+				'per_page'   => self::PAGE_SIZE,
+				'page'       => $page,
+			));
+
+			$info  = $envelope['result_info'] ?? null;
+			$items = $envelope['result'] ?? null;
+			if (
+				!is_array($info)
+				|| !isset($info['total_count'])
+				|| !is_int($info['total_count'])
+				|| $info['total_count'] < 0
+				|| !is_array($items)
+			) {
+				throw new ApiException(ErrorClass::MALFORMED, 200, array(), 'tunnel listing has no usable result_info');
+			}
+
+			foreach ($items as $item) {
+				$tunnel = self::parseTunnel($item);
+				if (isset($seen[$tunnel->id])) {
+					throw new ApiException(ErrorClass::MALFORMED, 200, array(), 'tunnel listing repeats a tunnel id');
+				}
+
+				$seen[$tunnel->id] = true;
+				$tunnels[]         = $tunnel;
+			}
+
+			if (count($tunnels) >= $info['total_count']) {
+				return $tunnels;
+			}
+			if ($items === array()) {
+				throw new ApiException(ErrorClass::MALFORMED, 200, array(), 'tunnel listing ended before total_count');
+			}
+		}
+
+		throw new ApiException(ErrorClass::MALFORMED, 200, array(), 'tunnel listing exceeds the page limit');
+	}
+
+	/**
+	 * Cloudflare answers an unknown tunnel with 401 and code 1001, not 404.
+	 * That is scoped to this resource: it means the tunnel is gone, not that
+	 * the token was revoked, so it maps to not_found. Any other 401 stays auth.
+	 *
+	 * @return array<int, ConnectorRecord>
+	 *
+	 * @throws ApiException
+	 */
+	public function listConnections(
+		string $cfAccountId,
+		#[\SensitiveParameter]
+		string $token,
+		string $tunnelId
+	): array {
+		$this->requireAccountId($cfAccountId);
+		if (!Ids::isUuid($tunnelId)) {
+			throw new ApiException(ErrorClass::CONFIG, null, array(), 'invalid tunnel id');
+		}
+
+		try {
+			$envelope = $this->request(
+				'GET',
+				'/accounts/' . $cfAccountId . '/cfd_tunnel/' . $tunnelId . '/connections',
+				$token
+			);
+		} catch (ApiException $e) {
+			$unknown = $e->getErrorClass() === ErrorClass::AUTH
+				&& $e->getHttpStatus() === 401
+				&& in_array(self::UNKNOWN_RESOURCE, $e->getApiCodes(), true);
+
+			if ($unknown) {
+				throw new ApiException(ErrorClass::NOT_FOUND, 401, $e->getApiCodes(), 'tunnel is unknown to Cloudflare');
+			}
+
+			throw $e;
+		}
+
+		$items = $envelope['result'] ?? null;
+		if (!is_array($items)) {
+			throw new ApiException(ErrorClass::MALFORMED, 200, array(), 'connections result is not a list');
+		}
+
+		$connectors = array();
+		foreach ($items as $item) {
+			$connectors[] = self::parseConnector($item);
+		}
+
+		return $connectors;
 	}
 
 	/**
@@ -299,6 +413,95 @@ final class CloudflareClient {
 		}
 
 		return array($codes, $messages);
+	}
+
+	/**
+	 * @param mixed $item
+	 *
+	 * @throws ApiException
+	 */
+	private static function parseTunnel($item): TunnelRecord {
+		if (
+			!is_array($item)
+			|| !isset($item['id'], $item['name'], $item['status'], $item['tun_type'])
+			|| !is_string($item['id'])
+			|| !Ids::isUuid($item['id'])
+			|| !is_string($item['name'])
+			|| !is_string($item['status'])
+			|| !in_array($item['status'], self::TUNNEL_STATUSES, true)
+			|| !is_string($item['tun_type'])
+		) {
+			throw new ApiException(ErrorClass::MALFORMED, 200, array(), 'tunnel item has an unexpected shape');
+		}
+
+		return new TunnelRecord(
+			$item['id'],
+			self::cleanName($item['name']),
+			$item['status'],
+			$item['tun_type'],
+			self::parseExpiry($item['created_at'] ?? null),
+			self::parseExpiry($item['conns_active_at'] ?? null),
+			self::parseExpiry($item['conns_inactive_at'] ?? null)
+		);
+	}
+
+	/**
+	 * @param mixed $item
+	 *
+	 * @throws ApiException
+	 */
+	private static function parseConnector($item): ConnectorRecord {
+		if (
+			!is_array($item)
+			|| !isset($item['id'], $item['version'], $item['arch'], $item['conns'])
+			|| !is_string($item['id'])
+			|| !Ids::isUuid($item['id'])
+			|| !is_string($item['version'])
+			|| !is_string($item['arch'])
+			|| !is_array($item['conns'])
+		) {
+			throw new ApiException(ErrorClass::MALFORMED, 200, array(), 'connector item has an unexpected shape');
+		}
+
+		$colos = array();
+		$ips   = array();
+		foreach ($item['conns'] as $conn) {
+			if (!is_array($conn)) {
+				throw new ApiException(ErrorClass::MALFORMED, 200, array(), 'connector connection is not an object');
+			}
+			if (isset($conn['colo_name']) && is_string($conn['colo_name']) && $conn['colo_name'] !== '') {
+				$colos[$conn['colo_name']] = true;
+			}
+			if (isset($conn['origin_ip']) && is_string($conn['origin_ip'])
+				&& filter_var($conn['origin_ip'], FILTER_VALIDATE_IP) !== false) {
+				$ips[$conn['origin_ip']] = true;
+			}
+		}
+
+		$colos = array_map('strval', array_keys($colos));
+		$ips   = array_map('strval', array_keys($ips));
+		sort($colos, SORT_STRING);
+		sort($ips, SORT_STRING);
+
+		return new ConnectorRecord(
+			$item['id'],
+			$item['version'],
+			$item['arch'],
+			self::parseExpiry($item['run_at'] ?? null),
+			count($item['conns']),
+			$colos,
+			$ips
+		);
+	}
+
+	private static function cleanName(string $name): string {
+		$name = (string) preg_replace('/[\x00-\x1f\x7f]/', '', $name);
+
+		if (function_exists('mb_substr')) {
+			return mb_substr($name, 0, self::MAX_NAME, 'UTF-8');
+		}
+
+		return substr($name, 0, self::MAX_NAME);
 	}
 
 	private function requireAccountId(string $cfAccountId): void {

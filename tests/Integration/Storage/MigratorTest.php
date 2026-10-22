@@ -21,9 +21,11 @@
 namespace Cacti\PluginCloudflare\Tests\Integration\Storage;
 
 use Cacti\PluginCloudflare\Storage\Database;
+use Cacti\PluginCloudflare\Storage\Migration;
 use Cacti\PluginCloudflare\Storage\DatabaseException;
 use Cacti\PluginCloudflare\Storage\Migrations\M001Foundation;
 use Cacti\PluginCloudflare\Storage\Migrator;
+use Cacti\PluginCloudflare\Tests\Support\ReleaseLockFailingStatement;
 use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
 use PDO;
 use InvalidArgumentException;
@@ -131,6 +133,46 @@ final class MigratorTest extends TestCase {
 		$other->releaseLock('plugin_cloudflare_migrate');
 
 		$this->assertSame(array(1), $this->migrator(1)->migrate());
+	}
+
+	public function testReleaseFailureKeepsTheMigrationError(): void {
+		$pdo = TestDatabase::pdo();
+		$pdo->setAttribute(PDO::ATTR_STATEMENT_CLASS, array(ReleaseLockFailingStatement::class));
+		$broken = new class () implements Migration {
+			public function version(): int {
+				return 1;
+			}
+
+			public function statements(Database $db): array {
+				return array('CREATE TABLE plugin_cloudflare_broken (');
+			}
+		};
+
+		try {
+			(new Migrator(new Database($pdo), array($broken)))->migrate();
+			$this->fail('Expected DatabaseException');
+		} catch (DatabaseException $e) {
+			$this->assertSame('42000', $e->getSqlState());
+		} finally {
+			$pdo->query("SELECT RELEASE_LOCK('plugin_cloudflare_migrate')");
+		}
+	}
+
+	public function testReleaseFailureSurfacesAfterSuccessfulMigration(): void {
+		$pdo = TestDatabase::pdo();
+		$pdo->setAttribute(PDO::ATTR_STATEMENT_CLASS, array(ReleaseLockFailingStatement::class));
+
+		try {
+			(new Migrator(new Database($pdo), Migrator::defaultMigrations()))->migrate();
+			$this->fail('Expected DatabaseException');
+		} catch (DatabaseException $e) {
+			$this->assertSame('HY000', $e->getSqlState());
+			$this->assertSame(2006, $e->getDriverCode());
+		} finally {
+			$pdo->query("SELECT RELEASE_LOCK('plugin_cloudflare_migrate')");
+		}
+
+		$this->assertSame(1, $this->migrator()->currentVersion());
 	}
 
 	public function testAccountIdUniqueConstraint(): void {

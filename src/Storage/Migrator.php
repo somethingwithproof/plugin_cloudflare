@@ -82,6 +82,8 @@ final class Migrator {
 			throw new DatabaseException('HY000', 0);
 		}
 
+		$failed = true;
+
 		try {
 			$this->db->execute(
 				'CREATE TABLE IF NOT EXISTS ' . self::TABLE . ' (
@@ -106,9 +108,19 @@ final class Migrator {
 				$applied[] = $version;
 			}
 
+			$failed = false;
+
 			return $applied;
 		} finally {
-			$this->db->releaseLock(self::LOCK_NAME);
+			try {
+				$this->db->releaseLock(self::LOCK_NAME);
+			} catch (DatabaseException $e) {
+				// The migration error is the one worth reporting, and a lock
+				// we could not release dies with the session anyway.
+				if (!$failed) {
+					throw $e;
+				}
+			}
 		}
 	}
 

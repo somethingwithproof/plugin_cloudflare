@@ -188,7 +188,7 @@ Verify sets the account's status:
 | `permission_denied` | The token is active but cannot read tunnels, or it lacks the permissions to call the token verify endpoints (HTTP 403) |
 | `unreachable` | The API could not be reached, timed out or returned a server error |
 | `rate_limited` | Cloudflare returned HTTP 429 |
-| `error` | Any other failure, including a token file that is missing or insecure, or a stored token that cannot be decrypted |
+| `error` | Any other failure, including a token file that is missing or insecure, a token vault key file that is missing or unusable, or a stored token that cannot be decrypted |
 
 The edit page also shows whether tunnel read and zone read were granted.
 

@@ -23,6 +23,7 @@ namespace Cacti\PluginCloudflare\Tests\Integration\Glue;
 use Cacti\PluginCloudflare\Storage\Database;
 use Cacti\PluginCloudflare\Storage\DatabaseException;
 use Cacti\PluginCloudflare\Storage\Migrations\M001Foundation;
+use Cacti\PluginCloudflare\Storage\Migrations\M002Discovery;
 use Cacti\PluginCloudflare\Storage\Migrator;
 use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
 use PDO;
@@ -38,6 +39,9 @@ final class SetupDatabaseTest extends IntegrationTestCase {
 
 	/** @var PDO */
 	private $pdo;
+
+	/** @var string|null */
+	private $base;
 
 	public static function setUpBeforeClass(): void {
 		require_once self::ROOT . '/tests/Support/CactiGlueStubs.php';
@@ -55,11 +59,61 @@ final class SetupDatabaseTest extends IntegrationTestCase {
 		$GLOBALS['database_port']     = '3306';
 		$GLOBALS['database_default']  = 'cacti';
 		$GLOBALS['database_sessions'] = array(self::SESSION => $this->pdo);
+		unset($GLOBALS['config']);
 	}
 
 	protected function tearDown(): void {
 		unset($GLOBALS['database_sessions'], $GLOBALS['database_hostname'], $GLOBALS['database_port'], $GLOBALS['database_default']);
+		unset($GLOBALS['config']);
 		TestDatabase::reset();
+
+		if ($this->base !== null) {
+			foreach ((array) glob($this->base . '/resource/script_server/*') as $file) {
+				unlink((string) $file);
+			}
+			rmdir($this->base . '/resource/script_server');
+			rmdir($this->base . '/resource');
+			unlink($this->base . '/lib/template.php');
+			unlink($this->base . '/lib/utility.php');
+			rmdir($this->base . '/lib');
+			rmdir($this->base);
+			$this->base = null;
+		}
+	}
+
+	/**
+	 * A Cacti tree with only the directory the plugin writes to, and stub
+	 * answers for the Cacti tables the template install reads.
+	 */
+	private function cactiTree(string $installed): string {
+		$this->base = sys_get_temp_dir() . '/cf-base-' . bin2hex(random_bytes(6));
+		mkdir($this->base . '/resource/script_server', 0755, true);
+		/* Empty stand-ins for the libraries loaded beside import.php. */
+		mkdir($this->base . '/lib');
+		file_put_contents($this->base . '/lib/template.php', "<?php\n");
+		file_put_contents($this->base . '/lib/utility.php', "<?php\n");
+		$GLOBALS['config'] = array('base_path' => $this->base);
+
+		$GLOBALS['cloudflare_glue']['import'] = array(
+			'data_template' => array(array('type' => 'new', 'title' => 'Cloudflare Tunnel', 'result' => 'success')),
+		);
+		$GLOBALS['cloudflare_glue']['cell'] = function (string $sql) use ($installed) {
+			if (strpos($sql, 'FROM plugin_config') !== false) {
+				return $installed;
+			}
+
+			if (strpos($sql, 'FROM data_source_profiles') !== false) {
+				return '1';
+			}
+
+			return cloudflare_glue_calls('import_xml_data') === array() ? false : '7';
+		};
+
+		return $this->base . '/resource/script_server/cloudflare_tunnels.xml';
+	}
+
+	private function mappingCount(): int {
+		return (int) $this->pdo->query('SELECT COUNT(*) FROM plugin_cloudflare_metric_mappings')->fetchColumn();
 	}
 
 	private function tableExists(string $table): bool {
@@ -112,17 +166,18 @@ final class SetupDatabaseTest extends IntegrationTestCase {
 
 		$this->assertTrue($this->tableExists('plugin_cloudflare_accounts'));
 		$this->assertSame(array(
-			array('UPDATE plugin_config SET version = ? WHERE directory = ?', array('0.2.0', 'cloudflare')),
+			array('UPDATE plugin_config SET version = ? WHERE directory = ?', array('0.3.0', 'cloudflare')),
 		), cloudflare_glue_calls('db_execute_prepared'));
 	}
 
 	public function testUpgradeRunsPendingMigrationsAtTheSameVersion(): void {
-		$GLOBALS['cloudflare_glue']['cell'] = '0.2.0';
+		$GLOBALS['cloudflare_glue']['cell'] = '0.3.0';
 
 		$this->assertTrue(plugin_cloudflare_upgrade());
 
 		$this->assertTrue($this->tableExists('plugin_cloudflare_accounts'));
 		$this->assertSame(array(), cloudflare_glue_calls('db_execute_prepared'));
+		$this->assertSame(array(), cloudflare_glue_calls('import_xml_data'), 'templates follow the version, not the schema');
 	}
 
 	public function testUpgradeFrom010RunsM002AndRegistersHook(): void {
@@ -139,7 +194,7 @@ final class SetupDatabaseTest extends IntegrationTestCase {
 			cloudflare_glue_calls('api_plugin_register_hook')
 		);
 		$this->assertSame(array(
-			array('UPDATE plugin_config SET version = ? WHERE directory = ?', array('0.2.0', 'cloudflare')),
+			array('UPDATE plugin_config SET version = ? WHERE directory = ?', array('0.3.0', 'cloudflare')),
 		), cloudflare_glue_calls('db_execute_prepared'));
 	}
 
@@ -180,6 +235,59 @@ final class SetupDatabaseTest extends IntegrationTestCase {
 		$this->assertFalse($this->tableExists('plugin_cloudflare_accounts'));
 		$this->assertFalse($this->tableExists('plugin_cloudflare_jobs'));
 		$this->assertFalse($this->tableExists('plugin_cloudflare_migrations'));
+		$this->assertSame(array(
+			array('DELETE FROM settings WHERE name LIKE ? ESCAPE \'!\'', array('cloudflare!_%')),
+		), cloudflare_glue_calls('db_execute_prepared'));
+	}
+
+	public function testUpgradeFrom020RunsM003AndImportsTemplates(): void {
+		(new Migrator(new Database($this->pdo), array(new M001Foundation(), new M002Discovery())))->migrate();
+		$this->assertFalse($this->tableExists('plugin_cloudflare_metric_mappings'));
+		$resource = $this->cactiTree('0.2.0');
+
+		$this->assertTrue(plugin_cloudflare_upgrade());
+
+		$this->assertTrue($this->tableExists('plugin_cloudflare_resources'));
+		$this->assertTrue($this->tableExists('plugin_cloudflare_metric_mappings'));
+		$this->assertSame(
+			'3',
+			(string) $this->pdo->query('SELECT MAX(version) FROM plugin_cloudflare_migrations')->fetchColumn()
+		);
+		$this->assertFileEquals(self::ROOT . '/templates/resource/cloudflare_tunnels.xml', $resource);
+		$this->assertSame(
+			array(array(hash_file('sha256', self::ROOT . '/templates/cloudflare_templates.xml'), false, '1')),
+			cloudflare_glue_calls('import_xml_data')
+		);
+		$this->assertSame(6, $this->mappingCount());
+		$this->assertSame(array(), cloudflare_glue_calls('api_plugin_register_hook'), '0.2.0 already has the hook');
+		$this->assertSame(array(
+			array('UPDATE plugin_config SET version = ? WHERE directory = ?', array('0.3.0', 'cloudflare')),
+		), cloudflare_glue_calls('db_execute_prepared'));
+		$this->assertSame(array(), $this->loggedLines());
+	}
+
+	public function testInstallImportsTemplatesAfterTheSchema(): void {
+		$resource = $this->cactiTree('');
+
+		plugin_cloudflare_install();
+
+		$this->assertFileExists($resource);
+		$this->assertCount(1, cloudflare_glue_calls('import_xml_data'));
+		$this->assertSame(6, $this->mappingCount());
+		$this->assertSame(array(), $this->loggedLines());
+	}
+
+	public function testUninstallKeepsResourceXml(): void {
+		$resource = $this->cactiTree('');
+		plugin_cloudflare_install();
+		$this->assertFileExists($resource);
+		cloudflare_glue_reset();
+
+		plugin_cloudflare_uninstall();
+
+		$this->assertFileEquals(self::ROOT . '/templates/resource/cloudflare_tunnels.xml', $resource);
+		$this->assertFalse($this->tableExists('plugin_cloudflare_metric_mappings'));
+		/* The only write to Cacti's own tables is the settings cleanup. */
 		$this->assertSame(array(
 			array('DELETE FROM settings WHERE name LIKE ? ESCAPE \'!\'', array('cloudflare!_%')),
 		), cloudflare_glue_calls('db_execute_prepared'));

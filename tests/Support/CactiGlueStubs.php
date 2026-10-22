@@ -55,6 +55,7 @@ function cloudflare_glue_reset(): void {
 		'page'     => 'index.php',
 		'on_log'   => null,
 		'on_top'   => null,
+		'import'   => array(),
 	);
 	$GLOBALS['cloudflare_glue_enabled_cache'] = array();
 }
@@ -280,7 +281,58 @@ if (!function_exists('db_fetch_cell_prepared')) {
 	function db_fetch_cell_prepared($sql, $params = array(), $col_name = '', $log = true, $db_conn = false) {
 		cloudflare_glue_record(__FUNCTION__, array($sql, $params));
 
-		return cloudflare_glue_state('cell');
+		/* A closure answers per query, for code that reads several cells. */
+		$cell = cloudflare_glue_state('cell');
+
+		return $cell instanceof Closure ? $cell((string) $sql, (array) $params) : $cell;
+	}
+}
+
+if (!function_exists('set_config_option')) {
+	/* lib/functions.php:418 (1.2.25: :419). Later reads see the new value. */
+	/**
+	 * @param mixed $config_name
+	 * @param mixed $value
+	 * @param mixed $remote
+	 */
+	function set_config_option($config_name, $value, $remote = false): void {
+		cloudflare_glue_record(__FUNCTION__, array($config_name, $value, $remote));
+
+		$GLOBALS['cloudflare_glue']['settings'][$config_name] = $value;
+	}
+}
+
+if (!function_exists('import_xml_data')) {
+	/*
+	 * lib/import.php:25, identical in 1.2.25 and 1.2.31. Records the sha256
+	 * of the XML rather than the XML itself. The 'import' state is the
+	 * return value, or a closure that builds it and may fill the global
+	 * $import_messages the way a parse error does (lib/import.php:38).
+	 */
+	/**
+	 * @param mixed $xml_data
+	 * @param mixed $import_as_new
+	 * @param mixed $profile_id
+	 * @param mixed $remove_orphans
+	 * @param mixed $replace_svalues
+	 * @param mixed $import_hashes
+	 * @param mixed $class
+	 * @return mixed
+	 */
+	function import_xml_data(
+		&$xml_data,
+		$import_as_new,
+		$profile_id,
+		$remove_orphans = false,
+		$replace_svalues = false,
+		$import_hashes = array(),
+		$class = ''
+	) {
+		cloudflare_glue_record(__FUNCTION__, array(hash('sha256', (string) $xml_data), $import_as_new, $profile_id));
+
+		$import = cloudflare_glue_state('import');
+
+		return $import instanceof Closure ? $import() : $import;
 	}
 }
 

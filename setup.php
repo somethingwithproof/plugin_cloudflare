@@ -20,6 +20,7 @@
 
 require_once __DIR__ . '/includes/bootstrap.php';
 require_once __DIR__ . '/includes/accounts.php';
+require_once __DIR__ . '/includes/templates.php';
 
 use Cacti\PluginCloudflare\Storage\DatabaseException;
 use Cacti\PluginCloudflare\Storage\Migrator;
@@ -48,12 +49,18 @@ function plugin_cloudflare_install() : void {
 		plugin_cloudflare_setup_database();
 	} catch (DatabaseException $e) {
 		cloudflare_log_schema_failure('install', $e);
+
+		return;
 	}
+
+	cloudflare_templates_install();
 }
 
 /**
  * Cacti removes hooks, realms and plugin_config itself after this returns
- * (lib/plugins.php:801). Devices, graphs and RRD files are left alone.
+ * (lib/plugins.php:801). Devices, graphs, RRD files, the imported templates
+ * and resource/script_server/cloudflare_tunnels.xml are left alone, so
+ * existing graphs keep working after a reinstall.
  */
 function plugin_cloudflare_uninstall() : void {
 	try {
@@ -135,6 +142,11 @@ function plugin_cloudflare_upgrade(int $lock_timeout = 10) : bool {
 	}
 
 	if ($current !== '' && $current !== (string) $installed) {
+		/* A failed template install is logged and does not hold back the
+		 * version: retrying a failing import on every page load would cost
+		 * more than it could fix. */
+		cloudflare_templates_install($lock_timeout);
+
 		db_execute_prepared('UPDATE plugin_config SET version = ? WHERE directory = ?', array($current, 'cloudflare'));
 	}
 

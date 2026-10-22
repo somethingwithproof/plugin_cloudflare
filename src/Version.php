@@ -21,6 +21,6 @@
 namespace Cacti\PluginCloudflare;
 
 final class Version {
-	const PLUGIN = '0.2.0';
+	const PLUGIN = '0.3.0';
 	const METRIC_SCHEMA = 1;
 }

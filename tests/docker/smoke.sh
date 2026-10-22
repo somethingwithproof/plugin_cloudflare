@@ -25,6 +25,7 @@ fixture_tunnels='0b6a8e4c-6c3b-4f64-9d6e-2f6c1f8a1d11|staging|inactive
 7d1c3f52-91a4-4a39-8a55-3e1b0c6f2b77|old-office|down
 f70ff985-a4ef-4643-bbbc-4a0ed4fc8415|blog|healthy'
 denied_marker='You are not permitted to access this section of Cacti.'
+cf_data_template='0a8e0fd46e03c70b32a5908fc0463e17'
 
 export CF_SMOKE_PORT="${port}"
 export CF_SMOKE_ADMIN_PASS="${admin_pass}"
@@ -91,8 +92,25 @@ plugin_tables() {
 	sql "SELECT table_name FROM information_schema.tables WHERE table_schema = 'cacti' AND table_name LIKE 'plugin!_cloudflare!_%' ESCAPE '!' ORDER BY table_name"
 }
 
+# The plugin's own data template is left out: install imports it and
+# uninstall keeps it, which step 6 checks on its own.
 core_counts() {
-	sql "SELECT (SELECT COUNT(*) FROM host), (SELECT COUNT(*) FROM graph_local), (SELECT COUNT(*) FROM data_template)"
+	sql "SELECT (SELECT COUNT(*) FROM host), (SELECT COUNT(*) FROM graph_local), (SELECT COUNT(*) FROM data_template WHERE hash != '${cf_data_template}')"
+}
+
+# Host template, data query, data template and the three graph templates,
+# each by its md5('plugin_cloudflare/<key>') hash.
+template_objects() {
+	sql "SELECT (SELECT COUNT(*) FROM host_template WHERE hash = '7b64ac0c934b4a22601a2a8e03f0d4c3')
+		+ (SELECT COUNT(*) FROM snmp_query WHERE hash = '82e9f55ad870c876a825287744c2afbb')
+		+ (SELECT COUNT(*) FROM data_template WHERE hash = '${cf_data_template}')
+		+ (SELECT COUNT(*) FROM graph_templates WHERE hash IN (MD5('plugin_cloudflare/graph_template/connectors'),
+			MD5('plugin_cloudflare/graph_template/health'), MD5('plugin_cloudflare/graph_template/collection')))"
+}
+
+resource_matches() {
+	"${dc[@]}" exec -T web cmp -s plugins/cloudflare/templates/resource/cloudflare_tunnels.xml \
+		resource/script_server/cloudflare_tunnels.xml
 }
 
 # capture <name> <command...>: saves stdout and stderr under ${captures}.
@@ -357,6 +375,14 @@ realms="$(sql "SELECT id, file FROM plugin_realms WHERE plugin = 'cloudflare' OR
 [[ "$(wc -l <<<"${realms}")" -eq 2 ]] || die 'expected two plugin realms' "${realms}"
 pass
 
+step='2b install imported the templates and copied the data query XML'
+[[ "$(template_objects)" = '6' ]] || die "found $(template_objects) of 6 template objects"
+resource_matches || die 'resource/script_server/cloudflare_tunnels.xml is missing or differs'
+[[ "$(sql "SELECT LENGTH(value) FROM settings WHERE name = 'cloudflare_templates_sha256'")" = '64' ]] \
+	|| die 'the template hash was not recorded'
+[[ "$(sql "SELECT COUNT(*) FROM plugin_cloudflare_metric_mappings")" = '6' ]] || die 'metric mappings were not recorded'
+pass
+
 step='3 disable, re-enable and reinstall keep the tables'
 out="$(plugin_manage --disable 2>&1)" || die "${out}"
 require_clean "${out}"
@@ -584,6 +610,8 @@ require_clean "${out}"
 [[ "$(sql "SELECT COUNT(*) FROM user_auth_realm WHERE realm_id = ${view_realm}")" = '0' ]] || die 'viewer realm grant remains'
 counts_after="$(core_counts)"
 [[ "${counts_after}" = "${counts_before}" ]] || die "host/graph_local/data_template counts ${counts_before} became ${counts_after}"
+[[ "$(template_objects)" = '6' ]] || die "uninstall left $(template_objects) of 6 template objects"
+resource_matches || die 'uninstall removed or changed the data query XML'
 pass
 
 step='7 the token appears in no log, page or database dump'

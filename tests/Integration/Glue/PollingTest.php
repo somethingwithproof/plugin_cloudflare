@@ -312,7 +312,7 @@ final class PollingTest extends IntegrationTestCase {
 		);
 
 		cloudflare_glue_reset();
-		$GLOBALS['cloudflare_glue']['cell'] = '0.2.0';
+		$GLOBALS['cloudflare_glue']['cell'] = '0.3.0';
 		$this->assertTrue(plugin_cloudflare_upgrade());
 		$this->assertSame(array(), cloudflare_glue_calls('api_plugin_register_hook'));
 	}

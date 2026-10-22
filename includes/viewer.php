@@ -93,6 +93,7 @@ function cloudflare_viewer_tabs(string $current) : void {
  * @param array{
  *        last_status: string,
  *        last_finished_at: int|null,
+ *        last_success_at: int|null,
  *        last_error_class: string|null,
  *        consecutive_failures: int
  *        }|null $job
@@ -100,8 +101,7 @@ function cloudflare_viewer_tabs(string $current) : void {
  *        active: int,
  *        unavailable: int,
  *        deleted: int,
- *        health: string|null,
- *        last_seen_at: int|null
+ *        health: string|null
  *        }|null $summary
  */
 function cloudflare_viewer_health(Account $account, ?array $job, ?array $summary) : string {
@@ -135,32 +135,6 @@ function cloudflare_viewer_health(Account $account, ?array $job, ?array $summary
 	}
 }
 
-/**
- * The job keeps only its latest run, so after a failure the newest
- * last_seen_at stands in for the last successful listing.
- *
- * @param array{
- *        last_status: string,
- *        last_finished_at: int|null,
- *        last_error_class: string|null,
- *        consecutive_failures: int
- *        }|null $job
- * @param array{
- *        active: int,
- *        unavailable: int,
- *        deleted: int,
- *        health: string|null,
- *        last_seen_at: int|null
- *        }|null $summary
- */
-function cloudflare_viewer_last_success(?array $job, ?array $summary) : ?int {
-	if ($job !== null && in_array($job['last_status'], array('ok', 'partial'), true)) {
-		return $job['last_finished_at'];
-	}
-
-	return $summary === null ? null : $summary['last_seen_at'];
-}
-
 function cloudflare_viewer_overview() : void {
 	$accounts   = array();
 	$summaries  = array();
@@ -188,12 +162,12 @@ function cloudflare_viewer_overview() : void {
  *        active: int,
  *        unavailable: int,
  *        deleted: int,
- *        health: string|null,
- *        last_seen_at: int|null
+ *        health: string|null
  *        }> $summaries
  * @param array<int, array{
  *        last_status: string,
  *        last_finished_at: int|null,
+ *        last_success_at: int|null,
  *        last_error_class: string|null,
  *        consecutive_failures: int
  *        }> $jobs
@@ -242,7 +216,7 @@ function cloudflare_viewer_overview_table(array $accounts, array $summaries, arr
 			form_selectable_cell((string) ($summary === null ? 0 : $summary[$lifecycle]), $id, '', 'right');
 		}
 
-		form_selectable_cell(html_escape(cloudflare_viewer_time(cloudflare_viewer_last_success($job, $summary))), $id);
+		form_selectable_cell(html_escape(cloudflare_viewer_time($job === null ? null : $job['last_success_at'])), $id);
 		form_selectable_cell((string) ($job === null ? 0 : $job['consecutive_failures']), $id, '', 'right');
 		form_end_row();
 	}

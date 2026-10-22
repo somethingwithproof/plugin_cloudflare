@@ -190,11 +190,11 @@ final class TunnelRepositoryTest extends IntegrationTestCase {
 
 		$this->assertSame(array($this->accountId, $this->otherId), array_keys($summary));
 		$this->assertSame(
-			array('active' => 5, 'unavailable' => 0, 'deleted' => 1, 'health' => 'down', 'last_seen_at' => self::T0 + 60),
+			array('active' => 5, 'unavailable' => 0, 'deleted' => 1, 'health' => 'down'),
 			$summary[$this->accountId]
 		);
 		$this->assertSame(
-			array('active' => 0, 'unavailable' => 1, 'deleted' => 0, 'health' => null, 'last_seen_at' => self::T0),
+			array('active' => 0, 'unavailable' => 1, 'deleted' => 0, 'health' => null),
 			$summary[$this->otherId]
 		);
 	}

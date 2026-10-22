@@ -88,6 +88,12 @@ final class M002Discovery implements Migration {
 				ADD COLUMN outage_failures INT UNSIGNED NOT NULL DEFAULT 0 AFTER consecutive_failures';
 		}
 
+		/* last_finished_at is overwritten by every run, failed ones included. */
+		if (!$this->columnExists($db, 'plugin_cloudflare_jobs', 'last_success_at')) {
+			$statements[] = 'ALTER TABLE plugin_cloudflare_jobs
+				ADD COLUMN last_success_at INT UNSIGNED NULL AFTER last_finished_at';
+		}
+
 		return $statements;
 	}
 

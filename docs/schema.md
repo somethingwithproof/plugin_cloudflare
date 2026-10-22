@@ -49,9 +49,11 @@ Keys: primary `id`; unique `cf_account_id`.
 | next_run_at | INT UNSIGNED | Default 0 |
 | last_started_at | INT UNSIGNED NULL | |
 | last_finished_at | INT UNSIGNED NULL | |
+| last_success_at | INT UNSIGNED NULL | Added by migration 2; set when a run finishes `ok` or `partial`, kept on failure |
 | last_status | VARCHAR(20) | Default `never` |
 | last_error_class | VARCHAR(20) NULL | |
 | consecutive_failures | INT UNSIGNED | Default 0 |
+| outage_failures | INT UNSIGNED | Added by migration 2; default 0 |
 
 Keys: primary `id`; unique `(job_type, account_id)`; foreign key
 `fk_cf_jobs_account`.

@@ -384,6 +384,28 @@ final class JobRepositoryTest extends IntegrationTestCase {
 		$this->assertNull($row['lease_until']);
 	}
 
+	public function testLastSuccessIsStampedOnlyWhenARunCompletes(): void {
+		$this->repo()->ensure('discovery', $this->accountId);
+		$id = $this->jobId($this->accountId);
+		$this->assertNull($this->job($id)['last_success_at']);
+
+		$lease = $this->leased($this->repo(self::T0), $id, 'host-a:1');
+		$this->repo(self::T0 + 5)->succeed($lease, self::T0 + 300);
+		$this->assertSame(self::T0 + 5, (int) $this->job($id)['last_success_at']);
+
+		$lease = $this->leased($this->repo(self::T0 + 10), $id, 'host-a:1');
+		$this->repo(self::T0 + 15)->fail($lease, ErrorClass::TRANSIENT, self::T0 + 600, true);
+		$this->assertSame(self::T0 + 5, (int) $this->job($id)['last_success_at'], 'a failure keeps the last success');
+
+		$lease = $this->leased($this->repo(self::T0 + 20), $id, 'host-a:1');
+		$this->repo(self::T0 + 25)->partial($lease, self::T0 + 900);
+		$this->assertSame(self::T0 + 25, (int) $this->job($id)['last_success_at']);
+
+		$lease = $this->leased($this->repo(self::T0 + 30), $id, 'host-a:1');
+		$this->repo(self::T0 + 35)->release($lease);
+		$this->assertSame(self::T0 + 25, (int) $this->job($id)['last_success_at'], 'a release records no run');
+	}
+
 	public function testSummariesAreKeyedByAccountForOneType(): void {
 		$other = $this->insertAccount('b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2');
 		$this->repo()->ensure('discovery', $this->accountId);
@@ -391,6 +413,8 @@ final class JobRepositoryTest extends IntegrationTestCase {
 		$this->repo()->ensure('analytics', $this->accountId);
 
 		$lease = $this->leased($this->repo(self::T0), $this->jobId($this->accountId), 'host-a:1');
+		$this->repo(self::T0 + 2)->succeed($lease, self::T0 + 3);
+		$lease = $this->leased($this->repo(self::T0 + 3), $this->jobId($this->accountId), 'host-a:1');
 		$this->repo(self::T0 + 5)->fail($lease, ErrorClass::TRANSIENT, self::T0 + 600);
 
 		$summaries = $this->repo()->summaries('discovery');
@@ -400,12 +424,14 @@ final class JobRepositoryTest extends IntegrationTestCase {
 		$this->assertSame(array(
 			'last_status'          => 'failed',
 			'last_finished_at'     => self::T0 + 5,
+			'last_success_at'      => self::T0 + 2,
 			'last_error_class'     => 'transient',
 			'consecutive_failures' => 1,
 		), $summaries[$this->accountId]);
 		$this->assertSame(array(
 			'last_status'          => 'never',
 			'last_finished_at'     => null,
+			'last_success_at'      => null,
 			'last_error_class'     => null,
 			'consecutive_failures' => 0,
 		), $summaries[$other]);

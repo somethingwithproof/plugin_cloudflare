@@ -97,24 +97,21 @@ final class TunnelRepository {
 	}
 
 	/**
-	 * Per-account lifecycle counts, the worst Cloudflare status among active
-	 * tunnels (null when none is active), and the latest last_seen_at. Every
-	 * complete listing stamps last_seen_at on each tunnel it returns, so that
-	 * is when the account was last listed, or earlier if that listing was empty.
+	 * Per-account lifecycle counts and the worst Cloudflare status among
+	 * active tunnels (null when none is active).
 	 *
 	 * @return array<int, array{
 	 *         active: int,
 	 *         unavailable: int,
 	 *         deleted: int,
-	 *         health: string|null,
-	 *         last_seen_at: int|null
+	 *         health: string|null
 	 *         }>
 	 */
 	public function summary(): array {
 		$summary = array();
 
 		foreach ($this->db->fetchAll(
-			'SELECT account_id, lifecycle, cf_status, COUNT(*) AS tunnels, MAX(last_seen_at) AS last_seen_at
+			'SELECT account_id, lifecycle, cf_status, COUNT(*) AS tunnels
 			FROM ' . self::TABLE . '
 			GROUP BY account_id, lifecycle, cf_status
 			ORDER BY account_id'
@@ -122,7 +119,7 @@ final class TunnelRepository {
 			$id = (int) $row['account_id'];
 
 			if (!isset($summary[$id])) {
-				$summary[$id] = array('active' => 0, 'unavailable' => 0, 'deleted' => 0, 'health' => null, 'last_seen_at' => null);
+				$summary[$id] = array('active' => 0, 'unavailable' => 0, 'deleted' => 0, 'health' => null);
 			}
 
 			$lifecycle = (string) $row['lifecycle'];
@@ -138,11 +135,6 @@ final class TunnelRepository {
 				&& ($health === null || self::HEALTH_RANK[$status] < self::HEALTH_RANK[$health])
 			) {
 				$summary[$id]['health'] = $status;
-			}
-
-			$seen = (int) $row['last_seen_at'];
-			if ($summary[$id]['last_seen_at'] === null || $seen > $summary[$id]['last_seen_at']) {
-				$summary[$id]['last_seen_at'] = $seen;
 			}
 		}
 

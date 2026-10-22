@@ -127,6 +127,19 @@ final class M002DiscoveryTest extends IntegrationTestCase {
 		$this->assertSame(1, $this->columnCount('plugin_cloudflare_jobs', 'outage_failures'));
 	}
 
+	public function testUpgradeFromV1AddsLastSuccessToJobs(): void {
+		(new Migrator($this->db, array(new M001Foundation())))->migrate();
+		$this->assertSame(0, $this->columnCount('plugin_cloudflare_jobs', 'last_success_at'));
+
+		$this->migrator()->migrate();
+		$this->assertSame(1, $this->columnCount('plugin_cloudflare_jobs', 'last_success_at'));
+
+		foreach ((new M002Discovery())->statements($this->db) as $sql) {
+			$this->db->execute($sql);
+		}
+		$this->assertSame(1, $this->columnCount('plugin_cloudflare_jobs', 'last_success_at'));
+	}
+
 	private function columnCount(string $table, string $column): int {
 		return (int) $this->db->fetchCell(
 			'SELECT COUNT(*) FROM information_schema.columns

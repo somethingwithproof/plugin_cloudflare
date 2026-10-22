@@ -115,7 +115,7 @@ final class ViewerPageHandlersTest extends IntegrationTestCase {
 	}
 
 	/**
-	 * Two accounts: Prod lists three tunnels and then fails twice; Edge
+	 * Two accounts: Prod lists three tunnels, succeeds once and then fails twice; Edge
 	 * lists one healthy tunnel and succeeds.
 	 *
 	 * @return array{0: int, 1: int}
@@ -137,6 +137,9 @@ final class ViewerPageHandlersTest extends IntegrationTestCase {
 			self::tunnel(2, 'api', 'degraded'),
 		));
 		$reconciler->applyListing($edge, array(self::tunnel(4, 'edge-web', 'healthy')));
+
+		$first = new JobRepository($this->db, new FrozenClock(self::T0 + 100));
+		$first->succeed($this->lease($first, $prod), self::T0 + 200);
 
 		$jobs = new JobRepository($this->db, new FrozenClock(self::T0 + 300));
 		$jobs->fail($this->lease($jobs, $prod), ErrorClass::TRANSIENT, self::T0 + 600, true);
@@ -199,7 +202,7 @@ final class ViewerPageHandlersTest extends IntegrationTestCase {
 
 		$this->assertStringContainsString('>Prod</a>', $rows[1][0]);
 		$this->assertSame(
-			array('Collection failing', '2', '0', '1', date('Y-m-d H:i:s', self::T0 + 60), '2'),
+			array('Collection failing', '2', '0', '1', date('Y-m-d H:i:s', self::T0 + 100), '2'),
 			array_slice($rows[1], 1)
 		);
 	}

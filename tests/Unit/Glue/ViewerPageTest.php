@@ -90,30 +90,31 @@ final class ViewerPageTest extends TestCase {
 	}
 
 	/**
-	 * @return array{active: int, unavailable: int, deleted: int, health: string|null, last_seen_at: int|null}
+	 * @return array{active: int, unavailable: int, deleted: int, health: string|null}
 	 */
-	private static function summary(int $active, ?string $health, int $lastSeen = 1800000000): array {
-		return array(
-			'active'       => $active,
-			'unavailable'  => 1,
-			'deleted'      => 2,
-			'health'       => $health,
-			'last_seen_at' => $lastSeen,
-		);
+	private static function summary(int $active, ?string $health): array {
+		return array('active' => $active, 'unavailable' => 1, 'deleted' => 2, 'health' => $health);
 	}
 
 	/**
 	 * @return array{
 	 *         last_status: string,
 	 *         last_finished_at: int|null,
+	 *         last_success_at: int|null,
 	 *         last_error_class: string|null,
 	 *         consecutive_failures: int
 	 *         }
 	 */
-	private static function job(string $status, int $failures, ?string $errorClass = null): array {
+	private static function job(
+		string $status,
+		int $failures,
+		?string $errorClass = null,
+		?int $lastSuccess = null
+	): array {
 		return array(
 			'last_status'          => $status,
 			'last_finished_at'     => 1800000600,
+			'last_success_at'      => $lastSuccess,
 			'last_error_class'     => $errorClass,
 			'consecutive_failures' => $failures,
 		);
@@ -161,19 +162,25 @@ final class ViewerPageTest extends TestCase {
 		$accounts = array(
 			self::account(array('id' => 1, 'name' => 'Prod')),
 			self::account(array('id' => 2, 'name' => 'Edge')),
+			self::account(array('id' => 3, 'name' => 'Lab')),
+		);
+		$jobs = array(
+			1 => self::job('failed', 4, 'transient', 1800000300),
+			2 => self::job('ok', 0, null, 1800000600),
+			3 => self::job('failed', 1, 'auth'),
 		);
 
-		self::capture(function () use ($accounts): void {
+		self::capture(function () use ($accounts, $jobs): void {
 			cloudflare_viewer_overview_table(
 				$accounts,
 				array(1 => self::summary(3, 'healthy'), 2 => self::summary(2, 'healthy')),
-				array(1 => self::job('failed', 4, 'transient'), 2 => self::job('ok', 0)),
+				$jobs,
 				false
 			);
 		});
 
 		$rows = self::rows();
-		$this->assertCount(2, $rows);
+		$this->assertCount(3, $rows);
 
 		$this->assertStringContainsString('>Prod</a>', $rows[0][0]);
 		$this->assertSame('Collection failing', $rows[0][1]);
@@ -181,12 +188,13 @@ final class ViewerPageTest extends TestCase {
 		$this->assertSame('4', $rows[0][6]);
 		$this->assertNotContains('Healthy', $rows[0]);
 
-		/* A failing job has no success time of its own; the last complete listing stamped last_seen_at. */
-		$this->assertSame(date('Y-m-d H:i:s', 1800000000), $rows[0][5]);
+		$this->assertSame(date('Y-m-d H:i:s', 1800000300), $rows[0][5], 'the stored success, not the failed run');
 
 		$this->assertSame('Healthy', $rows[1][1]);
 		$this->assertSame(date('Y-m-d H:i:s', 1800000600), $rows[1][5]);
 		$this->assertSame('0', $rows[1][6]);
+
+		$this->assertSame(array('Collection failing', '0', '0', '0', 'Never', '1'), array_slice($rows[2], 1));
 	}
 
 	public function testOverviewHealthFollowsTheWorstActiveTunnel(): void {

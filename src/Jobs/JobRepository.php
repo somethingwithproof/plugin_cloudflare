@@ -84,6 +84,7 @@ final class JobRepository {
 	 * @return array<int, array{
 	 *         last_status: string,
 	 *         last_finished_at: int|null,
+	 *         last_success_at: int|null,
 	 *         last_error_class: string|null,
 	 *         consecutive_failures: int
 	 *         }> keyed by account id
@@ -96,13 +97,14 @@ final class JobRepository {
 		$summaries = array();
 
 		foreach ($this->db->fetchAll(
-			'SELECT account_id, last_status, last_finished_at, last_error_class, consecutive_failures
+			'SELECT account_id, last_status, last_finished_at, last_success_at, last_error_class, consecutive_failures
 			FROM ' . self::TABLE . ' WHERE job_type = ?',
 			array($type)
 		) as $row) {
 			$summaries[(int) $row['account_id']] = array(
 				'last_status'          => (string) $row['last_status'],
 				'last_finished_at'     => $row['last_finished_at'] === null ? null : (int) $row['last_finished_at'],
+				'last_success_at'      => $row['last_success_at'] === null ? null : (int) $row['last_success_at'],
 				'last_error_class'     => $row['last_error_class'] === null ? null : (string) $row['last_error_class'],
 				'consecutive_failures' => (int) $row['consecutive_failures'],
 			);
@@ -158,12 +160,14 @@ final class JobRepository {
 	}
 
 	public function succeed(Lease $lease, int $nextRunAt): void {
+		$now = $this->clock->now();
+
 		$this->writeHeld(
 			$lease,
 			'UPDATE ' . self::TABLE . " SET last_status = 'ok', last_error_class = NULL, consecutive_failures = 0,
-			outage_failures = 0,
-			last_finished_at = ?, next_run_at = ?, lease_owner = NULL, lease_until = NULL" . self::HELD,
-			array($this->clock->now(), $nextRunAt)
+			outage_failures = 0, last_finished_at = ?, last_success_at = ?,
+			next_run_at = ?, lease_owner = NULL, lease_until = NULL" . self::HELD,
+			array($now, $now, $nextRunAt)
 		);
 	}
 
@@ -172,12 +176,14 @@ final class JobRepository {
 	 * the run. Cloudflare answered, so the failure streak resets as on success.
 	 */
 	public function partial(Lease $lease, int $nextRunAt): void {
+		$now = $this->clock->now();
+
 		$this->writeHeld(
 			$lease,
 			'UPDATE ' . self::TABLE . " SET last_status = 'partial', last_error_class = NULL, consecutive_failures = 0,
-			outage_failures = 0,
-			last_finished_at = ?, next_run_at = ?, lease_owner = NULL, lease_until = NULL" . self::HELD,
-			array($this->clock->now(), $nextRunAt)
+			outage_failures = 0, last_finished_at = ?, last_success_at = ?,
+			next_run_at = ?, lease_owner = NULL, lease_until = NULL" . self::HELD,
+			array($now, $now, $nextRunAt)
 		);
 	}
 

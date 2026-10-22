@@ -508,9 +508,8 @@ final class CactiObjectsTest extends IntegrationTestCase {
 			$this->assertSame(array(), cloudflare_glue_calls($function), $function);
 		}
 
-		foreach (cloudflare_glue_calls('db_execute_prepared') as $call) {
-			$this->assertStringNotContainsStringIgnoringCase('DELETE', (string) $call[0]);
-		}
+		// Cacti's tables are written only through its own APIs, never by direct SQL.
+		$this->assertSame(array(), cloudflare_glue_calls('db_execute_prepared'));
 
 		$this->assertSame($graphs, self::graphLocal());
 		$this->assertSame($rows, $this->graphRows($id));
@@ -534,6 +533,50 @@ final class CactiObjectsTest extends IntegrationTestCase {
 
 		$this->assertSame(2, cloudflare_sync_cacti_objects(array($id => self::outcome('ok')), 20, 4)['graphs']);
 		$this->assertCount(6, $this->graphRows($id));
+	}
+
+	public function testDeadlinePassingMidTunnelStopsBeforeTheNextGraph(): void {
+		$id = $this->account(sprintf('%032d', 1));
+		$this->device($id, 7);
+		$this->tunnel($id, self::uuid(1));
+
+		/* The budget is whole seconds from time(), so the cache lookup, which
+		 * runs once per tunnel after the first deadline check, waits it out. */
+		$until  = time() + 2;
+		$answer = $GLOBALS['cloudflare_glue']['cell'];
+		$GLOBALS['cloudflare_glue']['cell'] = function (string $sql, array $params) use ($answer, $until) {
+			if (strpos($sql, 'FROM host_snmp_cache') !== false) {
+				while (time() < $until) {
+					usleep(50000);
+				}
+			}
+
+			return $answer($sql, $params);
+		};
+
+		$this->assertSame(1, cloudflare_sync_cacti_objects(array($id => self::outcome('ok')), 1)['graphs']);
+		$this->assertCount(1, $this->graphRows($id));
+	}
+
+	public function testMissingTemplatesLogOnceAtLow(): void {
+		$outcomes = array();
+
+		foreach (array(1 => 7, 2 => 8) as $n => $host) {
+			$id = $this->account(sprintf('%032d', $n));
+			$this->device($id, $host);
+			$outcomes[$id] = self::outcome('ok');
+		}
+
+		$this->assertNotNull($this->base);
+		unlink($this->base . '/resource/script_server/cloudflare_tunnels.xml');
+
+		$this->assertSame(
+			array('reindexed' => 0, 'graphs' => 0, 'skipped' => 0),
+			cloudflare_sync_cacti_objects($outcomes)
+		);
+		$this->assertSame(array('CLOUDFLARE: graph sync skipped; templates missing'), self::logLines());
+		$this->assertSame(POLLER_VERBOSITY_LOW, cloudflare_glue_calls('cacti_log')[0][3]);
+		$this->assertSame(array(), cloudflare_glue_calls('run_data_query'));
 	}
 
 	public function testFaultInOneAccountDoesNotStopTheNext(): void {

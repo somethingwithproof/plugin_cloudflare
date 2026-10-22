@@ -101,11 +101,7 @@ final class MetricsContext implements Context {
 	 * @When the polling cycle executes
 	 */
 	public function thePollingCycleExecutes(): void {
-		try {
-			cloudflare_poller_bottom();
-		} catch (Throwable $e) {
-			$this->pollerFault = $e;
-		}
+		$this->pollerBottom();
 
 		/* The hook only launches poller_cloudflare.php; this is its discovery pass. */
 		for ($run = 0; $run < self::OUTAGE; $run++) {
@@ -116,6 +112,17 @@ final class MetricsContext implements Context {
 				throw new RuntimeException('A discovery run did not fail during the outage');
 			}
 		}
+
+		// The next cycle, with the failure streak recorded, must still launch.
+		$this->pollerBottom();
+	}
+
+	private function pollerBottom(): void {
+		try {
+			cloudflare_poller_bottom();
+		} catch (Throwable $e) {
+			$this->pollerFault = $e;
+		}
 	}
 
 	/**
@@ -125,8 +132,9 @@ final class MetricsContext implements Context {
 		if ($this->pollerFault !== null) {
 			throw new RuntimeException('The poller hook threw while Cloudflare was down');
 		}
-		if (count(cloudflare_glue_calls('exec_background')) !== 1) {
-			throw new RuntimeException('The poller hook did not launch the collector exactly once');
+		// One launch before the failed runs and one after them.
+		if (count(cloudflare_glue_calls('exec_background')) !== 2) {
+			throw new RuntimeException('The poller hook did not launch the collector on each cycle');
 		}
 	}
 

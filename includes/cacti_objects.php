@@ -273,7 +273,7 @@ function cloudflare_sync_cacti_objects(array $outcomes, int $budget_seconds = 20
 				$templates = cloudflare_templates_ready();
 
 				if ($templates === null) {
-					cacti_log('CLOUDFLARE: graph sync skipped; templates missing', false, 'CLOUDFLARE', POLLER_VERBOSITY_MEDIUM);
+					cacti_log('CLOUDFLARE: graph sync skipped; templates missing', false, 'CLOUDFLARE', POLLER_VERBOSITY_LOW);
 
 					break;
 				}

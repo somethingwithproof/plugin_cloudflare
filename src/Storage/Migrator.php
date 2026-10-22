@@ -25,6 +25,7 @@
 namespace Cacti\PluginCloudflare\Storage;
 
 use Cacti\PluginCloudflare\Storage\Migrations\M001Foundation;
+use InvalidArgumentException;
 
 final class Migrator {
 	const LOCK_NAME = 'plugin_cloudflare_migrate';
@@ -47,6 +48,10 @@ final class Migrator {
 		$this->lockTimeout = $lockTimeout;
 
 		foreach ($migrations as $migration) {
+			if (isset($this->migrations[$migration->version()])) {
+				throw new InvalidArgumentException('Duplicate migration version ' . $migration->version());
+			}
+
 			$this->migrations[$migration->version()] = $migration;
 		}
 
@@ -113,8 +118,9 @@ final class Migrator {
 
 	/**
 	 * Removes every plugin table and nothing else. Child tables go first so
-	 * the foreign keys never block a drop; tables added by later migrations
-	 * are found by prefix.
+	 * the foreign keys never block a drop, then the version record, so an
+	 * interrupted uninstall never leaves a version row over an empty schema.
+	 * Tables added by later migrations are found by prefix and go last.
 	 */
 	public function dropAll(): void {
 		$rows = $this->db->fetchAll(
@@ -130,9 +136,9 @@ final class Migrator {
 		}
 
 		$first = array('plugin_cloudflare_jobs', 'plugin_cloudflare_accounts');
-		$last = array(self::TABLE);
-		$middle = array_diff($present, $first, $last);
-		$ordered = array_merge($first, $middle, $last);
+		$core = array_merge($first, array(self::TABLE));
+		$others = array_diff($present, $core);
+		$ordered = array_merge($core, $others);
 
 		foreach ($ordered as $table) {
 			if (in_array($table, $present, true)) {

@@ -30,6 +30,7 @@ use Cacti\PluginCloudflare\Storage\Migrations\M001Foundation;
 use Cacti\PluginCloudflare\Storage\Migrator;
 use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
 use PDO;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 final class MigratorTest extends TestCase {
@@ -194,5 +195,44 @@ final class MigratorTest extends TestCase {
 		}
 
 		$this->assertTrue($this->tableExists('host_unrelated'));
+	}
+
+	public function testRerunAfterLostVersionRowIsIdempotent(): void {
+		$this->migrator()->migrate();
+		$this->db->execute('DELETE FROM plugin_cloudflare_migrations');
+
+		$this->assertSame(array(1), $this->migrator()->migrate());
+		$this->assertSame(1, $this->migrator()->currentVersion());
+
+		$count = (int) $this->db->fetchCell(
+			"SELECT COUNT(*) FROM information_schema.table_constraints WHERE table_schema = DATABASE() AND table_name = 'plugin_cloudflare_jobs' AND constraint_type = 'FOREIGN KEY'"
+		);
+		$this->assertSame(1, $count);
+	}
+
+	public function testDuplicateMigrationVersionsAreRejected(): void {
+		$this->expectException(InvalidArgumentException::class);
+		new Migrator($this->db, array(new M001Foundation(), new M001Foundation()));
+	}
+
+	public function testDropAllRemovesVersionRecordBeforeOtherPluginTables(): void {
+		$this->migrator()->migrate();
+		// A host table referencing a later plugin table makes that drop fail,
+		// which stops dropAll right after the core tables.
+		$this->db->execute('CREATE TABLE plugin_cloudflare_later (id INT UNSIGNED NOT NULL PRIMARY KEY) ENGINE=InnoDB');
+		$this->db->execute('CREATE TABLE host_unrelated (later_id INT UNSIGNED NOT NULL, FOREIGN KEY (later_id) REFERENCES plugin_cloudflare_later (id)) ENGINE=InnoDB');
+
+		try {
+			$this->migrator()->dropAll();
+			$this->fail('Expected DatabaseException');
+		} catch (DatabaseException $e) {
+			$this->assertSame('23000', $e->getSqlState());
+		}
+
+		foreach (array('jobs', 'accounts', 'migrations') as $suffix) {
+			$this->assertFalse($this->tableExists('plugin_cloudflare_' . $suffix), $suffix);
+		}
+
+		$this->assertTrue($this->tableExists('plugin_cloudflare_later'));
 	}
 }

@@ -132,4 +132,35 @@ final class ViewerPageDispatchTest extends IntegrationTestCase {
 		$this->assertStringContainsString(self::TAB . "connectors'>", $output);
 		$this->assertStringContainsString('Choose a tunnel on the Tunnels tab.', $output);
 	}
+
+	/*
+	 * An uncaught error would reach CactiShutdownHandler, which disables the
+	 * plugin. The schema is missing here, so the handler logs a read failure,
+	 * and that log call throws to stand in for any unexpected error.
+	 */
+	public function testUnexpectedErrorIsLoggedByClassAndRendered(): void {
+		$GLOBALS['cloudflare_glue']['cell'] = false;
+		$thrown                             = false;
+		$GLOBALS['cloudflare_glue']['on_log'] = function () use (&$thrown): void {
+			if (!$thrown) {
+				$thrown = true;
+
+				throw new \RuntimeException('detail that must not be logged');
+			}
+		};
+
+		$output = $this->page();
+
+		$this->assertTrue($thrown);
+		$lines = array_map(function (array $call): string {
+			return (string) $call[0];
+		}, cloudflare_glue_calls('cacti_log'));
+		$this->assertContains('CLOUDFLARE: viewer page failed (RuntimeException)', $lines);
+		$this->assertStringNotContainsString('must not be logged', implode("\n", $lines) . $output);
+		$this->assertStringContainsString(
+			'The Cloudflare tunnels could not be read. See the Cacti log for details.',
+			$output
+		);
+		$this->assertNotSame(array(), cloudflare_glue_calls('bottom_footer'));
+	}
 }

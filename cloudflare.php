@@ -31,28 +31,32 @@ if (!cloudflare_plugin_enabled()) {
 	exit;
 }
 
-plugin_cloudflare_upgrade();
-
 set_default_action('overview');
 
-top_header();
+try {
+	plugin_cloudflare_upgrade();
 
-switch (get_request_var('action')) {
-	case 'tunnels':
-		cloudflare_viewer_tabs('tunnels');
-		cloudflare_viewer_tunnels();
+	top_header();
 
-		break;
-	case 'connectors':
-		cloudflare_viewer_tabs('connectors');
-		cloudflare_viewer_connectors();
+	switch (get_request_var('action')) {
+		case 'tunnels':
+			cloudflare_viewer_tabs('tunnels');
+			cloudflare_viewer_tunnels();
 
-		break;
-	default:
-		cloudflare_viewer_tabs('overview');
-		cloudflare_viewer_overview();
+			break;
+		case 'connectors':
+			cloudflare_viewer_tabs('connectors');
+			cloudflare_viewer_connectors();
 
-		break;
+			break;
+		default:
+			cloudflare_viewer_tabs('overview');
+			cloudflare_viewer_overview();
+
+			break;
+	}
+
+	bottom_footer();
+} catch (Throwable $e) {
+	cloudflare_page_failed('viewer', $e, cloudflare_viewer_unreadable_text());
 }
-
-bottom_footer();

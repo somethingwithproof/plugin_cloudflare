@@ -429,6 +429,25 @@ final class DiscoveryServiceTest extends IntegrationTestCase {
 		$this->assertCount(3, $this->tunnels($id), 'the complete listing is kept');
 	}
 
+	/* The listing just succeeded, so Cloudflare is reachable; the quota is not an outage. */
+	public function testConnectionsRateLimitAfterListingKeepsTunnelsActive(): void {
+		$id = $this->account(self::CF_A);
+
+		for ($run = 1; $run <= 3; $run++) {
+			$this->makeDue($id);
+			$this->transport()->queue(FakeTransport::fixture('tunnel-list'));
+			$this->transport()->queue(FakeTransport::fixture('error-envelope', 429, array('Retry-After' => '600')));
+			$this->assertSame(ErrorClass::RATE_LIMITED, $this->runDue()[$id]['error_class']);
+		}
+
+		$this->assertSame('rate_limited', $this->job($id)['last_error_class']);
+		$this->assertSame(
+			array('active', 'active', 'active'),
+			array_values(array_column($this->tunnels($id), 'lifecycle'))
+		);
+		$this->assertStringNotContainsString('marked unavailable', implode("\n", $this->logs));
+	}
+
 	public function testConnectionsAuthFailsTheAccount(): void {
 		$id = $this->account(self::CF_A);
 		$this->transport()->queue(FakeTransport::fixture('tunnel-list'));

@@ -208,7 +208,9 @@ final class DiscoveryService {
 		} catch (LeaseLost $lost) {
 			return self::outcome('lease_lost');
 		} catch (Throwable $failError) {
-			$this->say('Cloudflare discovery: fault not recorded account=' . $accountId . ' error=' . get_class($failError));
+			$this->say(
+				'Cloudflare discovery: fault not recorded account=' . $accountId . ' error=' . get_class($failError)
+			);
 		}
 
 		try {
@@ -301,7 +303,7 @@ final class DiscoveryService {
 
 				$this->say('Cloudflare discovery: connections failed account=' . $accountId . ' class=' . $class);
 				if (in_array($class, self::STOP_CLASSES, true)) {
-					return $this->failed($lease, $account, $failures, $class, $e->getRetryAfter(), $counts);
+					return $this->failed($lease, $account, $failures, $class, $e->getRetryAfter(), $counts, false);
 				}
 
 				$skipped++;
@@ -351,7 +353,8 @@ final class DiscoveryService {
 
 	/**
 	 * fail() checks the lease, so marking unavailable in the same
-	 * transaction cannot outlive a lost lease.
+	 * transaction cannot outlive a lost lease. A failure after the listing
+	 * committed passes $outage false: Cloudflare answered that run.
 	 *
 	 * @param array{added: int, updated: int, deleted: int} $counts
 	 *
@@ -363,7 +366,8 @@ final class DiscoveryService {
 		int $failures,
 		string $class,
 		?int $retryAfter,
-		array $counts
+		array $counts,
+		bool $outage = true
 	): array {
 		$next = JobRepository::nextRun(
 			$this->clock->now(),
@@ -373,9 +377,9 @@ final class DiscoveryService {
 			$failures + 1
 		);
 
-		$marked = $this->db->transactional(function () use ($lease, $account, $class, $next): ?int {
+		$marked = $this->db->transactional(function () use ($lease, $account, $class, $next, $outage): ?int {
 			$streak = $this->jobs->fail($lease, $class, $next);
-			if ($streak < self::MARK_UNAVAILABLE_AFTER || !in_array($class, self::OUTAGE_CLASSES, true)) {
+			if (!$outage || $streak < self::MARK_UNAVAILABLE_AFTER || !in_array($class, self::OUTAGE_CLASSES, true)) {
 				return null;
 			}
 

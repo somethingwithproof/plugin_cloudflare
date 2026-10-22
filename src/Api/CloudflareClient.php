@@ -37,6 +37,8 @@ final class CloudflareClient {
 	private const PAGE_SIZE         = 1000;
 	private const MAX_PAGES         = 50;
 	private const MAX_NAME          = 255;
+	private const MAX_SHORT         = 32;
+	private const MAX_LIST          = 255;
 	private const TUNNEL_STATUSES   = array('healthy', 'degraded', 'down', 'inactive');
 
 	/** @var HttpTransport */
@@ -439,7 +441,7 @@ final class CloudflareClient {
 		}
 
 		$name = isset($item['name']) && is_string($item['name']) ? self::cleanName($item['name']) : $id;
-		$type = isset($item['tun_type']) && is_string($item['tun_type']) ? self::cleanName($item['tun_type']) : '';
+		$type = isset($item['tun_type']) && is_string($item['tun_type']) ? self::clip(self::cleanName($item['tun_type']), self::MAX_SHORT) : '';
 
 		return new TunnelRecord(
 			$id,
@@ -494,12 +496,12 @@ final class CloudflareClient {
 
 		return new ConnectorRecord(
 			strtolower($item['id']),
-			$item['version'],
-			$item['arch'],
+			self::clip($item['version'], self::MAX_SHORT),
+			self::clip($item['arch'], self::MAX_SHORT),
 			self::parseExpiry($item['run_at'] ?? null),
 			$count,
-			$colos,
-			$ips
+			self::fitList($colos),
+			self::fitList($ips)
 		);
 	}
 
@@ -516,11 +518,39 @@ final class CloudflareClient {
 			throw new ApiException(ErrorClass::MALFORMED, 200, array(), 'tunnel text is not valid UTF-8');
 		}
 
+		return self::clip($clean, self::MAX_NAME);
+	}
+
+	/* The columns count characters, so a multibyte string is cut by character where mbstring allows. */
+	private static function clip(string $text, int $max): string {
 		if (function_exists('mb_substr')) {
-			return mb_substr($clean, 0, self::MAX_NAME, 'UTF-8');
+			return mb_substr($text, 0, $max, 'UTF-8');
 		}
 
-		return substr($clean, 0, self::MAX_NAME);
+		return substr($text, 0, $max);
+	}
+
+	/**
+	 * Keeps whole entries only: a value cut mid-entry would name a colo or
+	 * address that does not exist.
+	 *
+	 * @param array<int, string> $entries
+	 * @return array<int, string>
+	 */
+	private static function fitList(array $entries): array {
+		$kept   = array();
+		$length = -1;
+
+		foreach ($entries as $entry) {
+			$length += strlen($entry) + 1;
+			if ($length > self::MAX_LIST) {
+				break;
+			}
+
+			$kept[] = $entry;
+		}
+
+		return $kept;
 	}
 
 	private function requireAccountId(string $cfAccountId): void {

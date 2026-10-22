@@ -441,6 +441,63 @@ final class TunnelListingTest extends TestCase {
 		$this->assertSame(array('10.0.0.1', '10.0.0.2'), $connectors[0]->originIps);
 	}
 
+	public function testTunTypeCappedAt32(): void {
+		$item             = $this->item(1);
+		$item['tun_type'] = str_repeat("\u{00e9}", 40);
+		$this->transport->queue($this->page(
+			array($item),
+			array('page' => 1, 'per_page' => 1000, 'count' => 1, 'total_count' => 1)
+		));
+
+		$tunnels = $this->client()->listTunnels(self::ACCOUNT, $this->token);
+
+		$this->assertSame(str_repeat("\u{00e9}", 32), $tunnels[0]->tunType);
+	}
+
+	public function testConnectorVersionAndArchCappedAt32(): void {
+		$client = array(
+			'id'      => '1bedc50d-42b3-473c-b108-ff3d10c0d925',
+			'version' => str_repeat('9', 40),
+			'arch'    => str_repeat("\u{00e9}", 33),
+			'conns'   => array(),
+		);
+		$this->transport->queue($this->page(array($client), null));
+
+		$connectors = $this->client()->listConnections(self::ACCOUNT, $this->token, self::TUNNEL);
+
+		$this->assertSame(str_repeat('9', 32), $connectors[0]->version);
+		$this->assertSame(str_repeat("\u{00e9}", 32), $connectors[0]->arch);
+	}
+
+	/* The columns are VARCHAR(255); a cut mid-entry would store a colo or IP that does not exist. */
+	public function testColosAndIpsKeepWholeEntriesWithin255(): void {
+		$conns = array();
+		for ($i = 0; $i < 80; $i++) {
+			$conns[] = array('colo_name' => sprintf('C%03d', $i), 'origin_ip' => sprintf('10.0.%d.%d', $i, $i));
+		}
+		$client = array(
+			'id'      => '1bedc50d-42b3-473c-b108-ff3d10c0d925',
+			'version' => '2022.7.1',
+			'arch'    => 'linux_amd64',
+			'conns'   => $conns,
+		);
+		$this->transport->queue($this->page(array($client), null));
+
+		$connector = $this->client()->listConnections(self::ACCOUNT, $this->token, self::TUNNEL)[0];
+
+		$colos = implode(',', $connector->colos);
+		$ips   = implode(',', $connector->originIps);
+		$this->assertLessThanOrEqual(255, strlen($colos));
+		$this->assertLessThanOrEqual(255, strlen($ips));
+		$this->assertGreaterThan(250, strlen($colos));
+		$this->assertCount(51, $connector->colos);
+		$this->assertSame('C050', $connector->colos[50]);
+		foreach ($connector->originIps as $ip) {
+			$this->assertNotFalse(filter_var($ip, FILTER_VALIDATE_IP));
+		}
+		$this->assertSame(80, $connector->connectionCount);
+	}
+
 	public function testConnectionsBadClientIsMalformed(): void {
 		$this->transport->queue($this->page(array(array('id' => 'nope', 'conns' => array())), null));
 

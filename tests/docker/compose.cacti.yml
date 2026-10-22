@@ -1,4 +1,4 @@
-# Cacti 1.2.31 with the plugin mounted read-only, for tests/docker/smoke.sh.
+# Cacti 1.2.31 with a copy of the plugin, for tests/docker/smoke.sh.
 # `make smoke-up` runs it as project cf-smoke on port 8090; smoke.sh uses
 # cf-smoke-run on 8091. Neither touches the compose.db.yml database on 33061.
 #
@@ -40,13 +40,12 @@ services:
       CACTI_DB_USER: cactiuser
       CACTI_DB_PASS: cactiuser
       CACTI_ADMIN_PASS: ${CF_SMOKE_ADMIN_PASS:-smoke-admin}
+    # The entrypoint copies this into plugins/cloudflare without vendor/ and
+    # the other trees a release archive leaves out, so the plugin loads src/
+    # through its own PSR-4 loader as it will in production. A tmpfs over
+    # vendor/ inside a read-only bind mount fails on Linux hosts.
     volumes:
-      - ${CF_PLUGIN_DIR:-../..}:/var/www/html/cacti/plugins/cloudflare:ro
-    # A release archive ships no vendor/ tree; hiding the checkout's copy
-    # makes the plugin load src/ through its own PSR-4 loader, as it will
-    # in production.
-    tmpfs:
-      - /var/www/html/cacti/plugins/cloudflare/vendor
+      - ${CF_PLUGIN_DIR:-../..}:/src/cloudflare:ro
     healthcheck:
       test: ["CMD", "curl", "-fsS", "-o", "/dev/null", "http://127.0.0.1/cacti/index.php"]
       interval: 3s

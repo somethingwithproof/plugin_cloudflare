@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Writes include/config.php, seeds the database from cacti.sql, runs Cacti's
-# CLI installer and sets a known admin password, then starts Apache. The
-# steps follow tests/e2e/entrypoint.sh and tests/e2e/docker/setup.sh in
+# Copies the plugin into place, writes include/config.php, seeds the
+# database from cacti.sql, runs Cacti's CLI installer and sets a known admin
+# password, then starts Apache. The steps follow tests/e2e/entrypoint.sh and tests/e2e/docker/setup.sh in
 # Cacti release/1.2.31. Safe to re-run against a seeded database.
 
 set -euo pipefail
@@ -13,6 +13,7 @@ DB_NAME="${CACTI_DB_NAME:-cacti}"
 DB_USER="${CACTI_DB_USER:-cactiuser}"
 DB_PASS="${CACTI_DB_PASS:-cactiuser}"
 ADMIN_PASS="${CACTI_ADMIN_PASS:-smoke-admin}"
+PLUGIN_SRC="${CACTI_PLUGIN_SRC:-/src/cloudflare}"
 
 log() { printf '[entrypoint] %s\n' "$*" >&2; }
 
@@ -25,6 +26,26 @@ sql() {
 as_www() {
 	runuser -u www-data -- "$@"
 }
+
+# The checkout is mounted read-only at PLUGIN_SRC and copied, so nothing
+# here writes to the host tree. The exclusions follow .gitattributes
+# export-ignore for the trees a release archive leaves out.
+plugin_dir="${CACTI_ROOT}/plugins/cloudflare"
+if [ ! -f "${PLUGIN_SRC}/setup.php" ]; then
+	log "no plugin checkout at ${PLUGIN_SRC}"
+	exit 1
+fi
+log "copying the plugin from ${PLUGIN_SRC}"
+rm -rf "${plugin_dir}"
+mkdir -p "${plugin_dir}"
+tar -C "${PLUGIN_SRC}" \
+	--exclude=./vendor \
+	--exclude=./tests \
+	--exclude=./features \
+	--exclude=./docs/superpowers \
+	--exclude=./.superpowers \
+	--exclude=./.git \
+	-cf - . | tar -C "${plugin_dir}" --no-same-owner -xf -
 
 config_php="${CACTI_ROOT}/include/config.php"
 cp "${CACTI_ROOT}/include/config.php.dist" "${config_php}"

@@ -1,7 +1,7 @@
 # Cacti 1.2.31 under Apache for the plugin install smoke. Modelled on
 # Cacti's tests/e2e/docker/Dockerfile.cacti at release/1.2.31. The Cacti
-# tree comes from `make cacti-src`; the plugin is bind-mounted read-only by
-# the compose file.
+# tree comes from `make cacti-src`; the compose file mounts the plugin
+# read-only at /src/cloudflare and the entrypoint copies it into plugins/.
 #
 # PHP 8.0 is the lowest release 1.2.31 runs on: its composer.json requires
 # php >=8.0 and include/vendor/composer/platform_check.php aborts on 7.4.

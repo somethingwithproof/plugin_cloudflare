@@ -60,6 +60,23 @@ function cloudflare_accounts_missing() : void {
 	raise_message('cloudflare_missing', __esc('The Cloudflare account no longer exists.', 'cloudflare'), MESSAGE_LEVEL_ERROR);
 }
 
+function cloudflare_accounts_unreadable_text() : string {
+	return __('The Cloudflare accounts could not be read. See the Cacti log for details.', 'cloudflare');
+}
+
+/*
+ * A read that throws would reach CactiShutdownHandler, which disables the
+ * plugin, so the read paths report a missing or broken schema instead.
+ */
+function cloudflare_accounts_unreadable(string $context, DatabaseException $e) : void {
+	cacti_log('CLOUDFLARE: account ' . $context . ' failed: ' . $e->getMessage(), false, 'CLOUDFLARE');
+
+	raise_message(2, html_escape(cloudflare_accounts_unreadable_text()), MESSAGE_LEVEL_ERROR);
+}
+
+/**
+ * @throws DatabaseException
+ */
 function cloudflare_accounts_find(int $id) : ?Account {
 	foreach (cloudflare_account_service()->list() as $account) {
 		if ($account->id() === $id) {
@@ -224,8 +241,15 @@ function cloudflare_accounts_actions() : ?string {
 	}
 
 	$accounts = array();
-	foreach (cloudflare_account_service()->list() as $account) {
-		$accounts[$account->id()] = $account;
+
+	try {
+		foreach (cloudflare_account_service()->list() as $account) {
+			$accounts[$account->id()] = $account;
+		}
+	} catch (DatabaseException $e) {
+		cloudflare_accounts_unreadable('confirmation', $e);
+
+		return '';
 	}
 
 	$ids  = array();
@@ -295,7 +319,13 @@ function cloudflare_accounts_edit() : ?string {
 	$account = null;
 
 	if ($id > 0) {
-		$account = cloudflare_accounts_find($id);
+		try {
+			$account = cloudflare_accounts_find($id);
+		} catch (DatabaseException $e) {
+			cloudflare_accounts_unreadable('edit', $e);
+
+			return '';
+		}
 
 		if ($account === null) {
 			cloudflare_accounts_missing();
@@ -469,8 +499,19 @@ function cloudflare_accounts_list() : void {
 
 	html_end_box();
 
+	$unreadable = false;
+
+	try {
+		$accounts = cloudflare_account_service()->list();
+	} catch (DatabaseException $e) {
+		cloudflare_accounts_unreadable('list', $e);
+
+		$accounts   = array();
+		$unreadable = true;
+	}
+
 	$accounts = cloudflare_account_sort(
-		cloudflare_account_filter(cloudflare_account_service()->list(), $filter),
+		cloudflare_account_filter($accounts, $filter),
 		(string) get_request_var('sort_column'),
 		(string) get_request_var('sort_direction')
 	);
@@ -519,7 +560,11 @@ function cloudflare_accounts_list() : void {
 			form_end_row();
 		}
 	} else {
-		print "<tr class='tableRow'><td colspan='" . (cacti_sizeof($display_text) + 1) . "'><em>" . __esc('No Cloudflare Accounts Found', 'cloudflare') . "</em></td></tr>\n";
+		/* top_header() has already printed this request's messages, so the
+		 * failure is also shown in the table rather than only next time. */
+		$empty = $unreadable ? cloudflare_accounts_unreadable_text() : __('No Cloudflare Accounts Found', 'cloudflare');
+
+		print "<tr class='tableRow'><td colspan='" . (cacti_sizeof($display_text) + 1) . "'><em>" . html_escape($empty) . "</em></td></tr>\n";
 	}
 
 	html_end_box(false);

@@ -127,7 +127,10 @@ never built from input. A failed statement throws `DatabaseException`, whose
 message is exactly `SQLSTATE[<state>] driver error <code>`. Driver text is
 dropped because MySQL echoes statement text in it, and with emulated
 prepares that text includes bound values. The page logs that message and
-shows Cacti's generic save error.
+shows a fixed error: Cacti's generic save error on save and the bulk actions,
+and "The Cloudflare accounts could not be read" on the list, edit and
+confirmation pages. No read path lets the exception escape, because Cacti's
+shutdown handler disables a plugin whose page dies with one.
 
 ## Access control
 

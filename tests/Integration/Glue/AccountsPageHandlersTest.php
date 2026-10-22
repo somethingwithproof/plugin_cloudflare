@@ -456,6 +456,65 @@ final class AccountsPageHandlersTest extends TestCase {
 		$this->assertStringStartsWith('CLOUDFLARE: account action 1 failed: ', (string) $logged[0][0]);
 	}
 
+	/**
+	 * The schema is gone, as when the plugin files are present but the
+	 * tables were dropped. An exception escaping a page handler would reach
+	 * Cacti's shutdown handler, which disables the plugin.
+	 */
+	private function dropAccountsTable(): void {
+		$this->pdo->exec('DROP TABLE IF EXISTS plugin_cloudflare_jobs');
+		$this->pdo->exec('DROP TABLE plugin_cloudflare_accounts');
+		cloudflare_glue_reset();
+		$GLOBALS['cloudflare_glue']['settings']['cloudflare_key_file'] = $this->dir . '/cloudflare.key';
+	}
+
+	private function assertUnreadableReported(string $context): void {
+		$this->assertSame(array(array(2, 'The Cloudflare accounts could not be read. See the Cacti log for details.', MESSAGE_LEVEL_ERROR)), cloudflare_glue_calls('raise_message'));
+
+		$logged = cloudflare_glue_calls('cacti_log');
+		$this->assertCount(1, $logged);
+		$this->assertSame('CLOUDFLARE: account ' . $context . ' failed: SQLSTATE[42S02] driver error 1146', (string) $logged[0][0]);
+	}
+
+	public function testListWithoutTheAccountsTableReportsItInsteadOfThrowing(): void {
+		$this->dropAccountsTable();
+		$_REQUEST = array('filter' => '', 'rows' => '-1', 'page' => '1', 'sort_column' => 'name', 'sort_direction' => 'ASC');
+
+		list(, $output) = self::capture('cloudflare_accounts_list');
+
+		$this->assertUnreadableReported('list');
+		$this->assertStringContainsString('The Cloudflare accounts could not be read. See the Cacti log for details.', $output);
+		$this->assertStringNotContainsString('No Cloudflare Accounts Found', $output);
+		$this->assertSame(array(), cloudflare_glue_calls('form_selectable_cell'));
+	}
+
+	public function testEditWithoutTheAccountsTableReturnsToTheList(): void {
+		$id = $this->fileAccount('Prod', self::ACCOUNT);
+		$this->dropAccountsTable();
+		$_REQUEST = array('id' => (string) $id);
+
+		list($redirect, $output) = self::capture('cloudflare_accounts_edit');
+
+		$this->assertSame('', $redirect);
+		$this->assertSame('', $output);
+		$this->assertSame(array(), cloudflare_glue_calls('top_header'));
+		$this->assertUnreadableReported('edit');
+	}
+
+	public function testConfirmationWithoutTheAccountsTableReturnsToTheList(): void {
+		$id = $this->fileAccount('Prod', self::ACCOUNT);
+		$this->dropAccountsTable();
+		$_REQUEST = array('drp_action' => '1');
+		$_POST    = array('chk_' . $id => 'on', 'drp_action' => '1');
+
+		list($redirect, $output) = self::capture('cloudflare_accounts_actions');
+
+		$this->assertSame('', $redirect);
+		$this->assertSame('', $output);
+		$this->assertSame(array(), cloudflare_glue_calls('top_header'));
+		$this->assertUnreadableReported('confirmation');
+	}
+
 	public function testEditOfAMissingAccountReturnsToTheList(): void {
 		$_REQUEST = array('id' => '999');
 

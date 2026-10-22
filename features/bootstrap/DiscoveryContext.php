@@ -23,6 +23,7 @@ namespace Cacti\PluginCloudflare\Features;
 use Behat\Behat\Context\Context;
 use Cacti\PluginCloudflare\Api\ErrorClass;
 use Cacti\PluginCloudflare\Tests\Support\FakeTransport;
+use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
 use RuntimeException;
 
 /**
@@ -178,7 +179,10 @@ final class DiscoveryContext implements Context {
 	public function theCollectorReceives429(): void {
 		/* A short Retry-After on every attempt: the policy sleeps it twice, then gives up. */
 		for ($i = 0; $i < self::ATTEMPT_CAP; $i++) {
-			$this->world->transport()->queue(FakeTransport::fixture('error-envelope', 429, array('Retry-After' => '5')));
+			/* The body is ignored; only the status and Retry-After matter. */
+			$this->world->transport()->queue(
+				FakeTransport::fixture('error-envelope', 429, array('Retry-After' => '5'))
+			);
 		}
 
 		$this->runDiscovery('failed');
@@ -191,8 +195,8 @@ final class DiscoveryContext implements Context {
 	public function boundedRetry(): void {
 		$sent = count($this->world->transport()->requests()) - $this->requestsBefore;
 
-		if ($sent < 1 || $sent > self::ATTEMPT_CAP) {
-			throw new RuntimeException('Retry was not bounded by the attempt cap');
+		if ($sent !== self::ATTEMPT_CAP) {
+			throw new RuntimeException('Requests sent differ from the attempt cap');
 		}
 	}
 
@@ -258,9 +262,23 @@ final class DiscoveryContext implements Context {
 			$_REQUEST['tunnel_id'] = (string) $this->tunnels()[0]['id'];
 			cloudflare_viewer_connectors();
 		} finally {
-			ob_end_clean();
+			$page = (string) ob_get_clean();
 		}
 
+		/* The glue stubs record cells instead of printing them. */
+		foreach ($GLOBALS['cloudflare_glue']['calls'] as $call) {
+			if ($call[0] === 'form_selectable_cell') {
+				$page .= ' ' . (string) $call[1][0];
+			}
+		}
+
+		/* A page that failed to read says so instead of listing the account and its tunnels. */
+		if (strpos($page, 'Production') === false || strpos($page, 'blog') === false) {
+			throw new RuntimeException('The viewer pages did not list the account and its tunnels');
+		}
+		if (strpos($page, cloudflare_viewer_unreadable_text()) !== false) {
+			throw new RuntimeException('A viewer page reported unreadable data');
+		}
 		if (count($this->world->transport()->requests()) !== $before) {
 			throw new RuntimeException('A viewer page sent a Cloudflare request');
 		}
@@ -276,7 +294,7 @@ final class DiscoveryContext implements Context {
 		$GLOBALS['database_hostname'] = 'cacti-db';
 		$GLOBALS['database_port']     = '3306';
 		$GLOBALS['database_default']  = 'cacti';
-		$GLOBALS['database_sessions'] = array(self::SESSION => \Cacti\PluginCloudflare\Tests\Support\TestDatabase::pdo());
+		$GLOBALS['database_sessions'] = array(self::SESSION => TestDatabase::pdo());
 		$GLOBALS['config']            = array('url_path' => '/cacti/');
 		$GLOBALS['item_rows']         = array(10 => '10', 25 => '25');
 		$_REQUEST                     = array();

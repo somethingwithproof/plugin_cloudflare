@@ -15,3 +15,4 @@
 /phpstan.neon.dist export-ignore
 /.php-cs-fixer.dist.php export-ignore
 /behat.yml.dist export-ignore
+/sonar-project.properties export-ignore

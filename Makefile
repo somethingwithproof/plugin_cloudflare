@@ -8,7 +8,7 @@ SMOKE := docker compose -p cf-smoke -f tests/docker/compose.cacti.yml
 # interleave their resets.
 .NOTPARALLEL:
 
-.PHONY: test test-integration bdd stan cs lint74 db-up db-down ci cacti-src smoke smoke-up smoke-down screenshots
+.PHONY: test test-integration bdd stan cs lint74 db-up db-down ci coverage package cacti-src smoke smoke-up smoke-down screenshots
 
 test:
 	$(PHPUNIT) --testsuite unit
@@ -36,6 +36,15 @@ db-down:
 	$(COMPOSE) down -v
 
 ci: test test-integration bdd stan cs lint74
+
+# Needs pcov or xdebug and the test database; Sonar reads the clover file.
+# phpunit.xml.dist names the measured files. pcov instruments only src/ by
+# default, which left the glue at zero, so it is pointed at the whole tree.
+coverage:
+	php -d memory_limit=-1 -d pcov.directory=. -d 'pcov.exclude=~/(vendor|tests)/~' $(PHPUNIT) --coverage-clover build/coverage/clover.xml
+
+package:
+	bash tests/build/package.sh
 
 cacti-src:
 	mkdir -p tests/docker/build

@@ -46,17 +46,22 @@ if (!defined('POLLER_VERBOSITY_NONE')) {
 
 function cloudflare_glue_reset(): void {
 	$GLOBALS['cloudflare_glue'] = array(
-		'calls'    => array(),
-		'settings' => array(),
-		'cached'   => array(),
-		'cell'     => false,
-		'realm'    => true,
-		'connect'  => false,
-		'enabled'  => true,
-		'page'     => 'index.php',
-		'on_log'   => null,
-		'on_top'   => null,
-		'import'   => array(),
+		'calls'            => array(),
+		'settings'         => array(),
+		'cached'           => array(),
+		'cell'             => false,
+		'realm'            => true,
+		'connect'          => false,
+		'enabled'          => true,
+		'page'             => 'index.php',
+		'on_log'           => null,
+		'on_top'           => null,
+		'import'           => array(),
+		'hosts'            => array(),
+		'next_host'        => 1,
+		'invalid'          => false,
+		'template_queries' => array(),
+		'host_queries'     => array(),
 	);
 	$GLOBALS['cloudflare_glue_enabled_cache'] = array();
 }
@@ -220,7 +225,10 @@ if (!function_exists('api_user_realm_auth')) {
 	function api_user_realm_auth($filename = ''): bool {
 		cloudflare_glue_record(__FUNCTION__, array($filename));
 
-		return cloudflare_glue_state('realm') === true;
+		/* A closure answers per realm file, for code that checks several. */
+		$realm = cloudflare_glue_state('realm');
+
+		return $realm instanceof Closure ? $realm((string) $filename) === true : $realm === true;
 	}
 }
 
@@ -1027,5 +1035,167 @@ if (!function_exists('form_end')) {
 	 */
 	function form_end($ajax = true): void {
 		cloudflare_glue_record(__FUNCTION__, array($ajax));
+	}
+}
+
+/*
+ * Device creation. The stubs keep a small model of the host and
+ * host_snmp_query tables in the glue state, so a test can check the
+ * reindex method a device ends up with, not only the calls made.
+ */
+
+if (!defined('DATA_QUERY_AUTOINDEX_NONE')) {
+	/* include/global_constants.php:75, identical in 1.2.25 and 1.2.31. */
+	define('DATA_QUERY_AUTOINDEX_NONE', 0);
+	define('DATA_QUERY_AUTOINDEX_BACKWARDS_UPTIME', 1);
+}
+
+if (!function_exists('is_error_message')) {
+	/* lib/functions.php:893 (1.2.25: :890); logic copied. */
+	function is_error_message(): bool {
+		if (isset($_SESSION['sess_error_fields']) && cacti_sizeof($_SESSION['sess_error_fields'])) {
+			return true;
+		}
+
+		return false;
+	}
+}
+
+if (!function_exists('run_data_query')) {
+	/* lib/data_query.php:25, same signature in 1.2.25 and 1.2.31. */
+	/**
+	 * @param mixed $host_id
+	 * @param mixed $snmp_query_id
+	 * @param mixed $automation
+	 * @param mixed $force
+	 */
+	function run_data_query($host_id, $snmp_query_id, $automation = false, $force = false): bool {
+		cloudflare_glue_record(__FUNCTION__, array($host_id, $snmp_query_id, $automation, $force));
+
+		return true;
+	}
+}
+
+if (!function_exists('api_device_dq_add')) {
+	/*
+	 * lib/api_device.php:552, identical in 1.2.25 and 1.2.31: REPLACE INTO
+	 * host_snmp_query with the given method, then run_data_query() (:578).
+	 */
+	/**
+	 * @param mixed $device_id
+	 * @param mixed $data_query_id
+	 * @param mixed $reindex_method
+	 */
+	function api_device_dq_add($device_id, $data_query_id, $reindex_method): void {
+		cloudflare_glue_record(__FUNCTION__, array($device_id, $data_query_id, $reindex_method));
+
+		$GLOBALS['cloudflare_glue']['host_queries'][(int) $device_id][(int) $data_query_id] = (int) $reindex_method;
+
+		run_data_query($device_id, $data_query_id);
+	}
+}
+
+if (!function_exists('api_device_save')) {
+	/*
+	 * lib/api_device.php:939, same 29 parameters in 1.2.25 and 1.2.31.
+	 * Modelled: nothing is saved while is_error_message() holds (:1035);
+	 * 'invalid' stands for a field form_input_validate() refuses, which
+	 * sets sess_error_fields; for SNMP version 0 the host's queries get
+	 * reindex method None (:1073-1077); and only after that a new device
+	 * template adds its queries with the global default and runs them
+	 * (:1130 calls api_device_update_host_template(), whose REPLACE and
+	 * run_data_query() are at :1288 and :1308 in 1.2.31, :1269 and :1289
+	 * in 1.2.25).
+	 */
+	/**
+	 * @param mixed $id
+	 * @param mixed $device_template_id
+	 * @param mixed $description
+	 * @param mixed $hostname
+	 * @param mixed $snmp_community
+	 * @param mixed $snmp_version
+	 * @param mixed $snmp_username
+	 * @param mixed $snmp_password
+	 * @param mixed $snmp_port
+	 * @param mixed $snmp_timeout
+	 * @param mixed $disabled
+	 * @param mixed $availability_method
+	 * @param mixed $ping_method
+	 * @param mixed $ping_port
+	 * @param mixed $ping_timeout
+	 * @param mixed $ping_retries
+	 * @param mixed $notes
+	 * @param mixed $snmp_auth_protocol
+	 * @param mixed $snmp_priv_passphrase
+	 * @param mixed $snmp_priv_protocol
+	 * @param mixed $snmp_context
+	 * @param mixed $snmp_engine_id
+	 * @param mixed $max_oids
+	 * @param mixed $device_threads
+	 * @param mixed $poller_id
+	 * @param mixed $site_id
+	 * @param mixed $external_id
+	 * @param mixed $location
+	 * @param mixed $bulk_walk_size
+	 * @return mixed
+	 */
+	function api_device_save(
+		$id,
+		$device_template_id,
+		$description,
+		$hostname,
+		$snmp_community,
+		$snmp_version,
+		$snmp_username,
+		$snmp_password,
+		$snmp_port,
+		$snmp_timeout,
+		$disabled,
+		$availability_method,
+		$ping_method,
+		$ping_port,
+		$ping_timeout,
+		$ping_retries,
+		$notes,
+		$snmp_auth_protocol,
+		$snmp_priv_passphrase,
+		$snmp_priv_protocol,
+		$snmp_context,
+		$snmp_engine_id,
+		$max_oids = 5,
+		$device_threads = 1,
+		$poller_id = 1,
+		$site_id = 1,
+		$external_id = '',
+		$location = '',
+		$bulk_walk_size = -1
+	) {
+		cloudflare_glue_record(__FUNCTION__, func_get_args());
+
+		if (cloudflare_glue_state('invalid') === true) {
+			$_SESSION['sess_error_fields']['hostname'] = 'hostname';
+		}
+
+		if (is_error_message()) {
+			return 0;
+		}
+
+		$device_id = (int) cloudflare_glue_state('next_host');
+
+		$GLOBALS['cloudflare_glue']['next_host']++;
+		$GLOBALS['cloudflare_glue']['hosts'][$device_id]        = (string) $hostname;
+		$GLOBALS['cloudflare_glue']['host_queries'][$device_id] = array();
+
+		raise_message(1);
+
+		$templates = cloudflare_glue_state('template_queries');
+
+		foreach ($templates[(int) $device_template_id] ?? array() as $data_query_id) {
+			$GLOBALS['cloudflare_glue']['host_queries'][$device_id][(int) $data_query_id] = (int) read_config_option('reindex_method');
+
+			run_data_query($device_id, $data_query_id);
+		}
+
+		return $device_id;
 	}
 }

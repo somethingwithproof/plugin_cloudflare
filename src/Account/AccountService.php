@@ -55,8 +55,17 @@ final class AccountService {
 	private const MESSAGE_FILE          = 'Token file is missing or insecure';
 	private const MESSAGE_VAULT_MISSING = 'Encrypted storage is unavailable; configure the key file or use a token file';
 
-	/** Schema defaults, used when an insert omits the field. */
-	private const DEFAULT_FLAGS    = array('enabled' => 1, 'collect_tunnels' => 1, 'collect_analytics' => 0);
+	/**
+	 * Schema defaults, used when an insert omits the field. create_graphs
+	 * also needs the host.php realm to turn on; the page checks that before
+	 * calling save() and omits the field when it is missing.
+	 */
+	private const DEFAULT_FLAGS    = array(
+		'enabled'           => 1,
+		'collect_tunnels'   => 1,
+		'collect_analytics' => 0,
+		'create_graphs'     => 0,
+	);
 	private const DEFAULT_INTERVAL = 300;
 
 	/** @var AccountRepository */
@@ -216,6 +225,7 @@ final class AccountService {
 			'enabled'            => $flags['enabled'],
 			'collect_tunnels'    => $flags['collect_tunnels'],
 			'collect_analytics'  => $flags['collect_analytics'],
+			'create_graphs'      => $flags['create_graphs'],
 			'discovery_interval' => $interval,
 			'updated_at'         => $now,
 		);
@@ -526,6 +536,8 @@ final class AccountService {
 				return $account->isEnabled() ? 1 : 0;
 			case 'collect_tunnels':
 				return $account->collectsTunnels() ? 1 : 0;
+			case 'create_graphs':
+				return $account->createsGraphs() ? 1 : 0;
 		}
 
 		return $account->collectsAnalytics() ? 1 : 0;

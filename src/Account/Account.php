@@ -63,6 +63,9 @@ final class Account {
 	/** @var bool */
 	private $collectAnalytics;
 
+	/** @var bool */
+	private $createGraphs;
+
 	/** @var int */
 	private $discoveryInterval;
 
@@ -89,6 +92,7 @@ final class Account {
 		$account->lastVerifiedAt    = $row['last_verified_at'] === null ? null : (int) $row['last_verified_at'];
 		$account->collectTunnels    = (int) $row['collect_tunnels'] === 1;
 		$account->collectAnalytics  = (int) $row['collect_analytics'] === 1;
+		$account->createGraphs      = (int) $row['create_graphs'] === 1;
 		$account->discoveryInterval = (int) $row['discovery_interval'];
 		$account->createdAt         = (int) $row['created_at'];
 		$account->updatedAt         = (int) $row['updated_at'];
@@ -154,6 +158,10 @@ final class Account {
 
 	public function collectsAnalytics(): bool {
 		return $this->collectAnalytics;
+	}
+
+	public function createsGraphs(): bool {
+		return $this->createGraphs;
 	}
 
 	public function discoveryInterval(): int {

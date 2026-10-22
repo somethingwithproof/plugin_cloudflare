@@ -175,6 +175,16 @@ function cloudflare_account_fields(?Account $account, ?array $credentials, bool 
 			),
 			'value'         => ($account !== null && $account->collectsAnalytics()) ? 'on' : '',
 		),
+		'create_graphs' => array(
+			'method'        => 'checkbox',
+			'friendly_name' => __('Create Graphs', 'cloudflare'),
+			'description'   => __(
+				'Create graphs for each tunnel on the account\'s Cacti device. Turning this on needs the permission to edit ' .
+				'Cacti devices.',
+				'cloudflare'
+			),
+			'value'         => ($account !== null && $account->createsGraphs()) ? 'on' : '',
+		),
 		'discovery_interval' => array(
 			'method'        => 'textbox',
 			'friendly_name' => __('Discovery Interval', 'cloudflare'),
@@ -226,7 +236,7 @@ function cloudflare_account_input() : array {
 		'discovery_interval' => (string) get_nfilter_request_var('discovery_interval'),
 	);
 
-	foreach (array('enabled', 'collect_tunnels', 'collect_analytics') as $flag) {
+	foreach (array('enabled', 'collect_tunnels', 'collect_analytics', 'create_graphs') as $flag) {
 		$input[$flag] = (isset_request_var($flag) && get_nfilter_request_var($flag) === 'on') ? 1 : 0;
 	}
 

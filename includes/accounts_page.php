@@ -19,6 +19,7 @@
 */
 
 require_once __DIR__ . '/accounts.php';
+require_once __DIR__ . '/cacti_objects.php';
 
 use Cacti\PluginCloudflare\Account\Account;
 use Cacti\PluginCloudflare\Account\AccountService;
@@ -40,7 +41,8 @@ function cloudflare_account_actions() : array {
 		1 => __('Delete', 'cloudflare'),
 		2 => __('Verify', 'cloudflare'),
 		3 => __('Enable', 'cloudflare'),
-		4 => __('Disable', 'cloudflare')
+		4 => __('Disable', 'cloudflare'),
+		5 => __('Create Cacti Device', 'cloudflare')
 	);
 }
 
@@ -137,7 +139,8 @@ function cloudflare_accounts_save() : string {
 	$id = (int) get_request_var('id');
 
 	try {
-		$id = cloudflare_account_service()->save($id > 0 ? $id : null, cloudflare_account_input());
+		$service = cloudflare_account_service();
+		$id      = $service->save($id > 0 ? $id : null, cloudflare_account_graphs_guard($service, $id, cloudflare_account_input()));
 
 		raise_message(1);
 	} catch (ValidationException $e) {
@@ -160,11 +163,114 @@ function cloudflare_accounts_save() : string {
 }
 
 /**
+ * Turning create_graphs on lets the plugin create Cacti graphs, so it also
+ * needs the host.php realm. Without it the field is left out and the
+ * service keeps the stored value; turning it off needs no more than the
+ * Configure realm.
+ *
+ * @param  array<string, mixed> $input
+ * @return array<string, mixed>
+ *
+ * @throws DatabaseException
+ */
+function cloudflare_account_graphs_guard(AccountService $service, int $id, array $input) : array {
+	if ($input['create_graphs'] !== 1 || api_user_realm_auth('host.php') === true) {
+		return $input;
+	}
+
+	unset($input['create_graphs']);
+
+	$account = $id > 0 ? cloudflare_accounts_find($service, $id) : null;
+
+	if ($account === null || !$account->createsGraphs()) {
+		raise_message(
+			'cloudflare_graphs_denied',
+			__esc('Create Graphs was left off: turning it on needs the permission to edit Cacti devices.', 'cloudflare'),
+			MESSAGE_LEVEL_WARN
+		);
+	}
+
+	return $input;
+}
+
+/**
+ * @return array<string, string> message for each result of cloudflare_create_device()
+ */
+function cloudflare_accounts_device_results() : array {
+	return array(
+		'created'           => __('Cacti device created', 'cloudflare'),
+		'exists'            => __('A Cacti device already exists for this account', 'cloudflare'),
+		'templates_missing' => __('The Cloudflare templates are not installed; see the Cacti log', 'cloudflare'),
+		'denied'            => __('You are not permitted to create Cacti devices', 'cloudflare'),
+		'failed'            => __('The Cacti device could not be created; see the Cacti log', 'cloudflare'),
+	);
+}
+
+/**
+ * Both realms are checked before anything else, so a denied request makes
+ * no Cacti call; cloudflare_create_device() checks them again itself.
+ *
+ * @param array<int, int> $ids
+ *
+ * @throws DatabaseException
+ */
+function cloudflare_accounts_create_devices(AccountService $service, array $ids) : void {
+	if (!cloudflare_device_permitted()) {
+		raise_message(
+			'cloudflare_device_denied',
+			__esc('You are not permitted to create Cacti devices.', 'cloudflare'),
+			MESSAGE_LEVEL_ERROR
+		);
+
+		return;
+	}
+
+	$accounts = array();
+
+	foreach ($service->list() as $account) {
+		$accounts[$account->id()] = $account;
+	}
+
+	$results = cloudflare_accounts_device_results();
+	$lines   = array();
+	$level   = MESSAGE_LEVEL_INFO;
+
+	foreach ($ids as $id) {
+		if (!isset($accounts[$id])) {
+			continue;
+		}
+
+		$result  = cloudflare_create_device($accounts[$id]);
+		$lines[] = html_escape($accounts[$id]->name() . ': ' . $results[$result]);
+
+		if ($result !== 'created' && $result !== 'exists') {
+			$level = MESSAGE_LEVEL_ERROR;
+		}
+	}
+
+	if (cacti_sizeof($lines)) {
+		raise_message('cloudflare_device', implode('<br>', $lines), $level);
+	}
+}
+
+/**
  * @param array<int, int> $ids
  */
 function cloudflare_accounts_execute(int $action, array $ids) : void {
 	$service  = cloudflare_account_service();
 	$verified = array();
+
+	if ($action === 5) {
+		try {
+			cloudflare_accounts_create_devices($service, $ids);
+		} catch (DatabaseException $e) {
+			cacti_log('CLOUDFLARE: account action 5 failed: ' . $e->getMessage(), false, 'CLOUDFLARE');
+
+			raise_message(2);
+		}
+
+		return;
+	}
 
 	try {
 		foreach ($ids as $id) {
@@ -305,6 +411,14 @@ function cloudflare_accounts_actions() : ?string {
 		4 => __n(
 			'Click \'Continue\' to Disable the following Cloudflare Account.',
 			'Click \'Continue\' to Disable the following Cloudflare Accounts.',
+			cacti_sizeof($ids),
+			'cloudflare'
+		),
+		5 => __n(
+			'Click \'Continue\' to create a Cacti device for the following Cloudflare Account. An account that already ' .
+			'has one is left as it is.',
+			'Click \'Continue\' to create a Cacti device for each of the following Cloudflare Accounts. An account that ' .
+			'already has one is left as it is.',
 			cacti_sizeof($ids),
 			'cloudflare'
 		)

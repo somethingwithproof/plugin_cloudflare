@@ -47,6 +47,12 @@ final class AccountsPageHandlersTest extends IntegrationTestCase {
 	/** @var string */
 	private $token;
 
+	/** @var string|null a stand-in Cacti base path, for the device tests */
+	private $base;
+
+	/** @var array<string, int> hash => id of the Cacti template objects that exist */
+	private $objects = array();
+
 	public static function setUpBeforeClass(): void {
 		require_once self::ROOT . '/tests/Support/CactiGlueStubs.php';
 		require_once self::ROOT . '/setup.php';
@@ -95,9 +101,26 @@ final class AccountsPageHandlersTest extends IntegrationTestCase {
 			rmdir($this->dir);
 		}
 
+		if (is_string($this->base) && is_dir($this->base)) {
+			self::removeTree($this->base);
+		}
+
 		if ($this->pdo !== null) {
 			TestDatabase::reset();
 		}
+	}
+
+	private static function removeTree(string $path): void {
+		foreach ((array) scandir($path) as $name) {
+			if ($name === '.' || $name === '..') {
+				continue;
+			}
+
+			$child = $path . '/' . $name;
+			is_dir($child) && !is_link($child) ? self::removeTree($child) : unlink($child);
+		}
+
+		rmdir($path);
 	}
 
 	/**
@@ -689,5 +712,317 @@ final class AccountsPageHandlersTest extends IntegrationTestCase {
 		self::capture('cloudflare_accounts_list');
 
 		$this->assertSame('No', cloudflare_glue_calls('form_selectable_cell')[2][0]);
+	}
+
+	private const HOST_TEMPLATE = 3;
+	private const DATA_QUERY    = 4;
+
+	/**
+	 * Cacti as the device action sees it: a base path with the resource XML
+	 * and empty stand-ins for the libraries the glue loads, the template
+	 * objects answered by hash, hosts answered from the stub model, and a
+	 * global reindex default that is not None.
+	 */
+	private function cactiForDevices(bool $templates = true): void {
+		$this->base = sys_get_temp_dir() . '/cf-cacti-' . bin2hex(random_bytes(6));
+		mkdir($this->base . '/resource/script_server', 0755, true);
+		mkdir($this->base . '/lib');
+
+		foreach (array('api_data_source.php', 'api_device.php', 'api_graph.php', 'data_query.php', 'snmp.php', 'template.php', 'utility.php') as $file) {
+			file_put_contents($this->base . '/lib/' . $file, "<?php\n");
+		}
+
+		$GLOBALS['config']['base_path'] = $this->base;
+
+		$this->objects = array();
+
+		if ($templates) {
+			$this->installObjects();
+			copy(self::ROOT . '/templates/resource/cloudflare_tunnels.xml', $this->base . '/resource/script_server/cloudflare_tunnels.xml');
+		}
+
+		$GLOBALS['cloudflare_glue']['settings']['reindex_method'] = (string) DATA_QUERY_AUTOINDEX_BACKWARDS_UPTIME;
+		$GLOBALS['cloudflare_glue']['template_queries']           = array(self::HOST_TEMPLATE => array(self::DATA_QUERY));
+		$GLOBALS['cloudflare_glue']['cell']                       = function (string $sql, array $params) {
+			if (strpos($sql, 'FROM host WHERE id = ?') !== false) {
+				return isset($GLOBALS['cloudflare_glue']['hosts'][(int) $params[0]]) ? (int) $params[0] : false;
+			}
+
+			if (strpos($sql, 'FROM data_source_profiles') !== false) {
+				return '1';
+			}
+
+			return $this->objects[(string) ($params[0] ?? '')] ?? false;
+		};
+	}
+
+	private function installObjects(): void {
+		$this->objects = array(
+			md5('plugin_cloudflare/host_template') => self::HOST_TEMPLATE,
+			md5('plugin_cloudflare/data_query')    => self::DATA_QUERY,
+			md5('plugin_cloudflare/data_template') => 5,
+		);
+
+		foreach (array('connectors', 'health', 'collection') as $n => $key) {
+			$this->objects[md5('plugin_cloudflare/graph_template/' . $key)]   = 10 + $n;
+			$this->objects[md5('plugin_cloudflare/data_query_graph/' . $key)] = 20 + $n;
+		}
+	}
+
+	/**
+	 * @param array<int, int> $ids
+	 */
+	private function createDevices(array $ids): void {
+		$_REQUEST = array('drp_action' => '5', 'selected_items' => serialize($ids));
+
+		$this->assertSame('', cloudflare_accounts_actions());
+	}
+
+	private function account(int $id): \Cacti\PluginCloudflare\Account\Account {
+		$account = cloudflare_accounts_find(cloudflare_account_service(), $id);
+		$this->assertNotNull($account);
+
+		return $account;
+	}
+
+	/**
+	 * @return array<int, int> host_id of each device row, by account id
+	 */
+	private function deviceRows(): array {
+		$rows = array();
+
+		foreach ($this->pdo->query('SELECT account_id, host_id FROM plugin_cloudflare_resources WHERE kind = \'device\'')->fetchAll(PDO::FETCH_ASSOC) as $row) {
+			$rows[(int) $row['account_id']] = (int) $row['host_id'];
+		}
+
+		return $rows;
+	}
+
+	/**
+	 * @return array<int, array<int, mixed>> every call that reaches Cacti's device, query or template code
+	 */
+	private static function cactiObjectCalls(): array {
+		$calls = array();
+
+		foreach (array('api_device_save', 'api_device_dq_add', 'run_data_query', 'import_xml_data', 'db_fetch_cell_prepared') as $function) {
+			foreach (cloudflare_glue_calls($function) as $args) {
+				$calls[] = array($function, $args);
+			}
+		}
+
+		return $calls;
+	}
+
+	public function testCreateDeviceCallsCactiApisWithPinnedArguments(): void {
+		$id = $this->fileAccount('Prod <b>', self::ACCOUNT);
+		$this->cactiForDevices();
+
+		$this->createDevices(array($id));
+
+		$this->assertSame(array(array(
+			'0', self::HOST_TEMPLATE, 'Cloudflare: Prod <b>', self::ACCOUNT . '.cloudflare.invalid', '', 0, '', '',
+			161, 500, '', '0', 1, 23, 400, 1, '', '[None]', '', '[None]', '', '', 10, 1, 1, 0,
+		)), cloudflare_glue_calls('api_device_save'));
+
+		$this->assertSame(array(array(1, self::DATA_QUERY, DATA_QUERY_AUTOINDEX_NONE)), cloudflare_glue_calls('api_device_dq_add'));
+		$this->assertSame(
+			array(self::DATA_QUERY => DATA_QUERY_AUTOINDEX_NONE),
+			$GLOBALS['cloudflare_glue']['host_queries'][1],
+			'the template added the query with the global default; the plugin set it back to None'
+		);
+		$this->assertSame(
+			array(array(1, self::DATA_QUERY, false, false), array(1, self::DATA_QUERY, false, false)),
+			cloudflare_glue_calls('run_data_query'),
+			'once from the device template, once from api_device_dq_add()'
+		);
+		$this->assertSame(array($id => 1), $this->deviceRows());
+
+		$messages = cloudflare_glue_calls('raise_message');
+		$this->assertSame(array('cloudflare_device', 'Prod &lt;b&gt;: Cacti device created', MESSAGE_LEVEL_INFO), end($messages));
+	}
+
+	public function testCreateDeviceIdempotentWhenHostExists(): void {
+		$id = $this->fileAccount('Prod', self::ACCOUNT);
+		$this->cactiForDevices();
+		$this->createDevices(array($id));
+
+		$GLOBALS['cloudflare_glue']['calls'] = array();
+		$this->createDevices(array($id));
+
+		$this->assertSame(array(), cloudflare_glue_calls('api_device_save'));
+		$this->assertSame(array(), cloudflare_glue_calls('api_device_dq_add'));
+		$this->assertSame(array($id => 1), $this->deviceRows());
+		$this->assertSame(
+			array(array('cloudflare_device', 'Prod: A Cacti device already exists for this account', MESSAGE_LEVEL_INFO)),
+			cloudflare_glue_calls('raise_message')
+		);
+		$this->assertSame('exists', cloudflare_create_device($this->account($id)));
+	}
+
+	public function testCreateDeviceAfterAdminDeletedHostMakesNewDevice(): void {
+		$id = $this->fileAccount('Prod', self::ACCOUNT);
+		$this->cactiForDevices();
+		$this->createDevices(array($id));
+
+		unset($GLOBALS['cloudflare_glue']['hosts'][1]);
+		$GLOBALS['cloudflare_glue']['calls'] = array();
+
+		$this->createDevices(array($id));
+
+		$this->assertCount(1, cloudflare_glue_calls('api_device_save'));
+		$this->assertSame(array(array(2, self::DATA_QUERY, DATA_QUERY_AUTOINDEX_NONE)), cloudflare_glue_calls('api_device_dq_add'));
+		$this->assertSame(array($id => 2), $this->deviceRows());
+	}
+
+	public function testConfigureWithoutHostRealmDenied(): void {
+		$id = $this->fileAccount('Prod', self::ACCOUNT);
+		$this->cactiForDevices();
+		$GLOBALS['cloudflare_glue']['realm'] = function (string $file): bool {
+			return $file === 'cloudflare_accounts.php';
+		};
+
+		$this->createDevices(array($id));
+
+		$this->assertSame(array(), self::cactiObjectCalls());
+		$this->assertSame(array(), $this->deviceRows());
+		$this->assertSame(array('cloudflare_device_denied'), self::messageIds());
+		$this->assertSame(MESSAGE_LEVEL_ERROR, cloudflare_glue_calls('raise_message')[0][2]);
+
+		$account = $this->account($id);
+
+		$this->assertSame('denied', cloudflare_create_device($account));
+
+		$GLOBALS['cloudflare_glue']['realm'] = function (string $file): bool {
+			return $file === 'host.php';
+		};
+
+		$this->assertSame('denied', cloudflare_create_device($account), 'the host realm alone is not enough either');
+		$this->assertSame(array(), self::cactiObjectCalls());
+	}
+
+	public function testTemplatesMissingRefuses(): void {
+		$id = $this->fileAccount('Prod', self::ACCOUNT);
+		$this->cactiForDevices(false);
+
+		$this->createDevices(array($id));
+
+		$this->assertCount(1, cloudflare_glue_calls('import_xml_data'), 'one install attempt per request');
+		$this->assertSame(array(), cloudflare_glue_calls('api_device_save'));
+		$this->assertSame(array(), $this->deviceRows());
+
+		$messages = cloudflare_glue_calls('raise_message');
+		$this->assertSame(
+			array('cloudflare_device', 'Prod: The Cloudflare templates are not installed; see the Cacti log', MESSAGE_LEVEL_ERROR),
+			end($messages)
+		);
+		$this->assertSame('templates_missing', cloudflare_create_device($this->account($id)));
+	}
+
+	public function testMissingTemplatesAreInstalledOnRequest(): void {
+		$id = $this->fileAccount('Prod', self::ACCOUNT);
+		$this->cactiForDevices(false);
+		$GLOBALS['cloudflare_glue']['import'] = function (): array {
+			$this->installObjects();
+
+			return array('host_template' => array(array('result' => 'success')), 'files' => array());
+		};
+
+		$this->createDevices(array($id));
+
+		$this->assertCount(1, cloudflare_glue_calls('import_xml_data'));
+		$this->assertFileExists($this->base . '/resource/script_server/cloudflare_tunnels.xml');
+		$this->assertCount(1, cloudflare_glue_calls('api_device_save'));
+		$this->assertSame(array($id => 1), $this->deviceRows());
+	}
+
+	public function testRefusedDeviceSaveReportsFailure(): void {
+		$id = $this->fileAccount('Prod', self::ACCOUNT);
+		$this->cactiForDevices();
+		$GLOBALS['cloudflare_glue']['invalid'] = true;
+
+		$this->createDevices(array($id));
+
+		$this->assertCount(1, cloudflare_glue_calls('api_device_save'));
+		$this->assertSame(array(), cloudflare_glue_calls('api_device_dq_add'));
+		$this->assertSame(array(), $this->deviceRows());
+
+		$messages = cloudflare_glue_calls('raise_message');
+		$this->assertSame(
+			array('cloudflare_device', 'Prod: The Cacti device could not be created; see the Cacti log', MESSAGE_LEVEL_ERROR),
+			end($messages)
+		);
+	}
+
+	public function testCreateDeviceRefusesWhileAnotherRequestHoldsTheLock(): void {
+		$id = $this->fileAccount('Prod', self::ACCOUNT);
+		$this->cactiForDevices();
+
+		$other = TestDatabase::pdo();
+		$other->query("SELECT GET_LOCK('plugin_cloudflare_device_" . $id . "', 0)");
+
+		try {
+			$this->assertSame('failed', cloudflare_create_device($this->account($id), 0));
+		} finally {
+			$other->query("SELECT RELEASE_LOCK('plugin_cloudflare_device_" . $id . "')");
+			$other = null;
+		}
+
+		$this->assertSame(array(), cloudflare_glue_calls('api_device_save'));
+		$this->assertSame('created', cloudflare_create_device($this->account($id), 0));
+	}
+
+	public function testCreateDeviceConfirmationNamesTheAccounts(): void {
+		$id       = $this->fileAccount('Prod <i>', self::ACCOUNT);
+		$_REQUEST = array('drp_action' => '5');
+		$_POST    = array('chk_' . $id => 'on');
+
+		list($redirect, $output) = self::capture('cloudflare_accounts_actions');
+
+		$this->assertNull($redirect);
+		$this->assertStringContainsString('<li>Prod &lt;i&gt;</li>', $output);
+		$this->assertStringContainsString('Cacti device', $output);
+		$this->assertSame(array(), cloudflare_glue_calls('api_device_save'));
+	}
+
+	public function testCreateGraphsFlagNeedsHostRealm(): void {
+		$GLOBALS['cloudflare_glue']['realm'] = function (string $file): bool {
+			return $file === 'cloudflare_accounts.php';
+		};
+		$_REQUEST = $this->form(array('create_graphs' => 'on'));
+
+		$redirect = cloudflare_accounts_save();
+		$this->assertSame(1, preg_match('/^&action=edit&id=([0-9]+)$/', $redirect, $m), $redirect);
+		$id = (int) $m[1];
+
+		$this->assertSame(0, (int) $this->row($id)['create_graphs']);
+		$this->assertContains('cloudflare_graphs_denied', self::messageIds());
+
+		$GLOBALS['cloudflare_glue']['realm'] = true;
+		$GLOBALS['cloudflare_glue']['calls'] = array();
+		$_REQUEST                            = $this->form(array('id' => (string) $id, 'create_graphs' => 'on', 'token' => '', 'token_confirm' => ''));
+		cloudflare_accounts_save();
+		$this->assertSame(1, (int) $this->row($id)['create_graphs']);
+		$this->assertNotContains('cloudflare_graphs_denied', self::messageIds());
+
+		// Without the host realm a stored 'on' stays on, and turning it off is allowed.
+		$GLOBALS['cloudflare_glue']['realm'] = function (string $file): bool {
+			return $file === 'cloudflare_accounts.php';
+		};
+		$GLOBALS['cloudflare_glue']['calls'] = array();
+		cloudflare_accounts_save();
+		$this->assertSame(1, (int) $this->row($id)['create_graphs']);
+		$this->assertNotContains('cloudflare_graphs_denied', self::messageIds());
+
+		unset($_REQUEST['create_graphs']);
+		cloudflare_accounts_save();
+		$this->assertSame(0, (int) $this->row($id)['create_graphs']);
+	}
+
+	public function testEditFormOffersTheCreateGraphsFlag(): void {
+		self::capture('cloudflare_accounts_edit');
+
+		$fields = cloudflare_glue_calls('draw_edit_form')[0][0]['fields'];
+		$this->assertSame('checkbox', $fields['create_graphs']['method']);
+		$this->assertSame('', $fields['create_graphs']['value']);
 	}
 }

@@ -31,7 +31,7 @@ final class AccountRepository {
 	private const READ_COLUMNS = 'id, cf_account_id, name, token_source, token_file,
 		(token_ciphertext IS NOT NULL AND token_ciphertext <> \'\') AS has_ciphertext,
 		enabled, status, status_message, permissions, last_checked_at,
-		last_verified_at, collect_tunnels, collect_analytics, discovery_interval,
+		last_verified_at, collect_tunnels, collect_analytics, create_graphs, discovery_interval,
 		created_at, updated_at';
 
 	private const WRITABLE = array(
@@ -48,6 +48,7 @@ final class AccountRepository {
 		'last_verified_at',
 		'collect_tunnels',
 		'collect_analytics',
+		'create_graphs',
 		'discovery_interval',
 		'created_at',
 		'updated_at',

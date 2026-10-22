@@ -67,6 +67,7 @@ final class AccountsPageTest extends TestCase {
 			'last_verified_at'   => 1800000000,
 			'collect_tunnels'    => 1,
 			'collect_analytics'  => 0,
+			'create_graphs'      => 0,
 			'discovery_interval' => 600,
 			'created_at'         => 1700000000,
 			'updated_at'         => 1700000000,

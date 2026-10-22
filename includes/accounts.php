@@ -28,6 +28,14 @@ use Cacti\PluginCloudflare\Account\Account;
 use Cacti\PluginCloudflare\Account\ValidationException;
 
 /**
+ * Cacti keeps realms loaded and config_arrays enabled while a plugin is
+ * disabled (lib/plugins.php:1103, :1268), so every entry point checks this.
+ */
+function cloudflare_plugin_enabled() : bool {
+	return function_exists('api_plugin_is_enabled') && api_plugin_is_enabled('cloudflare') === true;
+}
+
+/**
  * Edit form for draw_edit_form(). The token box is always empty: a stored
  * token is never sent back to the browser, only whether one exists.
  *
@@ -77,7 +85,7 @@ function cloudflare_account_fields(?Account $account, bool $vault_available) : a
 			'friendly_name' => __('Token Storage', 'cloudflare'),
 			'description'   => $vault_available
 				? __('Where the scoped API token is kept. Global API Keys are not accepted.', 'cloudflare')
-				: __('Encrypted storage is unavailable because the key file in Settings is missing; only token files can be used.', 'cloudflare'),
+				: __('Encrypted storage is unavailable because the key file in Settings is missing or unusable; only token files can be used.', 'cloudflare'),
 			'value'         => $source,
 			'array'         => $sources
 		),

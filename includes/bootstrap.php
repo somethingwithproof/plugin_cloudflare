@@ -95,11 +95,20 @@ function cloudflare_vault() : ?TokenVault {
 	try {
 		return TokenVault::fromKeyFile($path);
 	} catch (SecretException $e) {
-		if ($e->getReason() === 'key_unavailable') {
-			return null;
+		if ($e->getReason() !== 'key_unavailable') {
+			throw $e;
 		}
 
-		throw $e;
+		/* A missing file is the documented way to run without the vault; a
+		 * file that exists but is refused is a misconfiguration worth one
+		 * line per request. Only the reason is logged, never the contents. */
+		if ((file_exists($path) || is_link($path)) && empty($GLOBALS['cloudflare_key_refusal_logged'])) {
+			$GLOBALS['cloudflare_key_refusal_logged'] = true;
+
+			cacti_log('CLOUDFLARE: key file refused (reason=' . $e->getReason() . ')', false, 'CLOUDFLARE');
+		}
+
+		return null;
 	}
 }
 

@@ -143,6 +143,18 @@ final class SetupDatabaseTest extends TestCase {
 		$this->assertSame(array(), cloudflare_glue_calls('db_execute_prepared'));
 	}
 
+	public function testSettingsPatternMatchesOnlyPluginSettings(): void {
+		$this->pdo->exec('CREATE TEMPORARY TABLE settings (name VARCHAR(50) NOT NULL, value VARCHAR(10) NOT NULL)');
+		$this->pdo->exec("INSERT INTO settings VALUES ('cloudflare_key_file', ''), ('cloudflarex_other', ''), ('cloudflare', ''), ('thold_x', '')");
+
+		$stmt = $this->pdo->prepare('DELETE FROM settings WHERE name LIKE ? ESCAPE \'!\'');
+		$stmt->execute(array('cloudflare!_%'));
+
+		$left = $this->pdo->query('SELECT name FROM settings ORDER BY name');
+		$this->assertNotFalse($left);
+		$this->assertSame(array('cloudflare', 'cloudflarex_other', 'thold_x'), $left->fetchAll(PDO::FETCH_COLUMN));
+	}
+
 	public function testUninstallDropsTablesAndPluginSettings(): void {
 		plugin_cloudflare_setup_database();
 		cloudflare_glue_reset();
@@ -153,7 +165,7 @@ final class SetupDatabaseTest extends TestCase {
 		$this->assertFalse($this->tableExists('plugin_cloudflare_jobs'));
 		$this->assertFalse($this->tableExists('plugin_cloudflare_migrations'));
 		$this->assertSame(array(
-			array('DELETE FROM settings WHERE name LIKE ?', array('cloudflare\\_%')),
+			array('DELETE FROM settings WHERE name LIKE ? ESCAPE \'!\'', array('cloudflare!_%')),
 		), cloudflare_glue_calls('db_execute_prepared'));
 	}
 }

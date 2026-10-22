@@ -55,6 +55,8 @@ function cloudflare_glue_reset(): void {
 		'cell'     => false,
 		'realm'    => true,
 		'connect'  => false,
+		'enabled'  => true,
+		'page'     => 'index.php',
 	);
 }
 
@@ -154,6 +156,34 @@ if (!function_exists('api_plugin_register_realm')) {
 		cloudflare_glue_record(__FUNCTION__, array($plugin, $file, $display, $admin));
 
 		return null;
+	}
+}
+
+if (!function_exists('api_plugin_is_enabled')) {
+	/* lib/plugins.php:885 */
+	/**
+	 * @param mixed $plugin
+	 */
+	function api_plugin_is_enabled($plugin): bool {
+		cloudflare_glue_record(__FUNCTION__, array($plugin));
+
+		return cloudflare_glue_state('enabled') === true;
+	}
+}
+
+if (!function_exists('get_current_page')) {
+	/* lib/functions.php:4080 */
+	/**
+	 * @param mixed $basename
+	 */
+	function get_current_page($basename = true): string {
+		return (string) cloudflare_glue_state('page');
+	}
+}
+
+if (!function_exists('raise_ajax_permission_denied')) {
+	/* lib/functions.php:7599 */
+	function raise_ajax_permission_denied(): void {
 	}
 }
 

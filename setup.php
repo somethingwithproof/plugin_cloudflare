@@ -58,7 +58,8 @@ function plugin_cloudflare_uninstall() : void {
 		cacti_log('CLOUDFLARE: dropping plugin tables failed: ' . $e->getMessage(), false, 'CLOUDFLARE');
 	}
 
-	db_execute_prepared('DELETE FROM settings WHERE name LIKE ?', array('cloudflare\\_%'));
+	/* '!' as the escape keeps the pattern independent of NO_BACKSLASH_ESCAPES. */
+	db_execute_prepared('DELETE FROM settings WHERE name LIKE ? ESCAPE \'!\'', array('cloudflare!_%'));
 }
 
 /**

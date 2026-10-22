@@ -22,8 +22,14 @@
  +-------------------------------------------------------------------------+
 */
 
+require_once __DIR__ . '/accounts.php';
+
 function cloudflare_config_arrays() : void {
 	global $menu;
+
+	if (!cloudflare_plugin_enabled()) {
+		return;
+	}
 
 	$menu[__('Configuration')]['plugins/cloudflare/cloudflare_accounts.php'] = __('Cloudflare Accounts', 'cloudflare');
 }
@@ -33,6 +39,10 @@ function cloudflare_config_arrays() : void {
  * @return array<string, array<string, string>>
  */
 function cloudflare_draw_navigation_text($nav) {
+	if (!cloudflare_plugin_enabled()) {
+		return $nav;
+	}
+
 	$nav['cloudflare_accounts.php:'] = array(
 		'title'   => __('Cloudflare Accounts', 'cloudflare'),
 		'mapping' => 'index.php:',
@@ -60,7 +70,10 @@ function cloudflare_draw_navigation_text($nav) {
 function cloudflare_config_settings() : void {
 	global $tabs, $settings, $logfile_verbosity;
 
-	if (function_exists('get_current_page') && in_array(get_current_page(), array('settings.php', 'plugins.php'), true)) {
+	/* The tab stays while disabled: Cacti keeps this hook enabled so the key
+	 * path can be set before the plugin is turned on. The schema waits for
+	 * check_config, which runs the upgrade on enable. */
+	if (cloudflare_plugin_enabled() && function_exists('get_current_page') && in_array(get_current_page(), array('settings.php', 'plugins.php'), true)) {
 		include_once(dirname(__DIR__) . '/setup.php');
 
 		plugin_cloudflare_upgrade();

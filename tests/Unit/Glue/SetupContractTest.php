@@ -34,15 +34,133 @@ final class SetupContractTest extends TestCase {
 	public static function setUpBeforeClass(): void {
 		require_once self::ROOT . '/tests/Support/CactiGlueStubs.php';
 		require_once self::ROOT . '/setup.php';
+		require_once self::ROOT . '/includes/settings.php';
+		require_once self::ROOT . '/includes/accounts.php';
 	}
+
+	/** @var string|null */
+	private $keyDir;
 
 	protected function setUp(): void {
 		cloudflare_glue_reset();
-		unset($GLOBALS['cloudflare_extension_loaded']);
+		unset($GLOBALS['cloudflare_extension_loaded'], $GLOBALS['cloudflare_key_refusal_logged'], $GLOBALS['menu'], $GLOBALS['tabs'], $GLOBALS['settings']);
 	}
 
 	protected function tearDown(): void {
-		unset($GLOBALS['cloudflare_extension_loaded']);
+		unset($GLOBALS['cloudflare_extension_loaded'], $GLOBALS['cloudflare_key_refusal_logged'], $GLOBALS['menu'], $GLOBALS['tabs'], $GLOBALS['settings']);
+
+		if ($this->keyDir !== null) {
+			foreach ((array) glob($this->keyDir . '/*') as $file) {
+				unlink((string) $file);
+			}
+			rmdir($this->keyDir);
+			$this->keyDir = null;
+		}
+	}
+
+	/**
+	 * @return array<int, string>
+	 */
+	private static function loggedLines(): array {
+		return array_map(function (array $call): string {
+			return (string) $call[0];
+		}, cloudflare_glue_calls('cacti_log'));
+	}
+
+	public function testPluginEnabledHelperFollowsCacti(): void {
+		$this->assertTrue(cloudflare_plugin_enabled());
+
+		$GLOBALS['cloudflare_glue']['enabled'] = false;
+		$this->assertFalse(cloudflare_plugin_enabled());
+
+		$this->assertSame(array(array('cloudflare'), array('cloudflare')), cloudflare_glue_calls('api_plugin_is_enabled'));
+	}
+
+	public function testDisabledPluginAddsNoMenuOrNavigation(): void {
+		$GLOBALS['cloudflare_glue']['enabled'] = false;
+		$GLOBALS['menu'] = array('Configuration' => array('settings.php' => 'Settings'));
+		$nav             = array('index.php:' => array('title' => 'Console'));
+
+		cloudflare_config_arrays();
+
+		$this->assertSame(array('Configuration' => array('settings.php' => 'Settings')), $GLOBALS['menu']);
+		$this->assertSame($nav, cloudflare_draw_navigation_text($nav));
+	}
+
+	public function testEnabledPluginAddsMenuAndNavigation(): void {
+		$GLOBALS['menu'] = array();
+
+		cloudflare_config_arrays();
+		$nav = cloudflare_draw_navigation_text(array());
+
+		$this->assertSame(array('Configuration' => array('plugins/cloudflare/cloudflare_accounts.php' => 'Cloudflare Accounts')), $GLOBALS['menu']);
+		$this->assertSame(array('cloudflare_accounts.php:', 'cloudflare_accounts.php:edit', 'cloudflare_accounts.php:actions'), array_keys($nav));
+	}
+
+	public function testSettingsTabStaysButUpgradeWaitsWhileDisabled(): void {
+		$GLOBALS['cloudflare_glue']['page']    = 'settings.php';
+		$GLOBALS['cloudflare_glue']['enabled'] = false;
+
+		cloudflare_config_settings();
+
+		$this->assertSame('Cloudflare', $GLOBALS['tabs']['cloudflare']);
+		$this->assertArrayHasKey('cloudflare_key_file', $GLOBALS['settings']['cloudflare']);
+		$this->assertSame(array(), cloudflare_glue_calls('db_fetch_cell_prepared'));
+
+		$GLOBALS['cloudflare_glue']['enabled'] = true;
+		cloudflare_config_settings();
+		$this->assertCount(1, cloudflare_glue_calls('db_fetch_cell_prepared'));
+	}
+
+	public function testAccountsPageRefusesWhenPluginDisabled(): void {
+		$source = (string) file_get_contents(self::ROOT . '/cloudflare_accounts.php');
+
+		$this->assertSame(1, preg_match('#\nif \(!cloudflare_plugin_enabled\(\)\) \{(.*?)\n\}#s', $source, $guard, PREG_OFFSET_CAPTURE));
+		$this->assertStringContainsString('raise_ajax_permission_denied();', $guard[1][0]);
+		$this->assertStringContainsString('permission_denied.php', $guard[1][0]);
+		$this->assertStringContainsString('exit;', $guard[1][0]);
+
+		$at = $guard[0][1];
+		$this->assertGreaterThan((int) strpos($source, "include('./include/auth.php');"), $at);
+		foreach (array('plugin_cloudflare_upgrade();', 'set_default_action();', 'switch (get_request_var(\'action\'))') as $later) {
+			$this->assertLessThan((int) strpos($source, $later), $at, $later);
+		}
+	}
+
+	private function keyFile(int $mode): string {
+		$this->keyDir = sys_get_temp_dir() . '/cf-key-' . bin2hex(random_bytes(6));
+		mkdir($this->keyDir, 0700);
+		$path = $this->keyDir . '/cloudflare.key';
+		file_put_contents($path, bin2hex(random_bytes(32)));
+		chmod($path, $mode);
+
+		return $path;
+	}
+
+	public function testRefusedKeyFileIsLoggedOncePerRequest(): void {
+		$path = $this->keyFile(0644);
+		$key  = (string) file_get_contents($path);
+		$GLOBALS['cloudflare_glue']['settings']['cloudflare_key_file'] = $path;
+
+		$this->assertNull(cloudflare_vault());
+		$this->assertNull(cloudflare_vault());
+
+		$this->assertSame(array('CLOUDFLARE: key file refused (reason=key_unavailable)'), self::loggedLines());
+		$this->assertStringNotContainsString(substr($key, 0, 16), implode("\n", self::loggedLines()));
+	}
+
+	public function testMissingKeyFileIsNotLogged(): void {
+		$GLOBALS['cloudflare_glue']['settings']['cloudflare_key_file'] = sys_get_temp_dir() . '/cf-absent-' . bin2hex(random_bytes(6));
+
+		$this->assertNull(cloudflare_vault());
+		$this->assertSame(array(), self::loggedLines());
+	}
+
+	public function testUsableKeyFileIsNotLogged(): void {
+		$GLOBALS['cloudflare_glue']['settings']['cloudflare_key_file'] = $this->keyFile(0600);
+
+		$this->assertNotNull(cloudflare_vault());
+		$this->assertSame(array(), self::loggedLines());
 	}
 
 	public function testInstallRegistersExpectedHooksAndRealms(): void {
@@ -65,8 +183,6 @@ final class SetupContractTest extends TestCase {
 	}
 
 	public function testHookFunctionsExistInTheirFiles(): void {
-		require_once self::ROOT . '/includes/settings.php';
-
 		foreach (array('cloudflare_config_arrays', 'cloudflare_config_settings', 'cloudflare_draw_navigation_text') as $function) {
 			$this->assertTrue(function_exists($function), $function);
 		}

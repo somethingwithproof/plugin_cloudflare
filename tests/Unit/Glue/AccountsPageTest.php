@@ -119,6 +119,7 @@ final class AccountsPageTest extends TestCase {
 		$this->assertSame(array('file'), array_keys($fields['token_source']['array']));
 		$this->assertSame('file', $fields['token_source']['value']);
 		$this->assertArrayNotHasKey('token', $fields);
+		$this->assertStringContainsString('missing or unusable', (string) $fields['token_source']['description']);
 	}
 
 	public function testCheckboxesBecomeExplicitIntegers(): void {

@@ -32,6 +32,14 @@ use Cacti\PluginCloudflare\Account\ValidationException;
 use Cacti\PluginCloudflare\Auth\AccessDenied;
 use Cacti\PluginCloudflare\Storage\DatabaseException;
 
+/* include/auth.php passes a disabled plugin's page because realms load
+ * regardless of status; answer the way permission_denied.php does. */
+if (!cloudflare_plugin_enabled()) {
+	raise_ajax_permission_denied();
+	header('Location: ../../permission_denied.php');
+	exit;
+}
+
 plugin_cloudflare_upgrade();
 
 $cloudflare_account_actions = array(

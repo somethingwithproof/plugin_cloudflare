@@ -1,51 +1,49 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-labelledby="title desc">
   <title id="title">Cacti Cloudflare plugin logo</title>
-  <desc id="desc">A green saguaro cactus standing inside a tunnel arch at dusk, with a dotted path of traffic running through the arch.</desc>
+  <desc id="desc">A hand-drawn green saguaro cactus standing in front of a stone tunnel portal, with a road running into the tunnel.</desc>
   <defs>
-    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#1b2a41"/>
-      <stop offset="1" stop-color="#324a5f"/>
+    <linearGradient id="skin" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#c3ec6d"/>
+      <stop offset="0.55" stop-color="#2f9e2f"/>
+      <stop offset="1" stop-color="#16701a"/>
     </linearGradient>
-    <linearGradient id="arch" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#e9c46a"/>
-      <stop offset="1" stop-color="#d4a373"/>
+    <linearGradient id="stone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ead9b4"/>
+      <stop offset="1" stop-color="#c2a273"/>
     </linearGradient>
-    <linearGradient id="cactus" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#4caf50"/>
-      <stop offset="1" stop-color="#2e7d32"/>
+    <linearGradient id="depth" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1c2430"/>
+      <stop offset="1" stop-color="#3b4656"/>
     </linearGradient>
-    <clipPath id="badge">
-      <circle cx="128" cy="128" r="120"/>
-    </clipPath>
   </defs>
 
-  <circle cx="128" cy="128" r="120" fill="url(#sky)"/>
+  <g stroke="#111" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round">
+    <!-- tunnel portal -->
+    <path d="M22 186 V96 C22 38 150 38 150 96 V186 Z" fill="url(#stone)"/>
+    <path d="M46 186 V102 C46 66 126 66 126 102 V186 Z" fill="url(#depth)"/>
 
-  <g clip-path="url(#badge)">
-    <!-- ground -->
-    <rect x="0" y="196" width="256" height="60" fill="#c9a66b"/>
-    <rect x="0" y="196" width="256" height="6" fill="#b08a52"/>
-
-    <!-- tunnel arch: an open ring standing on the ground -->
-    <path d="M44 196 V130 A84 84 0 0 1 212 130 V196 H188 V130 A60 60 0 0 0 68 130 V196 Z" fill="url(#arch)"/>
-
-    <!-- traffic path running through the tunnel -->
-    <line x1="8" y1="214" x2="248" y2="214" stroke="#f1faee" stroke-width="6" stroke-linecap="round" stroke-dasharray="14 12"/>
-
-    <!-- saguaro -->
-    <g fill="url(#cactus)">
-      <rect x="114" y="92" width="28" height="108" rx="14"/>
-      <rect x="80" y="118" width="20" height="50" rx="10"/>
-      <rect x="80" y="150" width="44" height="18" rx="9"/>
-      <rect x="156" y="104" width="20" height="56" rx="10"/>
-      <rect x="132" y="142" width="44" height="18" rx="9"/>
-    </g>
-    <g stroke="#1b5e20" stroke-width="2" stroke-linecap="round" opacity="0.45">
-      <line x1="128" y1="104" x2="128" y2="190"/>
-      <line x1="90" y1="128" x2="90" y2="158"/>
-      <line x1="166" y1="114" x2="166" y2="150"/>
-    </g>
+    <!-- road into the tunnel -->
+    <path d="M58 186 L114 186 L96 120 L76 120 Z" fill="#59626e" stroke-width="2.5"/>
+  </g>
+  <g fill="#f4f1e8">
+    <rect x="84.5" y="170" width="3" height="12" rx="1"/>
+    <rect x="85" y="150" width="2.4" height="9" rx="1"/>
+    <rect x="85.3" y="134" width="1.8" height="7" rx="0.9"/>
   </g>
 
-  <circle cx="128" cy="128" r="120" fill="none" stroke="#e9c46a" stroke-width="6"/>
+  <!-- saguaro -->
+  <g fill="url(#skin)" stroke="#111" stroke-width="3.5" stroke-linejoin="round">
+    <path d="M131 141 C118 141 104 137 104 121 L104 99 C104 85 120 85 120 99 L120 120 C120 125 124 127 131 127 Z"/>
+    <path d="M160 119 C168 119 172 116 172 110 L172 82 C172 68 188 68 188 82 L188 112 C188 129 175 134 160 134 Z"/>
+    <path d="M132 192 C129 150 127 104 129 76 C130 56 160 54 161 76 C163 104 162 150 159 192 Z"/>
+  </g>
+
+  <!-- ribs -->
+  <g stroke="#e6f7c0" stroke-width="1.6" stroke-linecap="round" fill="none" opacity="0.7">
+    <path d="M138 70 C136 100 136 150 138 186"/>
+    <path d="M145 64 C145 100 145 150 145 188"/>
+    <path d="M152 70 C154 100 154 150 152 186"/>
+    <path d="M112 94 V122"/>
+    <path d="M180 78 V114"/>
+  </g>
 </svg>

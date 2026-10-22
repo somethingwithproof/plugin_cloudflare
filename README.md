@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/images/logo.svg" width="160" height="160" alt="Plugin logo: a green saguaro cactus inside a tunnel arch, with a dashed road running through it">
+  <img src="docs/images/logo.svg" width="160" height="160" alt="Plugin logo: a hand-drawn green saguaro in front of a stone tunnel portal with a road leading in">
 </p>
 
 # Cloudflare plugin for Cacti

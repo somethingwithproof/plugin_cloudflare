@@ -18,7 +18,7 @@
 - `src/` must not reference Cacti functions or globals. Only `setup.php`, `includes/*.php` and the page scripts may.
 - Every SQL statement is prepared with bound values. Identifiers are never interpolated from input.
 - Tokens never appear in logs, exception messages, HTML or test output. Every test that handles a token asserts this.
-- Each new PHP file starts with the GPL-2.0-or-later header used by Thold (`~/Developer/plugin_thold/setup.php` lines 1-23), with the copyright line `Copyright (C) 2026 The Cacti Group`.
+- Each new PHP file starts with the plugin's GPL-2.0-or-later header, copied from the first 19 lines of `setup.php`: the copyright line `Copyright (C) 2026 Thomas Vincent`, the GPL notice, and the `Cloudflare plugin for Cacti` block with the repository URL. `testEveryPhpFileStartsWithLicenseHeader` enforces it.
 - Commits: Conventional Commits, `git commit -s`, no Co-Authored-By line, one bullet max in the body. Commit locally only; do not push.
 - Test DB: `docker compose -f tests/docker/compose.db.yml up -d`. Tests read `CF_TEST_DSN`, `CF_TEST_DB_USER` and `CF_TEST_DB_PASS` and are skipped with a clear message when the DB is unreachable. CI never skips.
 

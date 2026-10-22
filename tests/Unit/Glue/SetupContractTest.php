@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2026 The Cacti Group                                      |
+ | Copyright (C) 2026 Thomas Vincent                                       |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -13,12 +13,8 @@
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
  +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDTool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
- +-------------------------------------------------------------------------+
- | http://www.cacti.net/                                                   |
+ | Cloudflare plugin for Cacti                                             |
+ | https://github.com/somethingwithproof/plugin_cloudflare                 |
  +-------------------------------------------------------------------------+
 */
 
@@ -198,7 +194,9 @@ final class SetupContractTest extends TestCase {
 		$this->assertSame('online_view:1, online_mgmt:1, offline_view:0, offline_mgmt:0, remote_collect:0', $info['capabilities']);
 		$this->assertSame('', $info['requires']);
 		/* api_plugin_install() reads author unguarded (lib/plugins.php:741). */
-		$this->assertArrayHasKey('author', $info);
+		$this->assertSame('Thomas Vincent', $info['author']);
+		$this->assertSame('', $info['email']);
+		$this->assertSame('https://github.com/somethingwithproof/plugin_cloudflare', $info['homepage']);
 	}
 
 	public function testCheckConfigFailsWithoutCurl(): void {
@@ -298,10 +296,13 @@ final class SetupContractTest extends TestCase {
 
 	public function testEveryPhpFileStartsWithLicenseHeader(): void {
 		$lines  = file(__FILE__);
-		$header = implode('', array_slice(is_array($lines) ? $lines : array(), 0, 23));
+		$header = implode('', array_slice(is_array($lines) ? $lines : array(), 0, 19));
 
-		$this->assertStringContainsString('Copyright (C) 2026 The Cacti Group', $header);
+		$this->assertStringContainsString('Copyright (C) 2026 Thomas Vincent', $header);
 		$this->assertStringContainsString('GNU General Public License', $header);
+		$this->assertStringContainsString('https://github.com/somethingwithproof/plugin_cloudflare', $header);
+		$this->assertStringEndsWith("*/\n", $header);
+		$this->assertStringNotContainsString('Cacti Group', $header);
 
 		$root  = (string) realpath(self::ROOT);
 		$files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, RecursiveDirectoryIterator::SKIP_DOTS));

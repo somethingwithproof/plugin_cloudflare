@@ -69,8 +69,10 @@ smoke-up: cacti-src
 	$(SMOKE) up -d --build --wait
 	@echo "Cacti is at http://127.0.0.1:$${CF_SMOKE_PORT:-8090}/cacti/ (admin / $${CF_SMOKE_ADMIN_PASS:-smoke-admin})"
 
+# smoke.sh runs as cf-smoke-run, which KEEP=1 leaves up.
 smoke-down:
 	$(SMOKE) down -v --remove-orphans
+	docker compose -p cf-smoke-run -f tests/docker/compose.cacti.yml down -v --remove-orphans
 
 # Brings up the smoke-up stack, captures docs/images/*.png, and
 # takes the stack down again whether or not the capture succeeds.

@@ -85,6 +85,19 @@ together with `--install`, so for an installed plugin the smoke calls
 Helpers added after 1.2.25, such as `cacti_redact_sensitive()` and
 `cacti_plugin_path()`, are not called. The plugin carries its own redaction.
 
+### Known issue: poller output warnings on some MariaDB releases
+
+On MariaDB 10.11.19, 11.4.13 and 11.8.9, the `DELETE` that Cacti runs on
+the MEMORY table `poller_output`, after its join `SELECT` in
+`process_poller_output()`, leaves rows behind: in a reproduction it removed
+2 of 3 rows. MariaDB 10.6.28, 10.11.10 and MySQL 8.4 removed all 3. On the
+affected releases Cacti logs "There are N Data Sources not returning all
+data" and "Poller Output Table not Empty" on every poll for any data source
+with more than one poller item, including Cacti's own, not only the
+plugin's. The RRD values are unaffected: the update is built before the
+`DELETE`, and Cacti removes the leftover rows on its next pass. The install
+smoke pins MariaDB 10.11.10 for this reason, and fails on either warning.
+
 ## PHP
 
 `composer.json` sets `config.platform.php = 7.4.33`, so the dev tools resolve

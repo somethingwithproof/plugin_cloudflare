@@ -789,10 +789,9 @@ for ds in connectors connections health; do
 	[[ "$(last_value "${rrd}" "${ds}")" = 'U' ]] || die "${ds} is $(last_value "${rrd}" "${ds}") during the outage, expected U"
 done
 out="$("${dc[@]}" exec -T web rrdtool fetch "${rrd}" AVERAGE -s -900 2>&1)" || die 'rrdtool fetch failed' "${out}"
+# A sanity check only: at the 300 second step these rows are NaN, so the U
+# in lastupdate above is what proves the outage is not recorded as 0.
 [[ -n "$(rrd_column connectors "${out}")" ]] || die 'rrdtool fetch returned no rows' "${out}"
-if grep -qx '0.0000000000e+00' <<<"$(rrd_column connectors "${out}")"; then
-	die 'connectors recorded 0 in the outage window' "${out}"
-fi
 pass
 
 step='5j once Cloudflare answers again, the values return'
@@ -863,10 +862,16 @@ found -F 'CREATE TABLE' "${captures}/db-dump" || die 'database dump has no CREAT
 no_token "${captures}/db-dump" 'the database'
 pass
 
-step='8 no PHP errors in cacti.log or the Apache error log'
+step='8 no PHP errors or poller output warnings in cacti.log, no PHP errors in the Apache log'
 capture cacti-logs-final "${dc[@]}" exec -T web cat log/cacti.log
 if found -E 'ERROR PHP|PHP (Fatal|Parse|Warning|Notice|Deprecated)' "${captures}/cacti-logs-final"; then
 	die 'cacti.log has PHP errors' "$(grep -E 'ERROR PHP|PHP (Fatal|Parse|Warning|Notice|Deprecated)' "${captures}/cacti-logs-final")"
+fi
+# The pinned MariaDB leaves poller_output clean, so these mean a data
+# source really returned only part of its fields.
+poller_warnings='Data Sources not returning all data|Poller Output Table not Empty'
+if found -E "${poller_warnings}" "${captures}/cacti-logs-final"; then
+	die 'cacti.log has poller output warnings' "$(grep -E "${poller_warnings}" "${captures}/cacti-logs-final")"
 fi
 capture web-logs "${dc[@]}" logs --no-color web
 if found -E 'PHP (Fatal|Parse|Warning|Notice|Deprecated)' "${captures}/web-logs"; then

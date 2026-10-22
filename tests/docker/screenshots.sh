@@ -152,7 +152,7 @@ job_started() {
 # poll [due]: one forced poll; with "due" the collector runs after it and
 # this waits for that run to finish with the given job status.
 poll() {
-    local expect="${1:-}" started
+    local expect="${1:-}" started i out
 
     if [[ -n "${expect}" ]]; then
         sql "UPDATE plugin_cloudflare_jobs SET next_run_at = 0 WHERE account_id = ${id}"
@@ -188,10 +188,13 @@ host_id="$(sql "SELECT IFNULL(MAX(host_id), 0) FROM plugin_cloudflare_resources 
 
 # The discovery after this poll creates the graphs, in the background.
 poll ok
+graphs=0
 for ((i = 0; i < 60; i++)); do
-    [[ "$(sql "SELECT COUNT(*) FROM graph_local WHERE host_id = ${host_id}")" = '9' ]] && break
+    graphs="$(sql "SELECT COUNT(*) FROM graph_local WHERE host_id = ${host_id}")"
+    [[ "${graphs}" = '9' ]] && break
     sleep 1
 done
+[[ "${graphs}" = '9' ]] || die "the graph sync made ${graphs} of 9 graphs within 60 seconds"
 read -r graph ds <<<"$(sql "SELECT r.local_graph_id, r.local_data_id FROM plugin_cloudflare_resources r
     JOIN plugin_cloudflare_tunnels t ON t.id = r.tunnel_id
     WHERE r.account_id = ${id} AND r.kind = 'graph' AND t.name = 'blog'

@@ -23,6 +23,7 @@ namespace Cacti\PluginCloudflare\Tests\Integration\Discovery;
 use Cacti\PluginCloudflare\Api\ConnectorRecord;
 use Cacti\PluginCloudflare\Api\TunnelRecord;
 use Cacti\PluginCloudflare\Discovery\Reconciler;
+use Cacti\PluginCloudflare\Discovery\TunnelRepository;
 use Cacti\PluginCloudflare\Storage\Database;
 use Cacti\PluginCloudflare\Storage\DatabaseException;
 use Cacti\PluginCloudflare\Storage\Migrator;
@@ -416,6 +417,17 @@ final class ReconcilerTest extends IntegrationTestCase {
 		$this->assertSame((string) (self::T0 + 60), (string) $rows[self::uuid(1)]['connections_attempted_at']);
 		$this->assertNull($rows[self::uuid(2)]['connections_refreshed_at']);
 		$this->assertNull($rows[self::uuid(2)]['connections_attempted_at']);
+	}
+
+	public function testConnectionsClearRecordedFailureClass(): void {
+		$this->reconciler()->applyListing($this->accountId, array(self::tunnel(1)));
+		$tunnelId = $this->tunnelId(1);
+		(new TunnelRepository($this->db))->markConnectionsAttempted($tunnelId, self::T0 + 30, 'transient');
+		$this->assertSame('transient', $this->tunnelsByUuid()[self::uuid(1)]['connections_error_class']);
+
+		$this->reconciler(self::T0 + 60)->applyConnections($tunnelId, array(self::connector(1, 2)));
+
+		$this->assertNull($this->tunnelsByUuid()[self::uuid(1)]['connections_error_class']);
 	}
 
 	public function testDuplicateIdsInListingCountOnce(): void {

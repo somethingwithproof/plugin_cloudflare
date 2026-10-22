@@ -369,12 +369,13 @@ final class DiscoveryService {
 			try {
 				$connectors = $this->client->listConnections($account->cfAccountId(), $token, $cfTunnelId);
 			} catch (ApiException $e) {
-				$this->db->transactional(function () use ($lease, $repo, $tunnelRowId): void {
+				$class = $e->getErrorClass();
+
+				$this->db->transactional(function () use ($lease, $repo, $tunnelRowId, $class): void {
 					$this->jobs->touch($lease);
-					$repo->markConnectionsAttempted($tunnelRowId, $this->clock->now());
+					$repo->markConnectionsAttempted($tunnelRowId, $this->clock->now(), $class);
 				});
 
-				$class = $e->getErrorClass();
 				if ($class === ErrorClass::NOT_FOUND) {
 					continue;
 				}

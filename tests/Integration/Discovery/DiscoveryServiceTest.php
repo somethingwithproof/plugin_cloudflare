@@ -663,6 +663,44 @@ final class DiscoveryServiceTest extends IntegrationTestCase {
 		);
 	}
 
+	public function testConnectionsFailureRecordsClass(): void {
+		$id = $this->account(self::CF_A);
+		$this->transport()->queue(FakeTransport::fixture('tunnel-list'));
+		$this->queueTransient();
+		$this->transport()->queue(FakeTransport::fixture('connections-1001', 401));
+		$this->transport()->queue(FakeTransport::fixture('tunnel-connections'));
+
+		$this->assertSame('ok', $this->runDue()[$id]['status']);
+
+		$tunnels = $this->tunnels($id);
+		$this->assertSame(ErrorClass::TRANSIENT, $tunnels[self::BLOG]['connections_error_class']);
+		$this->assertSame(ErrorClass::NOT_FOUND, $tunnels[self::STAGING]['connections_error_class']);
+		$this->assertNull($tunnels[self::OLDOFFICE]['connections_error_class']);
+	}
+
+	public function testSuccessfulReadClearsClass(): void {
+		$id = $this->account(self::CF_A);
+		$this->transport()->queue(FakeTransport::fixture('tunnel-list'));
+		$this->queueTransient();
+		$this->transport()->queue(self::noConnectors());
+		$this->transport()->queue(self::noConnectors());
+		$this->runDue();
+		$this->assertSame(
+			ErrorClass::TRANSIENT,
+			$this->tunnels($id)[self::BLOG]['connections_error_class']
+		);
+
+		$this->makeDue($id);
+		$this->db()->execute('UPDATE plugin_cloudflare_tunnels SET connections_attempted_at = 0');
+		$this->transport()->queue(FakeTransport::fixture('tunnel-list'));
+		for ($i = 0; $i < 3; $i++) {
+			$this->transport()->queue(self::noConnectors());
+		}
+		$this->assertSame('ok', $this->runDue()[$id]['status']);
+
+		$this->assertNull($this->tunnels($id)[self::BLOG]['connections_error_class']);
+	}
+
 	public function testConnectionsFailureKeepsThatTunnelsConnectors(): void {
 		$id = $this->account(self::CF_A);
 		$this->discoverOnce($id);

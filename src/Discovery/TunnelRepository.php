@@ -186,14 +186,15 @@ final class TunnelRepository {
 
 	/**
 	 * For an attempt that failed; a successful one is stamped by
-	 * Reconciler::applyConnections() with the refresh.
+	 * Reconciler::applyConnections() with the refresh. The class is the
+	 * reason ObservationReader reports the connection counts as unknown.
 	 *
 	 * @return int Rows changed.
 	 */
-	public function markConnectionsAttempted(int $tunnelId, int $now): int {
+	public function markConnectionsAttempted(int $tunnelId, int $now, ?string $errorClass = null): int {
 		return $this->db->execute(
-			'UPDATE ' . self::TABLE . ' SET connections_attempted_at = ? WHERE id = ?',
-			array($now, $tunnelId)
+			'UPDATE ' . self::TABLE . ' SET connections_attempted_at = ?, connections_error_class = ? WHERE id = ?',
+			array($now, $errorClass, $tunnelId)
 		);
 	}
 

@@ -43,7 +43,7 @@
 
 - [ ] **Step 1:** Write `tests/Unit/HarnessTest.php::testAutoloadsPluginNamespace`, asserting `class_exists('Cacti\\PluginCloudflare\\Version')`. Add `src/Version.php` only in Step 3.
 - [ ] **Step 2:** Run `vendor/bin/phpunit --testsuite unit`. It must fail with the class not found.
-- [ ] **Step 3:** Create `src/Version.php` with `final class Version { const PLUGIN = '1.0.0'; const METRIC_SCHEMA = 1; }`. Create the composer dev deps: `phpunit/phpunit ^9.6`, `behat/behat` (latest version installable with platform 7.4), `giorgiosironi/eris` (latest version supporting phpunit 9), `phpstan/phpstan ^1.12`, `friendsofphp/php-cs-fixer` (latest supporting 7.4 platform), plus PSR-4 `Cacti\PluginCloudflare\` to `src/` and `Cacti\PluginCloudflare\Tests\` to `tests/`. PHPUnit suites are `unit` (`tests/Unit`) and `integration` (`tests/Integration`). The compose file runs `mariadb:10.11` on host port 33061 with a tmpfs datadir and a healthcheck. Set PHPStan to level 6, `phpVersion: 70400`, paths `src tests setup.php includes`. php-cs-fixer uses tabs, `single_quote`, `braces_position` same line for control structures and functions in glue, and is scoped to `src tests`.
+- [ ] **Step 3:** Create `src/Version.php` with `final class Version { const PLUGIN = '0.1.0'; const METRIC_SCHEMA = 1; }`. Create the composer dev deps: `phpunit/phpunit ^9.6`, `behat/behat` (latest version installable with platform 7.4), `giorgiosironi/eris` (latest version supporting phpunit 9), `phpstan/phpstan ^1.12`, `friendsofphp/php-cs-fixer` (latest supporting 7.4 platform), plus PSR-4 `Cacti\PluginCloudflare\` to `src/` and `Cacti\PluginCloudflare\Tests\` to `tests/`. PHPUnit suites are `unit` (`tests/Unit`) and `integration` (`tests/Integration`). The compose file runs `mariadb:10.11` on host port 33061 with a tmpfs datadir and a healthcheck. Set PHPStan to level 6, `phpVersion: 70400`, paths `src tests setup.php includes`. php-cs-fixer uses tabs, `single_quote`, `braces_position` same line for control structures and functions in glue, and is scoped to `src tests`.
 - [ ] **Step 4:** Run `make test && make lint74 && make stan && make cs`. All pass.
 - [ ] **Step 5:** Commit: `chore: add test harness and tooling`.
 
@@ -325,7 +325,7 @@
 **Interfaces:**
 - Consumes: everything above.
 - Produces:
-  - `INFO`: `name = cloudflare`, `version = 1.0.0`, `longname = Cloudflare`, `compat = 1.2.25`, `capabilities = online_view:1, online_mgmt:1, offline_view:0, offline_mgmt:0, remote_collect:0`, `requires =` (empty).
+  - `INFO`: `name = cloudflare`, `version = 0.1.0`, `longname = Cloudflare`, `compat = 1.2.25`, `capabilities = online_view:1, online_mgmt:1, offline_view:0, offline_mgmt:0, remote_collect:0`, `requires =` (empty).
   - `setup.php` functions:
     - `plugin_cloudflare_install()` registers hooks `config_arrays`, `config_settings` and `draw_navigation_text` with file `includes/settings.php`. It registers realms `cloudflare.php` ("Cloudflare: View", admin false) and `cloudflare_accounts.php` ("Cloudflare: Configure", admin true), then runs `plugin_cloudflare_setup_database()`.
     - `plugin_cloudflare_uninstall()` calls `Migrator::dropAll()`, then deletes `settings` rows `LIKE 'cloudflare\_%'`. That is all it does.

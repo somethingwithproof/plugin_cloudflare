@@ -231,6 +231,10 @@ Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
 
 ## Roadmap
 
+Each milestone ships as a 0.x release: Milestone 1 is 0.1.0, Milestone 2 is
+0.2.0, and so on. Version 1.0.0 is reserved for the release that completes
+every milestone below.
+
 | Milestone | Scope | State |
 |---|---|---|
 | 1. Foundation | Plugin lifecycle, permissions, account configuration, connection test | In review ([#1](https://github.com/somethingwithproof/plugin_cloudflare/pull/1)) |

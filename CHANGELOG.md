@@ -1,6 +1,6 @@
 ## ChangeLog
 
---- 1.0.0 (unreleased) ---
+--- 0.1.0 (unreleased) ---
 
 Milestone 1: account configuration and a connection test. Tunnel discovery,
 graphs and analytics are not included.

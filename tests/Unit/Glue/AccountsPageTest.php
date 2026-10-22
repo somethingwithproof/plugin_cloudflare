@@ -73,8 +73,15 @@ final class AccountsPageTest extends TestCase {
 		), $overrides));
 	}
 
+	/**
+	 * @return array{token_source: string, token_file: string|null, has_token: bool}
+	 */
+	private static function vaultCredentials(): array {
+		return array('token_source' => 'vault', 'token_file' => null, 'has_token' => true);
+	}
+
 	public function testTokenFieldIsAnEmptyPasswordBoxThatKeepsTheCurrentToken(): void {
-		$fields = cloudflare_account_fields(self::account(), true);
+		$fields = cloudflare_account_fields(self::account(), self::vaultCredentials(), true);
 
 		$this->assertSame('textbox_password', $fields['token']['method']);
 		$this->assertSame('', $fields['token']['value']);
@@ -82,7 +89,11 @@ final class AccountsPageTest extends TestCase {
 	}
 
 	public function testEditFieldsCarryTheAccountValues(): void {
-		$fields = cloudflare_account_fields(self::account(array('token_source' => 'file', 'token_file' => '/etc/cacti/cf.token')), true);
+		$fields = cloudflare_account_fields(
+			self::account(),
+			array('token_source' => 'file', 'token_file' => '/etc/cacti/cf.token', 'has_token' => true),
+			true
+		);
 
 		$this->assertSame('Prod <b>&</b>', $fields['name']['value']);
 		$this->assertSame('ed17574386854bf78a67040be0a770b0', $fields['cf_account_id']['value']);
@@ -96,7 +107,7 @@ final class AccountsPageTest extends TestCase {
 	}
 
 	public function testNewAccountUsesSchemaDefaults(): void {
-		$fields = cloudflare_account_fields(null, true);
+		$fields = cloudflare_account_fields(null, null, true);
 
 		$this->assertSame('', $fields['name']['value']);
 		$this->assertSame('vault', $fields['token_source']['value']);
@@ -109,9 +120,9 @@ final class AccountsPageTest extends TestCase {
 	}
 
 	public function testVaultSourceIsHiddenWithoutTheVault(): void {
-		$this->assertSame(array('vault', 'file'), array_keys(cloudflare_account_fields(null, true)['token_source']['array']));
+		$this->assertSame(array('vault', 'file'), array_keys(cloudflare_account_fields(null, null, true)['token_source']['array']));
 
-		$fields = cloudflare_account_fields(self::account(), false);
+		$fields = cloudflare_account_fields(self::account(), self::vaultCredentials(), false);
 		$this->assertSame(array('file'), array_keys($fields['token_source']['array']));
 		$this->assertSame('file', $fields['token_source']['value']);
 		$this->assertArrayNotHasKey('token', $fields);

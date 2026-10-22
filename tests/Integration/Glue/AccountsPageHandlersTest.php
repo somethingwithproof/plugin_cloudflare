@@ -579,7 +579,31 @@ final class AccountsPageHandlersTest extends TestCase {
 		$this->assertNotLeaked($this->token, $this->trace($output), 'edit page');
 	}
 
-	public function testListShowsAccountsEscapedWithTheirTokenSource(): void {
+	public function testEditOfAFileAccountShowsItsPathFromTheCredentialDetails(): void {
+		$id       = $this->fileAccount('Prod', self::ACCOUNT);
+		$_REQUEST = array('id' => (string) $id);
+
+		self::capture('cloudflare_accounts_edit');
+
+		$fields = cloudflare_glue_calls('draw_edit_form')[0][0]['fields'];
+		$this->assertSame('file', $fields['token_source']['value']);
+		$this->assertSame($this->dir . '/absent.token', $fields['token_file']['value']);
+	}
+
+	public function testEditWithoutTheConfigureRightIsDenied(): void {
+		$id                                  = $this->fileAccount('Prod', self::ACCOUNT);
+		$GLOBALS['cloudflare_glue']['realm'] = false;
+		$_REQUEST                            = array('id' => (string) $id);
+
+		list($redirect, $output) = self::capture('cloudflare_accounts_edit');
+
+		$this->assertSame('', $redirect);
+		$this->assertSame('', $output);
+		$this->assertSame(array('cloudflare_denied'), self::messageIds());
+		$this->assertSame(array(), cloudflare_glue_calls('draw_edit_form'));
+	}
+
+	public function testListShowsAccountsEscapedWithWhetherATokenIsStored(): void {
 		$this->fileAccount('Zed <i>', self::OTHER);
 		$_REQUEST = $this->form(array('name' => 'Alpha'));
 		cloudflare_accounts_save();
@@ -607,9 +631,10 @@ final class AccountsPageHandlersTest extends TestCase {
 			return (string) $call[0];
 		}, cloudflare_glue_calls('form_selectable_cell'));
 		$this->assertStringContainsString('>Alpha</a>', $cells[0]);
-		$this->assertSame('Encrypted', $cells[2]);
+		$this->assertSame('Yes', $cells[2]);
 		$this->assertStringContainsString('>Zed &lt;i&gt;</a>', $cells[7]);
-		$this->assertSame('File', $cells[9]);
+		$this->assertSame('Yes', $cells[9]);
+		$this->assertStringNotContainsString($this->dir, $this->trace($output), 'the token file path is not listed');
 		$this->assertSame(array('Zed &lt;i&gt;'), array_slice(array_map(function (array $call): string {
 			return (string) $call[0];
 		}, cloudflare_glue_calls('form_checkbox_cell')), 1));
@@ -643,6 +668,6 @@ final class AccountsPageHandlersTest extends TestCase {
 
 		self::capture('cloudflare_accounts_list');
 
-		$this->assertSame('Encrypted (missing)', cloudflare_glue_calls('form_selectable_cell')[2][0]);
+		$this->assertSame('No', cloudflare_glue_calls('form_selectable_cell')[2][0]);
 	}
 }

@@ -21,6 +21,7 @@
 require_once __DIR__ . '/accounts.php';
 
 use Cacti\PluginCloudflare\Account\Account;
+use Cacti\PluginCloudflare\Account\AccountService;
 use Cacti\PluginCloudflare\Account\ValidationException;
 use Cacti\PluginCloudflare\Auth\AccessDenied;
 use Cacti\PluginCloudflare\Storage\DatabaseException;
@@ -77,8 +78,8 @@ function cloudflare_accounts_unreadable(string $context, DatabaseException $e) :
 /**
  * @throws DatabaseException
  */
-function cloudflare_accounts_find(int $id) : ?Account {
-	foreach (cloudflare_account_service()->list() as $account) {
+function cloudflare_accounts_find(AccountService $service, int $id) : ?Account {
+	foreach ($service->list() as $account) {
 		if ($account->id() === $id) {
 			return $account;
 		}
@@ -315,12 +316,24 @@ function cloudflare_accounts_edit() : ?string {
 	get_filter_request_var('id');
 	/* ==================================================== */
 
-	$id      = (int) get_request_var('id');
-	$account = null;
+	$id          = (int) get_request_var('id');
+	$account     = null;
+	$credentials = null;
 
 	if ($id > 0) {
 		try {
-			$account = cloudflare_accounts_find($id);
+			$service = cloudflare_account_service();
+			$account = cloudflare_accounts_find($service, $id);
+
+			if ($account !== null) {
+				$credentials = $service->credentialDetails($id);
+			}
+		} catch (AccessDenied $e) {
+			cloudflare_accounts_denied();
+
+			return '';
+		} catch (OutOfBoundsException $e) {
+			$account = null;
 		} catch (DatabaseException $e) {
 			cloudflare_accounts_unreadable('edit', $e);
 
@@ -349,7 +362,7 @@ function cloudflare_accounts_edit() : ?string {
 	draw_edit_form(
 		array(
 			'config' => array('no_form_tag' => true),
-			'fields' => cloudflare_account_fields($account, cloudflare_vault() !== null)
+			'fields' => cloudflare_account_fields($account, $credentials, cloudflare_vault() !== null)
 		)
 	);
 
@@ -522,7 +535,7 @@ function cloudflare_accounts_list() : void {
 	$display_text = array(
 		'name'            => array('display' => __('Name', 'cloudflare'), 'align' => 'left', 'sort' => 'ASC', 'tip' => __('The name of this account in Cacti.', 'cloudflare')),
 		'cf_account_id'   => array('display' => __('Account ID', 'cloudflare'), 'align' => 'left', 'sort' => 'ASC'),
-		'token_source'    => array('display' => __('Token', 'cloudflare'), 'align' => 'left', 'sort' => 'ASC', 'tip' => __('Where the API token is stored.', 'cloudflare')),
+		'has_token'       => array('display' => __('Token Stored', 'cloudflare'), 'align' => 'left', 'sort' => 'DESC', 'tip' => __('Whether an API token is configured. The edit page shows where it is kept.', 'cloudflare')),
 		'enabled'         => array('display' => __('Enabled', 'cloudflare'), 'align' => 'left', 'sort' => 'DESC'),
 		'status'          => array('display' => __('Status', 'cloudflare'), 'align' => 'left', 'sort' => 'ASC', 'tip' => __('The result of the last Verify.', 'cloudflare')),
 		'last_checked_at' => array('display' => __('Last Checked', 'cloudflare'), 'align' => 'left', 'sort' => 'DESC'),
@@ -541,17 +554,12 @@ function cloudflare_accounts_list() : void {
 
 	if (cacti_sizeof($accounts)) {
 		foreach ($accounts as $account) {
-			$id     = $account->id();
-			$source = $account->tokenSource() === 'file' ? __('File', 'cloudflare') : __('Encrypted', 'cloudflare');
-
-			if (!$account->hasToken()) {
-				$source = __('%s (missing)', $source, 'cloudflare');
-			}
+			$id = $account->id();
 
 			form_alternate_row('line' . $id, true);
 			form_selectable_cell('<a class="linkEditMain" href="' . html_escape('cloudflare_accounts.php?action=edit&id=' . $id) . '">' . html_escape($account->name()) . '</a>', $id);
 			form_selectable_cell(html_escape($account->cfAccountId()), $id);
-			form_selectable_cell(html_escape($source), $id);
+			form_selectable_cell($account->hasToken() ? __esc('Yes', 'cloudflare') : __esc('No', 'cloudflare'), $id);
 			form_selectable_cell($account->isEnabled() ? __esc('Yes', 'cloudflare') : __esc('No', 'cloudflare'), $id);
 			form_selectable_cell(html_escape($account->status()), $id, '', '', html_escape($account->statusMessage()));
 			form_selectable_cell(html_escape(cloudflare_accounts_time($account->lastCheckedAt())), $id);

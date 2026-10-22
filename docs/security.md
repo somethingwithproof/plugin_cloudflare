@@ -95,9 +95,10 @@ can decrypt them.
 
 The edit form never sends a stored token back to the browser. The token
 fields are always empty; leaving them blank on save keeps the current token.
-The page shows only whether a token is stored. `AccountService::credentialDetails()`
-returns the source, the file path and whether a token exists, never the token
-or ciphertext, and requires the configure right. A form that fails
+The list shows only whether a token is stored. The edit page reads the
+source and file path from `AccountService::credentialDetails()`, which
+returns those and whether a token exists, never the token or ciphertext, and
+requires the configure right. A form that fails
 validation is redrawn with the other fields kept, but the token is never
 written to the session.
 
@@ -144,8 +145,10 @@ again before every change, every Verify and every credential lookup, through
 `api_user_realm_auth('cloudflare_accounts.php')`, and throws `AccessDenied`
 otherwise. The install smoke checks that a user with only Cloudflare: View
 is denied the accounts page. The BDD features check that a user without the
-configure right can neither change an account nor read its credential
-details.
+configure right can neither change an account nor call `credentialDetails()`.
+`list()` stays unguarded because the `Account` read model it returns holds no
+token, ciphertext, token source or file path; an integration test checks
+that a dump of the list contains none of them.
 
 Save and the bulk actions (Delete, Verify, Enable, Disable) accept only POST;
 any other method is redirected back to the list. POST bodies are checked by

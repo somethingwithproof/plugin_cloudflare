@@ -341,6 +341,16 @@ final class AccountServiceTest extends TestCase {
 		$this->service()->credentialDetails($id + 1);
 	}
 
+	public function testCredentialDetailsReturnTheTokenFilePath(): void {
+		$path = $this->secretFile('token', $this->token);
+		$id   = $this->service()->save(null, $this->input(array('token_source' => 'file', 'token' => '', 'token_file' => $path)));
+
+		$details = $this->service()->credentialDetails($id);
+
+		$this->assertSame(array('token_source' => 'file', 'token_file' => $path, 'has_token' => true), $details);
+		$this->assertNotLeaked($this->token, var_export($details, true), 'file credential details');
+	}
+
 	public function testDeleteRemovesAccountAndJobs(): void {
 		$id = $this->service()->save(null, $this->input());
 		$this->db->execute('INSERT INTO plugin_cloudflare_jobs (job_type, account_id) VALUES (?, ?)', array('discovery', $id));
@@ -525,12 +535,13 @@ final class AccountServiceTest extends TestCase {
 	}
 
 	public function testListNeverExposesSecrets(): void {
+		$path = $this->secretFile('token', $this->token);
 		$this->service()->save(null, $this->input());
 		$this->service()->save(null, $this->input(array(
 			'cf_account_id' => self::OTHER,
 			'name'          => 'Alpha',
 			'token_source'  => 'file',
-			'token_file'    => $this->secretFile('token', $this->token),
+			'token_file'    => $path,
 		)));
 
 		$this->allowed = false;
@@ -543,6 +554,12 @@ final class AccountServiceTest extends TestCase {
 		$this->assertTrue($accounts[1]->hasToken());
 		$this->assertStringNotContainsString('v1:', $dump);
 		$this->assertNotLeaked($this->token, $dump, 'account list');
+
+		/* list() needs no right, so where the token lives stays out of it. */
+		$this->assertStringNotContainsString($path, $dump);
+		foreach (array('token_file', 'tokenFile', 'token_source', 'tokenSource') as $field) {
+			$this->assertStringNotContainsStringIgnoringCase($field, $dump);
+		}
 	}
 
 	public function testStatusTransitionsAreLoggedWithoutToken(): void {

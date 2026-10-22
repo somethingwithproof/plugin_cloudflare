@@ -35,9 +35,11 @@ function cloudflare_plugin_enabled() : bool {
  * Edit form for draw_edit_form(). The token box is always empty: a stored
  * token is never sent back to the browser, only whether one exists.
  *
+ * @param array{token_source: string, token_file: string|null, has_token: bool}|null $credentials
+ *        from AccountService::credentialDetails(), null for a new account
  * @return array<string, array<string, mixed>>
  */
-function cloudflare_account_fields(?Account $account, bool $vault_available) : array {
+function cloudflare_account_fields(?Account $account, ?array $credentials, bool $vault_available) : array {
 	$sources = array();
 
 	if ($vault_available) {
@@ -46,7 +48,7 @@ function cloudflare_account_fields(?Account $account, bool $vault_available) : a
 
 	$sources['file'] = __('Token file on this server', 'cloudflare');
 
-	$source = $account === null ? 'vault' : $account->tokenSource();
+	$source = $credentials === null ? 'vault' : $credentials['token_source'];
 	if (!isset($sources[$source])) {
 		$source = 'file';
 	}
@@ -91,7 +93,7 @@ function cloudflare_account_fields(?Account $account, bool $vault_available) : a
 		$fields['token'] = array(
 			'method'        => 'textbox_password',
 			'friendly_name' => __('API Token', 'cloudflare'),
-			'description'   => $account !== null && $account->hasToken() && $account->tokenSource() === 'vault'
+			'description'   => $credentials !== null && $credentials['has_token'] && $credentials['token_source'] === 'vault'
 				? __('Leave blank to keep the current token', 'cloudflare')
 				: __('A scoped API token with Account Cloudflare Tunnel Read permission.', 'cloudflare'),
 			'value'         => '',
@@ -104,7 +106,7 @@ function cloudflare_account_fields(?Account $account, bool $vault_available) : a
 		'method'        => 'textbox',
 		'friendly_name' => __('Token File', 'cloudflare'),
 		'description'   => __('Absolute path to a file that contains only the token. It must be readable by the web server and poller users and must not be world-readable.', 'cloudflare'),
-		'value'         => $account === null ? '' : (string) $account->tokenFile(),
+		'value'         => $credentials === null ? '' : (string) $credentials['token_file'],
 		'max_length'    => '255',
 		'size'          => '60'
 	);
@@ -221,7 +223,7 @@ function cloudflare_account_sort(array $accounts, string $column, string $direct
 	$keys = array(
 		'name'            => function (Account $a) { return strtolower($a->name()); },
 		'cf_account_id'   => function (Account $a) { return $a->cfAccountId(); },
-		'token_source'    => function (Account $a) { return $a->tokenSource(); },
+		'has_token'       => function (Account $a) { return $a->hasToken() ? 1 : 0; },
 		'enabled'         => function (Account $a) { return $a->isEnabled() ? 1 : 0; },
 		'status'          => function (Account $a) { return $a->status(); },
 		'last_checked_at' => function (Account $a) { return (int) $a->lastCheckedAt(); },

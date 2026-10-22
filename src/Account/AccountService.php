@@ -326,17 +326,19 @@ final class AccountService {
 	public function credentialDetails(int $id): array {
 		$this->requireConfigure();
 
-		$account = $this->requireAccount($id);
+		$account  = $this->requireAccount($id);
+		$material = $this->repo->tokenMaterial($id);
 
 		return array(
-			'token_source' => $account->tokenSource(),
-			'token_file'   => $account->tokenFile(),
+			'token_source' => $material['source'],
+			'token_file'   => $material['file'],
 			'has_token'    => $account->hasToken(),
 		);
 	}
 
 	/**
-	 * Needs no configure right: an Account carries no credential.
+	 * Needs no configure right: an Account carries no credential and no
+	 * token location.
 	 *
 	 * @return array<int, Account>
 	 */

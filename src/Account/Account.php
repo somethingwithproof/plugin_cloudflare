@@ -21,8 +21,10 @@
 namespace Cacti\PluginCloudflare\Account;
 
 /**
- * Read model of one account row. The ciphertext is never loaded into it, so
- * dumping, exporting or rendering an Account cannot expose a credential.
+ * Read model of one account row. Neither the ciphertext nor where the token
+ * lives is kept in it, so dumping, exporting or rendering an Account cannot
+ * expose a credential; AccountService::credentialDetails() holds the rest
+ * behind the configure right.
  */
 final class Account {
 	/** @var int */
@@ -33,12 +35,6 @@ final class Account {
 
 	/** @var string */
 	private $name;
-
-	/** @var string */
-	private $tokenSource;
-
-	/** @var string|null */
-	private $tokenFile;
 
 	/** @var bool */
 	private $hasToken;
@@ -85,8 +81,6 @@ final class Account {
 		$account->id                = (int) $row['id'];
 		$account->cfAccountId       = (string) $row['cf_account_id'];
 		$account->name              = (string) $row['name'];
-		$account->tokenSource       = (string) $row['token_source'];
-		$account->tokenFile         = $row['token_file'] === null ? null : (string) $row['token_file'];
 		$account->enabled           = (int) $row['enabled'] === 1;
 		$account->status            = (string) $row['status'];
 		$account->statusMessage     = (string) $row['status_message'];
@@ -99,8 +93,8 @@ final class Account {
 		$account->createdAt         = (int) $row['created_at'];
 		$account->updatedAt         = (int) $row['updated_at'];
 
-		if ($account->tokenSource === 'file') {
-			$account->hasToken = $account->tokenFile !== null && $account->tokenFile !== '';
+		if ((string) $row['token_source'] === 'file') {
+			$account->hasToken = $row['token_file'] !== null && (string) $row['token_file'] !== '';
 		} else {
 			$account->hasToken = (int) $row['has_ciphertext'] === 1;
 		}
@@ -121,14 +115,6 @@ final class Account {
 
 	public function name(): string {
 		return $this->name;
-	}
-
-	public function tokenSource(): string {
-		return $this->tokenSource;
-	}
-
-	public function tokenFile(): ?string {
-		return $this->tokenFile;
 	}
 
 	public function hasToken(): bool {

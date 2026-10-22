@@ -132,11 +132,14 @@ final class ObservationReader {
 			$healthReason = ErrorClass::MALFORMED;
 		}
 
+		// The connector rows and their count are written together, so a NULL count means no rows were read yet.
+		$connectors = self::intOrNull($row['connector_count']);
+
 		$values = array(
 			'health'      => array($health, $seenAt, $healthReason),
-			'connectors'  => array(self::intOrNull($row['connector_count']), $refreshed, $connReason),
+			'connectors'  => array($connectors, $refreshed, $connReason),
 			'connections' => array(self::intOrNull($row['connection_count']), $refreshed, $connReason),
-			'versions'    => array((int) $row['versions'], $refreshed, $connReason),
+			'versions'    => array($connectors === null ? null : (int) $row['versions'], $refreshed, $connReason),
 		);
 
 		/* Collection metrics describe an outage, so they ignore job status,

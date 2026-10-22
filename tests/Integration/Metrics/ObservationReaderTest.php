@@ -372,6 +372,16 @@ final class ObservationReaderTest extends IntegrationTestCase {
 		$this->assertSame('0', $obs['collectAge']->rrdValue());
 	}
 
+	/* No connector rows means no versions read yet, not zero versions. */
+	public function testVersionsAreUnknownUntilConnectorsAreStored(): void {
+		$this->insertTunnel(1, array('connector_count' => null, 'connection_count' => 4));
+
+		$obs = $this->reader->observe($this->accountId, self::uuid(1));
+
+		$this->assertUnknown($obs, array('connectors', 'versions'), 'never_collected');
+		$this->assertSame('4', $obs['connections']->rrdValue());
+	}
+
 	public function testUnrecognisedHealthIsMalformed(): void {
 		$this->insertTunnel(1, array('cf_status' => 'bogus'));
 

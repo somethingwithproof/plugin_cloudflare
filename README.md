@@ -280,8 +280,9 @@ on the same line).
 
 GPL-2.0-or-later. See [LICENSE](LICENSE).
 
-This is an independent project. It is not affiliated with or endorsed by
-Cloudflare, Inc. or the Cacti Group. Cloudflare is a trademark of
-Cloudflare, Inc. and is used here only to name the service the plugin reads
-from. See [docs/images/README-logo.md](docs/images/README-logo.md) for the
-logo.
+## Trademarks
+
+Cloudflare is a registered trademark of Cloudflare, Inc. This project is an independent open-source tool and is not affiliated with, sponsored, or endorsed by Cloudflare, Inc.
+
+The project is also not affiliated with the Cacti Group. See
+[docs/images/README-logo.md](docs/images/README-logo.md) for the logo.

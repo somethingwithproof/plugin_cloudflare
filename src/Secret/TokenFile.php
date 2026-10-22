@@ -56,7 +56,7 @@ final class TokenFile {
 				throw new SecretException(SecretException::FILE_UNAVAILABLE, $path);
 			}
 
-			if (($stat['mode'] & 0004) !== 0) {
+			if (($stat['mode'] & 0006) !== 0) {
 				throw new SecretException(SecretException::FILE_INSECURE, $path);
 			}
 
@@ -70,7 +70,9 @@ final class TokenFile {
 		}
 
 		$token = trim($raw);
-		$raw = str_repeat("\0", strlen($raw));
+		if (function_exists('sodium_memzero')) {
+			sodium_memzero($raw);
+		}
 
 		TokenPolicy::validate($token);
 

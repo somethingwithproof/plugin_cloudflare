@@ -28,10 +28,14 @@ use Cacti\PluginCloudflare\Secret\SecretException;
 use Cacti\PluginCloudflare\Secret\TokenVault;
 use Eris\Generators;
 use Eris\TestTrait;
+use LogicException;
+use Cacti\PluginCloudflare\Tests\Support\SecretAssertions;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 final class TokenVaultTest extends TestCase {
 	use TestTrait;
+	use SecretAssertions;
 
 	private const ACCOUNT = '0123456789abcdef0123456789abcdef';
 
@@ -64,6 +68,16 @@ final class TokenVaultTest extends TestCase {
 		return TokenVault::fromKeyFile($this->keyFile($key ?? random_bytes(32), 0600, bin2hex(random_bytes(4))));
 	}
 
+	/** Printable bytes so exporters emit the key verbatim rather than escaped. */
+	private function printableKey(): string {
+		$key = '';
+		for ($i = 0; $i < 32; $i++) {
+			$key .= chr(random_int(ord('g'), ord('z')));
+		}
+
+		return $key;
+	}
+
 	private function assertReason(int $code, callable $fn): SecretException {
 		try {
 			$fn();
@@ -92,8 +106,8 @@ final class TokenVaultTest extends TestCase {
 				$blob = $vault->encrypt($token, $aad);
 
 				$this->assertStringStartsWith('v1:', $blob);
-				$this->assertStringNotContainsString($token, $blob);
-				$this->assertSame($token, $vault->decrypt($blob, $aad));
+				$this->assertNotLeaked($token, $blob, 'ciphertext');
+				$this->assertSecretEquals($token, $vault->decrypt($blob, $aad));
 			});
 	}
 
@@ -115,7 +129,12 @@ final class TokenVaultTest extends TestCase {
 		$aad = TokenVault::aadFor(self::ACCOUNT);
 		$token = str_repeat('k', 40);
 
-		$this->assertNotSame($vault->encrypt($token, $aad), $vault->encrypt($token, $aad));
+		$first = $vault->encrypt($token, $aad);
+		$second = $vault->encrypt($token, $aad);
+
+		$this->assertNotSame($first, $second);
+		$this->assertNotLeaked($token, $first, 'ciphertext');
+		$this->assertNotLeaked($token, $second, 'ciphertext');
 	}
 
 	public function testDecryptWithWrongAadFails(): void {
@@ -135,8 +154,8 @@ final class TokenVaultTest extends TestCase {
 		$e = $this->assertReason(SecretException::DECRYPT_FAILED, function () use ($other, $blob): void {
 			$other->decrypt($blob, TokenVault::aadFor(self::ACCOUNT));
 		});
-		$this->assertStringNotContainsString($token, $e->getMessage());
-		$this->assertStringNotContainsString(substr($blob, 3), $e->getMessage());
+		$this->assertNotLeaked($token, $e->getMessage(), 'message');
+		$this->assertNotLeaked(substr($blob, 3), $e->getMessage(), 'message');
 	}
 
 	public function testTamperedTagFails(): void {
@@ -189,8 +208,102 @@ final class TokenVaultTest extends TestCase {
 		$raw = TokenVault::fromKeyFile($this->keyFile($key, 0600, 'raw'));
 		$upper = TokenVault::fromKeyFile($this->keyFile(strtoupper(bin2hex($key)), 0600, 'upper'));
 
-		$this->assertSame($token, $raw->decrypt($hex->encrypt($token, $aad), $aad));
-		$this->assertSame($token, $hex->decrypt($upper->encrypt($token, $aad), $aad));
+		$fromHex = $hex->encrypt($token, $aad);
+		$fromUpper = $upper->encrypt($token, $aad);
+
+		$this->assertNotLeaked($token, $fromHex, 'ciphertext');
+		$this->assertNotLeaked($token, $fromUpper, 'ciphertext');
+		$this->assertSecretEquals($token, $raw->decrypt($fromHex, $aad));
+		$this->assertSecretEquals($token, $hex->decrypt($fromUpper, $aad));
+	}
+
+	public function testThirtyTwoCharHexKeyRejected(): void {
+		foreach (array(bin2hex(random_bytes(16)), strtoupper(bin2hex(random_bytes(16)))) as $i => $contents) {
+			$path = $this->keyFile($contents, 0600, 'short' . $i);
+
+			$this->assertReason(SecretException::KEY_UNAVAILABLE, function () use ($path): void {
+				TokenVault::fromKeyFile($path);
+			});
+		}
+	}
+
+	public function testKeyFileWorldWritableRejected(): void {
+		$path = $this->keyFile(random_bytes(32), 0602);
+
+		$this->assertReason(SecretException::KEY_UNAVAILABLE, function () use ($path): void {
+			TokenVault::fromKeyFile($path);
+		});
+	}
+
+	public function testRelativeKeyPathRejected(): void {
+		$this->keyFile(random_bytes(32), 0600, 'rel');
+		$cwd = (string) getcwd();
+		chdir($this->dir);
+
+		try {
+			$this->assertReason(SecretException::KEY_UNAVAILABLE, function (): void {
+				TokenVault::fromKeyFile('rel');
+			});
+		} finally {
+			chdir($cwd);
+		}
+	}
+
+	public function testSerializeRefused(): void {
+		$vault = $this->vault();
+
+		$this->expectException(LogicException::class);
+		serialize($vault);
+	}
+
+	public function testUnserializeRefused(): void {
+		$this->expectException(LogicException::class);
+		unserialize('O:' . strlen(TokenVault::class) . ':"' . TokenVault::class . '":0:{}');
+	}
+
+	public function testCloneRefused(): void {
+		$vault = $this->vault();
+
+		$this->expectException(\Error::class);
+		$copy = clone $vault;
+		unset($copy);
+	}
+
+	public function testKeyNotExported(): void {
+		$key = $this->printableKey();
+		$vault = TokenVault::fromKeyFile($this->keyFile($key));
+
+		$this->assertNotLeaked($key, var_export($vault, true), 'var_export');
+		$this->assertNotLeaked($key, var_export((array) $vault, true), 'array cast');
+		$this->assertNotLeaked($key, json_encode(get_object_vars($vault)) ?: '', 'object vars');
+	}
+
+	public function testInstanceWithoutKeyRefusesToWork(): void {
+		$vault = (new ReflectionClass(TokenVault::class))->newInstanceWithoutConstructor();
+		$aad = TokenVault::aadFor(self::ACCOUNT);
+		$blob = $this->vault()->encrypt(str_repeat('k', 40), $aad);
+
+		$this->assertReason(SecretException::ENCRYPT_FAILED, function () use ($vault, $aad): void {
+			$vault->encrypt(str_repeat('k', 40), $aad);
+		});
+		$this->assertReason(SecretException::DECRYPT_FAILED, function () use ($vault, $blob, $aad): void {
+			$vault->decrypt($blob, $aad);
+		});
+	}
+
+	public function testVaultsKeepTheirOwnKeys(): void {
+		$token = str_repeat('k', 40);
+		$aad = TokenVault::aadFor(self::ACCOUNT);
+		$a = $this->vault();
+		$b = $this->vault();
+		$blob = $a->encrypt($token, $aad);
+		unset($b);
+		$c = $this->vault();
+
+		$this->assertSecretEquals($token, $a->decrypt($blob, $aad));
+		$this->assertReason(SecretException::DECRYPT_FAILED, function () use ($c, $blob, $aad): void {
+			$c->decrypt($blob, $aad);
+		});
 	}
 
 	public function testKeyFileWorldReadableRejected(): void {
@@ -263,13 +376,13 @@ final class TokenVaultTest extends TestCase {
 	}
 
 	public function testKeyNeverDumped(): void {
-		$key = random_bytes(32);
+		$key = $this->printableKey();
 		$vault = TokenVault::fromKeyFile($this->keyFile($key));
 
-		$this->assertStringNotContainsString(bin2hex($key), bin2hex(print_r($vault, true)));
+		$this->assertNotLeaked($key, print_r($vault, true), 'print_r');
 
 		ob_start();
 		var_dump($vault);
-		$this->assertStringNotContainsString(bin2hex($key), bin2hex((string) ob_get_clean()));
+		$this->assertNotLeaked($key, (string) ob_get_clean(), 'var_dump');
 	}
 }

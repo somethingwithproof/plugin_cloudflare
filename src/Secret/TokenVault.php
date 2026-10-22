@@ -24,6 +24,8 @@
 
 namespace Cacti\PluginCloudflare\Secret;
 
+use LogicException;
+
 /**
  * Stored format: 'v1:' . base64(nonce[12] . tag[16] . ciphertext). The AAD
  * binds a ciphertext to its account row, so a blob copied to another row
@@ -36,15 +38,56 @@ final class TokenVault {
 	private const TAG_BYTES = 16;
 	private const KEY_BYTES = 32;
 
-	/** @var string */
-	private $key;
+	/**
+	 * Keys live here, indexed by spl_object_id(), rather than in an instance
+	 * property: var_export(), (array) casts and get_object_vars() expose
+	 * private properties and no magic method can stop them.
+	 *
+	 * @var array<int, string>
+	 */
+	private static $keys = array();
 
 	private function __construct(string $key) {
-		$this->key = $key;
+		self::$keys[spl_object_id($this)] = $key;
 	}
 
 	public function __destruct() {
-		$this->key = str_repeat("\0", strlen($this->key));
+		$id = spl_object_id($this);
+
+		if (isset(self::$keys[$id])) {
+			if (function_exists('sodium_memzero')) {
+				sodium_memzero(self::$keys[$id]);
+			}
+			unset(self::$keys[$id]);
+		}
+	}
+
+	private function __clone() {
+	}
+
+	/**
+	 * @return array<string, mixed>
+	 */
+	public function __sleep(): array {
+		throw new LogicException('TokenVault cannot be serialized');
+	}
+
+	public function __wakeup(): void {
+		throw new LogicException('TokenVault cannot be unserialized');
+	}
+
+	/**
+	 * @return array<string, mixed>
+	 */
+	public function __serialize(): array {
+		throw new LogicException('TokenVault cannot be serialized');
+	}
+
+	/**
+	 * @param array<string, mixed> $data
+	 */
+	public function __unserialize(array $data): void {
+		throw new LogicException('TokenVault cannot be unserialized');
 	}
 
 	/**
@@ -56,10 +99,11 @@ final class TokenVault {
 
 	/**
 	 * Accepts exactly 32 raw bytes, or 64 hex characters with at most one
-	 * trailing newline. Anything else is refused rather than guessed at.
+	 * trailing newline. Anything else is refused rather than guessed at,
+	 * including 32 hex characters, which is a 16-byte key written as hex.
 	 */
 	public static function fromKeyFile(string $path): TokenVault {
-		if (strpos($path, "\0") !== false || $path === '' || is_link($path) || !is_file($path)) {
+		if (strpos($path, "\0") !== false || $path === '' || $path[0] !== '/' || is_link($path) || !is_file($path)) {
 			throw new SecretException(SecretException::KEY_UNAVAILABLE, $path);
 		}
 
@@ -70,7 +114,7 @@ final class TokenVault {
 
 		try {
 			$stat = fstat($fh);
-			if ($stat === false || ($stat['mode'] & 0170000) !== 0100000 || ($stat['mode'] & 0004) !== 0 || $stat['size'] > 65) {
+			if ($stat === false || ($stat['mode'] & 0170000) !== 0100000 || ($stat['mode'] & 0006) !== 0 || $stat['size'] > 65) {
 				throw new SecretException(SecretException::KEY_UNAVAILABLE, $path);
 			}
 
@@ -84,18 +128,34 @@ final class TokenVault {
 		}
 
 		$key = false;
-		if (strlen($raw) === self::KEY_BYTES) {
+		if (strlen($raw) === self::KEY_BYTES && preg_match('/^[0-9A-Fa-f]{32}\z/', $raw) !== 1) {
 			$key = $raw;
 		} elseif (preg_match('/^[0-9A-Fa-f]{64}\n?\z/', $raw) === 1) {
 			$key = hex2bin(substr($raw, 0, 64));
 		}
-		$raw = str_repeat("\0", strlen($raw));
+		if (function_exists('sodium_memzero')) {
+			sodium_memzero($raw);
+		}
 
 		if (!is_string($key) || strlen($key) !== self::KEY_BYTES) {
 			throw new SecretException(SecretException::KEY_UNAVAILABLE, $path);
 		}
 
 		return new TokenVault($key);
+	}
+
+	/**
+	 * An instance built without the constructor has no key. Failing here
+	 * matters because openssl pads a short or empty key with zero bytes.
+	 */
+	private function key(int $reason): string {
+		$id = spl_object_id($this);
+
+		if (!isset(self::$keys[$id])) {
+			throw new SecretException($reason);
+		}
+
+		return self::$keys[$id];
 	}
 
 	public static function aadFor(string $cfAccountId): string {
@@ -109,10 +169,10 @@ final class TokenVault {
 	): string {
 		$nonce = random_bytes(self::NONCE_BYTES);
 		$tag = '';
-		$ciphertext = openssl_encrypt($token, self::CIPHER, $this->key, OPENSSL_RAW_DATA, $nonce, $tag, $aad, self::TAG_BYTES);
+		$ciphertext = openssl_encrypt($token, self::CIPHER, $this->key(SecretException::ENCRYPT_FAILED), OPENSSL_RAW_DATA, $nonce, $tag, $aad, self::TAG_BYTES);
 
 		if ($ciphertext === false || strlen($tag) !== self::TAG_BYTES) {
-			throw new SecretException(SecretException::KEY_UNAVAILABLE);
+			throw new SecretException(SecretException::ENCRYPT_FAILED);
 		}
 
 		return self::PREFIX . base64_encode($nonce . $tag . $ciphertext);
@@ -136,7 +196,7 @@ final class TokenVault {
 		$tag = substr($raw, self::NONCE_BYTES, self::TAG_BYTES);
 		$ciphertext = substr($raw, self::NONCE_BYTES + self::TAG_BYTES);
 
-		$token = openssl_decrypt($ciphertext, self::CIPHER, $this->key, OPENSSL_RAW_DATA, $nonce, $tag, $aad);
+		$token = openssl_decrypt($ciphertext, self::CIPHER, $this->key(SecretException::DECRYPT_FAILED), OPENSSL_RAW_DATA, $nonce, $tag, $aad);
 		if ($token === false) {
 			throw new SecretException(SecretException::DECRYPT_FAILED);
 		}

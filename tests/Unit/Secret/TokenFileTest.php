@@ -26,9 +26,11 @@ namespace Cacti\PluginCloudflare\Tests\Unit\Secret;
 
 use Cacti\PluginCloudflare\Secret\SecretException;
 use Cacti\PluginCloudflare\Secret\TokenFile;
+use Cacti\PluginCloudflare\Tests\Support\SecretAssertions;
 use PHPUnit\Framework\TestCase;
 
 final class TokenFileTest extends TestCase {
+	use SecretAssertions;
 	/** @var string */
 	private $dir;
 
@@ -70,7 +72,7 @@ final class TokenFileTest extends TestCase {
 			TokenFile::read($path);
 		} catch (SecretException $e) {
 			$this->assertSame($code, $e->getCode(), $e->getReason());
-			$this->assertStringNotContainsString($this->token, $e->getMessage());
+			$this->assertNotLeaked($this->token, $e->getMessage(), 'message');
 
 			return;
 		}
@@ -81,13 +83,13 @@ final class TokenFileTest extends TestCase {
 	public function testReadsAndTrimsToken(): void {
 		$path = $this->tokenFile('  ' . $this->token . "\n");
 
-		$this->assertSame($this->token, TokenFile::read($path));
+		$this->assertSecretEquals($this->token, TokenFile::read($path));
 	}
 
 	public function testGroupReadableAccepted(): void {
 		$path = $this->tokenFile($this->token, 0640);
 
-		$this->assertSame($this->token, TokenFile::read($path));
+		$this->assertSecretEquals($this->token, TokenFile::read($path));
 	}
 
 	public function testRelativeTokenPathRejected(): void {
@@ -109,13 +111,18 @@ final class TokenFileTest extends TestCase {
 			TokenFile::read($this->token);
 			$this->fail('accepted');
 		} catch (SecretException $e) {
-			$this->assertStringNotContainsString($this->token, $e->getMessage());
+			$this->assertNotLeaked($this->token, $e->getMessage(), 'message');
 		}
 	}
 
 	public function testTokenFileWorldReadableRejected(): void {
 		$this->assertRejected(SecretException::FILE_INSECURE, $this->tokenFile($this->token, 0644));
 		$this->assertRejected(SecretException::FILE_INSECURE, $this->tokenFile($this->token, 0604, 'other'));
+	}
+
+	public function testTokenFileWorldWritableRejected(): void {
+		$this->assertRejected(SecretException::FILE_INSECURE, $this->tokenFile($this->token, 0602));
+		$this->assertRejected(SecretException::FILE_INSECURE, $this->tokenFile($this->token, 0666, 'both'));
 	}
 
 	public function testTokenFileTooLargeRejected(): void {
@@ -125,7 +132,7 @@ final class TokenFileTest extends TestCase {
 	public function testTokenFileAtSizeLimitAccepted(): void {
 		$path = $this->tokenFile($this->token . str_repeat("\n", 4096 - strlen($this->token)));
 
-		$this->assertSame($this->token, TokenFile::read($path));
+		$this->assertSecretEquals($this->token, TokenFile::read($path));
 	}
 
 	public function testMissingFileRejected(): void {
@@ -165,7 +172,7 @@ final class TokenFileTest extends TestCase {
 			$this->fail('accepted');
 		} catch (SecretException $e) {
 			$this->assertSame(SecretException::GLOBAL_KEY, $e->getCode());
-			$this->assertStringNotContainsString($key, $e->getMessage());
+			$this->assertNotLeaked($key, $e->getMessage(), 'message');
 		}
 	}
 
@@ -177,7 +184,7 @@ final class TokenFileTest extends TestCase {
 			$this->fail('accepted');
 		} catch (SecretException $e) {
 			$this->assertSame(SecretException::INVALID, $e->getCode());
-			$this->assertStringNotContainsString('s3cr3t', $e->getMessage());
+			$this->assertNotLeaked('s3cr3t', $e->getMessage(), 'message');
 		}
 	}
 

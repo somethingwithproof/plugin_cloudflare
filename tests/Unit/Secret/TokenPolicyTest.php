@@ -26,9 +26,11 @@ namespace Cacti\PluginCloudflare\Tests\Unit\Secret;
 
 use Cacti\PluginCloudflare\Secret\SecretException;
 use Cacti\PluginCloudflare\Secret\TokenPolicy;
+use Cacti\PluginCloudflare\Tests\Support\SecretAssertions;
 use PHPUnit\Framework\TestCase;
 
 final class TokenPolicyTest extends TestCase {
+	use SecretAssertions;
 	public function testAcceptsScopedTokens(): void {
 		TokenPolicy::validate(str_repeat('aB3_-', 8));
 		TokenPolicy::validate(str_repeat('x', 256));
@@ -41,6 +43,13 @@ final class TokenPolicyTest extends TestCase {
 		$this->addToAssertionCount(2);
 	}
 
+	public function testEncryptFailedReason(): void {
+		$e = new SecretException(SecretException::ENCRYPT_FAILED);
+
+		$this->assertSame(7, $e->getCode());
+		$this->assertSame('encrypt_failed', $e->getReason());
+	}
+
 	public function testRejectsGlobalApiKey(): void {
 		$key = str_repeat('0123456789abcdef', 2) . '01234';
 		$this->assertSame(37, strlen($key));
@@ -51,7 +60,7 @@ final class TokenPolicyTest extends TestCase {
 		} catch (SecretException $e) {
 			$this->assertSame(SecretException::GLOBAL_KEY, $e->getCode());
 			$this->assertSame('global_key', $e->getReason());
-			$this->assertStringNotContainsString($key, $e->getMessage());
+			$this->assertNotLeaked($key, $e->getMessage(), 'message');
 		}
 	}
 
@@ -97,9 +106,9 @@ final class TokenPolicyTest extends TestCase {
 				TokenPolicy::validate($input);
 				$this->fail('accepted');
 			} catch (SecretException $e) {
-				$this->assertStringNotContainsString($input, $e->getMessage());
-				$this->assertStringNotContainsString('s3cr3t', $e->getMessage());
-				$this->assertStringNotContainsString('abcdef0123', $e->getMessage());
+				$this->assertNotLeaked($input, $e->getMessage(), 'message');
+				$this->assertNotLeaked('s3cr3t', $e->getMessage(), 'message');
+				$this->assertNotLeaked('abcdef0123', $e->getMessage(), 'message');
 			}
 		}
 	}
@@ -119,7 +128,7 @@ final class TokenPolicyTest extends TestCase {
 			TokenPolicy::validate('s3cr3t');
 			$this->fail('accepted');
 		} catch (SecretException $e) {
-			$this->assertStringNotContainsString('s3cr3t', $e->getTraceAsString());
+			$this->assertNotLeaked('s3cr3t', $e->getTraceAsString(), 'trace');
 		} finally {
 			ini_set('zend.exception_ignore_args', (string) $previous);
 		}

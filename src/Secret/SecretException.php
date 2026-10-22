@@ -39,6 +39,7 @@ final class SecretException extends RuntimeException {
 	public const DECRYPT_FAILED   = 4;
 	public const FILE_UNAVAILABLE = 5;
 	public const FILE_INSECURE    = 6;
+	public const ENCRYPT_FAILED   = 7;
 
 	private const REASONS = array(
 		self::GLOBAL_KEY       => 'global_key',
@@ -47,6 +48,7 @@ final class SecretException extends RuntimeException {
 		self::DECRYPT_FAILED   => 'decrypt_failed',
 		self::FILE_UNAVAILABLE => 'file_unavailable',
 		self::FILE_INSECURE    => 'file_insecure',
+		self::ENCRYPT_FAILED   => 'encrypt_failed',
 	);
 
 	private const MESSAGES = array(
@@ -55,7 +57,8 @@ final class SecretException extends RuntimeException {
 		self::KEY_UNAVAILABLE  => 'Token vault key file is missing, unreadable, insecure or malformed',
 		self::DECRYPT_FAILED   => 'Stored API token could not be decrypted',
 		self::FILE_UNAVAILABLE => 'Token file is missing, unreadable, not a regular file or too large',
-		self::FILE_INSECURE    => 'Token file path is not absolute, is a symlink, or the file is world-readable',
+		self::FILE_INSECURE    => 'Token file path is not absolute, is a symlink, or the file is world-readable or world-writable',
+		self::ENCRYPT_FAILED   => 'API token could not be encrypted',
 	);
 
 	public function __construct(int $code, string $path = '') {

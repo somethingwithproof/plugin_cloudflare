@@ -25,18 +25,20 @@
 namespace Cacti\PluginCloudflare\Tests\Unit\Support;
 
 use Cacti\PluginCloudflare\Support\Redactor;
+use Cacti\PluginCloudflare\Tests\Support\SecretAssertions;
 use PHPUnit\Framework\TestCase;
 
 final class RedactorTest extends TestCase {
+	use SecretAssertions;
 	public function testRedactsBearerHeaderAndSecrets(): void {
 		$token = 'cfut_' . str_repeat('Ab9', 14);
 		$text = "GET /user/tokens/verify\nauthorization:   bearer abc.DEF-ghi\nAuthorization: Bearer " . $token . "\nbody " . $token . ' end';
 
 		$out = Redactor::redact($text, array($token));
 
-		$this->assertStringNotContainsString($token, $out);
-		$this->assertStringNotContainsString('abc.DEF-ghi', $out);
-		$this->assertSame("GET /user/tokens/verify\nauthorization:   bearer [REDACTED]\nAuthorization: Bearer [REDACTED]\nbody [REDACTED] end", $out);
+		$this->assertNotLeaked($token, $out, 'output');
+		$this->assertNotLeaked('abc.DEF-ghi', $out, 'output');
+		$this->assertTrue("GET /user/tokens/verify\nauthorization:   bearer [REDACTED]\nAuthorization: Bearer [REDACTED]\nbody [REDACTED] end" === $out, 'unexpected redaction output');
 	}
 
 	public function testShortSecretsRedacted(): void {

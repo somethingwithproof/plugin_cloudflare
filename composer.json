@@ -16,7 +16,8 @@
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"Cacti\\PluginCloudflare\\Tests\\": "tests/"
+			"Cacti\\PluginCloudflare\\Tests\\": "tests/",
+			"Cacti\\PluginCloudflare\\Features\\": "features/bootstrap/"
 		}
 	},
 	"require-dev": {

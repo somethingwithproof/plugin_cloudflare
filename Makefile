@@ -10,7 +10,7 @@ test-integration:
 	$(PHPUNIT) --testsuite integration
 
 bdd:
-	@if [ -f behat.yml ] || [ -f behat.yml.dist ]; then vendor/bin/behat --no-interaction; else echo 'no behat suite configured yet'; fi
+	vendor/bin/behat --strict --no-interaction
 
 stan:
 	vendor/bin/phpstan analyse --no-progress --memory-limit=1G

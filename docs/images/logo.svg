@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-labelledby="title desc">
+  <title id="title">Cacti Cloudflare plugin logo</title>
+  <desc id="desc">A green saguaro cactus standing inside a tunnel arch at dusk, with a dotted path of traffic running through the arch.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1b2a41"/>
+      <stop offset="1" stop-color="#324a5f"/>
+    </linearGradient>
+    <linearGradient id="arch" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e9c46a"/>
+      <stop offset="1" stop-color="#d4a373"/>
+    </linearGradient>
+    <linearGradient id="cactus" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#4caf50"/>
+      <stop offset="1" stop-color="#2e7d32"/>
+    </linearGradient>
+    <clipPath id="badge">
+      <circle cx="128" cy="128" r="120"/>
+    </clipPath>
+  </defs>
+
+  <circle cx="128" cy="128" r="120" fill="url(#sky)"/>
+
+  <g clip-path="url(#badge)">
+    <!-- ground -->
+    <rect x="0" y="196" width="256" height="60" fill="#c9a66b"/>
+    <rect x="0" y="196" width="256" height="6" fill="#b08a52"/>
+
+    <!-- tunnel arch: an open ring standing on the ground -->
+    <path d="M44 196 V130 A84 84 0 0 1 212 130 V196 H188 V130 A60 60 0 0 0 68 130 V196 Z" fill="url(#arch)"/>
+
+    <!-- traffic path running through the tunnel -->
+    <line x1="8" y1="214" x2="248" y2="214" stroke="#f1faee" stroke-width="6" stroke-linecap="round" stroke-dasharray="14 12"/>
+
+    <!-- saguaro -->
+    <g fill="url(#cactus)">
+      <rect x="114" y="92" width="28" height="108" rx="14"/>
+      <rect x="80" y="118" width="20" height="50" rx="10"/>
+      <rect x="80" y="150" width="44" height="18" rx="9"/>
+      <rect x="156" y="104" width="20" height="56" rx="10"/>
+      <rect x="132" y="142" width="44" height="18" rx="9"/>
+    </g>
+    <g stroke="#1b5e20" stroke-width="2" stroke-linecap="round" opacity="0.45">
+      <line x1="128" y1="104" x2="128" y2="190"/>
+      <line x1="90" y1="128" x2="90" y2="158"/>
+      <line x1="166" y1="114" x2="166" y2="150"/>
+    </g>
+  </g>
+
+  <circle cx="128" cy="128" r="120" fill="none" stroke="#e9c46a" stroke-width="6"/>
+</svg>

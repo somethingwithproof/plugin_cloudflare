@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/images/logo.svg" width="160" height="160" alt="Plugin logo: a green saguaro cactus inside a tunnel arch, with a dashed road running through it">
+</p>
+
 # Cloudflare plugin for Cacti
 
 [![CI](https://github.com/somethingwithproof/plugin_cloudflare/actions/workflows/ci.yml/badge.svg)](https://github.com/somethingwithproof/plugin_cloudflare/actions/workflows/ci.yml)
@@ -275,3 +279,9 @@ on the same line).
 ## License
 
 GPL-2.0-or-later. See [LICENSE](LICENSE).
+
+This is an independent project. It is not affiliated with or endorsed by
+Cloudflare, Inc. or the Cacti Group. Cloudflare is a trademark of
+Cloudflare, Inc. and is used here only to name the service the plugin reads
+from. The logo is original artwork; see
+[docs/images/README-logo.md](docs/images/README-logo.md).

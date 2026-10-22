@@ -113,19 +113,18 @@ function cloudflare_vault() : ?TokenVault {
 }
 
 /**
- * Reads an integer setting, falling back to $default when it is unset or
- * outside [$min, $max].
+ * Reads an integer setting, falling back to $default when it is unset, not
+ * a plain decimal integer, or outside [$min, $max]. is_numeric() is avoided
+ * because PHP 8 accepts trailing whitespace that PHP 7.4 rejects.
  */
 function cloudflare_setting_int(string $name, int $default, int $min, int $max) : int {
-	$value = read_config_option($name);
+	$value = filter_var(
+		trim((string) read_config_option($name)),
+		FILTER_VALIDATE_INT,
+		array('options' => array('min_range' => $min, 'max_range' => $max))
+	);
 
-	if (!is_numeric($value) || (string) (int) $value !== trim((string) $value)) {
-		return $default;
-	}
-
-	$value = (int) $value;
-
-	return ($value < $min || $value > $max) ? $default : $value;
+	return $value === false ? $default : $value;
 }
 
 function cloudflare_client(int $connect, int $total, int $retries = 2) : CloudflareClient {

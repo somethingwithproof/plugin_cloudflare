@@ -269,6 +269,11 @@ final class SetupContractTest extends TestCase {
 			'not a number'   => array('ten', 10),
 			'fraction'       => array('12.5', 10),
 			'padded'         => array(' 12 ', 12),
+			'newline'        => array("12\n", 12),
+			'plus sign'      => array('+12', 12),
+			'negative'       => array('-12', 10),
+			'hex'            => array('0x0c', 10),
+			'trailing text'  => array('12s', 10),
 			'leading zero'   => array('012', 10),
 			'exponent'       => array('1e1', 10),
 		);

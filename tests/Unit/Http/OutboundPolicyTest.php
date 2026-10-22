@@ -64,6 +64,9 @@ final class OutboundPolicyTest extends TestCase {
 			'nul'                 => array("https://api.cloudflare.com\0.evil.test/"),
 			'tab'                 => array("https://api.cloudflare.com/\tx"),
 			'non ascii'           => array("https://api.cloudflare.com\xE3\x80\x82evil.test/"),
+			'port with suffix'    => array('https://api.cloudflare.com:443x/client/v4'),
+			'signed port'         => array('https://api.cloudflare.com:+443/client/v4'),
+			'empty port'          => array('https://api.cloudflare.com:/client/v4'),
 			'empty'               => array(''),
 			'relative'            => array('/client/v4'),
 		);

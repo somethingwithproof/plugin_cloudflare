@@ -81,66 +81,31 @@ final class CurlTransport implements HttpTransport {
 		$headers  = array();
 		$tooLarge = false;
 		$maxBytes = $this->maxBytes;
-		$protocol = strtolower((string) parse_url($r->url(), PHP_URL_SCHEME)) === 'https' ? CURLPROTO_HTTPS : CURLPROTO_HTTP;
 
-		$httpHeaders = array();
-		foreach ($r->headers() as $name => $value) {
-			$httpHeaders[] = $name . ': ' . $value;
-		}
-
-		$options = array(
-			CURLOPT_URL            => $r->url(),
-			CURLOPT_HTTPHEADER     => $httpHeaders,
-			CURLOPT_FOLLOWLOCATION => false,
-			CURLOPT_MAXREDIRS      => 0,
-			CURLOPT_SSL_VERIFYPEER => true,
-			CURLOPT_SSL_VERIFYHOST => 2,
-			CURLOPT_CONNECTTIMEOUT => $connectTimeout,
-			CURLOPT_TIMEOUT        => $totalTimeout,
-			CURLOPT_NOPROXY        => '*',
-			CURLOPT_NOSIGNAL       => true,
-			CURLOPT_HEADERFUNCTION => function ($ch, string $line) use (&$headers): int {
-				// A new status line starts a new response (100 Continue), so
-				// headers from the interim one must not leak into the final.
-				if (strncmp($line, 'HTTP/', 5) === 0) {
-					$headers = array();
-				} elseif (($pos = strpos($line, ':')) !== false) {
-					$headers[strtolower(trim(substr($line, 0, $pos)))] = trim(substr($line, $pos + 1));
-				}
-
-				return strlen($line);
-			},
-			CURLOPT_WRITEFUNCTION  => function ($ch, string $chunk) use (&$body, &$tooLarge, $maxBytes): int {
-				if (strlen($body) + strlen($chunk) > $maxBytes) {
-					$tooLarge = true;
-
-					// Any return value other than the chunk length aborts the
-					// transfer with CURLE_WRITE_ERROR.
-					return 0;
-				}
-				$body .= $chunk;
-
-				return strlen($chunk);
-			},
-		);
-		if (defined('CURLOPT_PROTOCOLS')) {
-			$options[CURLOPT_PROTOCOLS] = $protocol;
-		}
-		if (defined('CURLOPT_REDIR_PROTOCOLS')) {
-			$options[CURLOPT_REDIR_PROTOCOLS] = $protocol;
-		}
-
-		if ($r->method() === 'GET') {
-			$options[CURLOPT_HTTPGET] = true;
-		} elseif ($r->method() === 'POST') {
-			$options[CURLOPT_POST] = true;
-			$options[CURLOPT_POSTFIELDS] = (string) $r->body();
-		} else {
-			$options[CURLOPT_CUSTOMREQUEST] = $r->method();
-			if ($r->body() !== null) {
-				$options[CURLOPT_POSTFIELDS] = $r->body();
+		$options = self::options($r, $connectTimeout, $totalTimeout);
+		$options[CURLOPT_HEADERFUNCTION] = function ($ch, string $line) use (&$headers): int {
+			// A new status line starts a new response (100 Continue), so
+			// headers from the interim one must not leak into the final.
+			if (strncmp($line, 'HTTP/', 5) === 0) {
+				$headers = array();
+			} elseif (($pos = strpos($line, ':')) !== false) {
+				$headers[strtolower(trim(substr($line, 0, $pos)))] = trim(substr($line, $pos + 1));
 			}
-		}
+
+			return strlen($line);
+		};
+		$options[CURLOPT_WRITEFUNCTION] = function ($ch, string $chunk) use (&$body, &$tooLarge, $maxBytes): int {
+			if (strlen($body) + strlen($chunk) > $maxBytes) {
+				$tooLarge = true;
+
+				// Any return value other than the chunk length aborts the
+				// transfer with CURLE_WRITE_ERROR.
+				return 0;
+			}
+			$body .= $chunk;
+
+			return strlen($chunk);
+		};
 
 		if (!curl_setopt_array($ch, $options)) {
 			unset($ch);
@@ -164,6 +129,54 @@ final class CurlTransport implements HttpTransport {
 		}
 
 		return new Response($status, $headers, $body);
+	}
+
+	/**
+	 * Every option except the response callbacks, kept separate so the
+	 * security-relevant settings can be asserted without a network call.
+	 *
+	 * @return array<int, mixed>
+	 */
+	private static function options(Request $r, int $connectTimeout, int $totalTimeout): array {
+		$protocol = strtolower((string) parse_url($r->url(), PHP_URL_SCHEME)) === 'https' ? CURLPROTO_HTTPS : CURLPROTO_HTTP;
+
+		$httpHeaders = array();
+		foreach ($r->headers() as $name => $value) {
+			$httpHeaders[] = $name . ': ' . $value;
+		}
+
+		$options = array(
+			CURLOPT_URL            => $r->url(),
+			CURLOPT_HTTPHEADER     => $httpHeaders,
+			CURLOPT_FOLLOWLOCATION => false,
+			CURLOPT_MAXREDIRS      => 0,
+			CURLOPT_SSL_VERIFYPEER => true,
+			CURLOPT_SSL_VERIFYHOST => 2,
+			CURLOPT_CONNECTTIMEOUT => $connectTimeout,
+			CURLOPT_TIMEOUT        => $totalTimeout,
+			CURLOPT_NOPROXY        => '*',
+			CURLOPT_NOSIGNAL       => true,
+		);
+		if (defined('CURLOPT_PROTOCOLS')) {
+			$options[CURLOPT_PROTOCOLS] = $protocol;
+		}
+		if (defined('CURLOPT_REDIR_PROTOCOLS')) {
+			$options[CURLOPT_REDIR_PROTOCOLS] = $protocol;
+		}
+
+		if ($r->method() === 'GET') {
+			$options[CURLOPT_HTTPGET] = true;
+		} elseif ($r->method() === 'POST') {
+			$options[CURLOPT_POST] = true;
+			$options[CURLOPT_POSTFIELDS] = (string) $r->body();
+		} else {
+			$options[CURLOPT_CUSTOMREQUEST] = $r->method();
+			if ($r->body() !== null) {
+				$options[CURLOPT_POSTFIELDS] = $r->body();
+			}
+		}
+
+		return $options;
 	}
 
 	/**

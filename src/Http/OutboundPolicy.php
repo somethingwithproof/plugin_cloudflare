@@ -92,6 +92,15 @@ final class OutboundPolicy {
 			return null;
 		}
 
+		// parse_url() tolerates ports such as ':443x', ':+443' and a bare
+		// ':', which curl may read differently, so the raw authority must
+		// be exactly the host or host:digits.
+		if (preg_match('#^https?://([^/?]*)#i', $url, $m) !== 1
+			|| (strcasecmp($m[1], $parts['host']) !== 0
+				&& preg_match('/^' . preg_quote($parts['host'], '/') . ':\d{1,5}\z/i', $m[1]) !== 1)) {
+			return null;
+		}
+
 		$scheme = strtolower($parts['scheme']);
 		if (!isset(self::DEFAULT_PORTS[$scheme])) {
 			return null;

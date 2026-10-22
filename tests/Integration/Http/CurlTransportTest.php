@@ -245,7 +245,7 @@ final class CurlTransportTest extends TestCase {
 		$this->assertSame('{"success":false}', $response->body());
 	}
 
-	public function testTlsVerificationFailureIsTransient(): void {
+	public function testTlsHandshakeFailureIsTransient(): void {
 		if ((curl_version()['features'] & CURL_VERSION_SSL) === 0) {
 			$this->markTestSkipped('curl was built without TLS support');
 		}
@@ -257,6 +257,69 @@ final class CurlTransportTest extends TestCase {
 
 		$this->assertSame('transient', $e->getErrorClass());
 		$this->assertSame(array(), $this->hits(), 'request reached the server without a TLS session');
+	}
+
+	public function testSelfSignedCertificateIsRejected(): void {
+		if ((curl_version()['features'] & CURL_VERSION_SSL) === 0) {
+			$this->markTestSkipped('curl was built without TLS support');
+		}
+
+		$dir = sys_get_temp_dir() . '/cf-tls-' . bin2hex(random_bytes(6));
+		mkdir($dir, 0700);
+		$pem = $dir . '/server.pem';
+		$log = $dir . '/requests.log';
+		file_put_contents($log, '');
+
+		$key = openssl_pkey_new(array('private_key_bits' => 2048, 'private_key_type' => OPENSSL_KEYTYPE_RSA));
+		$this->assertNotFalse($key);
+		$csr = openssl_csr_new(array('commonName' => '127.0.0.1'), $key);
+		$this->assertNotFalse($csr);
+		$this->assertNotTrue($csr);
+		$cert = openssl_csr_sign($csr, null, $key, 1);
+		$this->assertNotFalse($cert);
+		$this->assertTrue(openssl_x509_export($cert, $certPem));
+		$this->assertTrue(openssl_pkey_export($key, $keyPem));
+		file_put_contents($pem, $certPem . $keyPem);
+
+		$port = self::freePort();
+		$process = proc_open(
+			array(PHP_BINARY, dirname(__DIR__, 2) . '/Support/tls-server.php', (string) $port, $pem, $log),
+			array(0 => array('file', '/dev/null', 'r'), 1 => array('file', '/dev/null', 'w'), 2 => array('file', '/dev/null', 'w')),
+			$pipes
+		);
+		$this->assertIsResource($process);
+
+		try {
+			$deadline = microtime(true) + 3;
+			$listening = false;
+			while (!$listening && microtime(true) < $deadline) {
+				$fp = @fsockopen('127.0.0.1', $port, $errno, $errstr, 0.1);
+				if ($fp !== false) {
+					fclose($fp);
+					$listening = true;
+				} else {
+					usleep(50000);
+				}
+			}
+			$this->assertTrue($listening, 'TLS server did not start listening within 3 seconds');
+
+			$origin = 'https://127.0.0.1:' . $port;
+			$t = new CurlTransport(new OutboundPolicy(array($origin)));
+			$e = $this->sendExpectingFailure($t, new Request('GET', $origin . '/ok', $this->authHeaders()), 2, 5);
+
+			$this->assertSame('transient', $e->getErrorClass());
+			$this->assertStringContainsString('CURLE_PEER_FAILED_VERIFICATION', $e->getDetail());
+			$this->assertSame('', (string) file_get_contents($log), 'an HTTP request was sent over an unverified TLS session');
+		} finally {
+			proc_terminate($process, 9);
+			proc_close($process);
+			foreach (array($pem, $log) as $file) {
+				if (is_file($file)) {
+					unlink($file);
+				}
+			}
+			rmdir($dir);
+		}
 	}
 
 	public function testEnvironmentProxyIsIgnored(): void {

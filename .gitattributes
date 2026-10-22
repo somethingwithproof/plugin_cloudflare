@@ -1,6 +1,7 @@
 * text=auto eol=lf
 *.png binary
 /tests export-ignore
+/features export-ignore
 /docs/superpowers export-ignore
 /.superpowers export-ignore
 /.github export-ignore
@@ -13,3 +14,4 @@
 /phpunit.xml.dist export-ignore
 /phpstan.neon.dist export-ignore
 /.php-cs-fixer.dist.php export-ignore
+/behat.yml.dist export-ignore

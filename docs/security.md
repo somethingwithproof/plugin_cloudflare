@@ -186,6 +186,6 @@ files.
 - File permission problems surface at Verify, not at save.
 - `TokenFile` refuses a symbolic link at the final path component only; it
   does not check parent directories.
-- Verify runs inside the web request. Each request it makes is bounded by the
-  timeouts above and retried at most once, but one Verify can make up to four
-  requests (account verify, user verify, tunnel probe, zone probe).
+- Verify runs inside the web request. One Verify can make up to four
+  requests (account verify, user verify, tunnel probe, zone probe), each
+  bounded by the timeouts above and retried at most once.

@@ -55,9 +55,7 @@ stored but nothing reads it yet. When analytics ships it is expected to need:
 Cloudflare's GraphQL guide configures the token with Account Analytics Read,
 and the permissions page lists Analytics Read under Zone permissions. Which
 of the two a zone-level `httpRequestsAdaptiveGroups` query strictly needs has
-not been verified. The edit form's help text for "Collect Analytics" calls the
-permission "Zone Analytics Read"; Cloudflare's permissions page does not use
-that name.
+not been verified.
 
 ## Creating the token
 

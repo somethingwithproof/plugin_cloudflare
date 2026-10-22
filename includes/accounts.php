@@ -133,7 +133,7 @@ function cloudflare_account_fields(?Account $account, bool $vault_available) : a
 		'collect_analytics' => array(
 			'method'        => 'checkbox',
 			'friendly_name' => __('Collect Analytics', 'cloudflare'),
-			'description'   => __('Collect zone traffic analytics. This needs Zone Analytics Read permission.', 'cloudflare'),
+			'description'   => __('Collect zone traffic analytics. This needs the Account Analytics Read and Analytics Read (Zone) permissions.', 'cloudflare'),
 			'value'         => ($account !== null && $account->collectsAnalytics()) ? 'on' : '',
 		),
 		'discovery_interval' => array(

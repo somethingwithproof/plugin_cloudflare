@@ -4,6 +4,9 @@
 	"type": "project",
 	"license": "GPL-2.0-or-later",
 	"config": {
+		"audit": {
+			"abandoned": "report"
+		},
 		"platform": {
 			"php": "7.4.33"
 		},

@@ -208,6 +208,9 @@ jobs:
           php-version: '8.4'
           coverage: none
           tools: composer:v2
+      # Advisories fail the job. Abandoned packages are only reported
+      # (composer.json config.audit.abandoned): behat/transliterator is an
+      # abandoned dev-only dependency of behat with no replacement.
       - name: composer audit
         run: composer audit --locked --no-interaction
 

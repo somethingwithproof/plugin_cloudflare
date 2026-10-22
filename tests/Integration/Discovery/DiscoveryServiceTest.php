@@ -32,6 +32,7 @@ use Cacti\PluginCloudflare\Http\Response;
 use Cacti\PluginCloudflare\Http\TransportException;
 use Cacti\PluginCloudflare\Jobs\JobRepository;
 use Cacti\PluginCloudflare\Storage\Database;
+use Cacti\PluginCloudflare\Storage\DatabaseException;
 use Cacti\PluginCloudflare\Storage\Migrator;
 use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
 use Cacti\PluginCloudflare\Tests\Support\FakeTransport;
@@ -39,6 +40,7 @@ use Cacti\PluginCloudflare\Tests\Support\FrozenClock;
 use Cacti\PluginCloudflare\Tests\Support\RecordingSleeper;
 use Cacti\PluginCloudflare\Tests\Support\SecretAssertions;
 use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
+use OutOfBoundsException;
 
 final class DiscoveryServiceTest extends IntegrationTestCase {
 	use SecretAssertions;
@@ -71,6 +73,9 @@ final class DiscoveryServiceTest extends IntegrationTestCase {
 
 	/** @var callable|null */
 	private $beforeAccount;
+
+	/** @var Database|null */
+	private $resolverDb;
 
 	protected function setUp(): void {
 		TestDatabase::skipIfUnavailable($this);
@@ -149,7 +154,7 @@ final class DiscoveryServiceTest extends IntegrationTestCase {
 
 		return new DiscoveryService(
 			$accounts,
-			new CredentialResolver($accounts, null),
+			new CredentialResolver(new AccountRepository($this->resolverDb ?? $db), null),
 			new CloudflareClient($this->transport(), new RetryPolicy($clock, new RecordingSleeper())),
 			new Reconciler($db, $clock),
 			new JobRepository($db, $clock),
@@ -572,6 +577,133 @@ final class DiscoveryServiceTest extends IntegrationTestCase {
 		$this->assertSame(array($id => self::outcome('failed', ErrorClass::CONFIG)), $this->runDue());
 		$this->assertCount(0, $this->transport()->requests());
 		$this->assertSame((string) (self::T0 + 300), (string) $this->job($id)['next_run_at']);
+	}
+
+	/* Fails every tunnel upsert for one account, as a deadlock or a dropped statement would. */
+	private function failTunnelWritesFor(int $accountId): void {
+		$this->db()->execute(
+			'CREATE TRIGGER cf_test_reject BEFORE INSERT ON plugin_cloudflare_tunnels FOR EACH ROW
+			BEGIN
+				IF NEW.account_id = ' . $accountId . " THEN
+					SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'rejected';
+				END IF;
+			END"
+		);
+	}
+
+	public function testDatabaseErrorOnOneAccountDoesNotStopOthers(): void {
+		$a = $this->account(self::CF_A);
+		$b = $this->account(self::CF_B);
+		$this->failTunnelWritesFor($a);
+		$this->transport()->queue(FakeTransport::fixture('tunnel-list'));
+		$this->transport()->queue(self::emptyListing());
+
+		$this->assertSame(
+			array($a => self::outcome('failed', ErrorClass::TRANSIENT), $b => self::outcome('ok', null)),
+			$this->runDue()
+		);
+		$this->assertSame(array(), $this->tunnels($a));
+
+		$job = $this->job($a);
+		$this->assertSame('failed', $job['last_status']);
+		$this->assertSame(ErrorClass::TRANSIENT, $job['last_error_class']);
+		$this->assertSame('1', (string) $job['consecutive_failures']);
+		$this->assertSame((string) (self::T0 + 600), (string) $job['next_run_at']);
+		$this->assertNull($job['lease_owner']);
+		$this->assertSame('ok', $this->job($b)['last_status']);
+
+		$logs = implode("\n", $this->logs);
+		$this->assertStringContainsString('account=' . $a . ' error=' . DatabaseException::class, $logs);
+		$this->assertStringNotContainsString('rejected', $logs);
+	}
+
+	/*
+	 * The resolver reads through a snapshot taken before account A existed,
+	 * which is what it sees if A is deleted after find() and before resolve().
+	 */
+	public function testDeletedAccountBetweenFindAndResolve(): void {
+		$b                = $this->account(self::CF_B);
+		$this->resolverDb = new Database(TestDatabase::pdo());
+		$this->resolverDb->execute('START TRANSACTION WITH CONSISTENT SNAPSHOT');
+
+		try {
+			$a = $this->account(self::CF_A);
+			$this->transport()->queue(self::emptyListing());
+
+			$outcomes = $this->runDue();
+		} finally {
+			$this->resolverDb->execute('ROLLBACK');
+		}
+
+		$this->assertSame(
+			array($b => self::outcome('ok', null), $a => self::outcome('failed', ErrorClass::TRANSIENT)),
+			$outcomes
+		);
+		$this->assertSame('failed', $this->job($a)['last_status']);
+		$this->assertStringContainsString('error=' . OutOfBoundsException::class, implode("\n", $this->logs));
+	}
+
+	/**
+	 * @dataProvider jobWriteFaults
+	 */
+	public function testFaultThatCannotBeRecordedReleasesOrStops(string $rejectWhen, bool $released): void {
+		$a = $this->account(self::CF_A);
+		$b = $this->account(self::CF_B);
+		$this->failTunnelWritesFor($a);
+		$this->db()->execute(
+			'CREATE TRIGGER cf_test_reject_job BEFORE UPDATE ON plugin_cloudflare_jobs FOR EACH ROW
+			BEGIN
+				IF NEW.account_id = ' . $a . ' AND ' . $rejectWhen . " THEN
+					SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'rejected';
+				END IF;
+			END"
+		);
+		$this->transport()->queue(FakeTransport::fixture('tunnel-list'));
+		$this->transport()->queue(self::emptyListing());
+
+		$outcomes = $this->runDue();
+
+		$job = $this->job($a);
+		$this->assertSame('never', $job['last_status']);
+		if ($released) {
+			$this->assertSame(
+				array($a => self::outcome('failed', ErrorClass::TRANSIENT), $b => self::outcome('ok', null)),
+				$outcomes
+			);
+			$this->assertNull($job['lease_owner']);
+		} else {
+			$this->assertSame(array(), $outcomes, 'the run stops before account B');
+			$this->assertNotNull($job['lease_owner']);
+			$this->assertSame('never', $this->job($b)['last_status']);
+		}
+	}
+
+	/**
+	 * @return array<string, array{0: string, 1: bool}>
+	 */
+	public function jobWriteFaults(): array {
+		return array(
+			'fail rejected, release works' => array("NEW.last_status = 'failed'", true),
+			'fail and release rejected'    => array('NEW.lease_owner IS NULL', false),
+		);
+	}
+
+	public function testLocalFaultDoesNotMarkUnavailable(): void {
+		$id = $this->account(self::CF_A);
+		$this->discoverOnce($id);
+		$this->failTunnelWritesFor($id);
+
+		for ($run = 1; $run <= 3; $run++) {
+			$this->makeDue($id);
+			$this->transport()->queue(FakeTransport::fixture('tunnel-list'));
+			$this->assertSame(ErrorClass::TRANSIENT, $this->runDue()[$id]['error_class']);
+		}
+
+		$this->assertSame('3', (string) $this->job($id)['consecutive_failures']);
+		$this->assertSame(
+			array('active', 'active', 'active'),
+			array_values(array_column($this->tunnels($id), 'lifecycle'))
+		);
 	}
 
 	public function testLogsNeverContainToken(): void {

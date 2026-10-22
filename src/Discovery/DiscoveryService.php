@@ -33,6 +33,7 @@ use Cacti\PluginCloudflare\Secret\SecretException;
 use Cacti\PluginCloudflare\Storage\Database;
 use Cacti\PluginCloudflare\Support\Clock;
 use InvalidArgumentException;
+use Throwable;
 
 /**
  * Runs due discovery jobs in system context. Every write made under a lease
@@ -51,6 +52,9 @@ final class DiscoveryService {
 	private const MARK_UNAVAILABLE_AFTER = 3;
 
 	private const NO_CHANGES = array('added' => 0, 'updated' => 0, 'deleted' => 0);
+
+	/* The schema default; after a fault the account's own interval may be unreadable. */
+	private const FAULT_INTERVAL = 300;
 
 	/* Failures that say Cloudflare could not be read. A config or malformed failure does not. */
 	private const OUTAGE_CLASSES = array(
@@ -160,10 +164,64 @@ final class DiscoveryService {
 				continue;
 			}
 
-			$outcomes[$accountId] = $this->runAccount($lease, $accountId, (int) $job['consecutive_failures']);
+			$failures = (int) $job['consecutive_failures'];
+
+			try {
+				$outcomes[$accountId] = $this->runAccount($lease, $accountId, $failures);
+			} catch (Throwable $e) {
+				/* A DatabaseException, an account deleted mid-run, or anything unforeseen. */
+				$outcome = $this->fault($lease, $accountId, $failures, $e);
+				if ($outcome === null) {
+					break;
+				}
+
+				$outcomes[$accountId] = $outcome;
+			}
 		}
 
 		return $outcomes;
+	}
+
+	/**
+	 * A local fault says nothing about Cloudflare, so it is recorded as
+	 * transient without the unavailable check. Only the class name is
+	 * logged: an exception's string form carries a trace with the token.
+	 *
+	 * @return array{status: string, error_class: string|null, added: int, updated: int, deleted: int}|null
+	 *         null when even the release failed and the connection is likely gone
+	 */
+	private function fault(Lease $lease, int $accountId, int $failures, Throwable $e): ?array {
+		$this->say('Cloudflare discovery: local fault account=' . $accountId . ' error=' . get_class($e));
+
+		$next = JobRepository::nextRun(
+			$this->clock->now(),
+			self::FAULT_INTERVAL,
+			ErrorClass::TRANSIENT,
+			null,
+			$failures + 1
+		);
+
+		try {
+			$this->jobs->fail($lease, ErrorClass::TRANSIENT, $next);
+
+			return self::outcome('failed', ErrorClass::TRANSIENT);
+		} catch (LeaseLost $lost) {
+			return self::outcome('lease_lost');
+		} catch (Throwable $failError) {
+			$this->say('Cloudflare discovery: fault not recorded account=' . $accountId . ' error=' . get_class($failError));
+		}
+
+		try {
+			$this->jobs->release($lease);
+		} catch (LeaseLost $lost) {
+			return self::outcome('lease_lost');
+		} catch (Throwable $releaseError) {
+			$this->say('Cloudflare discovery: stopping, lease not released account=' . $accountId);
+
+			return null;
+		}
+
+		return self::outcome('failed', ErrorClass::TRANSIENT);
 	}
 
 	/**

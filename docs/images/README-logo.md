@@ -2,9 +2,11 @@
 
 `logo.svg` is original artwork made for this plugin. It shows a hand-drawn
 saguaro, a nod to Cacti, standing in front of a stone tunnel portal with a
-road leading in, a nod to Cloudflare Tunnel. It follows the style of Cacti's
-own logo (heavy outline, green gradient, light ribs) without reusing its
-artwork.
+road leading in, a nod to Cloudflare Tunnel. A smiling cartoon cloud sits
+on the portal and waters the cactus. It follows the style of Cacti's own
+logo (heavy outline, green gradient, light ribs) without reusing its
+artwork. The cloud is a generic round, white cartoon cloud; it is not
+Cloudflare's cloud mark and does not use Cloudflare's colors.
 
 It does not use Cloudflare's or Cacti's logos, cloud mark, colors or
 wordmarks. The plugin is not affiliated with or endorsed by Cloudflare, Inc.

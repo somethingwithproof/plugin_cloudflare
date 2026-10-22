@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-labelledby="title desc">
   <title id="title">Cacti Cloudflare plugin logo</title>
-  <desc id="desc">A hand-drawn green saguaro cactus standing in front of a stone tunnel portal, with a road running into the tunnel.</desc>
+  <desc id="desc">A hand-drawn green saguaro cactus beside a stone tunnel portal with a road running into it. A smiling white cloud sits on the portal and drips raindrops toward the cactus.</desc>
   <defs>
     <linearGradient id="skin" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#c3ec6d"/>
@@ -29,6 +29,42 @@
     <rect x="84.5" y="170" width="3" height="12" rx="1"/>
     <rect x="85" y="150" width="2.4" height="9" rx="1"/>
     <rect x="85.3" y="134" width="1.8" height="7" rx="0.9"/>
+  </g>
+
+  <!-- a friendly cloud resting on the portal; the outline comes from a
+       thicker black copy of the same circles drawn underneath -->
+  <g fill="#111">
+    <circle cx="36" cy="44" r="16"/>
+    <circle cx="56" cy="30" r="21"/>
+    <circle cx="80" cy="33" r="18"/>
+    <circle cx="97" cy="46" r="14"/>
+    <circle cx="66" cy="50" r="17"/>
+    <circle cx="46" cy="53" r="14"/>
+    <circle cx="86" cy="54" r="12"/>
+  </g>
+  <g fill="#ffffff">
+    <circle cx="36" cy="44" r="12.5"/>
+    <circle cx="56" cy="30" r="17.5"/>
+    <circle cx="80" cy="33" r="14.5"/>
+    <circle cx="97" cy="46" r="10.5"/>
+    <circle cx="66" cy="50" r="13.5"/>
+    <circle cx="46" cy="53" r="10.5"/>
+    <circle cx="86" cy="54" r="8.5"/>
+  </g>
+  <path d="M30 52 C40 62 84 64 100 52 C96 60 84 64 66 64 C48 64 36 60 30 52 Z" fill="#cfe3f7"/>
+  <!-- face -->
+  <ellipse cx="58" cy="41" rx="3" ry="4" fill="#111"/>
+  <ellipse cx="76" cy="41" rx="3" ry="4" fill="#111"/>
+  <circle cx="59" cy="39.5" r="1.1" fill="#fff"/>
+  <circle cx="77" cy="39.5" r="1.1" fill="#fff"/>
+  <path d="M61 49 Q67 55 73 49" fill="none" stroke="#111" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="51" cy="48" r="3.5" fill="#f7a9b8" opacity="0.8"/>
+  <circle cx="83" cy="48" r="3.5" fill="#f7a9b8" opacity="0.8"/>
+
+  <!-- raindrops for the cactus -->
+  <g fill="#7cc4f2" stroke="#111" stroke-width="2" stroke-linejoin="round">
+    <path d="M108 62 C108 62 102 70 102 74 A6 6 0 0 0 114 74 C114 70 108 62 108 62 Z"/>
+    <path d="M120 68 C120 68 116 73 116 76 A4 4 0 0 0 124 76 C124 73 120 68 120 68 Z"/>
   </g>
 
   <!-- saguaro -->

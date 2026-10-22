@@ -124,8 +124,12 @@ final class Database {
 		} catch (Throwable $e) {
 			$this->depth = 0;
 
-			if ($this->pdo->inTransaction()) {
-				$this->pdo->rollBack();
+			try {
+				if ($this->pdo->inTransaction()) {
+					$this->pdo->rollBack();
+				}
+			} catch (PDOException $rollbackFailure) {
+				// The original exception is the one worth reporting.
 			}
 
 			throw $e;
@@ -133,8 +137,12 @@ final class Database {
 
 		$this->depth = 0;
 
-		if (!$this->pdo->commit()) {
-			throw $this->fromErrorInfo($this->pdo->errorInfo());
+		try {
+			if (!$this->pdo->commit()) {
+				throw $this->fromErrorInfo($this->pdo->errorInfo());
+			}
+		} catch (PDOException $e) {
+			throw $this->fromPdoException($e);
 		}
 
 		return $result;
@@ -144,7 +152,7 @@ final class Database {
 		$result = $this->fetchCell('SELECT GET_LOCK(?, ?)', [$name, $timeoutSeconds]);
 
 		if ($result === null) {
-			throw new DatabaseException('HY000', 'GET_LOCK returned NULL');
+			throw new DatabaseException('HY000', 0, 'GET_LOCK returned NULL');
 		}
 
 		return (int) $result === 1;
@@ -180,11 +188,13 @@ final class Database {
 	 */
 	private function fromErrorInfo(array $info): DatabaseException {
 		$state = isset($info[0]) ? (string) $info[0] : 'HY000';
+		$code = isset($info[1]) ? (int) $info[1] : 0;
 		$message = isset($info[2]) ? (string) $info[2] : 'unknown error';
 
-		return new DatabaseException($state, $message);
+		return new DatabaseException($state, $code, $message);
 	}
 
+	/* The PDOException is not chained: its message carries the same driver text. */
 	private function fromPdoException(PDOException $e): DatabaseException {
 		$info = $e->errorInfo;
 
@@ -192,6 +202,6 @@ final class Database {
 			return $this->fromErrorInfo($info);
 		}
 
-		return new DatabaseException('HY000', $e->getMessage(), $e);
+		return new DatabaseException('HY000', 0, 'PDO error');
 	}
 }

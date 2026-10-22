@@ -175,7 +175,7 @@ final class DatabaseTest extends TestCase {
 		$this->assertSame(PDO::ERRMODE_SILENT, $pdo->getAttribute(PDO::ATTR_ERRMODE));
 	}
 
-	public function testExceptionHandleStillUsableAfterFailure(): void {
+	public function testHandleStillUsableAfterFailedStatement(): void {
 		try {
 			$this->db->execute('INSERT INTO plugin_cloudflare_missing VALUES (1)');
 		} catch (DatabaseException $e) {
@@ -183,5 +183,37 @@ final class DatabaseTest extends TestCase {
 		}
 
 		$this->assertSame(1, (int) $this->db->fetchCell('SELECT 1'));
+	}
+
+	public function testDuplicateKeyErrorDoesNotLeakValue(): void {
+		$this->db->execute('CREATE TABLE plugin_cloudflare_uniq (v VARCHAR(64) NOT NULL, UNIQUE KEY (v))');
+		$this->db->execute('INSERT INTO plugin_cloudflare_uniq (v) VALUES (?)', array('s3cr3t-value'));
+
+		try {
+			$this->db->execute('INSERT INTO plugin_cloudflare_uniq (v) VALUES (?)', array('s3cr3t-value'));
+			$this->fail('Expected DatabaseException');
+		} catch (DatabaseException $e) {
+			$this->assertSame('23000', $e->getSqlState());
+			$this->assertStringContainsString('23000', $e->getMessage());
+			$this->assertStringContainsString('1062', $e->getMessage());
+			$this->assertStringNotContainsString('s3cr3t-value', $e->getMessage());
+			$this->assertNull($e->getPrevious());
+		}
+	}
+
+	public function testExceptionModeHandleFailuresBecomeDatabaseException(): void {
+		$pdo = TestDatabase::pdo();
+		$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		$db = new Database($pdo);
+
+		try {
+			$db->execute('INSERT INTO plugin_cloudflare_missing (name) VALUES (?)', array('s3cr3t-value'));
+			$this->fail('Expected DatabaseException');
+		} catch (DatabaseException $e) {
+			$this->assertSame('42S02', $e->getSqlState());
+			$this->assertNull($e->getPrevious());
+		}
+
+		$this->assertSame(1, (int) $db->fetchCell('SELECT 1'));
 	}
 }

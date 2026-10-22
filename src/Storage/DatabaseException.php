@@ -25,20 +25,27 @@
 namespace Cacti\PluginCloudflare\Storage;
 
 use RuntimeException;
-use Throwable;
 
 /**
- * The message carries the SQLSTATE and the driver text. Bound values are never
- * passed in, so they cannot leak through here.
+ * The message carries the SQLSTATE and the driver error code. Driver text is
+ * added only outside SQLSTATE classes 22 (data exception) and 23 (integrity
+ * constraint), whose messages echo the offending value, for example
+ * "Duplicate entry '<value>'". Bound values are never passed in.
  */
 final class DatabaseException extends RuntimeException {
 	/** @var string */
 	private $sqlState;
 
-	public function __construct(string $sqlState, string $driverMessage, ?Throwable $previous = null) {
+	public function __construct(string $sqlState, int $driverCode, string $driverMessage) {
 		$this->sqlState = $sqlState;
 
-		parent::__construct('SQLSTATE[' . $sqlState . ']: ' . $driverMessage, 0, $previous);
+		$message = 'SQLSTATE[' . $sqlState . '] driver error ' . $driverCode;
+
+		if (!in_array(substr($sqlState, 0, 2), array('22', '23'), true)) {
+			$message .= ': ' . $driverMessage;
+		}
+
+		parent::__construct($message);
 	}
 
 	public function getSqlState(): string {

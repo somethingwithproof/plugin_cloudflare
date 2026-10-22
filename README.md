@@ -184,8 +184,8 @@ Verify sets the account's status:
 | `unknown` | Not verified since the account was added or its credentials changed |
 | `ok` | The token is active and can read tunnels |
 | `token_inactive` | Cloudflare reports the token as disabled or expired |
-| `auth_failed` | Cloudflare rejected the token |
-| `permission_denied` | The token is active but cannot read tunnels |
+| `auth_failed` | Cloudflare rejected the token as invalid or expired (HTTP 401) |
+| `permission_denied` | The token is active but cannot read tunnels, or it lacks the permissions to call the token verify endpoints (HTTP 403) |
 | `unreachable` | The API could not be reached, timed out or returned a server error |
 | `rate_limited` | Cloudflare returned HTTP 429 |
 | `error` | Any other failure, including a token file that is missing or insecure, or a stored token that cannot be decrypted |

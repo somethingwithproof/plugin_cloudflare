@@ -31,6 +31,7 @@ use Cacti\PluginCloudflare\Secret\SecretException;
 use Cacti\PluginCloudflare\Secret\TokenVault;
 use Cacti\PluginCloudflare\Storage\Database;
 use Cacti\PluginCloudflare\Storage\DatabaseException;
+use Cacti\PluginCloudflare\Support\Sleeper;
 use Cacti\PluginCloudflare\Support\SystemClock;
 use Cacti\PluginCloudflare\Support\SystemSleeper;
 
@@ -123,12 +124,10 @@ function cloudflare_setting_int(string $name, int $default, int $min, int $max) 
 	return $value === false ? $default : $value;
 }
 
-function cloudflare_client(int $connect, int $total, int $retries = 2) : CloudflareClient {
-	$clock = new SystemClock();
-
+function cloudflare_client(int $connect, int $total, RetryPolicy $retry) : CloudflareClient {
 	return new CloudflareClient(
 		new CurlTransport(OutboundPolicy::production()),
-		new RetryPolicy($clock, new SystemSleeper(), $retries),
+		$retry,
 		'https://api.cloudflare.com/client/v4',
 		$connect,
 		$total
@@ -136,9 +135,14 @@ function cloudflare_client(int $connect, int $total, int $retries = 2) : Cloudfl
 }
 
 /**
- * The UI client retries once at most (docs/design.md, Outbound HTTP) so a
- * verify cannot hold the page for several total timeouts.
+ * The UI client retries once at most and sleeps for a 429's retry-after only
+ * up to 2 seconds (docs/design.md, Error classification), so a Verify cannot
+ * hold the page for several total timeouts or a 30 second wait.
  */
+function cloudflare_ui_retry_policy(Sleeper $sleeper) : RetryPolicy {
+	return new RetryPolicy(new SystemClock(), $sleeper, 1, 2);
+}
+
 function cloudflare_account_service() : AccountService {
 	$db = cloudflare_db();
 
@@ -147,7 +151,11 @@ function cloudflare_account_service() : AccountService {
 		new CallbackAuthorizer(function () : bool {
 			return api_user_realm_auth('cloudflare_accounts.php') === true;
 		}),
-		cloudflare_client(CLOUDFLARE_CONNECT_TIMEOUT, cloudflare_setting_int('cloudflare_ui_timeout', 10, 5, 60), 1),
+		cloudflare_client(
+			CLOUDFLARE_CONNECT_TIMEOUT,
+			cloudflare_setting_int('cloudflare_ui_timeout', 10, 5, 60),
+			cloudflare_ui_retry_policy(new SystemSleeper())
+		),
 		cloudflare_vault(),
 		new SystemClock(),
 		function (string $line) : void {

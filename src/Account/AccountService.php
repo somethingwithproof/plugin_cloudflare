@@ -50,6 +50,7 @@ final class AccountService {
 		'error'             => 'Cloudflare API request failed unexpectedly',
 	);
 
+	private const MESSAGE_FORBIDDEN     = 'Token lacks the permissions needed to verify it';
 	private const MESSAGE_UNDECRYPTABLE = 'Stored token cannot be decrypted';
 	private const MESSAGE_FILE          = 'Token file is missing or insecure';
 	private const MESSAGE_VAULT_MISSING = 'Encrypted storage is unavailable; configure the key file or use a token file';
@@ -305,14 +306,14 @@ final class AccountService {
 		}
 
 		try {
-			list($status, $permissions, $detail) = $this->check($material['cf_account_id'], $token);
+			list($status, $message, $permissions, $detail) = $this->check($material['cf_account_id'], $token);
 		} finally {
 			if (function_exists('sodium_memzero')) {
 				sodium_memzero($token);
 			}
 		}
 
-		return $this->record($account, $now, $status, self::MESSAGES[$status], $permissions, $detail);
+		return $this->record($account, $now, $status, $message, $permissions, $detail);
 	}
 
 	/**
@@ -386,7 +387,7 @@ final class AccountService {
 	}
 
 	/**
-	 * @return array{0: string, 1: array<string, bool>|null, 2: string} status, permissions, log detail
+	 * @return array{0: string, 1: string, 2: array<string, bool>|null, 3: string} status, message, permissions, log detail
 	 */
 	private function check(
 		string $cfAccountId,
@@ -395,26 +396,35 @@ final class AccountService {
 	): array {
 		try {
 			if (!$this->client->verifyToken($cfAccountId, $token)->isActive()) {
-				return array('token_inactive', null, '');
+				return array('token_inactive', self::MESSAGES['token_inactive'], null, '');
 			}
 
 			$tunnelRead = $this->client->probe($cfAccountId, $token, '/accounts/' . $cfAccountId . '/cfd_tunnel', array('per_page' => 1));
 			$zoneRead   = $this->client->probe($cfAccountId, $token, '/zones', array('account.id' => $cfAccountId, 'per_page' => 5));
 		} catch (ApiException $e) {
-			return array(self::statusFor($e->getErrorClass()), null, 'class=' . $e->getErrorClass());
+			$class  = $e->getErrorClass();
+			$status = self::statusFor($class);
+
+			/* The probes turn a 403 into false, so one here came from both
+			 * verify endpoints refusing the token, not from the tunnel probe. */
+			$message = $class === ErrorClass::PERMISSION ? self::MESSAGE_FORBIDDEN : self::MESSAGES[$status];
+
+			return array($status, $message, null, 'class=' . $class);
 		}
 
 		$permissions = array('tunnel_read' => $tunnelRead, 'zone_read' => $zoneRead);
+		$status      = $tunnelRead ? 'ok' : 'permission_denied';
 
 		/* Zone read only feeds hostname mapping, so its absence is not a failure. */
-		return array($tunnelRead ? 'ok' : 'permission_denied', $permissions, $tunnelRead ? '' : 'tunnel_read=false');
+		return array($status, self::MESSAGES[$status], $permissions, $tunnelRead ? '' : 'tunnel_read=false');
 	}
 
 	private static function statusFor(string $errorClass): string {
 		switch ($errorClass) {
 			case ErrorClass::AUTH:
-			case ErrorClass::PERMISSION:
 				return 'auth_failed';
+			case ErrorClass::PERMISSION:
+				return 'permission_denied';
 			case ErrorClass::TRANSIENT:
 				return 'unreachable';
 			case ErrorClass::RATE_LIMITED:

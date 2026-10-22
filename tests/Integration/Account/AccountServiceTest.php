@@ -404,6 +404,22 @@ final class AccountServiceTest extends TestCase {
 		$this->assertNull($account->lastVerifiedAt());
 	}
 
+	public function testVerifyForbiddenIsPermissionDenied(): void {
+		$id = $this->service()->save(null, $this->input());
+		$this->transport->queue(FakeTransport::fixture('error-envelope', 403));
+		$this->transport->queue(FakeTransport::fixture('error-envelope', 403));
+
+		$account = $this->service()->verify($id);
+
+		$this->assertSame('permission_denied', $account->status());
+		$this->assertSame('Token lacks the permissions needed to verify it', $account->statusMessage());
+		$this->assertNull($account->permissions());
+		$this->assertNull($account->lastVerifiedAt());
+		$this->assertCount(2, $this->transport->requests(), 'both verify endpoints, no probes');
+		$this->assertStringContainsString('unknown -> permission_denied [class=permission]', implode("\n", $this->logged));
+		$this->assertNotLeaked($this->token, implode("\n", $this->logged) . var_export($account, true), 'forbidden verify');
+	}
+
 	public function testVerifyInvalidTokenSetsAuthFailed(): void {
 		$id = $this->service()->save(null, $this->input());
 		$this->transport->queue(FakeTransport::fixture('auth-error', 401));

@@ -35,7 +35,8 @@ under Connection Status:
 
 - **ok**: the token is active and the tunnel probe succeeded.
 - **permission_denied**: the token is active but the tunnel probe was
-  refused. Add one of the tunnel permissions above.
+  refused, or both token verify endpoints answered HTTP 403. Add one of the
+  tunnel permissions above.
 - **Permission: tunnel_read** and **Permission: zone_read**: whether each
   probe was granted, from the most recent Verify that reached both probes.
   Changing the account ID, token, token storage or token file clears them.

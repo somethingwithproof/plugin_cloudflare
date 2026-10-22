@@ -20,6 +20,12 @@
 
 namespace Cacti\PluginCloudflare\Tests\Unit\Glue;
 
+use Cacti\PluginCloudflare\Api\ApiException;
+use Cacti\PluginCloudflare\Api\CloudflareClient;
+use Cacti\PluginCloudflare\Api\ErrorClass;
+use Cacti\PluginCloudflare\Http\Response;
+use Cacti\PluginCloudflare\Tests\Support\FakeTransport;
+use Cacti\PluginCloudflare\Tests\Support\RecordingSleeper;
 use PHPUnit\Framework\TestCase;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -286,6 +292,46 @@ final class SetupContractTest extends TestCase {
 		$GLOBALS['cloudflare_glue']['settings']['cloudflare_ui_timeout'] = $stored;
 
 		$this->assertSame($expected, cloudflare_setting_int('cloudflare_ui_timeout', 10, 5, 60));
+	}
+
+	/**
+	 * A Verify runs inside a page request, so a long retry-after is not slept.
+	 */
+	public function testUiClientDoesNotSleepForALongRetryAfter(): void {
+		$transport = new FakeTransport();
+		$transport->queue(new Response(429, array('retry-after' => '5'), '{"success":false,"errors":[]}'));
+		$sleeper = new RecordingSleeper();
+		$client  = new CloudflareClient($transport, cloudflare_ui_retry_policy($sleeper));
+
+		try {
+			$client->request('GET', '/user/tokens/verify', 'cfut_' . str_repeat('a', 40));
+			$this->fail('no ApiException thrown');
+		} catch (ApiException $e) {
+			$this->assertSame(ErrorClass::RATE_LIMITED, $e->getErrorClass());
+			$this->assertSame(5, $e->getRetryAfter());
+		}
+
+		$this->assertSame(array(), $sleeper->slept);
+		$this->assertCount(1, $transport->requests());
+	}
+
+	public function testUiClientRetriesOnceForAShortRetryAfter(): void {
+		$transport = new FakeTransport();
+		for ($i = 0; $i < 3; $i++) {
+			$transport->queue(new Response(429, array('retry-after' => '2'), '{"success":false,"errors":[]}'));
+		}
+		$sleeper = new RecordingSleeper();
+		$client  = new CloudflareClient($transport, cloudflare_ui_retry_policy($sleeper));
+
+		try {
+			$client->request('GET', '/user/tokens/verify', 'cfut_' . str_repeat('a', 40));
+			$this->fail('no ApiException thrown');
+		} catch (ApiException $e) {
+			$this->assertSame(ErrorClass::RATE_LIMITED, $e->getErrorClass());
+		}
+
+		$this->assertSame(array(2), $sleeper->slept);
+		$this->assertCount(2, $transport->requests());
 	}
 
 	public function testUpgradeSkipsWhenPluginIsNotInstalled(): void {

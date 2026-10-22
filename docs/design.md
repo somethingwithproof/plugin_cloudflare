@@ -161,9 +161,19 @@ of HTTP details:
 | `config` | an invalid ID or a disallowed origin, raised before any I/O |
 
 `transient` and `rate_limited` failures never change the lifecycle state of
-discovered resources and never produce metric values. Both are retried at
-most twice. A 429 honours `retry-after` up to 30 seconds; a longer value
-defers the job instead of sleeping.
+discovered resources and never produce metric values. Retries differ by
+caller:
+
+- UI requests, such as Verify, retry once at most. A 429 sleeps for
+  `retry-after` only when it is 2 seconds or less; a longer value fails the
+  request at once as `rate_limited`, so a page request never waits out a long
+  limit.
+- The collector retries at most twice. A 429 honours `retry-after` up to 30
+  seconds; a longer value defers the job instead of sleeping.
+
+On Verify, a 403 from both token verify endpoints records
+`permission_denied` with a fixed message that the token lacks the
+permissions needed to verify it; a 401 records `auth_failed`.
 
 ## Authorization
 

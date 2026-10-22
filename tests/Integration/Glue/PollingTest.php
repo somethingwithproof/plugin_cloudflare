@@ -236,6 +236,30 @@ final class PollingTest extends IntegrationTestCase {
 		$this->assertSame(array(), cloudflare_discovery_service()->runDue(50));
 	}
 
+	/* The 0.3.0 account read needs an M003 column, so collecting on the old schema would fault every account. */
+	public function testCollectorSkipsWhileAnUpgradeIsPending(): void {
+		$this->migrate();
+		$this->account('a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1');
+		$this->db()->execute('DELETE FROM plugin_cloudflare_migrations WHERE version = ?', array(3));
+		$built = false;
+
+		$status = cloudflare_collector_main(function () use (&$built) {
+			$built = true;
+
+			return cloudflare_discovery_service();
+		});
+
+		$this->assertSame(0, $status);
+		$this->assertFalse($built, 'no discovery runs on the old schema');
+		$this->assertSame(0, $this->jobCount());
+		$this->assertSame(
+			array('CLOUDFLARE: collector skipped; plugin upgrade pending, open Console > Plugins'),
+			self::loggedLines()
+		);
+		$this->assertSame(POLLER_VERBOSITY_LOW, cloudflare_glue_calls('cacti_log')[0][3]);
+		$this->assertTrue($this->lockIsFree());
+	}
+
 	public function testCollectorReleasesTheLockWhenDiscoveryFails(): void {
 		$this->migrate();
 

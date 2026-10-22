@@ -25,6 +25,7 @@ require_once __DIR__ . '/cacti_objects.php';
 use Cacti\PluginCloudflare\Jobs\JobRepository;
 use Cacti\PluginCloudflare\Storage\Database;
 use Cacti\PluginCloudflare\Storage\DatabaseException;
+use Cacti\PluginCloudflare\Storage\Migrator;
 use Cacti\PluginCloudflare\Support\SystemClock;
 
 if (!defined('CLOUDFLARE_COLLECTOR_LOCK')) {
@@ -72,6 +73,8 @@ function cloudflare_poller_bottom() : void {
 /**
  * Body of poller_cloudflare.php. A lock held by another collector is the
  * normal overlap of a slow run with the next cycle, so it exits 0 quietly.
+ * A pending upgrade also exits 0, with one LOW line per run so the admin
+ * learns why nothing is collected.
  * Only the exception class is logged: messages can carry Cloudflare text.
  *
  * @param callable $service_factory returns the DiscoveryService to run
@@ -83,6 +86,19 @@ function cloudflare_collector_main(callable $service_factory) : int {
 
 	try {
 		$db = cloudflare_db();
+
+		/* The upgrade runs only from a page view, and the account read needs
+		 * the new columns, so until then every account would fault. */
+		if ((new Migrator($db, Migrator::defaultMigrations()))->pending() !== array()) {
+			cacti_log(
+				'CLOUDFLARE: collector skipped; plugin upgrade pending, open Console > Plugins',
+				false,
+				'CLOUDFLARE',
+				POLLER_VERBOSITY_LOW
+			);
+
+			return 0;
+		}
 
 		if (!$db->acquireLock(CLOUDFLARE_COLLECTOR_LOCK, 0)) {
 			return 0;

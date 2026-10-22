@@ -22,8 +22,11 @@ bdd:
 stan:
 	vendor/bin/phpstan analyse --no-progress --memory-limit=1G
 
+# src/, tests/ and features/ use .php-cs-fixer.dist.php; the plugin glue
+# follows Cacti's own rules in .php-cs-fixer.cacti.php.
 cs:
 	vendor/bin/php-cs-fixer fix --dry-run --diff --config=.php-cs-fixer.dist.php
+	vendor/bin/php-cs-fixer fix --dry-run --diff --config=.php-cs-fixer.cacti.php
 
 lint74:
 	docker run --rm -v "$$PWD":/app -w /app php:7.4-cli sh -c \

@@ -29,7 +29,8 @@ done
 for prefix in cloudflare/tests/ cloudflare/features/ cloudflare/vendor/ cloudflare/docs/superpowers/ \
     cloudflare/.superpowers/ cloudflare/.github/ cloudflare/composer.json cloudflare/composer.lock \
     cloudflare/Makefile cloudflare/phpunit.xml.dist cloudflare/phpstan.neon.dist \
-    cloudflare/.php-cs-fixer.dist.php cloudflare/behat.yml.dist cloudflare/sonar-project.properties; do
+    cloudflare/.php-cs-fixer.dist.php cloudflare/.php-cs-fixer.cacti.php \
+    cloudflare/behat.yml.dist cloudflare/sonar-project.properties; do
     if awk -v p="${prefix}" 'index($0, p) == 1 { found = 1 } END { exit !found }' <<<"${listing}"; then
         printf 'FAIL: %s is in %s\n' "${prefix}" "${archive}" >&2
         status=1

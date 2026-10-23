@@ -19,7 +19,7 @@
 */
 
 $finder = PhpCsFixer\Finder::create()
-	->in(array(__DIR__ . '/src', __DIR__ . '/tests'));
+	->in(array(__DIR__ . '/src', __DIR__ . '/tests', __DIR__ . '/features'));
 
 return (new PhpCsFixer\Config())
 	->setIndent("\t")

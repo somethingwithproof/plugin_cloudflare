@@ -1,0 +1,80 @@
+# Cacti 1.2.31 with a copy of the plugin, for tests/docker/smoke.sh.
+# `make smoke-up` runs it as project cf-smoke on port 8090; smoke.sh uses
+# cf-smoke-run on 8091. Neither touches the compose.db.yml database on 33061.
+#
+# web and db sit on an internal network with no route out, so a Verify
+# fails fast as unreachable instead of calling the real Cloudflare API. The
+# gateway is the only container on a routable network; it proxies
+# 127.0.0.1:${CF_SMOKE_PORT} (default 8090) to web.
+
+services:
+  db:
+    image: mariadb:10.11@sha256:0d0945c57f75b3a3b9ebe71aedaaad005fa5305054e8fca3d2e42a8c92b43b5e
+    environment:
+      MARIADB_ROOT_PASSWORD: smoke-root
+      MARIADB_DATABASE: cacti
+      MARIADB_USER: cactiuser
+      MARIADB_PASSWORD: cactiuser
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
+    tmpfs:
+      - /var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 3s
+      timeout: 3s
+      retries: 40
+    networks:
+      - smoke
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.cacti
+    image: cf-smoke-cacti:1.2.31
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      CACTI_DB_HOST: db
+      CACTI_DB_NAME: cacti
+      CACTI_DB_USER: cactiuser
+      CACTI_DB_PASS: cactiuser
+      CACTI_ADMIN_PASS: ${CF_SMOKE_ADMIN_PASS:-smoke-admin}
+    # The entrypoint copies this into plugins/cloudflare without vendor/ and
+    # the other trees a release archive leaves out, so the plugin loads src/
+    # through its own PSR-4 loader as it will in production. A tmpfs over
+    # vendor/ inside a read-only bind mount fails on Linux hosts.
+    volumes:
+      - ${CF_PLUGIN_DIR:-../..}:/src/cloudflare:ro
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "-o", "/dev/null", "http://127.0.0.1/cacti/index.php"]
+      interval: 3s
+      timeout: 5s
+      retries: 100
+    networks:
+      - smoke
+
+  gateway:
+    image: mirror.gcr.io/library/httpd:2.4@sha256:c842ac797bd1fe8b3cd26d002ac9d948aa2814097544600600b35aef42e6785a
+    depends_on:
+      web:
+        condition: service_healthy
+    command:
+      - sh
+      - -c
+      - >-
+        sed -i -E 's/^#(LoadModule (proxy|proxy_http)_module)/\1/' conf/httpd.conf
+        && echo 'Include conf/extra/cf-gateway.conf' >> conf/httpd.conf
+        && exec httpd-foreground
+    volumes:
+      - ./gateway.conf:/usr/local/apache2/conf/extra/cf-gateway.conf:ro
+    ports:
+      - "127.0.0.1:${CF_SMOKE_PORT:-8090}:80"
+    networks:
+      - smoke
+      - edge
+
+networks:
+  smoke:
+    internal: true
+  edge: {}

@@ -123,11 +123,82 @@ not weaken assertions. Do not mock the implementation under test. PHPUnit,
 PHPStan, Cacti-consistent style checks.
 
 ## 5. BDD
-`features/` with executable Gherkin (Behat). Scenarios: account
-configuration (valid account; user lacks permission), tunnel discovery
-(three tunnels; no duplicates on repeat), Cloudflare outage, HTTP 429,
-metrics integrity on failed request, permission enforcement on credential
-access. (Collector parity deferred with Rust.)
+`features/` holds executable Gherkin run with Behat, backed by automated
+steps. The scenario wording below is the owner's and is used verbatim. Steps
+may append further `And` checks, but must not reword these lines. The
+collector-parity scenario is deferred along with the Rust collector.
+
+```gherkin
+Feature: Account configuration
+
+  Scenario: Administrator adds a valid Cloudflare account
+    Given I am authenticated as a Cacti administrator
+    And I have a valid scoped Cloudflare API token
+    When I configure a Cloudflare account
+    And I verify the connection
+    Then the account should be saved
+    And the connection status should indicate success
+    And the token must not appear in application logs
+
+  Scenario: User lacks configuration permission
+    Given I am authenticated without Cloudflare configuration privileges
+    When I attempt to configure an account
+    Then the request must be rejected
+    And no configuration should change
+
+Feature: Tunnel discovery
+
+  Scenario: Discover tunnels successfully
+    Given a configured Cloudflare account
+    And the Cloudflare API returns three tunnels
+    When the discovery process executes
+    Then Cacti should store exactly three discovered tunnels
+    And each tunnel should retain its Cloudflare identifier
+
+  Scenario: Repeated discovery does not create duplicates
+    Given three tunnels have already been discovered
+    When the discovery process executes again with unchanged results
+    Then the tunnel count must remain three
+    And existing resource associations must be preserved
+
+Feature: Cloudflare outage
+
+  Scenario: Cloudflare becomes unavailable
+    Given Cacti is monitoring existing devices
+    And the Cloudflare API becomes unavailable
+    When the polling cycle executes
+    Then unrelated Cacti polling must continue
+    And Cloudflare observations must be classified as unavailable
+    And existing graph history must remain intact
+
+Feature: API rate limiting
+
+  Scenario: Cloudflare returns HTTP 429
+    Given the API request limit has been reached
+    When the Cloudflare collector receives HTTP 429
+    Then it must apply bounded retry handling
+    And honor supported retry information
+    And defer collection when the retry budget is exhausted
+    And it must not block the Cacti user interface
+
+Feature: Metrics integrity
+
+  Scenario: An API request fails
+    Given a tunnel previously reported four connections
+    When the next metrics request fails
+    Then the observation must be marked unknown
+    And the system must not record zero connections
+    And the previous historical samples must remain unchanged
+
+Feature: Permission enforcement
+
+  Scenario: Unauthorized user attempts credential access
+    Given I have permission to view Cloudflare graphs
+    And I do not have permission to administer Cloudflare accounts
+    When I request account credential details
+    Then the request must be denied
+    And no credential material must be returned
+```
 
 ## 6. Adversarial and failure tests
 Expired token, wrong permissions, timeouts, DNS failure, TLS failure, 429,

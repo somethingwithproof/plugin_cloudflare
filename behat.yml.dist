@@ -1,0 +1,9 @@
+default:
+  suites:
+    default:
+      paths:
+        - '%paths.base%/features'
+      contexts:
+        - Cacti\PluginCloudflare\Features\AccountContext
+  formatters:
+    progress: ~

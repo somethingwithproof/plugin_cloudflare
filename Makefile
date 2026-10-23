@@ -1,13 +1,20 @@
 COMPOSE := docker compose -f tests/docker/compose.db.yml
 PHPUNIT := vendor/bin/phpunit
 
-.PHONY: test test-integration stan cs lint74 db-up db-down ci
+# test-integration and bdd share one test database, so a -j run would
+# interleave their resets.
+.NOTPARALLEL:
+
+.PHONY: test test-integration bdd stan cs lint74 db-up db-down ci
 
 test:
 	$(PHPUNIT) --testsuite unit
 
 test-integration:
 	$(PHPUNIT) --testsuite integration
+
+bdd:
+	vendor/bin/behat --strict --no-interaction
 
 stan:
 	vendor/bin/phpstan analyse --no-progress --memory-limit=1G
@@ -25,4 +32,4 @@ db-up:
 db-down:
 	$(COMPOSE) down -v
 
-ci: test test-integration stan cs lint74
+ci: test test-integration bdd stan cs lint74

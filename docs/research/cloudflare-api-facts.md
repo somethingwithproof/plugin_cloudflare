@@ -115,3 +115,76 @@ Fixtures (`fixtures-*.json`) are in the same directory. Tunnel, connections, tok
 2. The Zone Read permission label differs between the API reference (`Zone Zone Read`) and the permissions page (`Zone Read`).
 3. Not found in any fetched source: REST 429 body, error codes `1000`/`9109`, GraphQL query-cost formula, adaptive-dataset latency, `cacheStatus`/`datetimeMinute`/`edgeResponseStatus` on `httpRequestsAdaptiveGroups`, Free-plan availability of `httpRequests1mGroups`/`1hGroups`, and which verify endpoint pairs with which token type. Resolve with one authenticated GraphQL introspection call and one live verify call before coding against them.
 4. The Cloudflare MCP server failed to connect during this research, so no authenticated calls were made. Everything above comes from public docs, the public OpenAPI schema, and cloudflared source, not live responses.
+
+## Live verification (2026-10-21)
+
+Read-only calls made with the owner's scoped tokens against one standard
+account that holds 12 Free-plan zones and no tunnels. No account or zone
+identifiers are recorded here. These observations override any conflicting
+UNVERIFIED item above.
+
+- **User-owned token, account verify endpoint.**
+  `GET /accounts/{id}/tokens/verify` returns HTTP 401 with
+  `{"code":1000,"message":"Invalid API Token"}`.
+  `GET /user/tokens/verify` returns `success: true`, and `result` holds only
+  `id` and `status` (`active`).
+  The client must therefore fall back from the account endpoint to the user
+  endpoint when it gets a 401.
+- **Invalid token.** A syntactically valid but invalid token returns error
+  code 1000.
+- **Malformed token.** A random 40-character alphanumeric string returns HTTP
+  400 with code 6003 ("Invalid request headers") and `error_chain` code 6111
+  ("Invalid format for Authorization header"). Treat 400 with 6003 or 6111 as
+  `auth`, not `malformed`.
+- **Unknown tunnel ID.** `GET /accounts/{id}/cfd_tunnel/{unknown-uuid}` and
+  `.../connections` return HTTP 401 with
+  `{"code":1001,"message":"Not authorized"}`, not 404. The token can still
+  list tunnels for the same account. Discovery must not read a per-tunnel
+  401 or 1001 as revocation of the account token.
+- **Wrong account ID.** An all-zero account ID on `cfd_tunnel` returns HTTP
+  403.
+- **Tunnel list, empty account.** `result_info` is
+  `{page, per_page, count, total_count}`, with no `total_pages`.
+- **Pagination fields elsewhere.** `/accounts` and `/zones` do include
+  `total_pages` in `result_info`. Pagination code must not depend on it.
+- **REST rate-limit headers** on success:
+  `ratelimit: "default";r=1199;t=1` and
+  `ratelimit-policy: "default";q=1200;w=300`.
+- **GraphQL `settings` node, Free-plan zone.** It works with the `...Groups`
+  dataset names.
+
+  | Dataset | `enabled` | `maxDuration` | `notOlderThan` | Other fields |
+  |---|---|---|---|---|
+  | `httpRequestsAdaptiveGroups` | true | 2592000 (30 d) | 2678400 (31 d) | `maxNumberOfFields` 40, `maxPageSize` 10000 |
+  | `httpRequests1hGroups` | true | 259200 (3 d) | 262800 | |
+  | `firewallEventsAdaptiveGroups` | **false** | 0 | 0 | |
+
+  | `firewallEventsAdaptive` | true | 2592000 | 2678400 | |
+  | `firewallEventsAdaptiveByTimeGroups` | true | 2592000 | 2678400 | |
+
+  Security event analytics are available on Free zones through
+  `firewallEventsAdaptiveByTimeGroups` (time-bucketed counts) and
+  `firewallEventsAdaptive` (raw events), but not through
+  `firewallEventsAdaptiveGroups`. Availability differs by dataset name, so
+  the collector probes the exact dataset it queries, per zone.
+
+### Pro-plan zone (2026-10-21)
+
+The same `settings` probe was run against one zone after it was upgraded to
+Pro.
+
+| Dataset | `enabled` | `maxDuration` | `notOlderThan` | Free-zone result |
+|---|---|---|---|---|
+| `httpRequestsAdaptiveGroups` | true | 2592000 | 2678400 | same |
+| `httpRequests1hGroups` | true | 259200 | 608400 | `notOlderThan` 262800 |
+| `httpRequests1mGroups` | true | 54000 | 90000 | not probed |
+| `firewallEventsAdaptive` | true | 2592000 | 2678400 | same |
+| `firewallEventsAdaptiveByTimeGroups` | true | 2592000 | 2678400 | same |
+| `firewallEventsAdaptiveGroups` | true | 86400 | 259200 | **disabled** |
+| `healthCheckEventsAdaptiveGroups` | true | 262800 | 262800 | not probed |
+| `loadBalancingRequestsAdaptiveGroups` | true | 604800 | 262800 | not probed |
+| `cacheReserveRequestsAdaptiveGroups` | false | 2764800 | 2764800 | not probed |
+
+The token used here cannot read the account subscriptions endpoint
+(`GET /accounts/{id}/subscriptions` returns code 10000), because billing
+permission is not part of the token's scope.

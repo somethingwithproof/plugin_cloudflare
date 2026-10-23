@@ -25,7 +25,6 @@ use Cacti\PluginCloudflare\Api\ErrorClass;
 use Cacti\PluginCloudflare\Auth\AccessDenied;
 use Cacti\PluginCloudflare\Auth\Authorizer;
 use Cacti\PluginCloudflare\Secret\SecretException;
-use Cacti\PluginCloudflare\Secret\TokenFile;
 use Cacti\PluginCloudflare\Secret\TokenPolicy;
 use Cacti\PluginCloudflare\Secret\TokenVault;
 use Cacti\PluginCloudflare\Storage\DatabaseException;
@@ -74,6 +73,9 @@ final class AccountService {
 	/** @var Clock */
 	private $clock;
 
+	/** @var CredentialResolver */
+	private $credentials;
+
 	/** @var callable(string): void|null */
 	private $log;
 
@@ -95,6 +97,8 @@ final class AccountService {
 		$this->vault  = $vault;
 		$this->clock  = $clock;
 		$this->log    = $log;
+
+		$this->credentials = new CredentialResolver($repo, $vault);
 	}
 
 	/**
@@ -298,7 +302,7 @@ final class AccountService {
 		$now      = $this->clock->now();
 
 		try {
-			$token = $this->loadToken($material);
+			$token = $this->credentials->resolveMaterial($material);
 		} catch (SecretException $e) {
 			if ($material['source'] === 'file') {
 				$message = self::MESSAGE_FILE;
@@ -366,30 +370,6 @@ final class AccountService {
 		}
 
 		return $account;
-	}
-
-	/**
-	 * A decrypt can legitimately return '' and a file can hold anything, so
-	 * the policy check runs here whatever the source.
-	 *
-	 * @param array{source: string, ciphertext: string|null, file: string|null, cf_account_id: string} $material
-	 *
-	 * @throws SecretException
-	 */
-	private function loadToken(array $material): string {
-		if ($material['source'] === 'file') {
-			$token = TokenFile::read((string) $material['file']);
-		} elseif ($this->vault === null) {
-			throw new SecretException(SecretException::KEY_UNAVAILABLE);
-		} elseif ($material['ciphertext'] === null) {
-			throw new SecretException(SecretException::DECRYPT_FAILED);
-		} else {
-			$token = $this->vault->decrypt($material['ciphertext'], TokenVault::aadFor($material['cf_account_id']));
-		}
-
-		TokenPolicy::validate($token);
-
-		return $token;
 	}
 
 	/**

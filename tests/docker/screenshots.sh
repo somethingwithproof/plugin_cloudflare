@@ -2,8 +2,10 @@
 # Captures the README screenshots from the `make smoke-up` stack (project
 # cf-smoke on CF_SMOKE_PORT, default 8090) into docs/images/. It installs
 # and enables the plugin, creates a vault key, adds "Example account" with
-# a placeholder account ID and a random token, and runs Verify. The stack
-# has no route to the internet, so the account's status is unreachable.
+# the fixture account ID and a random token, runs Verify, and polls once.
+# The stack has no route to the internet; cloudflare-fake answers as
+# api.cloudflare.com from tests/fixtures/cloudflare, so the pages show the
+# three fixture tunnels.
 #
 # Needs Node for `npx playwright`; run through `make screenshots`.
 
@@ -16,9 +18,10 @@ admin_pass="${CF_SMOKE_ADMIN_PASS:-smoke-admin}"
 playwright="${CF_PLAYWRIGHT:-playwright@1.63.0}"
 base="http://127.0.0.1:${port}/cacti"
 page="${base}/plugins/cloudflare/cloudflare_accounts.php"
+viewer="${base}/plugins/cloudflare/cloudflare.php"
 images="${root}/docs/images"
 account_name='Example account'
-account_id='0123456789abcdef0123456789abcdef'
+account_id='699d98642c564d2e855e9661899b7252'
 
 dc=(docker compose -p cf-smoke -f "${here}/compose.cacti.yml")
 work="$(mktemp -d)"
@@ -86,6 +89,8 @@ fi
 
 token="$(head -c 600 /dev/urandom | LC_ALL=C tr -dc 'A-Za-z0-9' | cut -c 1-40)"
 [[ "${#token}" -eq 40 ]] || die 'could not generate a placeholder token'
+# The fake accepts only this bearer credential.
+printf '%s' "${token}" | "${dc[@]}" exec -T -u www-data cloudflare-fake sh -c 'umask 077 && cat > /run/cf-fake/token'
 
 http "${work}/edit.html" "${page}?action=edit" >/dev/null
 csrf="$(require_csrf "${work}/edit.html")"
@@ -122,7 +127,20 @@ http "${work}/verify.html" \
     --data-urlencode "__csrf_magic=${csrf}" \
     "${page}" >/dev/null
 status="$(sql "SELECT status FROM plugin_cloudflare_accounts WHERE id = ${id}")"
-[[ "${status}" = 'unreachable' ]] || die "expected status unreachable after Verify, got ${status}"
+[[ "${status}" = 'ok' ]] || die "expected status ok after Verify, got ${status}"
+
+# The seeded automation network would have poller.php scan a LAN that does
+# not exist here. The View realm is not granted to admin on install.
+sql "UPDATE automation_networks SET enabled = ''"
+sql "INSERT IGNORE INTO user_auth_realm (realm_id, user_id) SELECT id + 100, 1 FROM plugin_realms WHERE plugin = 'cloudflare' AND file = 'cloudflare.php'"
+out="$("${dc[@]}" exec -T -u www-data web php poller.php --force 2>&1)" || die "${out}"
+# The collector runs detached from poller.php.
+for ((i = 0; i < 60; i++)); do
+    [[ "$(sql "SELECT COUNT(*) FROM plugin_cloudflare_jobs WHERE account_id = ${id} AND last_status = 'ok'")" = '1' ]] && break
+    sleep 1
+done
+[[ "$(sql "SELECT COUNT(*) FROM plugin_cloudflare_tunnels WHERE account_id = ${id}")" = '3' ]] \
+    || die 'discovery did not store the three fixture tunnels'
 
 # curl's jar is the Netscape format; Playwright wants its storage-state JSON.
 awk -F '\t' '
@@ -156,6 +174,8 @@ mkdir -p "${images}"
 shoot "${page}" 'accounts-list.png' "${account_name}"
 shoot "${page}?action=edit&id=${id}" 'account-edit.png' 'Connection Status'
 shoot "${base}/settings.php?tab=cloudflare" 'settings-cloudflare.png' 'Token Vault Key File'
+shoot "${viewer}" 'overview.png' "${account_name}"
+shoot "${viewer}?action=tunnels" 'tunnels-list.png' 'old-office'
 
 for png in "${images}"/*.png; do
     if command -v oxipng >/dev/null 2>&1; then

@@ -47,6 +47,19 @@ tar -C "${PLUGIN_SRC}" \
 	--exclude=./.git \
 	-cf - . | tar -C "${plugin_dir}" --no-same-owner -xf -
 
+# The smoke stack's fake api.cloudflare.com is signed by a CA minted at its
+# start. Trusting it through the system bundle leaves the plugin's own TLS
+# settings exactly as in production. Set but missing is a broken stack.
+if [[ -n "${CACTI_SMOKE_CA:-}" ]]; then
+	if [[ ! -s "${CACTI_SMOKE_CA}" ]]; then
+		log "no CA certificate at ${CACTI_SMOKE_CA}"
+		exit 1
+	fi
+	log "trusting the smoke CA"
+	install -m 0644 "${CACTI_SMOKE_CA}" /usr/local/share/ca-certificates/cf-smoke-ca.crt
+	update-ca-certificates >/dev/null
+fi
+
 config_php="${CACTI_ROOT}/include/config.php"
 cp "${CACTI_ROOT}/include/config.php.dist" "${config_php}"
 sed -i -E \

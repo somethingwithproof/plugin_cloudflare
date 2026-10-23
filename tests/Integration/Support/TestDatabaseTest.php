@@ -21,9 +21,9 @@ namespace Cacti\PluginCloudflare\Tests\Integration\Support;
 
 use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
 use PDO;
-use PHPUnit\Framework\TestCase;
+use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
 
-final class TestDatabaseTest extends TestCase {
+final class TestDatabaseTest extends IntegrationTestCase {
 	protected function setUp(): void {
 		TestDatabase::skipIfUnavailable($this);
 		TestDatabase::reset();
@@ -72,5 +72,13 @@ final class TestDatabaseTest extends TestCase {
 		TestDatabase::reset();
 
 		$this->assertSame(0, (int) $pdo->query($count)->fetchColumn());
+	}
+
+	public function testCloseAllKillsHandlesStillReferenced(): void {
+		$held = TestDatabase::pdo();
+
+		$this->assertSame(1, TestDatabase::closeAll());
+		$this->assertFalse(@$held->query('SELECT 1'));
+		$this->assertNotFalse(TestDatabase::pdo()->query('SELECT 1'));
 	}
 }

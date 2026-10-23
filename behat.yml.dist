@@ -5,5 +5,6 @@ default:
         - '%paths.base%/features'
       contexts:
         - Cacti\PluginCloudflare\Features\AccountContext
+        - Cacti\PluginCloudflare\Features\DiscoveryContext
   formatters:
     progress: ~

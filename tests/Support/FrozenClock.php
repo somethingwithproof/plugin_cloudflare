@@ -32,4 +32,8 @@ final class FrozenClock implements Clock {
 	public function now(): int {
 		return $this->now;
 	}
+
+	public function advance(int $seconds): void {
+		$this->now += $seconds;
+	}
 }

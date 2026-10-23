@@ -18,7 +18,7 @@ git archive --format=tar.gz --prefix=cloudflare/ -o "${archive}" HEAD
 listing="$(tar -tzf "${archive}")"
 status=0
 
-for path in cloudflare/setup.php cloudflare/INFO cloudflare/LICENSE cloudflare/cloudflare_accounts.php \
+for path in cloudflare/setup.php cloudflare/INFO cloudflare/LICENSE cloudflare/cloudflare.php cloudflare/cloudflare_accounts.php cloudflare/poller_cloudflare.php \
     cloudflare/src/ cloudflare/includes/ cloudflare/js/ cloudflare/docs/images/; do
     if ! grep -qxF -- "${path}" <<<"${listing}"; then
         printf 'FAIL: %s is missing from %s\n' "${path}" "${archive}" >&2

@@ -2,10 +2,15 @@
 # `make smoke-up` runs it as project cf-smoke on port 8090; smoke.sh uses
 # cf-smoke-run on 8091. Neither touches the compose.db.yml database on 33061.
 #
-# web and db sit on an internal network with no route out, so a Verify
-# fails fast as unreachable instead of calling the real Cloudflare API. The
+# web, db and cloudflare-fake sit on an internal network with no route
+# out, so nothing in the stack can reach the real Cloudflare API. The
 # gateway is the only container on a routable network; it proxies
 # 127.0.0.1:${CF_SMOKE_PORT} (default 8090) to web.
+#
+# cloudflare-fake answers as api.cloudflare.com through a network alias,
+# with a leaf signed by a CA it mints at start. Only web installs that CA,
+# into its system bundle, so the plugin runs with its production origin
+# and full TLS verification; nothing in the plugin is configured for test.
 
 services:
   db:
@@ -34,7 +39,10 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      cloudflare-fake:
+        condition: service_healthy
     environment:
+      CACTI_SMOKE_CA: /run/cf-smoke-ca/ca.crt
       CACTI_DB_HOST: db
       CACTI_DB_NAME: cacti
       CACTI_DB_USER: cactiuser
@@ -46,6 +54,7 @@ services:
     # vendor/ inside a read-only bind mount fails on Linux hosts.
     volumes:
       - ${CF_PLUGIN_DIR:-../..}:/src/cloudflare:ro
+      - smoke-ca:/run/cf-smoke-ca:ro
     healthcheck:
       test: ["CMD", "curl", "-fsS", "-o", "/dev/null", "http://127.0.0.1/cacti/index.php"]
       interval: 3s
@@ -53,6 +62,36 @@ services:
       retries: 100
     networks:
       - smoke
+
+  cloudflare-fake:
+    # The web image already has PHP and openssl, so the fake needs no new
+    # base. web is the only service that builds it; `up --build` finishes
+    # every build before it creates any container, and pull_policy: never
+    # stops compose from looking for this local tag on a registry.
+    image: cf-smoke-cacti:1.2.31
+    pull_policy: never
+    entrypoint: ["bash", "/opt/fake-cloudflare/start.sh"]
+    # Lets www-data bind 443 inside this container's own network namespace.
+    sysctls:
+      net.ipv4.ip_unprivileged_port_start: "443"
+    # The leaf key and the control files never leave this container.
+    tmpfs:
+      - /run/cf-fake-tls:mode=0700
+      - /run/cf-fake:mode=0700
+    volumes:
+      - ./fake-cloudflare:/opt/fake-cloudflare:ro
+      - ../fixtures/cloudflare:/opt/fixtures:ro
+      - smoke-ca:/run/cf-smoke-ca
+    # A bare TCP connect, so the check never shows up in requests.log.
+    healthcheck:
+      test: ["CMD", "sh", "-c", "test -s /run/cf-smoke-ca/ca.crt && php -r 'exit(@fsockopen(\"127.0.0.1\", 443) ? 0 : 1);'"]
+      interval: 3s
+      timeout: 5s
+      retries: 40
+    networks:
+      smoke:
+        aliases:
+          - api.cloudflare.com
 
   gateway:
     image: mirror.gcr.io/library/httpd:2.4@sha256:c842ac797bd1fe8b3cd26d002ac9d948aa2814097544600600b35aef42e6785a
@@ -78,3 +117,6 @@ networks:
   smoke:
     internal: true
   edge: {}
+
+volumes:
+  smoke-ca: {}

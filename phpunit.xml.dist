@@ -12,6 +12,7 @@
 		</testsuite>
 		<testsuite name="integration">
 			<directory>tests/Integration</directory>
+			<directory>tests/Guard</directory>
 		</testsuite>
 	</testsuites>
 	<coverage>
@@ -19,7 +20,9 @@
 			<directory suffix=".php">src</directory>
 			<directory suffix=".php">includes</directory>
 			<file>setup.php</file>
+			<file>cloudflare.php</file>
 			<file>cloudflare_accounts.php</file>
+			<file>poller_cloudflare.php</file>
 		</include>
 	</coverage>
 </phpunit>

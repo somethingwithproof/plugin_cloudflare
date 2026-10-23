@@ -6,11 +6,11 @@ read; no permission with write access is needed. Permission names below are
 the labels from Cloudflare's documentation, as recorded in
 [research/cloudflare-api-facts.md](research/cloudflare-api-facts.md#3-token-permissions).
 
-## Milestone 1
+## Milestones 1 and 2
 
 | Permission | Scope | Required | Used for |
 |---|---|---|---|
-| `Cloudflare Tunnel Read` | Account | Yes, or one of the equivalents below | The tunnel probe in Verify, and tunnel discovery from Milestone 2 |
+| `Cloudflare Tunnel Read` | Account | Yes, or one of the equivalents below | The tunnel probe in Verify, and tunnel discovery |
 | `Zone Read` | Zone | No | The zone probe in Verify. Nothing else uses it yet |
 
 Cloudflare accepts any one of these for the tunnel endpoints, and the
@@ -23,6 +23,20 @@ matching Write permissions also satisfy them:
 The Cloudflare API reference lists the zone permission as `Zone Zone Read`;
 the permissions page lists it as `Zone Read`. Both names refer to the same
 permission.
+
+### What discovery calls
+
+The collector makes two requests, both `GET`, and both need the tunnel read
+permission:
+
+- `/accounts/{account_id}/cfd_tunnel`, to list the account's tunnels
+- `/accounts/{account_id}/cfd_tunnel/{tunnel_id}/connections`, to read one
+  tunnel's connectors
+
+Discovery needs no permission beyond the tunnel read permission that Verify
+already checks. If Cloudflare refuses the tunnel listing during a run, the
+run fails as `auth` or `permission`; three failed runs in a row mark the
+account's active tunnels `unavailable` until a listing succeeds again.
 
 Token verification (`/tokens/verify`) needs no permission. Both account-owned
 and user-owned tokens work. A user-owned token gets HTTP 401 from the account

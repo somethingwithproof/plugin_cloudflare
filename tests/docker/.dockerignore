@@ -1,0 +1,4 @@
+# The image needs only the Cacti archive and the entrypoint.
+*
+!build/cacti.tar
+!entrypoint.sh

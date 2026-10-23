@@ -135,3 +135,93 @@ jobs:
       # skipping it (tests/Support/TestDatabase.php).
       - name: PHPUnit integration suite
         run: make test-integration
+
+  bdd:
+    name: bdd
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    services:
+      db:
+        image: mariadb:10.11@sha256:0d0945c57f75b3a3b9ebe71aedaaad005fa5305054e8fca3d2e42a8c92b43b5e
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: cacti_cf_test
+          MARIADB_USER: cacti
+          MARIADB_PASSWORD: cacti
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Set up PHP 8.3
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: '8.3'
+          extensions: curl, openssl, pdo_mysql
+          coverage: none
+          tools: composer:v2
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+      - name: Behat
+        run: make bdd
+
+  smoke:
+    name: smoke
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout plugin
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          path: plugin
+          persist-credentials: false
+      - name: Checkout Cacti 1.2.31
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: Cacti/cacti
+          ref: release/1.2.31
+          path: cacti
+          persist-credentials: false
+      - name: Install smoke on Cacti 1.2.31
+        working-directory: plugin
+        run: make cacti-src smoke CACTI_REPO="$GITHUB_WORKSPACE/cacti" CACTI_REF=HEAD
+
+  audit:
+    name: audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Set up PHP 8.4
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: '8.4'
+          coverage: none
+          tools: composer:v2
+      # Advisories fail the job. Abandoned packages are only reported
+      # (composer.json config.audit.abandoned): behat/transliterator is an
+      # abandoned dev-only dependency of behat with no replacement.
+      - name: composer audit
+        run: composer audit --locked --no-interaction
+
+  package:
+    name: package
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Build and check the release archive
+        run: make package

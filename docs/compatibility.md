@@ -1,0 +1,107 @@
+# Compatibility
+
+This page records the versions the plugin supports in Milestone 1, what is
+tested, and the external interfaces it depends on. Cacti facts come from the
+`release/1.2.25` and `release/1.2.31` tags of Cacti; Cloudflare facts come
+from [`research/cloudflare-api-facts.md`](research/cloudflare-api-facts.md).
+
+## Summary
+
+| Component | Supported | Tested |
+|---|---|---|
+| Cacti | 1.2.25 through 1.2.31 (`compat = 1.2.25` in INFO) | 1.2.31, by the install smoke |
+| PHP | 7.4 through 8.4 | Unit tests on 7.4, 8.1, 8.2, 8.3, 8.4; integration on 7.4 and 8.3; smoke on 8.0; `php -l` on 7.4 |
+| Database | MariaDB 10.6 and later, MySQL 8.0 and later | CI: MariaDB 10.11, MySQL 8.4. Integration tests and BDD features also run locally on 2026-10-22 against MariaDB 10.6.28 and MySQL 8.0.46; not part of CI |
+| PHP extensions | `curl`, `openssl`, `pdo_mysql` | Checked by `plugin_cloudflare_check_config()` |
+| Cacti 1.3 | Not a release target | Not tested |
+
+## Cacti
+
+### PHP floor
+
+The plugin keeps PHP 7.4 syntax. Cacti 1.2.25 through 1.2.30 have no
+Composer platform check and run on PHP 7.4, and INFO declares
+`compat = 1.2.25`.
+
+Cacti 1.2.31 requires PHP 8.0 or later. Its `composer.json` declares
+`"php": ">=8.0"`, and `include/vendor/composer/platform_check.php` stops on
+older versions. `include/global.php:555` loads that check through the
+Composer autoloader. On 1.2.31 the plugin therefore runs on PHP 8.0 or later,
+and the install smoke uses the `php:8.0-apache` image.
+
+### Hooks and APIs used
+
+The plugin changes no Cacti core files. It registers three hooks and two
+realms in `plugin_cloudflare_install()`:
+
+| Interface | Use | Reference (1.2.31) |
+|---|---|---|
+| `config_arrays` hook | Adds "Cloudflare Accounts" under Configuration when enabled | `include/global_arrays.php` |
+| `config_settings` hook | Adds the Settings > Cloudflare tab and runs pending migrations | `include/global_settings.php` |
+| `draw_navigation_text` hook | Breadcrumbs for `cloudflare_accounts.php` | `lib/functions.php` |
+| `api_plugin_register_realm()` | "Cloudflare: View" (`cloudflare.php`) and "Cloudflare: Configure" (`cloudflare_accounts.php`) | `lib/plugins.php` |
+| `api_plugin_valid_entrypoint()` | Requires registration calls to come from a function whose name contains install, upgrade or setup, so registration stays inside `plugin_cloudflare_install()` | `lib/plugins.php:1124` |
+| `api_plugin_uninstall()` | Cacti removes hooks, realms and `plugin_config` after the plugin's uninstall function returns | `lib/plugins.php:801` |
+| `api_plugin_disable_hooks()`, `api_plugin_load_realms()` | Cacti keeps realms loaded and the `config_arrays` hook active while a plugin is disabled, so each plugin entry point checks `api_plugin_is_enabled()` | `lib/plugins.php:1103`, `lib/plugins.php:1268` |
+| Realm check in `include/auth.php` | Enforces a page's realm by its basename | `include/auth.php:183` |
+| `$database_sessions` | The plugin reuses Cacti's PDO handle | `lib/database.php:129` |
+| `db_connect_real()` | Opens Cacti's connection with the arguments Cacti uses when no handle exists yet | `include/global.php:363` |
+
+Core Cacti never calls a plugin upgrade function, so
+`plugin_cloudflare_upgrade()` runs from `plugin_cloudflare_check_config()`,
+from the `config_settings` hook on `settings.php` and `plugins.php`, and at
+the top of `cloudflare_accounts.php`.
+
+Every Cacti function and hook above exists in `release/1.2.25`. The page
+calls `CactiSecureHeaders::getNonceAttribute()` only when that class exists,
+because older 1.2 releases do not have it.
+
+Helpers added after 1.2.25, such as `cacti_redact_sensitive()` and
+`cacti_plugin_path()`, are not called. The plugin carries its own redaction.
+
+## PHP
+
+`composer.json` sets `config.platform.php = 7.4.33`, so the dev tools resolve
+for PHP 7.4. PHPStan runs with `phpVersion: 70400`. The plugin has no runtime
+Composer dependencies; `includes/autoload.php` loads `src/` with a bundled
+PSR-4 loader when `vendor/` is absent, which is the case in a release archive.
+
+`#[\SensitiveParameter]` marks token parameters. PHP 8.2 and later hide
+those arguments from stack traces. PHP 8.0 and 8.1 ignore the unknown
+attribute, and PHP 7.4 reads the line as a comment. See
+[security.md](security.md#known-limitations).
+
+## Database
+
+The schema uses InnoDB, utf8mb4, a foreign key with `ON DELETE CASCADE`,
+`GET_LOCK()` for migrations, and `INT UNSIGNED` epoch timestamps
+([schema.md](schema.md)). Tests run with Cacti's session `sql_mode`, which
+removes the strict modes.
+
+MariaDB and MySQL report one failure differently. Dropping a table that
+another table references fails with SQLSTATE `23000` and error 1451 on
+MariaDB, and with SQLSTATE `HY000` and error 3730 on MySQL (seen on 8.0.46
+and 8.4.11). `MigratorTest` accepts both.
+
+## Cloudflare API
+
+Milestone 1 makes read-only `GET` requests to `https://api.cloudflare.com`
+only, and only when an administrator runs Verify.
+
+| Request | Purpose | Reference |
+|---|---|---|
+| `GET /client/v4/accounts/{account_id}/tokens/verify` | Check the token's status | [Token verification](research/cloudflare-api-facts.md#1-token-verification) |
+| `GET /client/v4/user/tokens/verify` | Fallback when the account endpoint answers with an auth or permission error, as it does for user-owned tokens | [Live verification](research/cloudflare-api-facts.md#live-verification-2026-10-21) |
+| `GET /client/v4/accounts/{account_id}/cfd_tunnel?per_page=1` | Probe for tunnel read permission | [Cloudflare Tunnel](research/cloudflare-api-facts.md#2-cloudflare-tunnel-cfd_tunnel) |
+| `GET /client/v4/zones?account.id={account_id}&per_page=5` | Probe for zone read permission | [Token permissions](research/cloudflare-api-facts.md#3-token-permissions) |
+
+The token permissions these requests need are in
+[token-permissions.md](token-permissions.md).
+
+Error handling follows the live observations in the research file: HTTP 400
+with error code 6003 or 6111 means a malformed token and is classed as an
+authentication failure. Requests from the web interface, such as Verify, are
+retried at most once. A 429 there is retried after the `retry-after` delay
+when that is 2 seconds or less, after the normal 1 second backoff when the
+header is absent, and not at all when the delay is longer. The 30 second
+`retry-after` limit belongs to the collector, which ships in Milestone 2.

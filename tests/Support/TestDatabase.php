@@ -24,6 +24,7 @@ use PDO;
 use PDOException;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
+use WeakReference;
 
 /**
  * Builds a PDO handle the way Cacti's db_connect_real() does (lib/database.php
@@ -35,6 +36,16 @@ final class TestDatabase {
 
 	/** @var string|null */
 	private static $unavailable = null;
+
+	/**
+	 * Weak, so the registry never keeps a handle alive on its own.
+	 *
+	 * @var array<int, WeakReference<PDO>>
+	 */
+	private static $open = array();
+
+	/** @var int */
+	private static $peakThreads = 0;
 
 	public static function pdo(): PDO {
 		$pdo = new PDO(self::dsn(), self::user(), self::pass(), array(
@@ -75,7 +86,59 @@ final class TestDatabase {
 		$stmt = $pdo->prepare('SET SESSION sql_mode = ?');
 		$stmt->execute(array(implode(',', $new_modes)));
 
+		self::$open[] = WeakReference::create($pdo);
+
 		return $pdo;
+	}
+
+	/**
+	 * Kills every handle from pdo() that something still references, so a
+	 * stray global or cache cannot hold a connection past its test class.
+	 *
+	 * @return int handles that were still referenced
+	 */
+	public static function closeAll(): int {
+		$live = 0;
+
+		foreach (self::$open as $ref) {
+			$pdo = $ref->get();
+			if ($pdo === null) {
+				continue;
+			}
+
+			$live++;
+
+			try {
+				$res = $pdo->query('SELECT CONNECTION_ID()');
+				if ($res !== false) {
+					$pdo->exec('KILL CONNECTION ' . (int) $res->fetchColumn());
+				}
+			} catch (PDOException $e) {
+				// Already gone, or the KILL reported its own connection closing.
+			}
+		}
+
+		self::$open = array();
+
+		return $live;
+	}
+
+	/* Samples only once a test has reached the database, so a skipped run records nothing. */
+	public static function recordThreads(): void {
+		if (self::$unavailable !== '') {
+			return;
+		}
+
+		$res = self::pdo()->query("SHOW STATUS LIKE 'Threads_connected'");
+		$row = $res === false ? false : $res->fetch(PDO::FETCH_NUM);
+
+		if (is_array($row)) {
+			self::$peakThreads = max(self::$peakThreads, (int) $row[1]);
+		}
+	}
+
+	public static function peakThreads(): int {
+		return self::$peakThreads;
 	}
 
 	public static function reset(): void {

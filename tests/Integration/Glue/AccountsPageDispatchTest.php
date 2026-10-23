@@ -21,7 +21,7 @@
 namespace Cacti\PluginCloudflare\Tests\Integration\Glue;
 
 use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
-use PHPUnit\Framework\TestCase;
+use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
 
 /**
  * Includes cloudflare_accounts.php itself from a stand-in Cacti tree whose
@@ -31,7 +31,7 @@ use PHPUnit\Framework\TestCase;
  * @runTestsInSeparateProcesses
  * @preserveGlobalState disabled
  */
-final class AccountsPageDispatchTest extends TestCase {
+final class AccountsPageDispatchTest extends IntegrationTestCase {
 	private const ROOT = __DIR__ . '/../../..';
 
 	/** @var string|null */
@@ -63,7 +63,7 @@ final class AccountsPageDispatchTest extends TestCase {
 		$GLOBALS['item_rows']         = array();
 
 		/* An installed plugin, so the page's upgrade call creates the schema. */
-		$GLOBALS['cloudflare_glue']['cell']                              = '0.1.0';
+		$GLOBALS['cloudflare_glue']['cell']                              = '0.2.0';
 		$GLOBALS['cloudflare_glue']['settings']['cloudflare_key_file'] = $this->cacti . '/absent.key';
 
 		$_REQUEST = array();
@@ -147,7 +147,7 @@ final class AccountsPageDispatchTest extends TestCase {
 		$this->assertSame(1, preg_match('/id=([0-9]+)$/', cloudflare_accounts_save(), $m));
 
 		cloudflare_glue_reset();
-		$GLOBALS['cloudflare_glue']['cell'] = '0.1.0';
+		$GLOBALS['cloudflare_glue']['cell'] = '0.2.0';
 		$_REQUEST                           = array('action' => 'actions', 'drp_action' => '2');
 		$_POST                              = array('chk_' . $m[1] => 'on');
 
@@ -155,5 +155,36 @@ final class AccountsPageDispatchTest extends TestCase {
 
 		$this->assertSame(array('Verify'), self::boxTitles());
 		$this->assertStringContainsString('<li>Prod</li>', $output);
+	}
+
+	/*
+	 * An uncaught error would reach CactiShutdownHandler, which disables the
+	 * plugin. The schema is missing here, so the handler logs a read failure,
+	 * and that log call throws to stand in for any unexpected error.
+	 */
+	public function testUnexpectedErrorIsLoggedByClassAndRendered(): void {
+		$GLOBALS['cloudflare_glue']['cell'] = false;
+		$thrown                             = false;
+		$GLOBALS['cloudflare_glue']['on_log'] = function () use (&$thrown): void {
+			if (!$thrown) {
+				$thrown = true;
+
+				throw new \RuntimeException('detail that must not be logged');
+			}
+		};
+
+		$output = $this->page();
+
+		$this->assertTrue($thrown);
+		$lines = array_map(function (array $call): string {
+			return (string) $call[0];
+		}, cloudflare_glue_calls('cacti_log'));
+		$this->assertContains('CLOUDFLARE: accounts page failed (RuntimeException)', $lines);
+		$this->assertStringNotContainsString('must not be logged', implode("\n", $lines) . $output);
+		$this->assertStringContainsString(
+			'The Cloudflare accounts could not be read. See the Cacti log for details.',
+			$output
+		);
+		$this->assertNotSame(array(), cloudflare_glue_calls('bottom_footer'));
 	}
 }

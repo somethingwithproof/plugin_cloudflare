@@ -37,9 +37,9 @@ use Cacti\PluginCloudflare\Tests\Support\RecordingSleeper;
 use Cacti\PluginCloudflare\Tests\Support\SecretAssertions;
 use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
 use OutOfBoundsException;
-use PHPUnit\Framework\TestCase;
+use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
 
-final class AccountServiceTest extends TestCase {
+final class AccountServiceTest extends IntegrationTestCase {
 	use SecretAssertions;
 
 	private const ACCOUNT = 'ed17574386854bf78a67040be0a770b0';

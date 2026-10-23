@@ -19,6 +19,7 @@
 */
 
 require_once __DIR__ . '/includes/bootstrap.php';
+require_once __DIR__ . '/includes/accounts.php';
 
 use Cacti\PluginCloudflare\Storage\DatabaseException;
 use Cacti\PluginCloudflare\Storage\Migrator;
@@ -26,7 +27,8 @@ use Cacti\PluginCloudflare\Storage\Migrator;
 /*
  * api_plugin_valid_entrypoint() (lib/plugins.php:1124) rejects hook and
  * realm registration unless the direct caller's name matches
- * /(install|upgrade|setup)/i, so registration stays inline in install().
+ * /(install|upgrade|setup)/i, so registration stays inline in install()
+ * and plugin_cloudflare_upgrade().
  */
 function plugin_cloudflare_install() : void {
 	api_plugin_register_hook('cloudflare', 'config_arrays', 'cloudflare_config_arrays', 'includes/settings.php');
@@ -37,6 +39,7 @@ function plugin_cloudflare_install() : void {
 		'cloudflare_draw_navigation_text',
 		'includes/settings.php'
 	);
+	api_plugin_register_hook('cloudflare', 'poller_bottom', 'cloudflare_poller_bottom', 'includes/polling.php');
 
 	api_plugin_register_realm('cloudflare', 'cloudflare.php', 'Cloudflare: View', false);
 	api_plugin_register_realm('cloudflare', 'cloudflare_accounts.php', 'Cloudflare: Configure', true);
@@ -115,6 +118,20 @@ function plugin_cloudflare_upgrade(int $lock_timeout = 10) : bool {
 		cloudflare_log_schema_failure('upgrade', $e);
 
 		return false;
+	}
+
+	/* 0.2.0 added the hook. Cacti inserts a new hook disabled unless asked
+	 * (lib/plugins.php:1046), and an already enabled plugin is not enabled
+	 * again, so the hook takes the plugin's current state. This stays inline:
+	 * api_plugin_valid_entrypoint() checks the direct caller's name. */
+	if (version_compare((string) $installed, '0.2.0', '<')) {
+		api_plugin_register_hook(
+			'cloudflare',
+			'poller_bottom',
+			'cloudflare_poller_bottom',
+			'includes/polling.php',
+			cloudflare_plugin_enabled()
+		);
 	}
 
 	if ($current !== '' && $current !== (string) $installed) {

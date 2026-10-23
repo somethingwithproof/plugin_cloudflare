@@ -20,17 +20,19 @@
 
 namespace Cacti\PluginCloudflare\Tests\Integration\Glue;
 
+use Cacti\PluginCloudflare\Storage\Database;
 use Cacti\PluginCloudflare\Storage\DatabaseException;
+use Cacti\PluginCloudflare\Storage\Migrations\M001Foundation;
 use Cacti\PluginCloudflare\Storage\Migrator;
 use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
 use PDO;
-use PHPUnit\Framework\TestCase;
+use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
 
 /**
  * Runs the lifecycle functions against real MariaDB through the same
  * $database_sessions slot Cacti fills in lib/database.php.
  */
-final class SetupDatabaseTest extends TestCase {
+final class SetupDatabaseTest extends IntegrationTestCase {
 	private const ROOT    = __DIR__ . '/../../..';
 	private const SESSION = 'cacti-db:3306:cacti';
 
@@ -104,23 +106,41 @@ final class SetupDatabaseTest extends TestCase {
 	}
 
 	public function testUpgradeMigratesAndRecordsTheVersion(): void {
-		$GLOBALS['cloudflare_glue']['cell'] = '0.9.0';
+		$GLOBALS['cloudflare_glue']['cell'] = '0.0.9';
 
 		$this->assertTrue(plugin_cloudflare_upgrade());
 
 		$this->assertTrue($this->tableExists('plugin_cloudflare_accounts'));
 		$this->assertSame(array(
-			array('UPDATE plugin_config SET version = ? WHERE directory = ?', array('0.1.0', 'cloudflare')),
+			array('UPDATE plugin_config SET version = ? WHERE directory = ?', array('0.2.0', 'cloudflare')),
 		), cloudflare_glue_calls('db_execute_prepared'));
 	}
 
 	public function testUpgradeRunsPendingMigrationsAtTheSameVersion(): void {
-		$GLOBALS['cloudflare_glue']['cell'] = '0.1.0';
+		$GLOBALS['cloudflare_glue']['cell'] = '0.2.0';
 
 		$this->assertTrue(plugin_cloudflare_upgrade());
 
 		$this->assertTrue($this->tableExists('plugin_cloudflare_accounts'));
 		$this->assertSame(array(), cloudflare_glue_calls('db_execute_prepared'));
+	}
+
+	public function testUpgradeFrom010RunsM002AndRegistersHook(): void {
+		(new Migrator(new Database($this->pdo), array(new M001Foundation())))->migrate();
+		$this->assertFalse($this->tableExists('plugin_cloudflare_tunnels'));
+		$GLOBALS['cloudflare_glue']['cell'] = '0.1.0';
+
+		$this->assertTrue(plugin_cloudflare_upgrade());
+
+		$this->assertTrue($this->tableExists('plugin_cloudflare_tunnels'));
+		$this->assertTrue($this->tableExists('plugin_cloudflare_connectors'));
+		$this->assertSame(
+			array(array('cloudflare', 'poller_bottom', 'cloudflare_poller_bottom', 'includes/polling.php', true)),
+			cloudflare_glue_calls('api_plugin_register_hook')
+		);
+		$this->assertSame(array(
+			array('UPDATE plugin_config SET version = ? WHERE directory = ?', array('0.2.0', 'cloudflare')),
+		), cloudflare_glue_calls('db_execute_prepared'));
 	}
 
 	public function testUpgradeDefersWhileAnotherProcessHoldsTheLock(): void {

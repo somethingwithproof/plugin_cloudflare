@@ -32,6 +32,31 @@ function cloudflare_plugin_enabled() : bool {
 }
 
 /**
+ * CactiShutdownHandler disables a plugin whose page dies with an uncaught
+ * error, so each page ends here instead. Only the class is logged, since a
+ * message may carry request or driver text. top_header() and bottom_footer()
+ * include their templates once, so calling them again is harmless.
+ */
+function cloudflare_page_failed(string $page, Throwable $e, string $text) : void {
+	cacti_log('CLOUDFLARE: ' . $page . ' page failed (' . get_class($e) . ')', false, 'CLOUDFLARE');
+
+	/* This is the last handler before CactiShutdownHandler, so a broken template must not escape it either. */
+	try {
+		top_header();
+
+		html_start_box(__esc('Cloudflare', 'cloudflare'), '100%', '', '3', 'center', '');
+
+		print "<tr class='tableRow'><td><em>" . html_escape($text) . "</em></td></tr>\n";
+
+		html_end_box();
+
+		bottom_footer();
+	} catch (Throwable $render) {
+		cacti_log('CLOUDFLARE: ' . $page . ' error page failed (' . get_class($render) . ')', false, 'CLOUDFLARE');
+	}
+}
+
+/**
  * Edit form for draw_edit_form(). The token box is always empty: a stored
  * token is never sent back to the browser, only whether one exists.
  *

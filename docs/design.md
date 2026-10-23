@@ -35,10 +35,11 @@ INFO
 includes/bootstrap.php    loads src/ (vendor autoloader if present, else a
                           bundled PSR-4 loader), builds services from Cacti state
 includes/settings.php     config_arrays, config_settings, draw_navigation_text
-includes/polling.php      poller_bottom hook (M2)
-cloudflare.php            viewer pages: overview, tunnels, connectors, analytics
+includes/polling.php      poller_bottom hook and the collector's entry function
+includes/viewer.php       viewer page handlers: overview, tunnels, connectors
+cloudflare.php            viewer page dispatcher
 cloudflare_accounts.php   admin page: accounts, verify, diagnostics
-poller_cloudflare.php     CLI collector, launched in the background (M2)
+poller_cloudflare.php     CLI collector, launched in the background
 ss_cloudflare.php         script server functions that read cached state (M3)
 src/                      domain, API client, storage, secrets
 templates/                Cacti template XML (M3)
@@ -81,7 +82,8 @@ plugin has no runtime Composer dependencies.
 - Timestamps are `INT UNSIGNED` epoch seconds (UTC), so time zone handling
   never depends on the session.
 - Migration 1 (M1): `accounts`, `jobs`, `migrations`. Migration 2 (M2):
-  `tunnels`, `connectors`. Migration 3 (M3): `resources`, `metric_mappings`.
+  `tunnels`, `connectors`, and the `outage_failures` and `last_success_at`
+  columns on `jobs`. Migration 3 (M3): `resources`, `metric_mappings`.
   This spreads the tables over three migrations, so the upgrade path gets
   exercised during development.
 - Core Cacti never calls an upgrade function (agent survey of
@@ -110,7 +112,7 @@ says this.
     the poller user. The file must be a regular file of no more than 4 KiB,
     must not be a symbolic link, and must not be readable or writable by
     others. These checks run when the file is read (at Verify, and in the
-    collector from Milestone 2), not when the account is saved. The web
+    collector), not when the account is saved. The web
     server user and the poller user can differ, so a check made by the web
     server at save time could pass for a file the poller cannot read, or
     fail for one it can. Save checks only that the path is absolute. A bad
@@ -137,8 +139,10 @@ says this.
   production list is exactly `https://api.cloudflare.com`. It enforces
   `CURLOPT_PROTOCOLS = HTTPS`, no redirects, peer and host TLS verification,
   a connect timeout, a total timeout, and a 5 MiB response cap.
-- Timeouts: UI requests use a 5 second connect and 10 second total timeout.
-  The collector uses 5 and 20 seconds. No UI request retries more than once.
+- Timeouts: UI requests use a 5 second connect and a 10 second total timeout
+  by default. The collector uses 5 and 20 seconds by default. The total
+  timeouts come from the two timeout settings. No UI request retries more
+  than once.
 - Path parameters are validated before a URL is built. An account ID is
   `^[0-9a-f]{32}$`. Tunnel and connector IDs are lowercase UUIDs.
 - Tests may build a policy that allows `http://127.0.0.1:<port>` to exercise
@@ -160,8 +164,13 @@ of HTTP details:
 | `malformed` | invalid JSON, a missing `success` field, a wrong `result` type |
 | `config` | an invalid ID or a disallowed origin, raised before any I/O |
 
-`transient` and `rate_limited` failures never change the lifecycle state of
-discovered resources and never produce metric values. Retries differ by
+Outage-class failures (`transient`, `rate_limited`, `auth` and `permission`)
+that happen before a complete listing count toward the account's
+`outage_failures`. After three consecutive ones, the account's active tunnels
+become `unavailable`. An outage never deletes anything, and the next complete
+listing restores the tunnels and resets the count. These failures never
+produce metric values. `config` and `malformed` failures do not count, because
+they say nothing about whether Cloudflare could be read. Retries differ by
 caller:
 
 - UI requests, such as Verify, retry once at most. A 429 sleeps for
@@ -174,6 +183,46 @@ caller:
 On Verify, a 403 from both token verify endpoints records
 `permission_denied` with a fixed message that the token lacks the
 permissions needed to verify it; a 401 records `auth_failed`.
+
+## Discovery
+
+- `includes/polling.php` runs in `poller_bottom` on the main poller only
+  (`poller_id` 1) and starts `poller_cloudflare.php` with `exec_background`,
+  so `poller.php` never waits for it. It starts nothing when no enabled
+  account collects tunnels.
+- The collector takes `GET_LOCK('plugin_cloudflare_collector', 0)` and exits
+  quietly when another collector holds it. Each job row also has a lease, so
+  two runs cannot work on one account.
+- A run starts no new account after a 50 second budget, and makes at most 200
+  connection requests, shared across the accounts that are due. An account
+  stopped by either limit is recorded `partial` and resumes on the normal
+  schedule, with the tunnels attempted least recently first. Before each
+  account the collector reads `plugin_config.status` directly and stops when
+  the plugin is disabled. `api_plugin_is_enabled()` is not used there because
+  it caches its first answer for the life of the process.
+- An account's tunnels come from one complete listing. A failed or
+  incomplete listing never deletes a tunnel and leaves every tunnel row
+  unchanged; three consecutive outage-class failures before a complete
+  listing mark the account's active tunnels `unavailable`, and the next
+  complete listing restores them. Rows are upserted on
+  `(account_id, cf_tunnel_id)` and never deleted and re-inserted, so a tunnel
+  keeps its row id. A tunnel absent from a complete listing becomes
+  `deleted`, and one that returns becomes `active`.
+- The listing pins page 1's `total_count`, and a later page that reports a
+  different total fails the run as `malformed`, so a tunnel deleted between
+  pages cannot shift the next page and hide another tunnel. A delete and a
+  create between pages keep the total unchanged, so on an account with more
+  than 1000 tunnels that pair can still hide one tunnel and mark it `deleted`
+  for one cycle; the next complete listing makes it `active` again.
+- The lifecycle is `active`, `unavailable` or `deleted`. Cloudflare's own
+  health is stored apart from it as `cf_status`.
+- Connections are read per tunnel. Cloudflare answers an unknown tunnel with
+  401 and code 1001 or with 404; both mean the tunnel is gone, so they are
+  not counted against the token. Connectors that a read no longer reports
+  are removed.
+- The viewer pages only read. Their handlers catch `Throwable`, log the class
+  name and show a fixed message, because Cacti disables a plugin whose page
+  fails with an uncaught error.
 
 ## Authorization
 

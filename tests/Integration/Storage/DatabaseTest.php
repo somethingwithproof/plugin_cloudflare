@@ -26,10 +26,10 @@ use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
 use Eris\Generators;
 use Eris\TestTrait;
 use PDO;
-use PHPUnit\Framework\TestCase;
+use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
 use RuntimeException;
 
-final class DatabaseTest extends TestCase {
+final class DatabaseTest extends IntegrationTestCase {
 	use TestTrait;
 
 	/** @var Database */

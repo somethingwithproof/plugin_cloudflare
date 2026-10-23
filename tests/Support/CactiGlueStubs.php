@@ -53,7 +53,10 @@ function cloudflare_glue_reset(): void {
 		'connect'  => false,
 		'enabled'  => true,
 		'page'     => 'index.php',
+		'on_log'   => null,
+		'on_top'   => null,
 	);
+	$GLOBALS['cloudflare_glue_enabled_cache'] = array();
 }
 
 /**
@@ -104,7 +107,12 @@ if (!function_exists('api_plugin_valid_entrypoint')) {
 		$backtrace = debug_backtrace();
 		if (cacti_sizeof($backtrace)) {
 			if (!preg_match('/(install|upgrade|setup)/i', $backtrace[2]['function'])) {
-				cacti_log(sprintf('WARNING: Plugin \'%s\' is attempting to call \'%s\' improperly in function \'%s\'', $plugin, $function, $backtrace[2]['function']), false, 'PLUGIN');
+				cacti_log(sprintf(
+					'WARNING: Plugin \'%s\' is attempting to call \'%s\' improperly in function \'%s\'',
+					$plugin,
+					$function,
+					$backtrace[2]['function']
+				), false, 'PLUGIN');
 
 				return false;
 			}
@@ -156,14 +164,32 @@ if (!function_exists('api_plugin_register_realm')) {
 }
 
 if (!function_exists('api_plugin_is_enabled')) {
-	/* lib/plugins.php:885 */
+	/* lib/plugins.php:885. The real function caches the first answer in a
+	 * static for the life of the process; cloudflare_glue_reset() stands in
+	 * for a new process. */
 	/**
 	 * @param mixed $plugin
 	 */
 	function api_plugin_is_enabled($plugin): bool {
 		cloudflare_glue_record(__FUNCTION__, array($plugin));
 
-		return cloudflare_glue_state('enabled') === true;
+		if (!isset($GLOBALS['cloudflare_glue_enabled_cache'][$plugin])) {
+			$GLOBALS['cloudflare_glue_enabled_cache'][$plugin] = cloudflare_glue_state('enabled') === true;
+		}
+
+		return $GLOBALS['cloudflare_glue_enabled_cache'][$plugin];
+	}
+}
+
+if (!function_exists('exec_background')) {
+	/* lib/poller.php:132 */
+	/**
+	 * @param mixed $filename
+	 * @param mixed $args
+	 * @param mixed $redirect_args
+	 */
+	function exec_background($filename, $args = '', $redirect_args = ''): void {
+		cloudflare_glue_record(__FUNCTION__, array($filename, $args, $redirect_args));
 	}
 }
 
@@ -180,6 +206,7 @@ if (!function_exists('get_current_page')) {
 if (!function_exists('raise_ajax_permission_denied')) {
 	/* lib/functions.php:7599 */
 	function raise_ajax_permission_denied(): void {
+		cloudflare_glue_record(__FUNCTION__, array());
 	}
 }
 
@@ -215,6 +242,12 @@ if (!function_exists('cacti_log')) {
 	 */
 	function cacti_log($string, $output = false, $environ = 'CMDPHP', $level = ''): bool {
 		cloudflare_glue_record(__FUNCTION__, array($string, $output, $environ, $level));
+
+		/* Lets a test act at a known point inside a run, such as between accounts. */
+		$on_log = cloudflare_glue_state('on_log');
+		if (is_callable($on_log)) {
+			$on_log((string) $string);
+		}
 
 		return true;
 	}
@@ -263,7 +296,16 @@ if (!function_exists('db_execute_prepared')) {
 	 * @param mixed $return_func
 	 * @param mixed $return_params
 	 */
-	function db_execute_prepared($sql, $params = array(), $log = true, $db_conn = false, $execute_name = 'Exec', $default_value = true, $return_func = 'no_return_function', $return_params = array()): bool {
+	function db_execute_prepared(
+		$sql,
+		$params = array(),
+		$log = true,
+		$db_conn = false,
+		$execute_name = 'Exec',
+		$default_value = true,
+		$return_func = 'no_return_function',
+		$return_params = array()
+	): bool {
 		cloudflare_glue_record(__FUNCTION__, array($sql, $params));
 
 		return true;
@@ -438,6 +480,12 @@ if (!function_exists('top_header')) {
 	/* lib/functions.php:4853 */
 	function top_header(): void {
 		cloudflare_glue_record(__FUNCTION__, array());
+
+		/* Lets a test make the page chrome fail, as a broken theme or template would. */
+		$on_top = cloudflare_glue_state('on_top');
+		if (is_callable($on_top)) {
+			$on_top();
+		}
 	}
 }
 
@@ -483,7 +531,15 @@ if (!function_exists('get_filter_request_var')) {
 			return $_REQUEST[$name];
 		}
 
-		if (!is_int($filter) || !in_array($filter, array(FILTER_VALIDATE_INT, FILTER_DEFAULT, FILTER_CALLBACK, FILTER_VALIDATE_REGEXP, FILTER_VALIDATE_FLOAT, FILTER_VALIDATE_BOOLEAN), true)) {
+		$filters = array(
+			FILTER_VALIDATE_INT,
+			FILTER_DEFAULT,
+			FILTER_CALLBACK,
+			FILTER_VALIDATE_REGEXP,
+			FILTER_VALIDATE_FLOAT,
+			FILTER_VALIDATE_BOOLEAN,
+		);
+		if (!is_int($filter) || !in_array($filter, $filters, true)) {
 			throw new LogicException('get_filter_request_var stub does not model filter ' . var_export($filter, true));
 		}
 
@@ -512,13 +568,110 @@ if (!function_exists('set_default_action')) {
 }
 
 if (!function_exists('validate_store_request_vars')) {
-	/* lib/html_utility.php:628 */
+	/*
+	 * lib/html_utility.php:628, for the filter_var() filters only. Session
+	 * fallback, defaults, 'clear' and the page reset on a changed pageset
+	 * filter follow Cacti; where it calls die_html_input_error() and exits,
+	 * this throws, so a test cannot pass input the real page would refuse.
+	 */
 	/**
 	 * @param mixed $filters
 	 * @param mixed $sess_prefix
 	 */
 	function validate_store_request_vars($filters, $sess_prefix = ''): void {
 		cloudflare_glue_record(__FUNCTION__, array($filters, $sess_prefix));
+
+		$changed  = 0;
+		$modelled = array(FILTER_VALIDATE_INT, FILTER_DEFAULT, FILTER_CALLBACK, FILTER_VALIDATE_REGEXP);
+
+		foreach ($filters as $variable => $options) {
+			$session_variable = '';
+
+			if ($sess_prefix != '') {
+				if (isset($options['session'])) {
+					$session_variable = $options['session'];
+				} elseif ($variable != 'rows') {
+					$session_variable = $sess_prefix . '_' . $variable;
+				} else {
+					$session_variable = 'sess_default_rows';
+				}
+
+				if (isset($_REQUEST['clear'])) {
+					unset($_SESSION[$session_variable], $_REQUEST[$variable]);
+				} elseif (isset($_REQUEST['reset'])) {
+					unset($_SESSION[$session_variable]);
+				} elseif (!empty($options['pageset']) && isset($_REQUEST[$variable], $_SESSION[$session_variable])
+					&& $_REQUEST[$variable] != $_SESSION[$session_variable]) {
+					$changed++;
+				}
+			}
+
+			if (!isset($_REQUEST[$variable])) {
+				if ($session_variable !== '' && isset($_SESSION[$session_variable])) {
+					$_REQUEST[$variable] = $_SESSION[$session_variable];
+				} else {
+					$_REQUEST[$variable] = $options['default'] ?? '';
+				}
+			} else {
+				$raw = $_REQUEST[$variable];
+
+				if ($raw == '0') {
+					$value = '0';
+				} elseif ($raw == 'undefined') {
+					$value = $options['default'] ?? '';
+				} elseif (empty($raw)) {
+					$value = '';
+				} elseif (!in_array($options['filter'], $modelled, true)) {
+					throw new LogicException(
+						'validate_store_request_vars stub does not model filter ' . var_export($options['filter'], true)
+					);
+				} elseif (!isset($options['options'])) {
+					$value = filter_var($raw, $options['filter']);
+				} else {
+					$value = filter_var($raw, $options['filter'], $options['options']);
+				}
+
+				if ($value === false) {
+					throw new RuntimeException('die_html_input_error(' . $variable . ')');
+				}
+
+				$_REQUEST[$variable] = $value;
+			}
+
+			if ($session_variable !== '') {
+				$_SESSION[$session_variable] = $_REQUEST[$variable];
+			}
+		}
+
+		if ($changed) {
+			$_REQUEST['page']                = 1;
+			$_REQUEST['changed']             = 1;
+			$_SESSION[$sess_prefix . '_page'] = 1;
+		}
+	}
+}
+
+if (!function_exists('sanitize_search_string')) {
+	/* lib/functions.php:4474 */
+	/**
+	 * @param mixed $string
+	 * @return mixed
+	 */
+	function sanitize_search_string($string) {
+		static $drop_char_match = array(
+			'(', ')', '^', '$', '<', '>', '`', '\'', '"', '|', ',',
+			'?', '+', '[', ']', '{', '}', '#', ';', '!', '=', '*',
+		);
+		static $drop_char_replace = array(
+			'', '', ' ', ' ', ' ', ' ', '', '', ' ', ' ', ' ',
+			' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+		);
+
+		$string = preg_replace('/[\n\r]/is', ' ', $string);
+		$string = preg_replace('/\b&[a-z]+;\b/', ' ', $string);
+		$string = preg_replace('/\b[a-z0-9]+:\/\/[a-z0-9\.\-]+(\/[a-z0-9\?\.%_\-\+=&\/]+)?/', ' ', $string);
+
+		return str_replace($drop_char_match, $drop_char_replace, $string);
 	}
 }
 
@@ -607,10 +760,68 @@ if (!function_exists('html_nav_bar')) {
 	 * @param mixed $return_to
 	 * @param mixed $page_count
 	 */
-	function html_nav_bar($base_url, $max_pages, $current_page, $rows_per_page, $total_rows, $colspan = 30, $object = '', $page_var = 'page', $return_to = '', $page_count = true): string {
-		cloudflare_glue_record(__FUNCTION__, array($base_url, $max_pages, $current_page, $rows_per_page, $total_rows, $colspan, $object, $page_var, $return_to, $page_count));
+	function html_nav_bar(
+		$base_url,
+		$max_pages,
+		$current_page,
+		$rows_per_page,
+		$total_rows,
+		$colspan = 30,
+		$object = '',
+		$page_var = 'page',
+		$return_to = '',
+		$page_count = true
+	): string {
+		cloudflare_glue_record(__FUNCTION__, array(
+			$base_url,
+			$max_pages,
+			$current_page,
+			$rows_per_page,
+			$total_rows,
+			$colspan,
+			$object,
+			$page_var,
+			$return_to,
+			$page_count,
+		));
 
 		return '';
+	}
+}
+
+if (!function_exists('html_header')) {
+	/* lib/html.php:1018 */
+	/**
+	 * @param mixed $header_items
+	 * @param mixed $last_item_colspan
+	 */
+	function html_header($header_items, $last_item_colspan = 1): void {
+		cloudflare_glue_record(__FUNCTION__, array($header_items, $last_item_colspan));
+	}
+}
+
+if (!function_exists('html_header_sort')) {
+	/* lib/html.php:665 */
+	/**
+	 * @param mixed $header_items
+	 * @param mixed $sort_column
+	 * @param mixed $sort_direction
+	 * @param mixed $last_item_colspan
+	 * @param mixed $url
+	 * @param mixed $return_to
+	 */
+	function html_header_sort(
+		$header_items,
+		$sort_column,
+		$sort_direction,
+		$last_item_colspan = 1,
+		$url = '',
+		$return_to = ''
+	): void {
+		cloudflare_glue_record(
+			__FUNCTION__,
+			array($header_items, $sort_column, $sort_direction, $last_item_colspan, $url, $return_to)
+		);
 	}
 }
 
@@ -625,8 +836,24 @@ if (!function_exists('html_header_sort_checkbox')) {
 	 * @param mixed $return_to
 	 * @param mixed $prefix
 	 */
-	function html_header_sort_checkbox($header_items, $sort_column, $sort_direction, $include_form = true, $form_action = '', $return_to = '', $prefix = 'chk'): void {
-		cloudflare_glue_record(__FUNCTION__, array($header_items, $sort_column, $sort_direction, $include_form, $form_action, $return_to, $prefix));
+	function html_header_sort_checkbox(
+		$header_items,
+		$sort_column,
+		$sort_direction,
+		$include_form = true,
+		$form_action = '',
+		$return_to = '',
+		$prefix = 'chk'
+	): void {
+		cloudflare_glue_record(__FUNCTION__, array(
+			$header_items,
+			$sort_column,
+			$sort_direction,
+			$include_form,
+			$form_action,
+			$return_to,
+			$prefix,
+		));
 	}
 }
 

@@ -31,31 +31,39 @@ if (!cloudflare_plugin_enabled()) {
 	exit;
 }
 
-plugin_cloudflare_upgrade();
-
 set_default_action();
 
 $redirect = null;
 
-switch (get_request_var('action')) {
-	case 'save':
-		$redirect = cloudflare_accounts_save();
+/* A failure renders here rather than redirecting, so a failing list
+ * cannot send the browser round a redirect loop. */
+try {
+	plugin_cloudflare_upgrade();
 
-		break;
-	case 'actions':
-		$redirect = cloudflare_accounts_actions();
+	switch (get_request_var('action')) {
+		case 'save':
+			$redirect = cloudflare_accounts_save();
 
-		break;
-	case 'edit':
-		$redirect = cloudflare_accounts_edit();
+			break;
+		case 'actions':
+			$redirect = cloudflare_accounts_actions();
 
-		break;
-	default:
-		top_header();
-		cloudflare_accounts_list();
-		bottom_footer();
+			break;
+		case 'edit':
+			$redirect = cloudflare_accounts_edit();
 
-		break;
+			break;
+		default:
+			top_header();
+			cloudflare_accounts_list();
+			bottom_footer();
+
+			break;
+	}
+} catch (Throwable $e) {
+	$redirect = null;
+
+	cloudflare_page_failed('accounts', $e, cloudflare_accounts_unreadable_text());
 }
 
 if ($redirect !== null) {

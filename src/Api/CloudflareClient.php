@@ -33,6 +33,14 @@ final class CloudflareClient {
 	private const AUTH_CODE         = 10000;
 	private const BAD_HEADER_CODES  = array(6003, 6111);
 	private const MAX_API_MESSAGES  = 3;
+	private const UNKNOWN_RESOURCE  = 1001;
+	private const PAGE_SIZE         = 1000;
+	private const MAX_PAGES         = 50;
+	private const MAX_NAME          = 255;
+	private const MAX_SHORT         = 32;
+	private const MAX_LIST          = 255;
+	private const MAX_TIMESTAMP     = 4294967295;
+	private const TUNNEL_STATUSES   = array('healthy', 'degraded', 'down', 'inactive');
 
 	/** @var HttpTransport */
 	private $transport;
@@ -124,6 +132,129 @@ final class CloudflareClient {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Lists every non-deleted tunnel, or throws. A partial listing is never
+	 * returned: callers treat the result as the complete account state.
+	 *
+	 * @return array<int, TunnelRecord>
+	 *
+	 * @throws ApiException
+	 */
+	public function listTunnels(
+		string $cfAccountId,
+		#[\SensitiveParameter]
+		string $token
+	): array {
+		$this->requireAccountId($cfAccountId);
+
+		$tunnels = array();
+		$seen    = array();
+		$total   = null;
+
+		for ($page = 1; $page <= self::MAX_PAGES; $page++) {
+			$envelope = $this->request('GET', '/accounts/' . $cfAccountId . '/cfd_tunnel', $token, array(
+				'is_deleted' => 'false',
+				'per_page'   => self::PAGE_SIZE,
+				'page'       => $page,
+			));
+
+			$info  = $envelope['result_info'] ?? null;
+			$items = $envelope['result'] ?? null;
+			if (
+				!is_array($info)
+				|| !isset($info['total_count'])
+				|| !is_int($info['total_count'])
+				|| $info['total_count'] < 0
+				|| !is_array($items)
+			) {
+				throw new ApiException(ErrorClass::MALFORMED, 200, array(), 'tunnel listing has no usable result_info');
+			}
+
+			/*
+			 * A delete between pages shifts later pages by one item and lowers
+			 * their total, so the running count would still match and a live
+			 * tunnel would be missing. Pin page 1's total instead.
+			 */
+			if ($total === null) {
+				$total = $info['total_count'];
+			} elseif ($info['total_count'] !== $total) {
+				throw new ApiException(ErrorClass::MALFORMED, 200, array(), 'tunnel listing total changed between pages');
+			}
+
+			foreach ($items as $item) {
+				$tunnel = self::parseTunnel($item);
+				if (isset($seen[$tunnel->id])) {
+					throw new ApiException(ErrorClass::MALFORMED, 200, array(), 'tunnel listing repeats a tunnel id');
+				}
+
+				$seen[$tunnel->id] = true;
+				$tunnels[]         = $tunnel;
+			}
+
+			if (count($tunnels) >= $total) {
+				return $tunnels;
+			}
+			if ($items === array()) {
+				throw new ApiException(ErrorClass::MALFORMED, 200, array(), 'tunnel listing ended before total_count');
+			}
+		}
+
+		throw new ApiException(ErrorClass::MALFORMED, 200, array(), 'tunnel listing exceeds the page limit');
+	}
+
+	/**
+	 * Cloudflare answers an unknown tunnel with 401 and code 1001, not 404.
+	 * That is scoped to this resource: it means the tunnel is gone, not that
+	 * the token was revoked, so it maps to not_found. Any other 401 stays auth.
+	 *
+	 * @return array<int, ConnectorRecord>
+	 *
+	 * @throws ApiException
+	 */
+	public function listConnections(
+		string $cfAccountId,
+		#[\SensitiveParameter]
+		string $token,
+		string $tunnelId
+	): array {
+		$this->requireAccountId($cfAccountId);
+		if (!Ids::isUuid($tunnelId)) {
+			throw new ApiException(ErrorClass::CONFIG, null, array(), 'invalid tunnel id');
+		}
+
+		try {
+			$envelope = $this->request(
+				'GET',
+				'/accounts/' . $cfAccountId . '/cfd_tunnel/' . $tunnelId . '/connections',
+				$token
+			);
+		} catch (ApiException $e) {
+			$codes   = $e->getApiCodes();
+			$unknown = $e->getErrorClass() === ErrorClass::AUTH
+				&& $e->getHttpStatus() === 401
+				&& isset($codes[0])
+				&& $codes[0] === self::UNKNOWN_RESOURCE;
+
+			if ($unknown) {
+				throw new ApiException(ErrorClass::NOT_FOUND, 401, $e->getApiCodes(), 'tunnel is unknown to Cloudflare');
+			}
+
+			throw $e;
+		}
+
+		$items = $envelope['result'] ?? null;
+		if (!is_array($items)) {
+			throw new ApiException(ErrorClass::MALFORMED, 200, array(), 'connections result is not a list');
+		}
+
+		$connectors = array();
+		foreach ($items as $item) {
+			$connectors[] = self::parseConnector($item);
+		}
+
+		return $connectors;
 	}
 
 	/**
@@ -301,6 +432,142 @@ final class CloudflareClient {
 		return array($codes, $messages);
 	}
 
+	/**
+	 * @param mixed $item
+	 *
+	 * @throws ApiException
+	 */
+	private static function parseTunnel($item): TunnelRecord {
+		if (
+			!is_array($item)
+			|| !isset($item['id'], $item['status'])
+			|| !is_string($item['id'])
+			|| !is_string($item['status'])
+			|| !in_array($item['status'], self::TUNNEL_STATUSES, true)
+		) {
+			throw new ApiException(ErrorClass::MALFORMED, 200, array(), 'tunnel item has an unexpected shape');
+		}
+
+		$id = strtolower($item['id']);
+		if (!Ids::isUuid($id)) {
+			throw new ApiException(ErrorClass::MALFORMED, 200, array(), 'tunnel item has an unexpected shape');
+		}
+
+		$name = isset($item['name']) && is_string($item['name']) ? self::cleanName($item['name']) : $id;
+		$type = isset($item['tun_type']) && is_string($item['tun_type'])
+			? self::clip(self::cleanName($item['tun_type']), self::MAX_SHORT)
+			: '';
+
+		return new TunnelRecord(
+			$id,
+			$name,
+			$item['status'],
+			$type,
+			self::parseExpiry($item['created_at'] ?? null),
+			self::parseExpiry($item['conns_active_at'] ?? null),
+			self::parseExpiry($item['conns_inactive_at'] ?? null)
+		);
+	}
+
+	/**
+	 * @param mixed $item
+	 *
+	 * @throws ApiException
+	 */
+	private static function parseConnector($item): ConnectorRecord {
+		if (
+			!is_array($item)
+			|| !isset($item['id'], $item['version'], $item['arch'], $item['conns'])
+			|| !is_string($item['id'])
+			|| !Ids::isUuid(strtolower($item['id']))
+			|| !is_string($item['version'])
+			|| !is_string($item['arch'])
+			|| !is_array($item['conns'])
+		) {
+			throw new ApiException(ErrorClass::MALFORMED, 200, array(), 'connector item has an unexpected shape');
+		}
+
+		$colos = array();
+		$ips   = array();
+		$count = 0;
+		foreach ($item['conns'] as $conn) {
+			if (!is_array($conn)) {
+				continue;
+			}
+			$count++;
+			if (isset($conn['colo_name']) && is_string($conn['colo_name']) && $conn['colo_name'] !== '') {
+				$colos[$conn['colo_name']] = true;
+			}
+			if (isset($conn['origin_ip']) && is_string($conn['origin_ip'])
+				&& filter_var($conn['origin_ip'], FILTER_VALIDATE_IP) !== false) {
+				$ips[$conn['origin_ip']] = true;
+			}
+		}
+
+		$colos = array_map('strval', array_keys($colos));
+		$ips   = array_map('strval', array_keys($ips));
+		sort($colos, SORT_STRING);
+		sort($ips, SORT_STRING);
+
+		return new ConnectorRecord(
+			strtolower($item['id']),
+			self::clip($item['version'], self::MAX_SHORT),
+			self::clip($item['arch'], self::MAX_SHORT),
+			self::parseExpiry($item['run_at'] ?? null),
+			$count,
+			self::fitList($colos),
+			self::fitList($ips)
+		);
+	}
+
+	/**
+	 * Strips control, format (bidi overrides, zero-width) and line/paragraph
+	 * separator characters. The u flag makes invalid UTF-8 return null, which
+	 * Cloudflare should never send.
+	 *
+	 * @throws ApiException
+	 */
+	private static function cleanName(string $name): string {
+		$clean = preg_replace('/[\p{Cc}\p{Cf}\x{2028}\x{2029}]/u', '', $name);
+		if ($clean === null) {
+			throw new ApiException(ErrorClass::MALFORMED, 200, array(), 'tunnel text is not valid UTF-8');
+		}
+
+		return self::clip($clean, self::MAX_NAME);
+	}
+
+	/* The columns count characters, so a multibyte string is cut by character where mbstring allows. */
+	private static function clip(string $text, int $max): string {
+		if (function_exists('mb_substr')) {
+			return mb_substr($text, 0, $max, 'UTF-8');
+		}
+
+		return substr($text, 0, $max);
+	}
+
+	/**
+	 * Keeps whole entries only: a value cut mid-entry would name a colo or
+	 * address that does not exist.
+	 *
+	 * @param array<int, string> $entries
+	 * @return array<int, string>
+	 */
+	private static function fitList(array $entries): array {
+		$kept   = array();
+		$length = -1;
+
+		foreach ($entries as $entry) {
+			$length += strlen($entry) + 1;
+			if ($length > self::MAX_LIST) {
+				break;
+			}
+
+			$kept[] = $entry;
+		}
+
+		return $kept;
+	}
+
 	private function requireAccountId(string $cfAccountId): void {
 		if (!Ids::isAccountId($cfAccountId)) {
 			throw new ApiException(ErrorClass::CONFIG, null, array(), 'invalid account id');
@@ -316,9 +583,16 @@ final class CloudflareClient {
 		}
 
 		try {
-			return (new DateTimeImmutable($value))->getTimestamp();
+			$timestamp = (new DateTimeImmutable($value))->getTimestamp();
 		} catch (Exception $e) {
 			return null;
 		}
+
+		/*
+		 * The columns are INT UNSIGNED and Cacti clears STRICT modes from its
+		 * session, so a value outside the range would be clamped silently and
+		 * shown as a real date. Go's zero time lands here too.
+		 */
+		return $timestamp >= 0 && $timestamp <= self::MAX_TIMESTAMP ? $timestamp : null;
 	}
 }

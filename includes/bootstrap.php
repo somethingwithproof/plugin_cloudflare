@@ -22,11 +22,15 @@ require_once __DIR__ . '/autoload.php';
 
 use Cacti\PluginCloudflare\Account\AccountRepository;
 use Cacti\PluginCloudflare\Account\AccountService;
+use Cacti\PluginCloudflare\Account\CredentialResolver;
 use Cacti\PluginCloudflare\Api\CloudflareClient;
 use Cacti\PluginCloudflare\Api\RetryPolicy;
 use Cacti\PluginCloudflare\Auth\CallbackAuthorizer;
+use Cacti\PluginCloudflare\Discovery\DiscoveryService;
+use Cacti\PluginCloudflare\Discovery\Reconciler;
 use Cacti\PluginCloudflare\Http\CurlTransport;
 use Cacti\PluginCloudflare\Http\OutboundPolicy;
+use Cacti\PluginCloudflare\Jobs\JobRepository;
 use Cacti\PluginCloudflare\Secret\SecretException;
 use Cacti\PluginCloudflare\Secret\TokenVault;
 use Cacti\PluginCloudflare\Storage\Database;
@@ -162,4 +166,47 @@ function cloudflare_account_service() : AccountService {
 			cacti_log($line, false, 'CLOUDFLARE');
 		}
 	);
+}
+
+/**
+ * The collector runs detached from poller.php, so it may wait out a 429's
+ * retry-after up to 30 seconds; the 50 second run budget still bounds it.
+ * Runs in system context: there is no user, so no Authorizer.
+ * The enabled check reads plugin_config each time: api_plugin_is_enabled()
+ * caches its first answer for the process (lib/plugins.php:886), which would
+ * hide a disable made while the collector runs.
+ */
+function cloudflare_discovery_service() : DiscoveryService {
+	$db       = cloudflare_db();
+	$clock    = new SystemClock();
+	$accounts = new AccountRepository($db);
+
+	return new DiscoveryService(
+		$accounts,
+		new CredentialResolver($accounts, cloudflare_vault()),
+		cloudflare_client(
+			CLOUDFLARE_CONNECT_TIMEOUT,
+			cloudflare_setting_int('cloudflare_poller_timeout', 20, 5, 60),
+			new RetryPolicy($clock, new SystemSleeper(), 2, 30)
+		),
+		new Reconciler($db, $clock),
+		new JobRepository($db, $clock),
+		$db,
+		$clock,
+		function () use ($db) : bool {
+			return cloudflare_plugin_status_enabled($db);
+		},
+		function (string $line, int $level) : void {
+			cacti_log($line, false, 'CLOUDFLARE', $level);
+		}
+	);
+}
+
+/* A read failure counts as disabled, so the run stops instead of carrying on blind. */
+function cloudflare_plugin_status_enabled(Database $db) : bool {
+	try {
+		return (int) $db->fetchCell('SELECT status FROM plugin_config WHERE directory = ?', array('cloudflare')) === 1;
+	} catch (DatabaseException $e) {
+		return false;
+	}
 }

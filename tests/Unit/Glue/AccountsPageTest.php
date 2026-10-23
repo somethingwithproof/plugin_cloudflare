@@ -269,4 +269,21 @@ final class AccountsPageTest extends TestCase {
 		$this->assertSame('5', get_filter_request_var('rows', FILTER_VALIDATE_INT, array('default' => '5')));
 		$this->assertSame('5', $_REQUEST['rows']);
 	}
+
+	/* A throw out of the error page itself would reach CactiShutdownHandler and disable the plugin. */
+	public function testPageFailedSurvivesAFailingRender(): void {
+		$GLOBALS['cloudflare_glue']['on_top'] = function (): void {
+			throw new \LogicException('template detail that must not be logged');
+		};
+
+		cloudflare_page_failed('viewer', new \RuntimeException('first'), 'unreadable');
+
+		$lines = array_map(function (array $call): string {
+			return (string) $call[0];
+		}, cloudflare_glue_calls('cacti_log'));
+		$this->assertSame(array(
+			'CLOUDFLARE: viewer page failed (RuntimeException)',
+			'CLOUDFLARE: viewer error page failed (LogicException)',
+		), $lines);
+	}
 }

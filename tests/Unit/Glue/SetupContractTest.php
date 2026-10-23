@@ -73,9 +73,12 @@ final class SetupContractTest extends TestCase {
 		$this->assertTrue(cloudflare_plugin_enabled());
 
 		$GLOBALS['cloudflare_glue']['enabled'] = false;
-		$this->assertFalse(cloudflare_plugin_enabled());
-
+		$this->assertTrue(cloudflare_plugin_enabled(), 'Cacti answers from a per-process cache');
 		$this->assertSame(array(array('cloudflare'), array('cloudflare')), cloudflare_glue_calls('api_plugin_is_enabled'));
+
+		cloudflare_glue_reset();
+		$GLOBALS['cloudflare_glue']['enabled'] = false;
+		$this->assertFalse(cloudflare_plugin_enabled());
 	}
 
 	public function testDisabledPluginAddsNoMenuOrNavigation(): void {
@@ -95,8 +98,20 @@ final class SetupContractTest extends TestCase {
 		cloudflare_config_arrays();
 		$nav = cloudflare_draw_navigation_text(array());
 
-		$this->assertSame(array('Configuration' => array('plugins/cloudflare/cloudflare_accounts.php' => 'Cloudflare Accounts')), $GLOBALS['menu']);
-		$this->assertSame(array('cloudflare_accounts.php:', 'cloudflare_accounts.php:edit', 'cloudflare_accounts.php:actions'), array_keys($nav));
+		$this->assertSame(array(
+			'Configuration' => array('plugins/cloudflare/cloudflare_accounts.php' => 'Cloudflare Accounts'),
+			'Management'    => array('plugins/cloudflare/cloudflare.php' => 'Cloudflare Tunnels'),
+		), $GLOBALS['menu']);
+		$this->assertSame(array(
+			'cloudflare_accounts.php:',
+			'cloudflare_accounts.php:edit',
+			'cloudflare_accounts.php:actions',
+			'cloudflare.php:',
+			'cloudflare.php:overview',
+			'cloudflare.php:tunnels',
+			'cloudflare.php:connectors',
+		), array_keys($nav));
+		$this->assertSame('index.php:,cloudflare.php:', $nav['cloudflare.php:tunnels']['mapping']);
 	}
 
 	public function testSettingsTabStaysButUpgradeWaitsWhileDisabled(): void {
@@ -109,7 +124,8 @@ final class SetupContractTest extends TestCase {
 		$this->assertArrayHasKey('cloudflare_key_file', $GLOBALS['settings']['cloudflare']);
 		$this->assertSame(array(), cloudflare_glue_calls('db_fetch_cell_prepared'));
 
-		$GLOBALS['cloudflare_glue']['enabled'] = true;
+		cloudflare_glue_reset();
+		$GLOBALS['cloudflare_glue']['page'] = 'settings.php';
 		cloudflare_config_settings();
 		$this->assertCount(1, cloudflare_glue_calls('db_fetch_cell_prepared'));
 	}
@@ -172,6 +188,7 @@ final class SetupContractTest extends TestCase {
 			array('cloudflare', 'config_arrays', 'cloudflare_config_arrays', 'includes/settings.php', false),
 			array('cloudflare', 'config_settings', 'cloudflare_config_settings', 'includes/settings.php', false),
 			array('cloudflare', 'draw_navigation_text', 'cloudflare_draw_navigation_text', 'includes/settings.php', false),
+			array('cloudflare', 'poller_bottom', 'cloudflare_poller_bottom', 'includes/polling.php', false),
 		), cloudflare_glue_calls('api_plugin_register_hook'));
 
 		$this->assertSame(array(
@@ -194,7 +211,7 @@ final class SetupContractTest extends TestCase {
 		$info = plugin_cloudflare_version();
 
 		$this->assertSame('cloudflare', $info['name']);
-		$this->assertSame('0.1.0', $info['version']);
+		$this->assertSame('0.2.0', $info['version']);
 		$this->assertSame('Cloudflare', $info['longname']);
 		$this->assertSame('1.2.25', $info['compat']);
 		$this->assertSame('online_view:1, online_mgmt:1, offline_view:0, offline_mgmt:0, remote_collect:0', $info['capabilities']);

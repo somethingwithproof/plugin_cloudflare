@@ -1,7 +1,6 @@
 # Compatibility
 
-This page records the versions the plugin supports in Milestone 1, what is
-tested, and the external interfaces it depends on. Cacti facts come from the
+This page records the versions the plugin supports, what is tested, and the external interfaces it depends on. Cacti facts come from the
 `release/1.2.25` and `release/1.2.31` tags of Cacti; Cloudflare facts come
 from [`research/cloudflare-api-facts.md`](research/cloudflare-api-facts.md).
 
@@ -31,7 +30,7 @@ and the install smoke uses the `php:8.0-apache` image.
 
 ### Hooks and APIs used
 
-The plugin changes no Cacti core files. It registers three hooks and two
+The plugin changes no Cacti core files. It registers four hooks and two
 realms in `plugin_cloudflare_install()`:
 
 | Interface | Use | Reference (1.2.31) |
@@ -39,6 +38,8 @@ realms in `plugin_cloudflare_install()`:
 | `config_arrays` hook | Adds "Cloudflare Accounts" under Configuration when enabled | `include/global_arrays.php` |
 | `config_settings` hook | Adds the Settings > Cloudflare tab and runs pending migrations | `include/global_settings.php` |
 | `draw_navigation_text` hook | Breadcrumbs for `cloudflare_accounts.php` | `lib/functions.php` |
+| `poller_bottom` hook | Starts the background collector after each polling cycle, on the main poller only | `poller.php:943`, `poller.php:956` |
+| `exec_background()` | Launches `poller_cloudflare.php` detached from `poller.php`. The plugin passes the arguments as a string, because arrays are accepted only from 1.2.31 | `lib/poller.php:132` |
 | `api_plugin_register_realm()` | "Cloudflare: View" (`cloudflare.php`) and "Cloudflare: Configure" (`cloudflare_accounts.php`) | `lib/plugins.php` |
 | `api_plugin_valid_entrypoint()` | Requires registration calls to come from a function whose name contains install, upgrade or setup, so registration stays inside `plugin_cloudflare_install()` | `lib/plugins.php:1124` |
 | `api_plugin_uninstall()` | Cacti removes hooks, realms and `plugin_config` after the plugin's uninstall function returns | `lib/plugins.php:801` |
@@ -47,10 +48,26 @@ realms in `plugin_cloudflare_install()`:
 | `$database_sessions` | The plugin reuses Cacti's PDO handle | `lib/database.php:129` |
 | `db_connect_real()` | Opens Cacti's connection with the arguments Cacti uses when no handle exists yet | `include/global.php:363` |
 
+### The `poller_bottom` hook on upgrade
+
+Version 0.2.0 added the `poller_bottom` hook. `api_plugin_register_hook()`
+inserts a hook that is not a configuration hook with status 0, which is
+disabled, unless the caller asks for it to be enabled (`lib/plugins.php:1030`,
+with the `$enable` branch at `lib/plugins.php:1048`). Cacti does not enable a plugin again when it is
+already enabled, so an upgrade from 0.1.0 would leave the new hook off and the
+collector would never start. `plugin_cloudflare_upgrade()` therefore registers
+the hook, for an installation older than 0.2.0, with the plugin's current
+enabled state. A new install registers it with the other hooks, and Cacti
+enables all of a plugin's hooks when the plugin is enabled.
+
+The hook runs only on the main poller. `poller.php` also runs `poller_bottom`
+on remote pollers (`poller.php:956`), and the hook returns without doing
+anything when `poller_id` is not 1. INFO declares `remote_collect:0`.
+
 Core Cacti never calls a plugin upgrade function, so
 `plugin_cloudflare_upgrade()` runs from `plugin_cloudflare_check_config()`,
 from the `config_settings` hook on `settings.php` and `plugins.php`, and at
-the top of `cloudflare_accounts.php`.
+the top of `cloudflare_accounts.php` and `cloudflare.php`.
 
 Every Cacti function and hook above exists in `release/1.2.25`. The page
 calls `CactiSecureHeaders::getNonceAttribute()` only when that class exists,
@@ -85,8 +102,9 @@ and 8.4.11). `MigratorTest` accepts both.
 
 ## Cloudflare API
 
-Milestone 1 makes read-only `GET` requests to `https://api.cloudflare.com`
-only, and only when an administrator runs Verify.
+The plugin makes read-only `GET` requests to `https://api.cloudflare.com`
+only. Verify makes the first four requests below, from the web interface when
+an administrator runs it. The collector makes the last two.
 
 | Request | Purpose | Reference |
 |---|---|---|
@@ -94,6 +112,8 @@ only, and only when an administrator runs Verify.
 | `GET /client/v4/user/tokens/verify` | Fallback when the account endpoint answers with an auth or permission error, as it does for user-owned tokens | [Live verification](research/cloudflare-api-facts.md#live-verification-2026-10-21) |
 | `GET /client/v4/accounts/{account_id}/cfd_tunnel?per_page=1` | Probe for tunnel read permission | [Cloudflare Tunnel](research/cloudflare-api-facts.md#2-cloudflare-tunnel-cfd_tunnel) |
 | `GET /client/v4/zones?account.id={account_id}&per_page=5` | Probe for zone read permission | [Token permissions](research/cloudflare-api-facts.md#3-token-permissions) |
+| `GET /client/v4/accounts/{account_id}/cfd_tunnel?is_deleted=false&per_page=1000&page=N` | List the account's tunnels, up to 50 pages | [Cloudflare Tunnel](research/cloudflare-api-facts.md#2-cloudflare-tunnel-cfd_tunnel) |
+| `GET /client/v4/accounts/{account_id}/cfd_tunnel/{tunnel_id}/connections` | List one tunnel's connectors and connections | [Cloudflare Tunnel](research/cloudflare-api-facts.md#2-cloudflare-tunnel-cfd_tunnel) |
 
 The token permissions these requests need are in
 [token-permissions.md](token-permissions.md).
@@ -103,5 +123,10 @@ with error code 6003 or 6111 means a malformed token and is classed as an
 authentication failure. Requests from the web interface, such as Verify, are
 retried at most once. A 429 there is retried after the `retry-after` delay
 when that is 2 seconds or less, after the normal 1 second backoff when the
-header is absent, and not at all when the delay is longer. The 30 second
-`retry-after` limit belongs to the collector, which ships in Milestone 2.
+header is absent, and not at all when the delay is longer. The collector
+retries at most twice and waits for a `retry-after` of up to 30 seconds;
+a longer delay fails the request, and the job runs again after that delay,
+but not sooner than 60 seconds.
+Cloudflare answers a connections request for an unknown tunnel with HTTP 401
+and error code 1001, which the client classes as `not_found` and not as an
+authentication failure.

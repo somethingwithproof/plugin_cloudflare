@@ -28,6 +28,10 @@ function cloudflare_config_arrays() : void {
 	}
 
 	$menu[__('Configuration')]['plugins/cloudflare/cloudflare_accounts.php'] = __('Cloudflare Accounts', 'cloudflare');
+
+	/* draw_menu() shows an entry only to users holding its file's realm, so
+	 * this one follows Cloudflare: View, not the admin-only Configure. */
+	$menu[__('Management')]['plugins/cloudflare/cloudflare.php'] = __('Cloudflare Tunnels', 'cloudflare');
 }
 
 /**
@@ -59,6 +63,28 @@ function cloudflare_draw_navigation_text($nav) {
 		'url'     => 'cloudflare_accounts.php',
 		'level'   => '2'
 	);
+
+	$nav['cloudflare.php:'] = array(
+		'title'   => __('Cloudflare', 'cloudflare'),
+		'mapping' => 'index.php:',
+		'url'     => 'cloudflare.php',
+		'level'   => '1'
+	);
+
+	$views = array(
+		'overview'   => __('Overview', 'cloudflare'),
+		'tunnels'    => __('Tunnels', 'cloudflare'),
+		'connectors' => __('Connectors', 'cloudflare'),
+	);
+
+	foreach ($views as $action => $title) {
+		$nav['cloudflare.php:' . $action] = array(
+			'title'   => $title,
+			'mapping' => 'index.php:,cloudflare.php:',
+			'url'     => 'cloudflare.php',
+			'level'   => '2'
+		);
+	}
 
 	return $nav;
 }

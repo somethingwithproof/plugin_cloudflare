@@ -20,10 +20,12 @@
 
 require_once __DIR__ . '/bootstrap.php';
 require_once __DIR__ . '/accounts.php';
+require_once __DIR__ . '/cacti_objects.php';
 
 use Cacti\PluginCloudflare\Jobs\JobRepository;
 use Cacti\PluginCloudflare\Storage\Database;
 use Cacti\PluginCloudflare\Storage\DatabaseException;
+use Cacti\PluginCloudflare\Storage\Migrator;
 use Cacti\PluginCloudflare\Support\SystemClock;
 
 if (!defined('CLOUDFLARE_COLLECTOR_LOCK')) {
@@ -60,7 +62,7 @@ function cloudflare_poller_bottom() : void {
 		return;
 	}
 
-	/* 1.2.25 interpolates $args as a string (lib/poller.php:132); arrays are 1.2.31 only. */
+	// 1.2.25 interpolates $args as a string (lib/poller.php:132); arrays are 1.2.31 only.
 	// nosemgrep: php.lang.security.exec-use.exec-use -- admin-set PHP binary, fixed escaped script path
 	exec_background(
 		read_config_option('path_php_binary'),
@@ -71,6 +73,8 @@ function cloudflare_poller_bottom() : void {
 /**
  * Body of poller_cloudflare.php. A lock held by another collector is the
  * normal overlap of a slow run with the next cycle, so it exits 0 quietly.
+ * A pending upgrade also exits 0, with one LOW line per run so the admin
+ * learns why nothing is collected.
  * Only the exception class is logged: messages can carry Cloudflare text.
  *
  * @param callable $service_factory returns the DiscoveryService to run
@@ -83,6 +87,19 @@ function cloudflare_collector_main(callable $service_factory) : int {
 	try {
 		$db = cloudflare_db();
 
+		/* The upgrade runs only from a page view, and the account read needs
+		 * the new columns, so until then every account would fault. */
+		if ((new Migrator($db, Migrator::defaultMigrations()))->pending() !== array()) {
+			cacti_log(
+				'CLOUDFLARE: collector skipped; plugin upgrade pending, open Console > Plugins',
+				false,
+				'CLOUDFLARE',
+				POLLER_VERBOSITY_LOW
+			);
+
+			return 0;
+		}
+
 		if (!$db->acquireLock(CLOUDFLARE_COLLECTOR_LOCK, 0)) {
 			return 0;
 		}
@@ -93,6 +110,8 @@ function cloudflare_collector_main(callable $service_factory) : int {
 			$outcomes = $service_factory()->runDue(CLOUDFLARE_COLLECTOR_BUDGET);
 
 			cacti_log(cloudflare_collector_summary($outcomes), false, 'CLOUDFLARE', POLLER_VERBOSITY_MEDIUM);
+
+			cloudflare_collector_sync($outcomes);
 		} finally {
 			$db->releaseLock(CLOUDFLARE_COLLECTOR_LOCK);
 		}
@@ -105,7 +124,21 @@ function cloudflare_collector_main(callable $service_factory) : int {
 	return 0;
 }
 
-/* Nothing else creates discovery jobs, so an account added since the last run gets one here. */
+/**
+ * Discovery has already recorded its results, so a failed sync is logged
+ * and leaves the collector's exit status alone.
+ *
+ * @param array<int, array{status: string}> $outcomes from DiscoveryService::runDue()
+ */
+function cloudflare_collector_sync(array $outcomes) : void {
+	try {
+		cloudflare_sync_cacti_objects($outcomes);
+	} catch (Throwable $e) {
+		cacti_log('CLOUDFLARE: graph sync failed (' . get_class($e) . ')', false, 'CLOUDFLARE', POLLER_VERBOSITY_LOW);
+	}
+}
+
+// Nothing else creates discovery jobs, so an account added since the last run gets one here.
 function cloudflare_collector_ensure_jobs(Database $db) : void {
 	$jobs = new JobRepository($db, new SystemClock());
 	$rows = $db->fetchAll(
@@ -130,6 +163,7 @@ function cloudflare_collector_summary(array $outcomes) : string {
 	}
 
 	$parts = array();
+
 	foreach ($counts as $status => $count) {
 		$parts[] = $status . '=' . $count;
 	}

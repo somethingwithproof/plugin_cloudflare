@@ -23,6 +23,7 @@
 			<file>cloudflare.php</file>
 			<file>cloudflare_accounts.php</file>
 			<file>poller_cloudflare.php</file>
+			<file>ss_cloudflare.php</file>
 		</include>
 	</coverage>
 </phpunit>

@@ -67,7 +67,7 @@ final class ViewerPageDispatchTest extends IntegrationTestCase {
 		$GLOBALS['item_rows']         = array();
 
 		/* An installed plugin, so the page's upgrade call creates the schema. */
-		$GLOBALS['cloudflare_glue']['cell'] = '0.2.0';
+		$GLOBALS['cloudflare_glue']['cell'] = '0.3.0';
 
 		$_REQUEST = array();
 		$_SESSION = array();

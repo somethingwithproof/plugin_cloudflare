@@ -40,7 +40,7 @@ function cloudflare_plugin_enabled() : bool {
 function cloudflare_page_failed(string $page, Throwable $e, string $text) : void {
 	cacti_log('CLOUDFLARE: ' . $page . ' page failed (' . get_class($e) . ')', false, 'CLOUDFLARE');
 
-	/* This is the last handler before CactiShutdownHandler, so a broken template must not escape it either. */
+	// This is the last handler before CactiShutdownHandler, so a broken template must not escape it either.
 	try {
 		top_header();
 
@@ -59,9 +59,10 @@ function cloudflare_page_failed(string $page, Throwable $e, string $text) : void
 /**
  * Edit form for draw_edit_form(). The token box is always empty: a stored
  * token is never sent back to the browser, only whether one exists.
+ * $credentials comes from AccountService::credentialDetails(), and is null
+ * for a new account.
  *
- * @param array{token_source: string, token_file: string|null, has_token: bool}|null $credentials
- *        from AccountService::credentialDetails(), null for a new account
+ * @param  array{token_source: string, token_file: string|null, has_token: bool}|null $credentials
  * @return array<string, array<string, mixed>>
  */
 function cloudflare_account_fields(?Account $account, ?array $credentials, bool $vault_available) : array {
@@ -74,6 +75,7 @@ function cloudflare_account_fields(?Account $account, ?array $credentials, bool 
 	$sources['file'] = __('Token file on this server', 'cloudflare');
 
 	$source = $credentials === null ? 'vault' : $credentials['token_source'];
+
 	if (!isset($sources[$source])) {
 		$source = 'file';
 	}
@@ -173,6 +175,16 @@ function cloudflare_account_fields(?Account $account, ?array $credentials, bool 
 			),
 			'value'         => ($account !== null && $account->collectsAnalytics()) ? 'on' : '',
 		),
+		'create_graphs' => array(
+			'method'        => 'checkbox',
+			'friendly_name' => __('Create Graphs', 'cloudflare'),
+			'description'   => __(
+				'Create graphs for each tunnel on the account\'s Cacti device. Turning this on needs the permission to edit ' .
+				'Cacti devices.',
+				'cloudflare'
+			),
+			'value'         => ($account !== null && $account->createsGraphs()) ? 'on' : '',
+		),
 		'discovery_interval' => array(
 			'method'        => 'textbox',
 			'friendly_name' => __('Discovery Interval', 'cloudflare'),
@@ -224,7 +236,7 @@ function cloudflare_account_input() : array {
 		'discovery_interval' => (string) get_nfilter_request_var('discovery_interval'),
 	);
 
-	foreach (array('enabled', 'collect_tunnels', 'collect_analytics') as $flag) {
+	foreach (array('enabled', 'collect_tunnels', 'collect_analytics', 'create_graphs') as $flag) {
 		$input[$flag] = (isset_request_var($flag) && get_nfilter_request_var($flag) === 'on') ? 1 : 0;
 	}
 
@@ -232,7 +244,7 @@ function cloudflare_account_input() : array {
 }
 
 /**
- * @param array<int, Account> $accounts
+ * @param  array<int, Account> $accounts
  * @return array<int, Account>
  */
 function cloudflare_account_filter(array $accounts, string $filter) : array {
@@ -255,7 +267,7 @@ function cloudflare_account_filter(array $accounts, string $filter) : array {
  * Sort keys are an allow-list; anything else sorts by name. Ties fall back
  * to the row id so the order is stable across page loads.
  *
- * @param array<int, Account> $accounts
+ * @param  array<int, Account> $accounts
  * @return array<int, Account>
  */
 function cloudflare_account_sort(array $accounts, string $column, string $direction) : array {

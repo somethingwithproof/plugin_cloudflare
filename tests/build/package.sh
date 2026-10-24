@@ -19,7 +19,7 @@ listing="$(tar -tzf "${archive}")"
 status=0
 
 for path in cloudflare/setup.php cloudflare/INFO cloudflare/LICENSE cloudflare/cloudflare.php cloudflare/cloudflare_accounts.php cloudflare/poller_cloudflare.php \
-    cloudflare/src/ cloudflare/includes/ cloudflare/js/ cloudflare/docs/images/; do
+    cloudflare/ss_cloudflare.php cloudflare/templates/ cloudflare/src/ cloudflare/includes/ cloudflare/js/ cloudflare/docs/images/; do
     if ! grep -qxF -- "${path}" <<<"${listing}"; then
         printf 'FAIL: %s is missing from %s\n' "${path}" "${archive}" >&2
         status=1
@@ -29,7 +29,8 @@ done
 for prefix in cloudflare/tests/ cloudflare/features/ cloudflare/vendor/ cloudflare/docs/superpowers/ \
     cloudflare/.superpowers/ cloudflare/.github/ cloudflare/composer.json cloudflare/composer.lock \
     cloudflare/Makefile cloudflare/phpunit.xml.dist cloudflare/phpstan.neon.dist \
-    cloudflare/.php-cs-fixer.dist.php cloudflare/behat.yml.dist cloudflare/sonar-project.properties; do
+    cloudflare/.php-cs-fixer.dist.php cloudflare/.php-cs-fixer.cacti.php \
+    cloudflare/behat.yml.dist cloudflare/sonar-project.properties; do
     if awk -v p="${prefix}" 'index($0, p) == 1 { found = 1 } END { exit !found }' <<<"${listing}"; then
         printf 'FAIL: %s is in %s\n' "${prefix}" "${archive}" >&2
         status=1

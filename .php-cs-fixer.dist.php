@@ -19,8 +19,7 @@
 */
 
 $finder = PhpCsFixer\Finder::create()
-	->in(array(__DIR__ . '/src', __DIR__ . '/tests', __DIR__ . '/features'))
-	->append(array(__DIR__ . '/cloudflare.php', __DIR__ . '/poller_cloudflare.php'));
+	->in(array(__DIR__ . '/src', __DIR__ . '/tests', __DIR__ . '/features'));
 
 return (new PhpCsFixer\Config())
 	->setIndent("\t")

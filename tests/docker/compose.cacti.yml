@@ -1,4 +1,5 @@
-# Cacti 1.2.31 with a copy of the plugin, for tests/docker/smoke.sh.
+# Cacti (1.2.31 unless CACTI_REF says otherwise) with a copy of the plugin,
+# for tests/docker/smoke.sh.
 # `make smoke-up` runs it as project cf-smoke on port 8090; smoke.sh uses
 # cf-smoke-run on 8091. Neither touches the compose.db.yml database on 33061.
 #
@@ -14,7 +15,10 @@
 
 services:
   db:
-    image: mariadb:10.11@sha256:0d0945c57f75b3a3b9ebe71aedaaad005fa5305054e8fca3d2e42a8c92b43b5e
+    # 10.11.19, 11.4.13 and 11.8.9 leave poller_output rows behind after
+    # Cacti's DELETE, and smoke.sh fails on the warnings that follow; see
+    # docs/compatibility.md.
+    image: mariadb:10.11.10@sha256:41d89394db8e777d96058d4cf5cf4daf1ed87f76192154f3d89572676f1e2327
     environment:
       MARIADB_ROOT_PASSWORD: smoke-root
       MARIADB_DATABASE: cacti
@@ -35,7 +39,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.cacti
-    image: cf-smoke-cacti:1.2.31
+    image: cf-smoke-cacti:${CF_SMOKE_CACTI_TAG:-1.2.31}
     depends_on:
       db:
         condition: service_healthy
@@ -68,7 +72,7 @@ services:
     # base. web is the only service that builds it; `up --build` finishes
     # every build before it creates any container, and pull_policy: never
     # stops compose from looking for this local tag on a registry.
-    image: cf-smoke-cacti:1.2.31
+    image: cf-smoke-cacti:${CF_SMOKE_CACTI_TAG:-1.2.31}
     pull_policy: never
     entrypoint: ["bash", "/opt/fake-cloudflare/start.sh"]
     # Lets www-data bind 443 inside this container's own network namespace.

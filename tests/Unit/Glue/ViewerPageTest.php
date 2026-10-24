@@ -83,6 +83,7 @@ final class ViewerPageTest extends TestCase {
 			'last_verified_at'   => null,
 			'collect_tunnels'    => 1,
 			'collect_analytics'  => 0,
+			'create_graphs'      => 0,
 			'discovery_interval' => 300,
 			'created_at'         => 1700000000,
 			'updated_at'         => 1700000000,

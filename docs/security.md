@@ -1,6 +1,6 @@
 # Security
 
-This page describes the security controls as implemented through Milestone 2,
+This page describes the security controls as implemented through Milestone 3,
 with the code that enforces each one. To report a vulnerability, see
 [SECURITY.md](../SECURITY.md).
 
@@ -139,6 +139,7 @@ shutdown handler disables a plugin whose page dies with one.
 |---|---|---|
 | Cloudflare: Configure | `cloudflare_accounts.php` | Granted to admin at install |
 | Cloudflare: View | `cloudflare.php` | Not granted at install |
+| Sites/Devices/Data (Cacti's realm for `host.php`) | Create Cacti Device, and Create Graphs on | Cacti's own grant |
 
 `include/auth.php` enforces the realm by page name. `AccountService` checks
 again before every change, every Verify and every credential lookup, through
@@ -151,6 +152,20 @@ realm, which Cacti enforces from the page name, and they accept no POST
 actions. Tunnel and connector text comes from Cloudflare, so every value is
 printed through `html_escape()`. The Tunnels filter and sort values are
 checked against fixed lists before they reach a query.
+
+Device and graph actions need a second realm. A Cacti device is a `host.php`
+object, so the Configure realm alone must not create one. Create Cacti Device
+and turning Create Graphs on both require `cloudflare_accounts.php` and
+`api_user_realm_auth('host.php')` (`includes/cacti_objects.php:34`). The
+dropdown hides the action from a user without both
+(`includes/accounts_page.php:55-62`), the handler refuses the request again
+before any Cacti call (`:234-243`), and `cloudflare_create_device()` checks a
+third time (`includes/cacti_objects.php:47`). When a user without the
+`host.php` realm saves the account form with Create Graphs on, the field is
+dropped and the stored value stays; a warning is shown when the setting was
+off (`includes/accounts_page.php:193-209`). Turning it off needs only Configure.
+The collector creates graphs without a logged-in user, so the realm check
+happens when the setting is saved.
 
 `list()` stays unguarded because the `Account` read model it returns holds no
 token, ciphertext, token source or file path; an integration test checks
@@ -199,6 +214,52 @@ Tunnel discovery runs in a separate PHP process, `poller_cloudflare.php`.
   Cloudflare text or a token. Run lines carry the numeric account row ID, an
   error class and counts, at Cacti's medium verbosity.
 
+## Cacti devices, graphs and templates
+
+- **Hostname.** The account's device gets the hostname
+  `<cf_account_id>.cloudflare.invalid` (`includes/cacti_objects.php:107`).
+  `.invalid` is reserved and never resolves, SNMP version is 0 and the
+  availability method is none, so Cacti never connects anywhere for this
+  device. The device carries no token or credential.
+- **One fixed write outside the plugin directory.** The plugin copies its
+  shipped `templates/resource/cloudflare_tunnels.xml` to
+  `<base_path>/resource/script_server/cloudflare_tunnels.xml`, because Cacti
+  1.2.31 reads a data query XML only from `resource/`
+  (`includes/templates.php:46-52`). Neither the source nor the target comes
+  from input. The function writes a temporary file beside the target with
+  `fopen()` mode `xb`, which fails on an existing name, so a link planted at
+  the temporary name is never followed. It sets mode 0644 and renames the file
+  over the target (`includes/templates.php:140-178`). A symbolic link at the
+  target is replaced, because `rename()` swaps the link itself and does not
+  write through it. The copy is skipped only when the target is a regular
+  file with identical contents (`:151`). A failure is logged and returns
+  false; it never throws, because Cacti disables a plugin whose install
+  throws. Nothing else is written outside the plugin directory, and uninstall
+  keeps this file.
+- **Half-created device.** If `api_device_save()` succeeds but the plugin
+  cannot record the device, it removes that host with `api_device_remove()`
+  and reads the host table back. The host id is the one that same request just
+  received, never a value from the request or the database. If the host is
+  still there, the log says so by id and the administrator removes it in
+  Devices (`includes/cacti_objects.php:146-158`, `:172-188`).
+- **Locks.** `GET_LOCK('plugin_cloudflare_device_<account id>')` makes a
+  second Create Cacti Device for the same account wait and then find the
+  device, so one account never gets two. The lock is released in a `finally`
+  block, and a failed release is logged without replacing the result
+  (`includes/cacti_objects.php:65-82`). `GET_LOCK('plugin_cloudflare_templates')`
+  keeps two upgrading processes from importing the templates at once
+  (`includes/templates.php:79-94`). MySQL drops both when the connection ends.
+- **Template import.** `import_xml_data()` reports failure through return
+  values and `$import_messages`, not through exceptions, so the plugin checks
+  both and then that every object resolves by hash
+  (`includes/templates.php:188-251`). An import that fails is logged by stage
+  name only.
+- **Script server.** `ss_cloudflare.php` reads the plugin's tables and makes
+  no network call. It accepts a device id only as `^[1-9][0-9]{0,9}\z` and a
+  tunnel index only as a lowercase UUID, binds both in prepared statements,
+  and logs a failure as the exception class name only
+  (`includes/script_server.php:38-84`).
+
 ## Disabled plugin
 
 Cacti keeps a disabled plugin's realms loaded and its `config_arrays` hook
@@ -230,8 +291,8 @@ nothing else. The test CA exists only in the smoke stack.
 
 Uninstall drops the plugin's tables, including stored ciphertexts, and
 deletes the `cloudflare_` settings. It does not touch the key file or token
-files, and it does not remove Cacti devices, graphs, data sources or RRD
-files.
+files, and it does not remove Cacti devices, graphs, data sources, RRD files,
+templates or `resource/script_server/cloudflare_tunnels.xml`.
 
 ## Known limitations
 
@@ -257,6 +318,9 @@ files.
 - Three consecutive outage-class failures mark an account's active tunnels
   `unavailable`, including when the cause is a long rate limit. The next
   complete listing restores them.
+- The plugin overwrites administrator edits to the imported templates when an
+  upgrade changes the shipped template XML, and the device must stay on the
+  main poller. See the README's known limitations.
 - Verify runs inside the web request. One Verify can make up to four
   requests (account verify, user verify, tunnel probe, zone probe), each
   bounded by the timeouts above and retried at most once.

@@ -671,6 +671,26 @@ final class AccountServiceTest extends IntegrationTestCase {
 		$this->assertSame(array(0, 0, 1), array((int) $row['enabled'], (int) $row['collect_tunnels'], (int) $row['collect_analytics']));
 	}
 
+	public function testCreateGraphsIsOffByDefaultAndKeptWhenOmitted(): void {
+		$id = $this->service()->save(null, $this->input());
+		$this->assertSame(0, (int) $this->rawRow($id)['create_graphs']);
+		$this->assertFalse($this->service()->list()[0]->createsGraphs());
+
+		$this->service()->save($id, $this->input(array('token' => '', 'create_graphs' => 1)));
+		$this->assertSame(1, (int) $this->rawRow($id)['create_graphs']);
+		$this->assertTrue($this->service()->list()[0]->createsGraphs());
+
+		$input = $this->input(array('token' => ''));
+		unset($input['create_graphs']);
+		$this->service()->save($id, $input);
+		$this->assertSame(1, (int) $this->rawRow($id)['create_graphs']);
+
+		$errors = $this->validationErrors(function () use ($id): void {
+			$this->service()->save($id, $this->input(array('token' => '', 'create_graphs' => 'yes')));
+		});
+		$this->assertSame(array('create_graphs' => 'Must be 0 or 1'), $errors);
+	}
+
 	public function testVerifyOfAVaultTokenWithoutTheVaultMarksError(): void {
 		$id = $this->service()->save(null, $this->input());
 

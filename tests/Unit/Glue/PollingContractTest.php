@@ -130,7 +130,7 @@ final class PollingContractTest extends TestCase {
 		);
 	}
 
-	/* Enough of Cacti's handle for the collector to take the lock and find no accounts. */
+	/* Enough of Cacti's handle for the collector to see a current schema, take the lock and find no accounts. */
 	private static function lockingSqlite(): PDO {
 		$pdo = new PDO('sqlite::memory:', null, null, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
 		$pdo->sqliteCreateFunction('GET_LOCK', function (): int {
@@ -139,6 +139,14 @@ final class PollingContractTest extends TestCase {
 		$pdo->sqliteCreateFunction('RELEASE_LOCK', function (): int {
 			return 1;
 		}, 1);
+		$pdo->sqliteCreateFunction('DATABASE', function (): string {
+			return 'cacti';
+		}, 0);
+		$pdo->exec("ATTACH DATABASE ':memory:' AS information_schema");
+		$pdo->exec('CREATE TABLE information_schema.tables (table_schema TEXT, table_name TEXT)');
+		$pdo->exec("INSERT INTO information_schema.tables VALUES ('cacti', 'plugin_cloudflare_migrations')");
+		$pdo->exec('CREATE TABLE plugin_cloudflare_migrations (version INTEGER)');
+		$pdo->exec('INSERT INTO plugin_cloudflare_migrations VALUES (1), (2), (3)');
 		$pdo->exec('CREATE TABLE plugin_cloudflare_accounts (id INTEGER, enabled INTEGER, collect_tunnels INTEGER)');
 
 		return $pdo;

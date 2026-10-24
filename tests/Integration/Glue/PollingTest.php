@@ -22,8 +22,10 @@ namespace Cacti\PluginCloudflare\Tests\Integration\Glue;
 
 use Cacti\PluginCloudflare\Account\AccountRepository;
 use Cacti\PluginCloudflare\Discovery\DiscoveryService;
+use Cacti\PluginCloudflare\Metrics\ResourceRepository;
 use Cacti\PluginCloudflare\Storage\Database;
 use Cacti\PluginCloudflare\Storage\Migrator;
+use Cacti\PluginCloudflare\Support\SystemClock;
 use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
 use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
 use PDO;
@@ -234,6 +236,30 @@ final class PollingTest extends IntegrationTestCase {
 		$this->assertSame(array(), cloudflare_discovery_service()->runDue(50));
 	}
 
+	/* The 0.3.0 account read needs an M003 column, so collecting on the old schema would fault every account. */
+	public function testCollectorSkipsWhileAnUpgradeIsPending(): void {
+		$this->migrate();
+		$this->account('a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1');
+		$this->db()->execute('DELETE FROM plugin_cloudflare_migrations WHERE version = ?', array(3));
+		$built = false;
+
+		$status = cloudflare_collector_main(function () use (&$built) {
+			$built = true;
+
+			return cloudflare_discovery_service();
+		});
+
+		$this->assertSame(0, $status);
+		$this->assertFalse($built, 'no discovery runs on the old schema');
+		$this->assertSame(0, $this->jobCount());
+		$this->assertSame(
+			array('CLOUDFLARE: collector skipped; plugin upgrade pending, open Console > Plugins'),
+			self::loggedLines()
+		);
+		$this->assertSame(POLLER_VERBOSITY_LOW, cloudflare_glue_calls('cacti_log')[0][3]);
+		$this->assertTrue($this->lockIsFree());
+	}
+
 	public function testCollectorReleasesTheLockWhenDiscoveryFails(): void {
 		$this->migrate();
 
@@ -244,6 +270,51 @@ final class PollingTest extends IntegrationTestCase {
 		$this->assertSame(1, $status);
 		$this->assertSame(array('CLOUDFLARE: collector failed (RuntimeException)'), self::loggedLines());
 		$this->assertSame(POLLER_VERBOSITY_LOW, cloudflare_glue_calls('cacti_log')[0][3]);
+		$this->assertTrue($this->lockIsFree());
+	}
+
+	public function testSyncFaultDoesNotFailCollector(): void {
+		$this->migrate();
+		$id = $this->account('a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1');
+		(new ResourceRepository($this->db(), new SystemClock()))->recordDevice($id, 7);
+
+		$held = null;
+		$GLOBALS['cloudflare_glue']['cell'] = function () use (&$held): void {
+			$held = !$this->lockIsFree();
+
+			throw new RuntimeException('detail that must not be logged');
+		};
+
+		$outcomes = array($id => array('status' => 'ok', 'error_class' => null, 'added' => 1, 'updated' => 0, 'deleted' => 0));
+		$service  = new class ($outcomes) {
+			/** @var array<int, array<string, mixed>> */
+			private $outcomes;
+
+			/**
+			 * @param array<int, array<string, mixed>> $outcomes
+			 */
+			public function __construct(array $outcomes) {
+				$this->outcomes = $outcomes;
+			}
+
+			/**
+			 * @return array<int, array<string, mixed>>
+			 */
+			public function runDue(int $budgetSeconds): array {
+				return $this->outcomes;
+			}
+		};
+
+		$this->assertSame(0, cloudflare_collector_main(function () use ($service) {
+			return $service;
+		}));
+
+		$this->assertSame(array(
+			'CLOUDFLARE: collector ok=1 partial=0 failed=0 skipped=0 lease_lost=0',
+			'CLOUDFLARE: account ' . $id . ' graph sync failed (RuntimeException)',
+		), self::loggedLines());
+		$this->assertSame(POLLER_VERBOSITY_LOW, cloudflare_glue_calls('cacti_log')[1][3]);
+		$this->assertTrue($held, 'the sync runs under the collector lock');
 		$this->assertTrue($this->lockIsFree());
 	}
 
@@ -312,7 +383,7 @@ final class PollingTest extends IntegrationTestCase {
 		);
 
 		cloudflare_glue_reset();
-		$GLOBALS['cloudflare_glue']['cell'] = '0.2.0';
+		$GLOBALS['cloudflare_glue']['cell'] = '0.3.0';
 		$this->assertTrue(plugin_cloudflare_upgrade());
 		$this->assertSame(array(), cloudflare_glue_calls('api_plugin_register_hook'));
 	}

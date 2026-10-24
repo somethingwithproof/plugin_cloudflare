@@ -35,7 +35,7 @@ function cloudflare_config_arrays() : void {
 }
 
 /**
- * @param array<string, array<string, string>> $nav
+ * @param  array<string, array<string, string>> $nav
  * @return array<string, array<string, string>>
  */
 function cloudflare_draw_navigation_text($nav) {

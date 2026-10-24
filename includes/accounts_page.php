@@ -19,6 +19,7 @@
 */
 
 require_once __DIR__ . '/accounts.php';
+require_once __DIR__ . '/cacti_objects.php';
 
 use Cacti\PluginCloudflare\Account\Account;
 use Cacti\PluginCloudflare\Account\AccountService;
@@ -40,8 +41,25 @@ function cloudflare_account_actions() : array {
 		1 => __('Delete', 'cloudflare'),
 		2 => __('Verify', 'cloudflare'),
 		3 => __('Enable', 'cloudflare'),
-		4 => __('Disable', 'cloudflare')
+		4 => __('Disable', 'cloudflare'),
+		5 => __('Create Cacti Device', 'cloudflare')
 	);
+}
+
+/**
+ * The dropdown hides Create Cacti Device from a user without host.php;
+ * cloudflare_accounts_create_devices() still refuses it on the server.
+ *
+ * @return array<int, string>
+ */
+function cloudflare_accounts_offered_actions() : array {
+	$actions = cloudflare_account_actions();
+
+	if (!cloudflare_device_permitted()) {
+		unset($actions[5]);
+	}
+
+	return $actions;
 }
 
 /*
@@ -126,9 +144,9 @@ function cloudflare_accounts_save() : string {
 		return '';
 	}
 
-	/* ================= input validation ================= */
+	// ================= input validation =================
 	get_filter_request_var('id');
-	/* ==================================================== */
+	// ====================================================
 
 	if (!isset_request_var('save_component_account')) {
 		return '';
@@ -137,7 +155,9 @@ function cloudflare_accounts_save() : string {
 	$id = (int) get_request_var('id');
 
 	try {
-		$id = cloudflare_account_service()->save($id > 0 ? $id : null, cloudflare_account_input());
+		$service = cloudflare_account_service();
+		$input   = cloudflare_account_graphs_guard($service, $id, cloudflare_account_input());
+		$id      = $service->save($id > 0 ? $id : null, $input);
 
 		raise_message(1);
 	} catch (ValidationException $e) {
@@ -160,11 +180,114 @@ function cloudflare_accounts_save() : string {
 }
 
 /**
+ * Turning create_graphs on lets the plugin create Cacti graphs, so it also
+ * needs the host.php realm. Without it the field is left out and the
+ * service keeps the stored value; turning it off needs no more than the
+ * Configure realm.
+ *
+ * @param  array<string, mixed> $input
+ * @return array<string, mixed>
+ *
+ * @throws DatabaseException
+ */
+function cloudflare_account_graphs_guard(AccountService $service, int $id, array $input) : array {
+	if ($input['create_graphs'] !== 1 || api_user_realm_auth('host.php') === true) {
+		return $input;
+	}
+
+	unset($input['create_graphs']);
+
+	$account = $id > 0 ? cloudflare_accounts_find($service, $id) : null;
+
+	if ($account === null || !$account->createsGraphs()) {
+		raise_message(
+			'cloudflare_graphs_denied',
+			__esc('Create Graphs was left off: turning it on needs the permission to edit Cacti devices.', 'cloudflare'),
+			MESSAGE_LEVEL_WARN
+		);
+	}
+
+	return $input;
+}
+
+/**
+ * @return array<string, string> message for each result of cloudflare_create_device()
+ */
+function cloudflare_accounts_device_results() : array {
+	return array(
+		'created'           => __('Cacti device created', 'cloudflare'),
+		'exists'            => __('A Cacti device already exists for this account', 'cloudflare'),
+		'templates_missing' => __('The Cloudflare templates are not installed; see the Cacti log', 'cloudflare'),
+		'denied'            => __('You are not permitted to create Cacti devices', 'cloudflare'),
+		'failed'            => __('The Cacti device could not be created; see the Cacti log', 'cloudflare'),
+	);
+}
+
+/**
+ * Both realms are checked before anything else, so a denied request makes
+ * no Cacti call; cloudflare_create_device() checks them again itself.
+ *
+ * @param array<int, int> $ids
+ *
+ * @throws DatabaseException
+ */
+function cloudflare_accounts_create_devices(AccountService $service, array $ids) : void {
+	if (!cloudflare_device_permitted()) {
+		raise_message(
+			'cloudflare_device_denied',
+			__esc('You are not permitted to create Cacti devices.', 'cloudflare'),
+			MESSAGE_LEVEL_ERROR
+		);
+
+		return;
+	}
+
+	$accounts = array();
+
+	foreach ($service->list() as $account) {
+		$accounts[$account->id()] = $account;
+	}
+
+	$results = cloudflare_accounts_device_results();
+	$lines   = array();
+	$level   = MESSAGE_LEVEL_INFO;
+
+	foreach ($ids as $id) {
+		if (!isset($accounts[$id])) {
+			continue;
+		}
+
+		$result  = cloudflare_create_device($accounts[$id]);
+		$lines[] = html_escape($accounts[$id]->name() . ': ' . $results[$result]);
+
+		if ($result !== 'created' && $result !== 'exists') {
+			$level = MESSAGE_LEVEL_ERROR;
+		}
+	}
+
+	if (cacti_sizeof($lines)) {
+		raise_message('cloudflare_device', implode('<br>', $lines), $level);
+	}
+}
+
+/**
  * @param array<int, int> $ids
  */
 function cloudflare_accounts_execute(int $action, array $ids) : void {
 	$service  = cloudflare_account_service();
 	$verified = array();
+
+	if ($action === 5) {
+		try {
+			cloudflare_accounts_create_devices($service, $ids);
+		} catch (DatabaseException $e) {
+			cacti_log('CLOUDFLARE: account action 5 failed: ' . $e->getMessage(), false, 'CLOUDFLARE');
+
+			raise_message(2);
+		}
+
+		return;
+	}
 
 	try {
 		foreach ($ids as $id) {
@@ -185,7 +308,7 @@ function cloudflare_accounts_execute(int $action, array $ids) : void {
 						break;
 				}
 			} catch (OutOfBoundsException $e) {
-				/* Removed by someone else since the list was drawn. */
+				// Removed by someone else since the list was drawn.
 			}
 		}
 	} catch (AccessDenied $e) {
@@ -233,9 +356,9 @@ function cloudflare_accounts_actions() : ?string {
 
 	$cloudflare_account_actions = cloudflare_account_actions();
 
-	/* ================= input validation ================= */
+	// ================= input validation =================
 	get_filter_request_var('drp_action');
-	/* ==================================================== */
+	// ====================================================
 
 	$action = (int) get_request_var('drp_action');
 
@@ -307,6 +430,14 @@ function cloudflare_accounts_actions() : ?string {
 			'Click \'Continue\' to Disable the following Cloudflare Accounts.',
 			cacti_sizeof($ids),
 			'cloudflare'
+		),
+		5 => __n(
+			'Click \'Continue\' to create a Cacti device for the following Cloudflare Account. An account that already ' .
+			'has one is left as it is.',
+			'Click \'Continue\' to create a Cacti device for each of the following Cloudflare Accounts. An account that ' .
+			'already has one is left as it is.',
+			cacti_sizeof($ids),
+			'cloudflare'
 		)
 	);
 
@@ -352,9 +483,9 @@ function cloudflare_accounts_actions() : ?string {
  *                     been printed
  */
 function cloudflare_accounts_edit() : ?string {
-	/* ================= input validation ================= */
+	// ================= input validation =================
 	get_filter_request_var('id');
-	/* ==================================================== */
+	// ====================================================
 
 	$id          = (int) get_request_var('id');
 	$account     = null;
@@ -428,7 +559,7 @@ function cloudflare_accounts_time(?int $timestamp) : string {
 function cloudflare_accounts_status(Account $account) : void {
 	$permissions = $account->permissions();
 
-	/* Labels and values are escaped here, once, and printed as built. */
+	// Labels and values are escaped here, once, and printed as built.
 	$rows = array(
 		__esc('Status', 'cloudflare')        => html_escape($account->status()),
 		__esc('Message', 'cloudflare')       => html_escape($account->statusMessage()),
@@ -475,7 +606,7 @@ function cloudflare_accounts_script() : void {
 function cloudflare_accounts_list() : void {
 	global $item_rows;
 
-	/* ================= input validation and session storage ================= */
+	// ================= input validation and session storage =================
 	$filters = array(
 		'rows' => array(
 			'filter'  => FILTER_VALIDATE_INT,
@@ -504,9 +635,10 @@ function cloudflare_accounts_list() : void {
 	);
 
 	validate_store_request_vars($filters, 'sess_cf_accounts');
-	/* ================= input validation ================= */
+	// ================= input validation =================
 
 	$rows = (int) get_request_var('rows');
+
 	if ($rows < 1) {
 		$rows = max(1, (int) read_config_option('num_rows_table'));
 	}
@@ -530,19 +662,19 @@ function cloudflare_accounts_list() : void {
 			<table class='filterTable' role='presentation'>
 				<tr>
 					<td>
-						<label for='filter'><?php print __('Search', 'cloudflare');?></label>
+						<label for='filter'><?php print __('Search', 'cloudflare'); ?></label>
 					</td>
 					<td>
 						<input type='text' class='ui-state-default ui-corner-all' id='filter' size='25'
-							value='<?php print html_escape_request_var('filter');?>'>
+							value='<?php print html_escape_request_var('filter'); ?>'>
 					</td>
 					<td>
-						<label for='rows'><?php print __('Accounts', 'cloudflare');?></label>
+						<label for='rows'><?php print __('Accounts', 'cloudflare'); ?></label>
 					</td>
 					<td>
 						<select id='rows'>
-							<option value='-1'<?php print (get_request_var('rows') == '-1' ? ' selected>':'>') .
-								__('Default', 'cloudflare');?></option>
+							<option value='-1'<?php print (get_request_var('rows') == '-1' ? ' selected>' : '>') .
+								__('Default', 'cloudflare'); ?></option>
 							<?php
 							if (cacti_sizeof($item_rows)) {
 								foreach ($item_rows as $key => $value) {
@@ -561,11 +693,11 @@ function cloudflare_accounts_list() : void {
 					<td>
 						<span>
 							<input type='button' class='ui-button ui-corner-all ui-widget' id='refresh'
-								value='<?php print __esc('Go', 'cloudflare');?>'
-								title='<?php print __esc('Set/Refresh Filters', 'cloudflare');?>'>
+								value='<?php print __esc('Go', 'cloudflare'); ?>'
+								title='<?php print __esc('Set/Refresh Filters', 'cloudflare'); ?>'>
 							<input type='button' class='ui-button ui-corner-all ui-widget' id='clear'
-								value='<?php print __esc('Clear', 'cloudflare');?>'
-								title='<?php print __esc('Clear Filters', 'cloudflare');?>'>
+								value='<?php print __esc('Clear', 'cloudflare'); ?>'
+								title='<?php print __esc('Clear Filters', 'cloudflare'); ?>'>
 						</span>
 					</td>
 				</tr>
@@ -600,23 +732,23 @@ function cloudflare_accounts_list() : void {
 	$display_text = array(
 		'name'            => array(
 			'display' => __('Name', 'cloudflare'),
-			'align' => 'left',
-			'sort' => 'ASC',
-			'tip' => __('The name of this account in Cacti.', 'cloudflare')
+			'align'   => 'left',
+			'sort'    => 'ASC',
+			'tip'     => __('The name of this account in Cacti.', 'cloudflare')
 		),
 		'cf_account_id'   => array('display' => __('Account ID', 'cloudflare'), 'align' => 'left', 'sort' => 'ASC'),
 		'has_token'       => array(
 			'display' => __('Token Stored', 'cloudflare'),
-			'align' => 'left',
-			'sort' => 'DESC',
-			'tip' => __('Whether an API token is configured. The edit page shows where it is kept.', 'cloudflare')
+			'align'   => 'left',
+			'sort'    => 'DESC',
+			'tip'     => __('Whether an API token is configured. The edit page shows where it is kept.', 'cloudflare')
 		),
 		'enabled'         => array('display' => __('Enabled', 'cloudflare'), 'align' => 'left', 'sort' => 'DESC'),
 		'status'          => array(
 			'display' => __('Status', 'cloudflare'),
-			'align' => 'left',
-			'sort' => 'ASC',
-			'tip' => __('The result of the last Verify.', 'cloudflare')
+			'align'   => 'left',
+			'sort'    => 'ASC',
+			'tip'     => __('The result of the last Verify.', 'cloudflare')
 		),
 		'last_checked_at' => array('display' => __('Last Checked', 'cloudflare'), 'align' => 'left', 'sort' => 'DESC'),
 		'id'              => array('display' => __('ID', 'cloudflare'), 'align' => 'right', 'sort' => 'ASC')
@@ -682,7 +814,7 @@ function cloudflare_accounts_list() : void {
 		print $nav;
 	}
 
-	draw_actions_dropdown(cloudflare_account_actions());
+	draw_actions_dropdown(cloudflare_accounts_offered_actions());
 
 	form_end();
 

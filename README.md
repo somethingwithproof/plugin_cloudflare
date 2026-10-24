@@ -17,21 +17,28 @@
 A Cacti 1.2 plugin that is being built to monitor Cloudflare Tunnels and
 zone analytics. It reads from the Cloudflare API with scoped API tokens,
 never changes anything in Cloudflare, and keeps its data in its own tables.
+In Cacti it copies one data query XML into `resource/script_server/` and
+creates devices, graphs and templates through Cacti's own APIs, with no core
+file changes.
 
-**Status: Milestone 2.** The plugin configures Cloudflare accounts, tests
-their tokens, and discovers their tunnels and connectors. It does not create
-graphs or collect analytics yet.
+**Status: Milestone 3.** The plugin configures Cloudflare accounts, tests
+their tokens, discovers their tunnels and connectors, and graphs each tunnel's
+health, connectors, connections and connector versions. It does not collect
+zone analytics yet.
 
 | Available now | Planned |
 |---|---|
-| Install, upgrade, disable and uninstall through Cacti's plugin manager | Tunnel health data sources and graph templates (Milestone 3) |
-| Cloudflare: View and Cloudflare: Configure permissions | GraphQL analytics and Thold alerts (Milestone 4) |
+| Install, upgrade, disable and uninstall through Cacti's plugin manager | GraphQL analytics and Thold alerts (Milestone 4) |
+| Cloudflare: View and Cloudflare: Configure permissions | Fault injection, TLA+ models and full documentation (Milestone 5) |
 | Add, edit, delete, enable and disable Cloudflare accounts | |
 | Store a token in a file or encrypted in the Cacti database | |
 | Verify a token and check its tunnel and zone read permissions | |
 | Tunnel and connector discovery in a background collector started by the main poller | |
 | Overview, Tunnels and Connectors pages under Management > Cloudflare Tunnels | |
 | Lifecycle tracking: `active`, `unavailable` and `deleted` | |
+| One Cacti device per account, created by an administrator, with the tunnels as the indexes of a data query | |
+| Per tunnel Connectors, Health and Collection graphs, drawn from one RRD file per tunnel | |
+| Values the plugin cannot vouch for are stored as unknown (`U`), never as 0 | |
 
 ## Why this plugin
 
@@ -50,8 +57,10 @@ Three constraints shape the design:
   slow the Cacti UI or stall polling of other devices. All API calls have
   hard timeouts, and collection runs in a background process launched by
   the poller.
-- **No core changes.** The plugin uses only the Cacti 1.2 plugin hooks and
-  its own tables, so Cacti upgrades and other plugins are unaffected.
+- **No core changes.** The plugin uses the Cacti 1.2 plugin hooks and its
+  own tables. It copies one data query XML into `resource/script_server/` and
+  creates devices, graphs and templates through Cacti's own APIs. No core
+  file changes, so Cacti upgrades and other plugins are unaffected.
 
 ## How it works
 
@@ -62,6 +71,8 @@ flowchart LR
         Poller["poller.php<br/>poller_bottom hook"]
         Viewer["Overview, Tunnels, Connectors<br/>(View realm)"]
         Collector["poller_cloudflare.php<br/>background collector"]
+        SS["ss_cloudflare.php<br/>script server data query"]
+        Objects[("device, graphs,<br/>data sources, RRDs")]
         DB[("plugin_cloudflare_*<br/>tables")]
     end
     subgraph Plugin["plugin src/"]
@@ -70,6 +81,7 @@ flowchart LR
         Client["CloudflareClient<br/>error classes, bounded retries"]
         Transport["CurlTransport<br/>allowlist, TLS, timeouts"]
         Disc["DiscoveryService"]
+        Reader["ObservationReader"]
     end
     CF["api.cloudflare.com"]
 
@@ -82,6 +94,8 @@ flowchart LR
     Poller -- "exec_background" --> Collector --> Disc
     Disc --> DB
     Disc --> Client
+    Collector -- "Cacti APIs" --> Objects
+    Poller -- "script server" --> SS --> Reader --> DB
 ```
 
 - **Cacti glue** (`setup.php`, `includes/`, the page scripts) registers
@@ -111,11 +125,12 @@ data, so the account, its ID and the three tunnels are placeholders.
 *The Cloudflare Accounts list. The fake API accepts the token, so Verify
 reports `ok`.*
 
-![The account edit form with name, account ID, encrypted token storage, collection options and the Connection Status table.](docs/images/account-edit.png)
+![The account edit form with name, account ID, encrypted token storage, collection options including Create Graphs, and the Connection Status table.](docs/images/account-edit.png)
 
 *Editing an account. The token fields are always empty; the stored token is
-never sent back to the browser. Connection Status shows the result of the
-last Verify: `ok`, tunnel read granted and zone read missing.*
+never sent back to the browser. Collect Tunnels and Create Graphs are on and
+Collect Analytics is off. Connection Status shows the result of the last
+Verify: `ok`, tunnel read granted and zone read missing.*
 
 ![The Cloudflare tab under Cacti Settings with the key file path, two timeouts and the log level.](docs/images/settings-cloudflare.png)
 
@@ -134,6 +149,14 @@ whose last run failed shows `Collection failing` whatever its tunnels report.*
 *The Tunnels tab. Connectors and Connections show `-` for old-office, because
 the fake API answers its connections request as an unknown tunnel and nothing
 was stored, and 0 for staging, which has no running connector.*
+
+![A Cacti graph titled Cloudflare: Example account - blog - Connectors. The Connectors, Connections and Connector Versions lines sit at 1, stop for a gap of about a minute and a half, and resume at 1.](docs/images/tunnel-graph.png)
+
+*The Connectors graph of the blog tunnel. All three lines are 1 before and
+after a gap in the middle, where the fake API returned errors and the plugin
+stored unknown values. The lines do not fall to 0. The graph comes from the
+same fixture stack (`make screenshots`), which sets a 30 second step on this
+one data source so that seven minutes of polling fill the graph.*
 
 ## Requirements
 
@@ -206,11 +229,14 @@ refused.
 1. Replace the files in `plugins/cloudflare` with the new release, keeping
    the directory name.
 2. Open Console > Configuration > Plugins, or Console > Configuration >
-   Cloudflare Accounts, once as an admin. That runs the plugin's migrations
-   and, on an upgrade from 0.1.0, registers the `poller_bottom` hook.
+   Cloudflare Accounts, once as an admin. That runs the plugin's migrations,
+   imports the Cloudflare templates and copies the data query file (see
+   [Tunnel metrics and graphs](#tunnel-metrics-and-graphs)), and, on an
+   upgrade from 0.1.0, registers the `poller_bottom` hook.
 
-`poller.php` does not run the plugin's upgrade, so until step 2 the
-new schema is missing and nothing is collected.
+`poller.php` does not run the plugin's upgrade, so until step 2 the new
+schema is missing. Each collector run then does nothing and logs
+`CLOUDFLARE: collector skipped; plugin upgrade pending, open Console > Plugins`.
 
 ## Account status
 
@@ -281,6 +307,72 @@ read-only:
   for account, lifecycle, status and name, and sortable columns.
 - **Connectors** shows the connectors of the tunnel chosen on the Tunnels tab.
 
+## Tunnel metrics and graphs
+
+Cacti reads tunnel state through a script server data query,
+`ss_cloudflare.php`. It answers from the plugin's tables only and never calls
+Cloudflare, so a Cloudflare outage cannot slow the poller. Each tunnel gives
+six values: health (healthy 3, degraded 2, down 1, inactive 0), connectors,
+connections, connector versions, the seconds since its connections were last
+read, and the discovery job's consecutive failures. Health, connectors,
+connections and versions are printed only when the plugin can vouch for them,
+which means the last discovery succeeded, the tunnel is `active` and the
+reading is recent. Otherwise they are `U`, and the graph shows a gap instead
+of a zero that would look like an outage. The two collection values stay
+printed during an outage, so the Collection graph shows it; they are `U` only
+for a deleted tunnel or one whose connections were never refreshed. The rules
+are in [docs/metrics.md](docs/metrics.md).
+
+### Create the device
+
+An account maps to at most one Cacti device. The device holds the account's
+tunnels as the indexes of the Cloudflare Tunnels data query. Nothing creates
+it automatically:
+
+1. Open Console > Configuration > Cloudflare Accounts.
+2. Select the account, choose Create Cacti Device from the actions menu, and
+   confirm.
+
+The action needs both the Cloudflare: Configure realm and Cacti's
+Sites/Devices/Data realm (the one for `host.php`). The menu entry appears only
+to users who hold both, and the server refuses the request from anyone else.
+The device is named `Cloudflare: <account name>`, uses the Cloudflare Account
+host template and the main poller, has SNMP version 0 and no availability
+check, and gets the hostname `<account ID>.cloudflare.invalid`. That name is
+reserved and never resolves; Cacti does not connect to it. If the account
+already has a device, the action says so and changes nothing. If an
+administrator deletes the device in Cacti, the plugin does not make another
+until Create Cacti Device is run again.
+
+### Create Graphs
+
+Create Graphs on the account form is off by default. When it is on, each time
+a discovery of the account ends `ok` or `partial`, the collector reindexes the
+device and creates any missing graphs for the account's `active` tunnels:
+Connectors, Health and Collection, three per tunnel. A tunnel's three graphs
+share one RRD file. One run creates at most 50 graphs and stops after 20
+seconds, and the next run continues. The plugin never removes a Cacti object.
+A graph that an administrator deletes is not made again, and a tunnel that
+Cloudflare no longer lists keeps its graph and RRD file, which show `U`.
+
+Turning Create Graphs on needs both realms. Turning it off needs only
+Configure. A user without the Sites/Devices/Data realm who saves the form
+leaves the setting as it was, with a warning. With Create Graphs off, the
+device is still reindexed after each discovery, so new tunnels appear as
+indexes of the data query.
+
+### The data query file
+
+Cacti 1.2.31 reads a data query XML only from inside its `resource`
+directory. At install and upgrade the plugin therefore copies one file,
+`templates/resource/cloudflare_tunnels.xml`, to
+`<Cacti>/resource/script_server/cloudflare_tunnels.xml`. It is the only file
+the plugin writes outside its own directory, so the user that installs or
+upgrades the plugin must be able to write to that directory.
+Uninstall keeps the file, along with the devices, graphs, RRD files and
+templates. If the copy or the template import fails, the plugin logs it and
+Create Cacti Device tries again.
+
 ## Settings
 
 Settings > Cloudflare holds:
@@ -293,16 +385,39 @@ Settings > Cloudflare holds:
   background collector. Default 20; values outside 5 to 60 fall back to 20.
 - **Log Level**: stored. Nothing reads it yet.
 
-On the account form, Collect Tunnels and Discovery Interval control discovery.
-Collect Analytics is stored and has no effect in this release.
+On the account form, Collect Tunnels and Discovery Interval control discovery,
+and Create Graphs controls graph creation. Collect Analytics is stored and has
+no effect in this release.
 
 ## Uninstall and data retention
 
 Uninstall drops the plugin's own tables, which hold accounts, encrypted
-tokens, discovered tunnels and job state, and deletes its `cloudflare_`
-settings. It does not remove the key file, token files, or any Cacti devices,
-graphs, data sources, RRD files or templates. Those hold historical monitoring data, and removing
-them is an explicit administrator action in Cacti.
+tokens, discovered tunnels, job state and the record of which Cacti objects it
+made, and deletes its `cloudflare_` settings. It does not remove the key file,
+token files, the copied `resource/script_server/cloudflare_tunnels.xml`, or any
+Cacti devices, graphs, data sources, RRD files or templates. Those hold
+historical monitoring data, and removing them is an explicit administrator
+action in Cacti.
+
+The kept device stops receiving data. After an uninstall, or after its
+account is deleted, no account owns the host, so its graphs keep their
+history but print `U` from then on. Create Cacti Device on the reinstalled or
+re-added account makes a new device; it does not reuse the old one, so delete
+the old device in Cacti once its history is no longer needed.
+
+## Known limitations
+
+- A run makes at most 200 connection requests. Tunnels beyond that cap are
+  refreshed less often than the observation window, so their connection
+  graphs show gaps.
+- The plugin overwrites administrator edits to the imported templates when an
+  upgrade changes the shipped template XML.
+- The account's device must stay on the main poller. The plugin's tables are
+  in the main database and the script reads them there.
+- Deleted tunnels stay in the data query index, with their graphs and RRD
+  files, and print `U`.
+- Cacti disables a plugin whose code ends in a true fatal error, such as
+  running out of memory. See [docs/security.md](docs/security.md).
 
 ## Security
 
@@ -313,8 +428,9 @@ them is an explicit administrator action in Cacti.
 - Database errors carry only the SQLSTATE and the driver error code, never
   the statement's values.
 - Every change is a POST protected by Cacti's CSRF token, and is checked
-  against the Cloudflare: Configure permission. A disabled plugin refuses
-  its pages.
+  against the Cloudflare: Configure permission. Creating a Cacti device or
+  turning on Create Graphs also needs Cacti's Sites/Devices/Data permission.
+  A disabled plugin refuses its pages.
 
 Details and known limitations are in [docs/security.md](docs/security.md).
 Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
@@ -329,7 +445,7 @@ every milestone below.
 |---|---|---|
 | 1. Foundation | Plugin lifecycle, permissions, account configuration, connection test | In review ([#1](https://github.com/somethingwithproof/plugin_cloudflare/pull/1)) |
 | 2. Discovery | Tunnel and connector discovery in a background collector, Overview, Tunnels and Connectors pages | Implemented, unreleased |
-| 3. Metrics | Tunnel health data sources, graph templates, outage handling that never records a fabricated zero | Planned |
+| 3. Metrics | Tunnel health data sources, graph templates, outage handling that never records a fabricated zero | Implemented, unreleased |
 | 4. Analytics and alerting | Plan-aware GraphQL analytics per zone, Thold thresholds with outage suppression | Planned |
 | 5. Hardening | Fault injection, TLA+ models of discovery and collection, full documentation | Planned |
 
@@ -366,6 +482,8 @@ on the same line).
 - [docs/security.md](docs/security.md): security controls and known limitations
 - [docs/token-permissions.md](docs/token-permissions.md): token permissions
 - [docs/compatibility.md](docs/compatibility.md): supported versions and the interfaces used
+- [docs/metrics.md](docs/metrics.md): metric catalog and when a value is unknown
+- [docs/collector-protocol.md](docs/collector-protocol.md): what `ss_cloudflare.php` reads and prints
 - [docs/schema.md](docs/schema.md): database tables
 - [docs/design.md](docs/design.md): design decisions
 - [CHANGELOG.md](CHANGELOG.md)

@@ -31,6 +31,7 @@ by running it again.
 | last_verified_at | INT UNSIGNED NULL | |
 | collect_tunnels | TINYINT(1) | Default 1 |
 | collect_analytics | TINYINT(1) | Default 0 |
+| create_graphs | TINYINT(1) | Added by migration 3, after `collect_analytics`. Default 0 |
 | discovery_interval | INT UNSIGNED | Seconds, default 300 |
 | created_at | INT UNSIGNED | |
 | updated_at | INT UNSIGNED | |
@@ -79,6 +80,7 @@ is Cloudflare's raw health (`healthy`, `degraded`, `down`, `inactive`).
 | connection_count | INT UNSIGNED NULL | |
 | connections_refreshed_at | INT UNSIGNED NULL | Last time the tunnel's connections were read and stored |
 | connections_attempted_at | INT UNSIGNED NULL | Last time reading them was tried, whether or not it succeeded. Orders the next run's work, with never-tried tunnels first |
+| connections_error_class | VARCHAR(20) NULL | Added by migration 3, after `connections_attempted_at` |
 | first_seen_at | INT UNSIGNED | |
 | last_seen_at | INT UNSIGNED | |
 | lifecycle_changed_at | INT UNSIGNED | |
@@ -108,6 +110,45 @@ reports.
 
 Keys: primary `id`; unique `(tunnel_id, cf_connector_id)`; foreign key
 `fk_cf_connectors_tunnel`.
+
+## plugin_cloudflare_resources
+
+Added by migration 3. Cacti objects the plugin created for an account: one
+`device` row per account and one `graph` row per tunnel and graph template.
+
+| Column | Type | Notes |
+|---|---|---|
+| id | INT UNSIGNED | Primary key, auto increment |
+| account_id | INT UNSIGNED | Foreign key to accounts, `ON DELETE CASCADE` |
+| kind | ENUM('device','graph') | |
+| tunnel_id | INT UNSIGNED | Default 0, which is the value for the device row. No foreign key: tunnel rows are never deleted, only cascaded with the account |
+| template_hash | CHAR(32) | Graph template hash. Default empty, which is the value for the device row |
+| host_id | INT UNSIGNED | Cacti host |
+| local_graph_id | INT UNSIGNED NULL | |
+| local_data_id | INT UNSIGNED NULL | |
+| created_at | INT UNSIGNED | |
+
+Keys: primary `id`; unique `account_resource` on
+`(account_id, kind, tunnel_id, template_hash)`; unique `graph` on
+`local_graph_id`; key `host`; foreign key `fk_cf_resources_account`.
+
+## plugin_cloudflare_metric_mappings
+
+Added by migration 3. Maps a metric to the data template and RRD data source
+that stores it.
+
+| Column | Type | Notes |
+|---|---|---|
+| metric_name | VARCHAR(64) | Primary key |
+| schema_version | SMALLINT UNSIGNED | |
+| ds_type | ENUM('GAUGE','COUNTER') | |
+| unit | VARCHAR(16) | |
+| query_field | VARCHAR(32) | |
+| data_template_hash | CHAR(32) | |
+| rrd_ds_name | VARCHAR(19) | |
+
+Keys: primary `metric_name`; unique `template_ds` on
+`(data_template_hash, rrd_ds_name)`.
 
 ## Retention
 

@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
-# Install smoke for the plugin against a real Cacti 1.2.31. Brings up
-# compose.cacti.yml, walks the plugin lifecycle through Cacti's CLI and web
-# UI, and stops at the first failed step. KEEP=1 leaves the stack running;
-# CF_PLUGIN_DIR mounts another directory in place of this checkout.
+# Install smoke for the plugin against a real Cacti, 1.2.31 unless `make
+# smoke CACTI_REF=...` names another tag. Brings up compose.cacti.yml, walks
+# the plugin lifecycle through Cacti's CLI and web UI, polls the tunnel
+# graphs through the real poller and rrdtool, and stops at the first failed
+# step. KEEP=1 leaves the stack running; CF_PLUGIN_DIR mounts another
+# directory in place of this checkout.
 #
 # Needs tests/docker/build/cacti.tar; run through `make smoke`.
 
@@ -25,6 +27,8 @@ fixture_tunnels='0b6a8e4c-6c3b-4f64-9d6e-2f6c1f8a1d11|staging|inactive
 7d1c3f52-91a4-4a39-8a55-3e1b0c6f2b77|old-office|down
 f70ff985-a4ef-4643-bbbc-4a0ed4fc8415|blog|healthy'
 denied_marker='You are not permitted to access this section of Cacti.'
+cf_data_template='0a8e0fd46e03c70b32a5908fc0463e17'
+cf_data_query='82e9f55ad870c876a825287744c2afbb'
 
 export CF_SMOKE_PORT="${port}"
 export CF_SMOKE_ADMIN_PASS="${admin_pass}"
@@ -83,6 +87,18 @@ plugin_manage() {
 	"${dc[@]}" exec -T -u www-data web php cli/plugin_manage.php --plugin=cloudflare "$@"
 }
 
+# Before 1.2.31, cli/plugin_manage.php enables a plugin only as part of
+# --install, so an installed one is enabled the way plugins.php does it.
+plugin_enable() {
+	# shellcheck disable=SC2016 # a literal line of plugin_manage.php.
+	if "${dc[@]}" exec -T web grep -qF 'Enabling Plugin $plugin.' cli/plugin_manage.php; then
+		plugin_manage --enable
+	else
+		"${dc[@]}" exec -T -u www-data web php -r \
+			'chdir("/var/www/html/cacti"); include "./include/cli_check.php"; api_plugin_enable("cloudflare");'
+	fi
+}
+
 plugin_status() {
 	sql "SELECT COALESCE(MAX(status), 'none') FROM plugin_config WHERE directory = 'cloudflare'"
 }
@@ -91,8 +107,25 @@ plugin_tables() {
 	sql "SELECT table_name FROM information_schema.tables WHERE table_schema = 'cacti' AND table_name LIKE 'plugin!_cloudflare!_%' ESCAPE '!' ORDER BY table_name"
 }
 
+# The plugin's own data template is left out: install imports it and
+# uninstall keeps it, which step 6 checks on its own.
 core_counts() {
-	sql "SELECT (SELECT COUNT(*) FROM host), (SELECT COUNT(*) FROM graph_local), (SELECT COUNT(*) FROM data_template)"
+	sql "SELECT (SELECT COUNT(*) FROM host), (SELECT COUNT(*) FROM graph_local), (SELECT COUNT(*) FROM data_template WHERE hash != '${cf_data_template}')"
+}
+
+# Host template, data query, data template and the three graph templates,
+# each by its md5('plugin_cloudflare/<key>') hash.
+template_objects() {
+	sql "SELECT (SELECT COUNT(*) FROM host_template WHERE hash = '7b64ac0c934b4a22601a2a8e03f0d4c3')
+		+ (SELECT COUNT(*) FROM snmp_query WHERE hash = '82e9f55ad870c876a825287744c2afbb')
+		+ (SELECT COUNT(*) FROM data_template WHERE hash = '${cf_data_template}')
+		+ (SELECT COUNT(*) FROM graph_templates WHERE hash IN (MD5('plugin_cloudflare/graph_template/connectors'),
+			MD5('plugin_cloudflare/graph_template/health'), MD5('plugin_cloudflare/graph_template/collection')))"
+}
+
+resource_matches() {
+	"${dc[@]}" exec -T web cmp -s plugins/cloudflare/templates/resource/cloudflare_tunnels.xml \
+		resource/script_server/cloudflare_tunnels.xml
 }
 
 # capture <name> <command...>: saves stdout and stderr under ${captures}.
@@ -235,8 +268,10 @@ wait_for_run() {
 collectors_running() {
 	local procs
 
+	# A process can exit between the glob and the read; stderr is redirected
+	# before the input so that failed open stays quiet.
 	# shellcheck disable=SC2016 # $f belongs to the container's shell.
-	procs="$("${dc[@]}" exec -T web sh -c 'for f in /proc/[0-9]*/cmdline; do tr "\0" " " < "$f" 2>/dev/null; echo; done')" \
+	procs="$("${dc[@]}" exec -T web sh -c 'for f in /proc/[0-9]*/cmdline; do tr "\0" " " 2>/dev/null < "$f"; echo; done')" \
 		|| die 'could not list the web container processes'
 	[[ -n "${procs}" ]] || die 'the web container process list is empty'
 	grep -c 'poller_cloudflare\.php' <<<"${procs}" || true
@@ -268,18 +303,32 @@ log_since() {
 # its own when it exits at the enabled check.
 spawn_pattern='About to Spawn a Remote Process \[CMD: [^]]*, ARGS: [^]]*poller_cloudflare\.php'
 
-# Set while poll_debug has log_verbosity raised; teardown restores it too,
-# because run_poller and log_since exit through die.
+# Set while log_verbosity or data_source_trace is raised; teardown restores
+# them too, because run_poller and log_since exit through die.
 verbosity_pending=''
 verbosity_saved=''
+trace_saved=''
+
+restore_setting() {
+	local name="$1" value="$2"
+
+	if [[ -n "${value}" ]]; then
+		sql "REPLACE INTO settings (name, value) VALUES ('${name}', '${value}')"
+	else
+		sql "DELETE FROM settings WHERE name = '${name}'"
+	fi
+}
+
+save_log_settings() {
+	verbosity_saved="$(sql "SELECT IFNULL(MAX(value), '') FROM settings WHERE name = 'log_verbosity'")"
+	trace_saved="$(sql "SELECT IFNULL(MAX(value), '') FROM settings WHERE name = 'data_source_trace'")"
+	verbosity_pending=1
+}
 
 restore_verbosity() {
 	[[ -n "${verbosity_pending}" ]] || return 0
-	if [[ -n "${verbosity_saved}" ]]; then
-		sql "REPLACE INTO settings (name, value) VALUES ('log_verbosity', '${verbosity_saved}')"
-	else
-		sql "DELETE FROM settings WHERE name = 'log_verbosity'"
-	fi
+	restore_setting log_verbosity "${verbosity_saved}"
+	restore_setting data_source_trace "${trace_saved}"
 	verbosity_pending=''
 }
 
@@ -288,15 +337,76 @@ restore_verbosity() {
 poll_debug() {
 	local file="$1" offset
 
-	verbosity_saved="$(sql "SELECT IFNULL(MAX(value), '') FROM settings WHERE name = 'log_verbosity'")"
-	verbosity_pending=1
+	save_log_settings
 	sql "REPLACE INTO settings (name, value) VALUES ('log_verbosity', '5')"
 	offset="$(log_size)"
 	run_poller
 	log_since "${offset}" >"${file}"
 	restore_verbosity
-	# An empty capture would make the absence check in 5f vacuous.
+	# An empty capture would make the absence check in 5k vacuous.
 	found -F 'DEBUG' "${file}" || die 'the DEBUG poll wrote no DEBUG lines to cacti.log'
+}
+
+job_result() {
+	sql "SELECT CONCAT_WS('|', last_status, IFNULL(last_error_class, 'null')) FROM plugin_cloudflare_jobs WHERE account_id = ${account_id}"
+}
+
+# The graph sync runs in the collector after the job row is finished, so
+# wait_for_run alone could return while it is still reindexing.
+wait_for_collectors() {
+	local i
+
+	for ((i = 0; i < 60; i++)); do
+		[[ "$(collectors_running)" = '0' ]] && return 0
+		sleep 1
+	done
+
+	die 'poller_cloudflare.php still running after 60 seconds'
+}
+
+# One metrics poll: the job is made due so the collector runs after it.
+# rrdtool refuses a second update to an RRD within the same second.
+poll_due() {
+	local started
+
+	sql "UPDATE plugin_cloudflare_jobs SET next_run_at = 0 WHERE account_id = ${account_id}"
+	started="$(job_started)"
+	run_poller
+	wait_for_run "${started}"
+	wait_for_collectors
+	sleep 2
+}
+
+# The RRD behind blog's connectors graph; all three of a tunnel's graphs
+# share it.
+blog_rrd() {
+	sql "SELECT REPLACE(dtd.data_source_path, '<path_rra>', '/var/www/html/cacti/rra')
+		FROM plugin_cloudflare_resources r
+		JOIN plugin_cloudflare_tunnels t ON t.id = r.tunnel_id
+		JOIN data_template_data dtd ON dtd.local_data_id = r.local_data_id
+		WHERE r.account_id = ${account_id} AND r.kind = 'graph' AND t.name = 'blog'
+		AND r.template_hash = MD5('plugin_cloudflare/graph_template/connectors')"
+}
+
+# rrd_column <ds> <output>: prints the values of the column named <ds> in
+# `rrdtool lastupdate` or `rrdtool fetch` output, one per data row. The
+# header line names the data sources; data rows lead with "timestamp:".
+rrd_column() {
+	local ds="$1" output="$2"
+
+	awk -v ds="${ds}" '
+		NR == 1 { for (i = 1; i <= NF; i++) if ($i == ds) col = i + 1; next }
+		col && /^[0-9]+:/ { print $col }
+		END { if (!col) exit 1 }
+	' <<<"${output}" || die "no data source ${ds} in rrdtool output" "${output}"
+}
+
+# last_value <rrd> <ds>: the DS's last update, by name, never by position.
+last_value() {
+	local rrd="$1" ds="$2" out
+
+	out="$("${dc[@]}" exec -T web rrdtool lastupdate "${rrd}" 2>&1)" || die "rrdtool lastupdate ${rrd} failed" "${out}"
+	rrd_column "${ds}" "${out}"
 }
 
 admin_jar="${work}/admin.jar"
@@ -311,7 +421,7 @@ step='setup: stack up'
 # created and not only what the installer seeded.
 out="$("${dc[@]}" exec -T -u www-data web php cli/add_device.php --description=smoke-host --ip=192.0.2.10 --template=0 --avail=none --version=0 2>&1)" || die "${out}"
 [[ "$(sql "SELECT COUNT(*) FROM host WHERE description = 'smoke-host'")" = '1' ]] || die 'seed device was not added' "${out}"
-counts_before="$(core_counts)"
+printf '  Cacti %s\n' "$(sql "SELECT cacti FROM version")"
 pass
 
 step='setup: only the web container trusts the test CA, and only for api.cloudflare.com'
@@ -357,11 +467,21 @@ realms="$(sql "SELECT id, file FROM plugin_realms WHERE plugin = 'cloudflare' OR
 [[ "$(wc -l <<<"${realms}")" -eq 2 ]] || die 'expected two plugin realms' "${realms}"
 pass
 
+step='2b install imported the templates and copied the data query XML'
+[[ "$(template_objects)" = '6' ]] || die "found $(template_objects) of 6 template objects"
+resource_matches || die 'resource/script_server/cloudflare_tunnels.xml is missing or differs'
+shipped_sha="$("${dc[@]}" exec -T web sha256sum plugins/cloudflare/templates/cloudflare_templates.xml | cut -d ' ' -f 1)"
+[[ "${#shipped_sha}" -eq 64 ]] || die 'could not hash the shipped templates in the container'
+recorded_sha="$(sql "SELECT value FROM settings WHERE name = 'cloudflare_templates_sha256'")"
+[[ "${recorded_sha}" = "${shipped_sha}" ]] || die "recorded template hash '${recorded_sha}' is not ${shipped_sha}"
+[[ "$(sql "SELECT COUNT(*) FROM plugin_cloudflare_metric_mappings")" = '6' ]] || die 'metric mappings were not recorded'
+pass
+
 step='3 disable, re-enable and reinstall keep the tables'
 out="$(plugin_manage --disable 2>&1)" || die "${out}"
 require_clean "${out}"
 [[ "$(plugin_status)" = '4' ]] || die "status after disable is $(plugin_status)"
-out="$(plugin_manage --enable 2>&1)" || die "${out}"
+out="$(plugin_enable 2>&1)" || die "${out}"
 require_clean "${out}"
 [[ "$(plugin_status)" = '1' ]] || die "status after enable is $(plugin_status)"
 # The CLI skips an installed plugin, so call the installer plugins.php uses.
@@ -369,7 +489,7 @@ out="$("${dc[@]}" exec -T -u www-data web php -r \
 	'chdir("/var/www/html/cacti"); include "./include/cli_check.php"; api_plugin_install("cloudflare");' 2>&1)" || die "${out}"
 require_clean "${out}"
 [[ "$(plugin_status)" = '4' ]] || die "status after reinstall is $(plugin_status)"
-out="$(plugin_manage --enable 2>&1)" || die "${out}"
+out="$(plugin_enable 2>&1)" || die "${out}"
 require_clean "${out}"
 [[ "$(plugin_status)" = '1' ]] || die "status after reinstall and enable is $(plugin_status)"
 [[ "$(plugin_tables)" = "${tables}" ]] || die 'tables changed' "$(plugin_tables)"
@@ -387,7 +507,7 @@ step='4b a disabled plugin page is denied, and served again once re-enabled'
 out="$(plugin_manage --disable 2>&1)" || die "${out}"
 http "${admin_jar}" "${work}/admin-disabled.html" "${page}" >/dev/null
 require_denied "${work}/admin-disabled.html"
-out="$(plugin_manage --enable 2>&1)" || die "${out}"
+out="$(plugin_enable 2>&1)" || die "${out}"
 code="$(http "${admin_jar}" "${work}/admin-reenabled.html" "${page}")"
 require_accounts_page "${work}/admin-reenabled.html" "${code}"
 pass
@@ -481,7 +601,7 @@ poll_debug "${work}/log-5c"
 # Positive control for 5f: an enabled plugin's hook does log the spawn.
 found -E "${spawn_pattern}" "${work}/log-5c" || die 'no exec_background line for poller_cloudflare.php at DEBUG'
 wait_for_run "${started}"
-job="$(sql "SELECT CONCAT_WS('|', last_status, IFNULL(last_error_class, 'null')) FROM plugin_cloudflare_jobs WHERE account_id = ${account_id}")"
+job="$(job_result)"
 [[ "${job}" = 'ok|null' ]] || die "discovery job ended ${job}"
 [[ "$(sql "SELECT COUNT(*) FROM plugin_cloudflare_tunnels")" = '3' ]] || die 'expected exactly 3 tunnels' "$(tunnel_rows)"
 stored="$(sql "SELECT CONCAT_WS('|', cf_tunnel_id, name, cf_status) FROM plugin_cloudflare_tunnels WHERE account_id = ${account_id} AND lifecycle = 'active' ORDER BY cf_tunnel_id")"
@@ -537,7 +657,7 @@ sql "UPDATE plugin_cloudflare_jobs SET next_run_at = 0 WHERE account_id = ${acco
 started="$(job_started)"
 run_poller
 wait_for_run "${started}"
-job="$(sql "SELECT CONCAT_WS('|', last_status, IFNULL(last_error_class, 'null')) FROM plugin_cloudflare_jobs WHERE account_id = ${account_id}")"
+job="$(job_result)"
 [[ "${job}" = 'failed|transient' ]] || die "discovery job ended ${job}, expected failed|transient"
 fake_requests | tail -n "+$((before_requests + 1))" >"${work}/requests-503"
 found -E "^GET /client/v4/accounts/${cf_account}/cfd_tunnel\\?[^ ]* 503$" "${work}/requests-503" \
@@ -549,7 +669,142 @@ found -E "^GET /client/v4/accounts/${cf_account}/cfd_tunnel\\?[^ ]* 503$" "${wor
 fake rm /run/cf-fake/fail-503
 pass
 
-step='5f with the plugin disabled, poller.php launches no collector'
+step='5f Create Cacti Device makes the account device, and the edit form turns on graphs'
+[[ "$(sql "SELECT COUNT(*) FROM graph_templates WHERE hash IN (MD5('plugin_cloudflare/graph_template/connectors'),
+	MD5('plugin_cloudflare/graph_template/health'), MD5('plugin_cloudflare/graph_template/collection'))")" = '3' ]] \
+	|| die 'the three graph templates are not all present'
+resource_matches || die 'resource/script_server/cloudflare_tunnels.xml is missing or differs'
+http "${admin_jar}" "${work}/list-device.html" "${page}" >/dev/null
+csrf="$(csrf_from "${work}/list-device.html")"
+[[ -n "${csrf}" ]] || die 'no __csrf_magic token on the list page'
+http "${admin_jar}" "${work}/confirm-device.html" \
+	--data-urlencode 'action=actions' \
+	--data-urlencode 'drp_action=5' \
+	--data-urlencode "chk_${account_id}=on" \
+	--data-urlencode "__csrf_magic=${csrf}" \
+	"${page}" >/dev/null
+grep -qF 'create a Cacti device for the following Cloudflare Account' "${work}/confirm-device.html" \
+	|| die 'no Create Cacti Device confirmation page' "$(head -c 600 "${work}/confirm-device.html")"
+csrf="$(csrf_from "${work}/confirm-device.html")"
+[[ -n "${csrf}" ]] || die 'no __csrf_magic token on the device confirmation page'
+http "${admin_jar}" "${work}/device.html" \
+	--data-urlencode 'action=actions' \
+	--data-urlencode 'drp_action=5' \
+	--data-urlencode "selected_items=a:1:{i:0;i:${account_id};}" \
+	--data-urlencode "__csrf_magic=${csrf}" \
+	"${page}" >/dev/null
+require_clean "$(cat "${work}/device.html")"
+host_id="$(sql "SELECT IFNULL(MAX(host_id), 0) FROM plugin_cloudflare_resources WHERE account_id = ${account_id} AND kind = 'device'")"
+[[ "${host_id}" != '0' ]] || die 'no device was recorded for the account' "$(sql "SELECT * FROM plugin_cloudflare_resources")"
+dq_id="$(sql "SELECT id FROM snmp_query WHERE hash = '${cf_data_query}'")"
+[[ -n "${dq_id}" ]] || die 'the data query is missing'
+[[ "$(sql "SELECT CONCAT_WS('|', h.deleted, ht.hash) FROM host h JOIN host_template ht ON ht.id = h.host_template_id WHERE h.id = ${host_id}")" = '|7b64ac0c934b4a22601a2a8e03f0d4c3' ]] \
+	|| die "host ${host_id} is not a live device on the plugin's host template"
+[[ "$(sql "SELECT reindex_method FROM host_snmp_query WHERE host_id = ${host_id} AND snmp_query_id = ${dq_id}")" = '0' ]] \
+	|| die 'the device data query is not on reindex None'
+http "${admin_jar}" "${work}/edit-graphs.html" "${page}?action=edit&id=${account_id}" >/dev/null
+csrf="$(csrf_from "${work}/edit-graphs.html")"
+[[ -n "${csrf}" ]] || die 'no __csrf_magic token on the account edit form'
+grep -qF 'create_graphs' "${work}/edit-graphs.html" || die 'the edit form has no create_graphs field'
+http "${admin_jar}" "${work}/save-graphs.html" \
+	--data-urlencode 'action=save' \
+	--data-urlencode 'save_component_account=1' \
+	--data-urlencode "id=${account_id}" \
+	--data-urlencode 'name=smoke' \
+	--data-urlencode "cf_account_id=${cf_account}" \
+	--data-urlencode 'token_source=file' \
+	--data-urlencode 'token_file=/var/lib/cf-smoke/token' \
+	--data-urlencode 'enabled=on' \
+	--data-urlencode 'collect_tunnels=on' \
+	--data-urlencode 'create_graphs=on' \
+	--data-urlencode 'discovery_interval=300' \
+	--data-urlencode "__csrf_magic=${csrf}" \
+	"${page}" >/dev/null
+[[ "$(sql "SELECT create_graphs FROM plugin_cloudflare_accounts WHERE id = ${account_id}")" = '1' ]] \
+	|| die 'create_graphs was not saved' "$(head -c 600 "${work}/save-graphs.html")"
+[[ "$(sql "SELECT COUNT(*) FROM graph_local WHERE host_id = ${host_id}")" = '0' ]] || die 'graphs exist before the sync'
+pass
+
+step='5g the next discovery reindexes the device and creates three graphs per active tunnel'
+# Cacti logs a reindex only with data_source_trace on (lib/data_query.php:28),
+# and the sync's summary is a MEDIUM line.
+save_log_settings
+sql "REPLACE INTO settings (name, value) VALUES ('log_verbosity', '3'), ('data_source_trace', 'on')"
+offset="$(log_size)"
+poll_due
+restore_verbosity
+log_since "${offset}" >"${work}/log-5g"
+[[ "$(job_result)" = 'ok|null' ]] || die "discovery job ended $(job_result)"
+found -F "Running Re-Index for Device[${host_id}], DQ[${dq_id}]" "${work}/log-5g" \
+	|| die 'cacti.log shows no reindex of the device' "$(grep -F CLOUDFLARE "${work}/log-5g")"
+found -F "CLOUDFLARE: account ${account_id} graphs created=9 adopted=0" "${work}/log-5g" \
+	|| die 'cacti.log shows no graph sync' "$(grep -F CLOUDFLARE "${work}/log-5g")"
+indexed="$(sql "SELECT GROUP_CONCAT(DISTINCT snmp_index ORDER BY snmp_index SEPARATOR ' ') FROM host_snmp_cache WHERE host_id = ${host_id} AND snmp_query_id = ${dq_id}")"
+active="$(sql "SELECT GROUP_CONCAT(cf_tunnel_id ORDER BY cf_tunnel_id SEPARATOR ' ') FROM plugin_cloudflare_tunnels WHERE account_id = ${account_id} AND lifecycle = 'active'")"
+[[ "${indexed}" = "${active}" ]] || die "indexed '${indexed}', active tunnels '${active}'"
+per_tunnel="$(sql "SELECT CONCAT(snmp_index, ':', COUNT(*), ':', COUNT(DISTINCT graph_template_id)) FROM graph_local WHERE host_id = ${host_id} GROUP BY snmp_index ORDER BY snmp_index")"
+[[ "${per_tunnel}" = "$(tr ' ' '\n' <<<"${active}" | sed 's/$/:3:3/')" ]] || die 'expected three graphs for each active tunnel' "${per_tunnel}"
+[[ "$(sql "SELECT COUNT(*) FROM plugin_cloudflare_resources WHERE account_id = ${account_id} AND kind = 'graph'")" = '9' ]] \
+	|| die 'expected 9 graph resource rows' "$(sql "SELECT * FROM plugin_cloudflare_resources")"
+# Each row names a graph on the device, for its own tunnel and template, and
+# a data source that graph draws from.
+matched="$(sql "SELECT COUNT(DISTINCT r.id) FROM plugin_cloudflare_resources r
+	JOIN plugin_cloudflare_tunnels t ON t.id = r.tunnel_id
+	JOIN graph_local gl ON gl.id = r.local_graph_id AND gl.host_id = r.host_id AND gl.snmp_index = t.cf_tunnel_id
+	JOIN graph_templates gt ON gt.id = gl.graph_template_id AND gt.hash = r.template_hash
+	JOIN graph_templates_item gti ON gti.local_graph_id = gl.id
+	JOIN data_template_rrd dtr ON dtr.id = gti.task_item_id AND dtr.local_data_id = r.local_data_id
+	WHERE r.account_id = ${account_id} AND r.kind = 'graph' AND r.host_id = ${host_id}")"
+[[ "${matched}" = '9' ]] || die "only ${matched} of 9 resource rows match graph_local"
+[[ "$(sql "SELECT COUNT(DISTINCT local_data_id) FROM plugin_cloudflare_resources WHERE account_id = ${account_id} AND kind = 'graph'")" = '3' ]] \
+	|| die 'expected one data source per tunnel'
+[[ "$(sql "SELECT COUNT(*) FROM poller_item WHERE host_id = ${host_id}")" = '18' ]] \
+	|| die 'the poller cache does not hold the six fields of each tunnel data source'
+pass
+
+step="5h two polls record blog's connectors and health in its RRD"
+poll_due
+poll_due
+rrd="$(blog_rrd)"
+[[ "${rrd}" = /var/www/html/cacti/rra/*.rrd ]] || die "unexpected RRD path '${rrd}'"
+"${dc[@]}" exec -T web test -s "${rrd}" || die "the poller did not create ${rrd}"
+blog_status="$(sql "SELECT cf_status FROM plugin_cloudflare_tunnels WHERE account_id = ${account_id} AND name = 'blog'")"
+# shellcheck disable=SC2016 # PHP source; $argv is PHP's, not the shell's.
+blog_health="$("${dc[@]}" exec -T web php -r 'require "plugins/cloudflare/includes/autoload.php";
+	echo Cacti\PluginCloudflare\Metrics\Catalog::HEALTH[$argv[1]];' "${blog_status}")"
+[[ "${blog_status}|${blog_health}" = 'healthy|3' ]] || die "blog is ${blog_status}, health ${blog_health}"
+[[ "$(last_value "${rrd}" connectors)" = '1' ]] || die "connectors is $(last_value "${rrd}" connectors), expected 1"
+[[ "$(last_value "${rrd}" connections)" = '1' ]] || die "connections is $(last_value "${rrd}" connections), expected 1"
+[[ "$(last_value "${rrd}" health)" = "${blog_health}" ]] || die "health is $(last_value "${rrd}" health), expected ${blog_health}"
+pass
+
+step='5i during a Cloudflare 503 the state data sources record U, never 0'
+fake touch /run/cf-fake/fail-503
+poll_due
+[[ "$(job_result)" = 'failed|transient' ]] || die "discovery job ended $(job_result), expected failed|transient"
+# This poll reads the failed job.
+poll_due
+[[ "$(job_result)" = 'failed|transient' ]] || die "discovery job ended $(job_result), expected failed|transient"
+for ds in connectors connections health; do
+	[[ "$(last_value "${rrd}" "${ds}")" = 'U' ]] || die "${ds} is $(last_value "${rrd}" "${ds}") during the outage, expected U"
+done
+out="$("${dc[@]}" exec -T web rrdtool fetch "${rrd}" AVERAGE -s -900 2>&1)" || die 'rrdtool fetch failed' "${out}"
+# A sanity check only: at the 300 second step these rows are NaN, so the U
+# in lastupdate above is what proves the outage is not recorded as 0.
+[[ -n "$(rrd_column connectors "${out}")" ]] || die 'rrdtool fetch returned no rows' "${out}"
+pass
+
+step='5j once Cloudflare answers again, the values return'
+fake rm /run/cf-fake/fail-503
+poll_due
+[[ "$(job_result)" = 'ok|null' ]] || die "discovery job ended $(job_result) after the fake recovered"
+poll_due
+[[ "$(last_value "${rrd}" connectors)" = '1' ]] || die "connectors is $(last_value "${rrd}" connectors) after recovery, expected 1"
+[[ "$(last_value "${rrd}" health)" = "${blog_health}" ]] || die "health is $(last_value "${rrd}" health) after recovery"
+[[ "$(sql "SELECT COUNT(*) FROM graph_local WHERE host_id = ${host_id}")" = '9' ]] || die 'later syncs changed the graph count'
+pass
+
+step='5k with the plugin disabled, poller.php launches no collector'
 out="$(plugin_manage --disable 2>&1)" || die "${out}"
 require_clean "${out}"
 [[ "$(plugin_status)" = '4' ]] || die "status after disable is $(plugin_status)"
@@ -569,11 +824,13 @@ done
 [[ "$(sql "SELECT * FROM plugin_cloudflare_jobs WHERE account_id = ${account_id}")" = "${before_job}" ]] \
 	|| die 'the job row changed while the plugin was disabled'
 [[ "$(fake_requests | wc -l)" = "${before_requests}" ]] || die 'the fake was called while the plugin was disabled'
-out="$(plugin_manage --enable 2>&1)" || die "${out}"
+out="$(plugin_enable 2>&1)" || die "${out}"
 require_clean "${out}"
 pass
 
 step='6 uninstall drops plugin tables and settings and leaves Cacti data alone'
+# The plugin's device and graphs are Cacti data now, so they must survive.
+counts_before="$(core_counts)"
 sql "INSERT INTO settings (name, value) VALUES ('cloudflare_ui_timeout', '10') ON DUPLICATE KEY UPDATE value = VALUES(value)"
 out="$(plugin_manage --disable --uninstall 2>&1)" || die "${out}"
 require_clean "${out}"
@@ -584,6 +841,9 @@ require_clean "${out}"
 [[ "$(sql "SELECT COUNT(*) FROM user_auth_realm WHERE realm_id = ${view_realm}")" = '0' ]] || die 'viewer realm grant remains'
 counts_after="$(core_counts)"
 [[ "${counts_after}" = "${counts_before}" ]] || die "host/graph_local/data_template counts ${counts_before} became ${counts_after}"
+[[ "$(sql "SELECT COUNT(*) FROM graph_local WHERE host_id = ${host_id}")" = '9' ]] || die "uninstall removed the device's graphs"
+[[ "$(template_objects)" = '6' ]] || die "uninstall left $(template_objects) of 6 template objects"
+resource_matches || die 'uninstall removed or changed the data query XML'
 pass
 
 step='7 the token appears in no log, page or database dump'
@@ -602,10 +862,16 @@ found -F 'CREATE TABLE' "${captures}/db-dump" || die 'database dump has no CREAT
 no_token "${captures}/db-dump" 'the database'
 pass
 
-step='8 no PHP errors in cacti.log or the Apache error log'
+step='8 no PHP errors or poller output warnings in cacti.log, no PHP errors in the Apache log'
 capture cacti-logs-final "${dc[@]}" exec -T web cat log/cacti.log
 if found -E 'ERROR PHP|PHP (Fatal|Parse|Warning|Notice|Deprecated)' "${captures}/cacti-logs-final"; then
 	die 'cacti.log has PHP errors' "$(grep -E 'ERROR PHP|PHP (Fatal|Parse|Warning|Notice|Deprecated)' "${captures}/cacti-logs-final")"
+fi
+# The pinned MariaDB leaves poller_output clean, so these mean a data
+# source really returned only part of its fields.
+poller_warnings='Data Sources not returning all data|Poller Output Table not Empty'
+if found -E "${poller_warnings}" "${captures}/cacti-logs-final"; then
+	die 'cacti.log has poller output warnings' "$(grep -E "${poller_warnings}" "${captures}/cacti-logs-final")"
 fi
 capture web-logs "${dc[@]}" logs --no-color web
 if found -E 'PHP (Fatal|Parse|Warning|Notice|Deprecated)' "${captures}/web-logs"; then

@@ -1,0 +1,57 @@
+<interface>
+	<name>Get Cloudflare Tunnels</name>
+	<script_path>|path_cacti|/plugins/cloudflare/ss_cloudflare.php</script_path>
+	<script_function>ss_cloudflare</script_function>
+	<script_server>php</script_server>
+	<arg_prepend>|host_id|</arg_prepend>
+	<arg_index>index</arg_index>
+	<arg_query>query</arg_query>
+	<arg_get>get</arg_get>
+	<arg_num_indexes>num_indexes</arg_num_indexes>
+	<output_delimiter>!</output_delimiter>
+	<index_order>tunnelId</index_order>
+	<index_order_type>alphabetic</index_order_type>
+	<index_title_format>|chosen_order_field|</index_title_format>
+	<fields>
+		<tunnelId>
+			<name>Tunnel ID</name>
+			<direction>input</direction>
+			<query_name>tunnelId</query_name>
+		</tunnelId>
+		<tunnelName>
+			<name>Tunnel Name</name>
+			<direction>input</direction>
+			<query_name>tunnelName</query_name>
+		</tunnelName>
+		<health>
+			<name>Health</name>
+			<direction>output</direction>
+			<query_name>health</query_name>
+		</health>
+		<connectors>
+			<name>Connectors</name>
+			<direction>output</direction>
+			<query_name>connectors</query_name>
+		</connectors>
+		<connections>
+			<name>Connections</name>
+			<direction>output</direction>
+			<query_name>connections</query_name>
+		</connections>
+		<versions>
+			<name>Connector Versions</name>
+			<direction>output</direction>
+			<query_name>versions</query_name>
+		</versions>
+		<collectAge>
+			<name>Collection Age</name>
+			<direction>output</direction>
+			<query_name>collectAge</query_name>
+		</collectAge>
+		<collectFailures>
+			<name>Collection Failures</name>
+			<direction>output</direction>
+			<query_name>collectFailures</query_name>
+		</collectFailures>
+	</fields>
+</interface>

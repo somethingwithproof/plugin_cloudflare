@@ -21,6 +21,7 @@ namespace Cacti\PluginCloudflare\Storage;
 
 use Cacti\PluginCloudflare\Storage\Migrations\M001Foundation;
 use Cacti\PluginCloudflare\Storage\Migrations\M002Discovery;
+use Cacti\PluginCloudflare\Storage\Migrations\M003Metrics;
 use InvalidArgumentException;
 
 final class Migrator {
@@ -58,7 +59,7 @@ final class Migrator {
 	 * @return Migration[]
 	 */
 	public static function defaultMigrations(): array {
-		return array(new M001Foundation(), new M002Discovery());
+		return array(new M001Foundation(), new M002Discovery(), new M003Metrics());
 	}
 
 	/**
@@ -144,6 +145,8 @@ final class Migrator {
 		}
 
 		$first = array(
+			'plugin_cloudflare_resources',
+			'plugin_cloudflare_metric_mappings',
 			'plugin_cloudflare_connectors',
 			'plugin_cloudflare_tunnels',
 			'plugin_cloudflare_jobs',

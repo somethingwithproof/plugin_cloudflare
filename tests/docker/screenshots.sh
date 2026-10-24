@@ -3,9 +3,11 @@
 # cf-smoke on CF_SMOKE_PORT, default 8090) into docs/images/. It installs
 # and enables the plugin, creates a vault key, adds "Example account" with
 # the fixture account ID and a random token, runs Verify, and polls once.
-# The stack has no route to the internet; cloudflare-fake answers as
-# api.cloudflare.com from tests/fixtures/cloudflare, so the pages show the
-# three fixture tunnels.
+# It then creates the account's Cacti device and graphs and polls for a few
+# minutes, with a Cloudflare outage in the middle, so tunnel-graph.png shows
+# real values and a gap. The stack has no route to the internet;
+# cloudflare-fake answers as api.cloudflare.com from tests/fixtures/cloudflare,
+# so the pages show the three fixture tunnels.
 #
 # Needs Node for `npx playwright`; run through `make screenshots`.
 
@@ -105,6 +107,7 @@ http "${work}/save.html" \
     --data-urlencode "token_confirm=${token}" \
     --data-urlencode 'enabled=on' \
     --data-urlencode 'collect_tunnels=on' \
+    --data-urlencode 'create_graphs=on' \
     --data-urlencode 'discovery_interval=300' \
     --data-urlencode "__csrf_magic=${csrf}" \
     "${page}" >/dev/null
@@ -142,6 +145,89 @@ done
 [[ "$(sql "SELECT COUNT(*) FROM plugin_cloudflare_tunnels WHERE account_id = ${id}")" = '3' ]] \
     || die 'discovery did not store the three fixture tunnels'
 
+job_started() {
+    sql "SELECT IFNULL(MAX(last_started_at), 0) FROM plugin_cloudflare_jobs WHERE account_id = ${id}"
+}
+
+# poll [due]: one forced poll; with "due" the collector runs after it and
+# this waits for that run to finish with the given job status.
+poll() {
+    local expect="${1:-}" started i out
+
+    if [[ -n "${expect}" ]]; then
+        sql "UPDATE plugin_cloudflare_jobs SET next_run_at = 0 WHERE account_id = ${id}"
+    fi
+    started="$(job_started)"
+    out="$("${dc[@]}" exec -T -u www-data web php poller.php --force 2>&1)" || die "${out}"
+    [[ -n "${expect}" ]] || return 0
+    for ((i = 0; i < 60; i++)); do
+        [[ "$(sql "SELECT COUNT(*) FROM plugin_cloudflare_jobs WHERE account_id = ${id} AND last_started_at > ${started}
+            AND lease_owner IS NULL AND last_finished_at >= last_started_at AND last_status = '${expect}'")" = '1' ]] && return 0
+        sleep 1
+    done
+    die "the collector did not finish a run with status ${expect}"
+}
+
+http "${work}/list-device.html" "${page}" >/dev/null
+csrf="$(require_csrf "${work}/list-device.html")"
+http "${work}/confirm-device.html" \
+    --data-urlencode 'action=actions' \
+    --data-urlencode 'drp_action=5' \
+    --data-urlencode "chk_${id}=on" \
+    --data-urlencode "__csrf_magic=${csrf}" \
+    "${page}" >/dev/null
+csrf="$(require_csrf "${work}/confirm-device.html")"
+http "${work}/device.html" \
+    --data-urlencode 'action=actions' \
+    --data-urlencode 'drp_action=5' \
+    --data-urlencode "selected_items=a:1:{i:0;i:${id};}" \
+    --data-urlencode "__csrf_magic=${csrf}" \
+    "${page}" >/dev/null
+host_id="$(sql "SELECT IFNULL(MAX(host_id), 0) FROM plugin_cloudflare_resources WHERE account_id = ${id} AND kind = 'device'")"
+[[ "${host_id}" != '0' ]] || die 'Create Cacti Device made no device'
+
+# The discovery after this poll creates the graphs, in the background.
+poll ok
+graphs=0
+for ((i = 0; i < 60; i++)); do
+    graphs="$(sql "SELECT COUNT(*) FROM graph_local WHERE host_id = ${host_id}")"
+    [[ "${graphs}" = '9' ]] && break
+    sleep 1
+done
+[[ "${graphs}" = '9' ]] || die "the graph sync made ${graphs} of 9 graphs within 60 seconds"
+read -r graph ds <<<"$(sql "SELECT r.local_graph_id, r.local_data_id FROM plugin_cloudflare_resources r
+    JOIN plugin_cloudflare_tunnels t ON t.id = r.tunnel_id
+    WHERE r.account_id = ${id} AND r.kind = 'graph' AND t.name = 'blog'
+    AND r.template_hash = MD5('plugin_cloudflare/graph_template/connectors')")"
+[[ -n "${graph:-}" && -n "${ds:-}" ]] || die "no connectors graph for blog"
+
+# Cacti's 30 second profile, set before the RRD exists, lets a few minutes
+# of real polls fill the graph; the default 5 minute step would need hours.
+# poller_item keeps its 300 second step, so every forced poll still reads
+# the data source; with 30 there cmd.php skips every other run.
+sql "UPDATE data_template_data SET rrd_step = 30, data_source_profile_id = 2 WHERE local_data_id = ${ds}"
+graph_start="$(($(date +%s) - 30))"
+for ((n = 0; n < 4; n++)); do
+    poll
+    sleep 30
+done
+# While fail-503 is present the job fails and blog's state metrics are U.
+"${dc[@]}" exec -T -u www-data cloudflare-fake touch /run/cf-fake/fail-503
+poll failed
+sleep 30
+for ((n = 0; n < 3; n++)); do
+    poll
+    sleep 30
+done
+"${dc[@]}" exec -T -u www-data cloudflare-fake rm /run/cf-fake/fail-503
+poll ok
+sleep 30
+for ((n = 0; n < 4; n++)); do
+    poll
+    sleep 30
+done
+graph_end="$(date +%s)"
+
 # curl's jar is the Netscape format; Playwright wants its storage-state JSON.
 awk -F '\t' '
     BEGIN { printf "{\"cookies\":[" }
@@ -176,6 +262,15 @@ shoot "${page}?action=edit&id=${id}" 'account-edit.png' 'Connection Status'
 shoot "${base}/settings.php?tab=cloudflare" 'settings-cloudflare.png' 'Token Vault Key File'
 shoot "${viewer}" 'overview.png' "${account_name}"
 shoot "${viewer}?action=tunnels" 'tunnels-list.png' 'old-office'
+
+# Cacti renders the graph itself, so it is saved as served; 1.2.31 answers
+# with SVG unless asked for PNG.
+code="$(http "${images}/tunnel-graph.png" \
+    "${base}/graph_image.php?local_graph_id=${graph}&graph_start=${graph_start}&graph_end=${graph_end}&image_format=png&disable_cache=true")"
+[[ "${code}" = '200' ]] || die "graph_image.php returned ${code}"
+[[ "$(head -c 8 "${images}/tunnel-graph.png" | od -An -tx1 | tr -d ' \n')" = '89504e470d0a1a0a' ]] \
+    || die 'graph_image.php did not return a PNG'
+printf 'wrote docs/images/%s\n' 'tunnel-graph.png'
 
 for png in "${images}"/*.png; do
     if command -v oxipng >/dev/null 2>&1; then

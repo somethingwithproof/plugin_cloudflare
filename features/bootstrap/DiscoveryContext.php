@@ -54,6 +54,9 @@ final class DiscoveryContext implements Context {
 	/** @var int */
 	private $requestsBefore = 0;
 
+	/** @var array<int, array<string, mixed>> */
+	private $resourcesBefore = array();
+
 	/** @var array<int, int> */
 	private $sleepsAfterRetry = array();
 
@@ -133,6 +136,7 @@ final class DiscoveryContext implements Context {
 		$this->exactlyThreeTunnels();
 
 		$this->tunnelsBefore = $this->tunnels();
+		$this->seedResources();
 	}
 
 	/**
@@ -160,6 +164,9 @@ final class DiscoveryContext implements Context {
 		$before = array_column($this->tunnelsBefore, 'id', 'cf_tunnel_id');
 		if ($now !== $before) {
 			throw new RuntimeException('A tunnel row id changed between discovery runs');
+		}
+		if ($this->resources() !== $this->resourcesBefore) {
+			throw new RuntimeException('A resource row changed between discovery runs');
 		}
 	}
 
@@ -298,6 +305,36 @@ final class DiscoveryContext implements Context {
 		$GLOBALS['item_rows']         = array(10 => '10', 25 => '25');
 		$_REQUEST                     = array();
 		$_SESSION                     = array();
+	}
+
+	/* The device and graph rows the Cacti object sync keeps for each tunnel. */
+	private function seedResources(): void {
+		$db = $this->world->database();
+		$db->execute(
+			"INSERT INTO plugin_cloudflare_resources (account_id, kind, host_id, created_at) VALUES (?, 'device', 7, 1)",
+			array($this->accountId)
+		);
+
+		foreach ($this->tunnels() as $tunnel) {
+			$db->execute(
+				"INSERT INTO plugin_cloudflare_resources
+				(account_id, kind, tunnel_id, template_hash, host_id, local_graph_id, local_data_id, created_at)
+				VALUES (?, 'graph', ?, ?, 7, ?, ?, 1)",
+				array($this->accountId, $tunnel['id'], str_repeat('a', 32), 200 + (int) $tunnel['id'], 300 + (int) $tunnel['id'])
+			);
+		}
+
+		$this->resourcesBefore = $this->resources();
+	}
+
+	/**
+	 * @return array<int, array<string, mixed>>
+	 */
+	private function resources(): array {
+		return $this->world->database()->fetchAll(
+			'SELECT * FROM plugin_cloudflare_resources WHERE account_id = ? ORDER BY id',
+			array($this->accountId)
+		);
 	}
 
 	private function queueDiscovery(): void {

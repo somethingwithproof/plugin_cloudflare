@@ -92,8 +92,10 @@ plugin has no runtime Composer dependencies.
 - Core Cacti never calls an upgrade function (agent survey of
   `lib/plugins.php`). `plugin_cloudflare_upgrade()` compares the INFO version
   with `plugin_config.version`, runs pending migrations, and writes the new
-  version. It is called from the `config_settings` hook and at the top of
-  every plugin page, the same way Thold does it. Until then the collector
+  version. It is called from `check_config`, from the `config_settings` hook
+  on `settings.php` and `plugins.php`, and at the top of
+  `cloudflare_accounts.php`. The View realm page `cloudflare.php` does not
+  call it, so a View user cannot trigger a migration. Until then the collector
   exits at once with one LOW log line, because the account read needs the new
   columns. `poller_bottom` still launches it, so that line reaches the log.
 

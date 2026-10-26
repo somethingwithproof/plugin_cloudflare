@@ -242,6 +242,9 @@ refused. See [docs/security.md](docs/security.md#token-file).
 `poller.php` does not run the plugin's upgrade, so until step 2 the new
 schema is missing. Each collector run then does nothing and logs
 `CLOUDFLARE: collector skipped; plugin upgrade pending, open Console > Plugins`.
+The Cloudflare Tunnels pages need only Cloudflare: View, so they never run
+the upgrade, and until step 2 they may show "The Cloudflare tunnels could not
+be read".
 
 ## Account status
 

@@ -64,10 +64,16 @@ The hook runs only on the main poller. `poller.php` also runs `poller_bottom`
 on remote pollers (`poller.php:956`), and the hook returns without doing
 anything when `poller_id` is not 1. INFO declares `remote_collect:0`.
 
-Core Cacti never calls a plugin upgrade function, so
-`plugin_cloudflare_upgrade()` runs from `plugin_cloudflare_check_config()`,
-from the `config_settings` hook on `settings.php` and `plugins.php`, and at
-the top of `cloudflare_accounts.php` and `cloudflare.php`.
+Core Cacti never calls a plugin upgrade function (only
+`cli/audit_database.php` looks one up), so `plugin_cloudflare_upgrade()` runs
+from `plugin_cloudflare_check_config()`, from the `config_settings` hook on
+`settings.php` and `plugins.php`, and at the top of `cloudflare_accounts.php`,
+which needs the Cloudflare: Configure realm. `cloudflare.php` does not run
+it: that page is in the Cloudflare: View realm, and an upgrade migrates the
+schema, imports templates and writes
+`resource/script_server/cloudflare_tunnels.xml`. Until an admin opens one of
+those pages, the viewer pages show "The Cloudflare tunnels could not be read"
+when the schema they read is missing.
 
 Every Cacti function and hook above exists in `release/1.2.25`. The page
 calls `CactiSecureHeaders::getNonceAttribute()` only when that class exists,

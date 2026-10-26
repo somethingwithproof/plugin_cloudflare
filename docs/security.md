@@ -331,7 +331,9 @@ templates or `resource/script_server/cloudflare_tunnels.xml`.
 - Outbound requests ignore HTTP proxy settings. A Cacti server that can reach
   the internet only through a proxy cannot reach the Cloudflare API.
 - There is no key rotation tool. A new key makes existing vault tokens fail
-  with "Stored token cannot be decrypted" until each token is entered again.
+  with "Stored token cannot be decrypted" until each token is entered again;
+  the README lists the steps under "Rotating the key". A rekey command that
+  re-encrypts every ciphertext with a new key is a possible follow-up.
 - File permission problems surface at Verify, not at save.
 - `TokenFile` refuses a symbolic link at the final path component only; it
   does not check parent directories unless the Token File Directory is set.

@@ -209,6 +209,30 @@ Cloudflare > Token Vault Key File. When the key is missing or refused, the
 edit form offers only the token file option. Keep a backup of the key:
 without it, stored tokens cannot be decrypted and must be entered again.
 
+#### Rotating the key
+
+There is no rekey command. A new key cannot decrypt tokens stored under the
+old one, so rotation means entering each stored token again:
+
+1. Have each account's token value at hand. Cloudflare shows a token's value
+   only when it is created or rolled, so roll the token in the Cloudflare
+   dashboard if you no longer have it.
+2. Create the new key at a new path with the commands above, for example
+   `/etc/cacti/cloudflare.key.new`, with the same owner and mode.
+3. Set Settings > Cloudflare > Token Vault Key File to the new path and save.
+   From now on, Verify on an account still encrypted with the old key
+   reports "Stored token cannot be decrypted", and each collector run logs
+   `discovery token unavailable` with `reason=decrypt_failed` for it.
+4. For each account that stores its token in the database, open it under
+   Console > Configuration > Cloudflare Accounts, paste the token into both
+   token fields, save, and run Verify. It should report `ok`.
+5. When every such account verifies, remove the old key file and its
+   backups.
+
+Between steps 3 and 4 an account's tunnels are not refreshed and their
+health, connector and connection graphs record U. Token file accounts are
+not affected.
+
 ### Option B: token file
 
 Write the token, and nothing else, to a file the web server and poller users

@@ -62,6 +62,32 @@ saved. The web server and poller users can differ, so a save-time check by
 the web server could pass or fail for the wrong user. A file that fails the
 checks makes Verify record "Token file is missing or insecure".
 
+The path is a trust decision made by whoever holds the Cloudflare: Configure
+realm. Verify and the collector open that path as the web server user and
+the poller user, and the poller user is sometimes root. A Configure user can
+therefore point an account at any file those users can read. If the file
+passes the checks above and its trimmed content matches the token pattern,
+the plugin sends that content as a Bearer token, and only to
+`https://api.cloudflare.com` over verified TLS, because the outbound
+allowlist cannot be changed. The content never reaches the browser or the
+log. Verify does show whether the file was readable and token shaped
+("Token file is missing or insecure" against a Cloudflare answer), and the
+log line carries the reason code, so a Configure user learns whether such a
+file exists. Grant Configure only to users trusted with the files the poller
+user can read.
+
+To narrow this, set Settings > Cloudflare > Token File Directory (empty by
+default, which allows any path). `TokenFile::read()` then refuses, with
+reason `file_outside_directory` and before any other filesystem check, a
+path whose parent directory does not resolve inside that directory, a path
+with `.` or `..` segments, or any path when the directory itself does not
+resolve. The parent is resolved with `realpath()`, so a symbolic link to a
+directory cannot lead out. The setting is on Cacti's Settings page, which
+needs the Settings/Utilities realm rather than Cloudflare: Configure, so it
+narrows only what a Configure user who lacks that realm can reach. A user
+who can write inside the directory or replace one of its parent directories
+can still change what is read.
+
 ### Encrypted in the Cacti database (vault)
 
 `src/Secret/TokenVault.php` encrypts the token with AES-256-GCM through
@@ -308,7 +334,7 @@ templates or `resource/script_server/cloudflare_tunnels.xml`.
   with "Stored token cannot be decrypted" until each token is entered again.
 - File permission problems surface at Verify, not at save.
 - `TokenFile` refuses a symbolic link at the final path component only; it
-  does not check parent directories.
+  does not check parent directories unless the Token File Directory is set.
 - Cacti disables a plugin whose code ends in a true fatal error, such as
   running out of memory, exceeding `max_execution_time` or a compile error.
   No `catch` can intercept these, and the plugin cannot prevent them; an

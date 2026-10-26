@@ -431,6 +431,18 @@ final class AccountsPageHandlersTest extends IntegrationTestCase {
 		$this->assertStringStartsWith('Prod &lt;i&gt;: ', (string) $messages[0][1]);
 	}
 
+	public function testVerifyAppliesTheTokenFileDirectorySetting(): void {
+		$id = $this->fileAccount('Prod', self::ACCOUNT);
+		$GLOBALS['cloudflare_glue']['settings']['cloudflare_token_dir'] = $this->dir . '/tokens';
+		$_REQUEST = array('drp_action' => '2', 'selected_items' => serialize(array($id)));
+
+		$this->assertSame('', cloudflare_accounts_actions());
+
+		$lines = array_column(cloudflare_glue_calls('cacti_log'), 0);
+		$this->assertCount(1, $lines);
+		$this->assertStringEndsWith('[reason=file_outside_directory]', (string) $lines[0]);
+	}
+
 	public function testVerifyOfAnAccountDeletedMeanwhileSaysNothing(): void {
 		$_REQUEST = array('drp_action' => '2', 'selected_items' => serialize(array(999)));
 

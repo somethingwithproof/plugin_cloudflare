@@ -224,6 +224,11 @@ The file is checked when it is read, at Verify, not when you save. Symbolic
 links, files over 4 KiB and files readable or writable by others are
 refused.
 
+Anyone with Cloudflare: Configure can enter any path, and the poller user
+reads it. To keep token files in one place, set Settings > Cloudflare >
+Token File Directory, for example to `/etc/cacti`; a path outside it is then
+refused. See [docs/security.md](docs/security.md#token-file).
+
 ## Upgrade
 
 1. Replace the files in `plugins/cloudflare` with the new release, keeping

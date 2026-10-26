@@ -219,12 +219,20 @@ permissions needed to verify it; a 401 records `auth_failed`.
   `(account_id, cf_tunnel_id)` and never deleted and re-inserted, so a tunnel
   keeps its row id. A tunnel absent from a complete listing becomes
   `deleted`, and one that returns becomes `active`.
-- The listing pins page 1's `total_count`, and a later page that reports a
-  different total fails the run as `malformed`, so a tunnel deleted between
-  pages cannot shift the next page and hide another tunnel. A delete and a
-  create between pages keep the total unchanged, so on an account with more
-  than 1000 tunnels that pair can still hide one tunnel and mark it `deleted`
-  for one cycle; the next complete listing makes it `active` again.
+- The listing requests 1000 tunnels per page and stops at the first page
+  that returns fewer, including an empty one. It does not stop on
+  `total_count`, because the schema describes that field as the total
+  without search parameters, so it may also count deleted tunnels. A page
+  with more than 1000 items, a repeated tunnel id, or more than 50 pages
+  fails the run as `malformed`.
+- The listing also pins page 1's `total_count`, and a later page that
+  reports a different total fails the run as `malformed`. When the total
+  counts only live tunnels, this catches a tunnel deleted between pages,
+  which would shift the next page and hide another tunnel. When it also
+  counts deleted tunnels, a delete leaves it unchanged, and so does a delete
+  and a create between pages. On an account with more than 1000 tunnels
+  either case can hide one tunnel and mark it `deleted` for one cycle; the
+  next complete listing makes it `active` again.
 - The lifecycle is `active`, `unavailable` or `deleted`. Cloudflare's own
   health is stored apart from it as `cf_status`.
 - Connections are read per tunnel. Cloudflare answers an unknown tunnel with

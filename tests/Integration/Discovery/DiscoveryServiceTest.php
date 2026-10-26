@@ -326,6 +326,21 @@ final class DiscoveryServiceTest extends IntegrationTestCase {
 		$this->assertSame(array(), $this->runDue(), 'a job that is not due runs nothing');
 	}
 
+	/*
+	 * total_count may count deleted tunnels (schema: "without any search
+	 * parameters"); the fixture follows the documented shape, not a live reply.
+	 */
+	public function testTotalCountIncludingDeletedTunnelsStillDiscovers(): void {
+		$id = $this->account(self::CF_A);
+		$this->transport()->queue(FakeTransport::fixture('tunnel-list-short'));
+		$this->transport()->queue(FakeTransport::fixture('tunnel-connections'));
+		$this->transport()->queue(FakeTransport::fixture('tunnel-connections'));
+
+		$this->assertSame(array($id => self::outcome('ok', null, 2)), $this->runDue());
+		$this->assertSame(array(self::BLOG, self::STAGING), array_keys($this->tunnels($id)));
+		$this->assertCount(3, $this->transport()->requests());
+	}
+
 	public function testOutageLeavesTunnelsIntact(): void {
 		$id = $this->account(self::CF_A);
 		$this->discoverOnce($id);

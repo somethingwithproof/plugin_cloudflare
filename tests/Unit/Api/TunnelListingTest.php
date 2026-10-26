@@ -174,16 +174,99 @@ final class TunnelListingTest extends TestCase {
 		$this->assertSame(array(), $this->client()->listTunnels(self::ACCOUNT, $this->token));
 	}
 
-	public function testShortPageBeforeTotalIsPartial(): void {
+	/**
+	 * @param array<int, array<string, mixed>> $all
+	 */
+	private function queuePages(array $all, int $total): void {
+		foreach (array_chunk($all, 1000) as $i => $items) {
+			$this->transport->queue($this->page(
+				$items,
+				array('page' => $i + 1, 'per_page' => 1000, 'count' => count($items), 'total_count' => $total)
+			));
+		}
+	}
+
+	/**
+	 * @return array<int, array<string, mixed>>
+	 */
+	private function items(int $from, int $to): array {
+		$items = array();
+		for ($i = $from; $i <= $to; $i++) {
+			$items[] = $this->item($i);
+		}
+
+		return $items;
+	}
+
+	/**
+	 * The schema describes total_count as "Total results available without
+	 * any search parameters", so with is_deleted=false it may count deleted
+	 * tunnels too. The fixture is built from the documented response shape,
+	 * not captured from a live account.
+	 */
+	public function testTotalCountAboveTheFilteredCountStillLists(): void {
 		$this->transport->queue(FakeTransport::fixture('tunnel-list-short'));
+
+		$tunnels = $this->client()->listTunnels(self::ACCOUNT, $this->token);
+
+		$this->assertCount(2, $tunnels);
+		$this->assertSame('staging', $tunnels[1]->name);
+		$this->assertCount(1, $this->transport->requests());
+	}
+
+	public function testFullPageThenEmptyPageEndsTheListing(): void {
+		$this->queuePages($this->items(1, 1000), 1003);
 		$this->transport->queue($this->page(
 			array(),
-			array('page' => 2, 'per_page' => 1000, 'count' => 0, 'total_count' => 3)
+			array('page' => 2, 'per_page' => 1000, 'count' => 0, 'total_count' => 1003)
+		));
+
+		$tunnels = $this->client()->listTunnels(self::ACCOUNT, $this->token);
+
+		$this->assertCount(1000, $tunnels);
+		$this->assertCount(2, $this->transport->requests());
+	}
+
+	public function testShortLastPageEndsTheListing(): void {
+		$this->queuePages($this->items(1, 1200), 1250);
+
+		$tunnels = $this->client()->listTunnels(self::ACCOUNT, $this->token);
+
+		$this->assertCount(1200, $tunnels);
+		$this->assertSame('tunnel-1200', $tunnels[1199]->name);
+		$this->assertCount(2, $this->transport->requests());
+	}
+
+	/* A full page needs page 2 even when total_count already looks reached, since that count is not trusted. */
+	public function testFullPageReadsNextPageEvenWhenTotalLooksReached(): void {
+		$this->queuePages($this->items(1, 1001), 1000);
+
+		$tunnels = $this->client()->listTunnels(self::ACCOUNT, $this->token);
+
+		$this->assertCount(1001, $tunnels);
+		$this->assertCount(2, $this->transport->requests());
+	}
+
+	public function testPageLargerThanPerPageIsMalformed(): void {
+		$this->transport->queue($this->page(
+			$this->items(1, 1001),
+			array('page' => 1, 'per_page' => 1000, 'count' => 1001, 'total_count' => 1001)
 		));
 
 		$this->expectFailure(function (): void {
 			$this->client()->listTunnels(self::ACCOUNT, $this->token);
 		}, ErrorClass::MALFORMED);
+	}
+
+	public function testTunnelRepeatedOnALaterPageIsMalformed(): void {
+		$all   = $this->items(1, 1000);
+		$all[] = $this->item(7);
+		$this->queuePages($all, 1001);
+
+		$this->expectFailure(function (): void {
+			$this->client()->listTunnels(self::ACCOUNT, $this->token);
+		}, ErrorClass::MALFORMED);
+		$this->assertCount(2, $this->transport->requests());
 	}
 
 	/**
@@ -221,16 +304,11 @@ final class TunnelListingTest extends TestCase {
 	}
 
 	public function testBadItemOnLaterPageDiscardsEarlierPages(): void {
-		$bad       = $this->item(3);
+		$bad       = $this->item(1001);
 		$bad['id'] = 'NOT-A-UUID';
-		$this->transport->queue($this->page(
-			array($this->item(1), $this->item(2)),
-			array('page' => 1, 'per_page' => 2, 'count' => 2, 'total_count' => 3)
-		));
-		$this->transport->queue($this->page(
-			array($bad),
-			array('page' => 2, 'per_page' => 2, 'count' => 1, 'total_count' => 3)
-		));
+		$all       = $this->items(1, 1000);
+		$all[]     = $bad;
+		$this->queuePages($all, 1001);
 
 		$this->expectFailure(function (): void {
 			$this->client()->listTunnels(self::ACCOUNT, $this->token);
@@ -249,12 +327,7 @@ final class TunnelListingTest extends TestCase {
 	}
 
 	public function testPageCap(): void {
-		for ($p = 1; $p <= 60; $p++) {
-			$this->transport->queue($this->page(
-				array($this->item($p)),
-				array('page' => $p, 'per_page' => 1000, 'count' => 1, 'total_count' => 100000)
-			));
-		}
+		$this->queuePages($this->items(1, 51000), 100000);
 
 		$this->expectFailure(function (): void {
 			$this->client()->listTunnels(self::ACCOUNT, $this->token);

@@ -1,0 +1,669 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-FileCopyrightText: 2026 Thomas Vincent <thomasvincent@gmail.com>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cloudflare 0.3.0\n"
+"Report-Msgid-Bugs-To: https://github.com/somethingwithproof/plugin_cloudflare/issues\n"
+"PO-Revision-Date: 2026-11-14 00:00+0000\n"
+"Last-Translator: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language-Team: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language: ja-JP\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: includes/accounts.php
+msgid "Connection verified"
+msgstr "接続を確認しました"
+
+#: includes/accounts.php
+msgid "Token is not active; it may be expired or disabled"
+msgstr "トークンが有効ではありません。期限切れか無効になっている可能性があります"
+
+#: includes/accounts.php
+msgid "Token is invalid or expired"
+msgstr "トークンが無効か、期限切れです"
+
+#: includes/accounts.php
+msgid "Token lacks the Account Cloudflare Tunnel Read permission"
+msgstr "トークンに Account Cloudflare Tunnel Read 権限がありません"
+
+#: includes/accounts.php
+msgid "Cloudflare API is unreachable; try again later"
+msgstr "Cloudflare API に接続できません。しばらくしてからやり直してください"
+
+#: includes/accounts.php
+msgid "Cloudflare API rate limit reached; try again later"
+msgstr "Cloudflare API のレート制限に達しました。しばらくしてからやり直してください"
+
+#: includes/accounts.php
+msgid "Cloudflare API request failed unexpectedly"
+msgstr "Cloudflare API へのリクエストが予期せず失敗しました"
+
+#: includes/accounts.php
+msgid "Token lacks the permissions needed to verify it"
+msgstr "トークンを確認するために必要な権限がありません"
+
+#: includes/accounts.php
+msgid "Stored token cannot be decrypted"
+msgstr "保存されているトークンを復号できません"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing or unusable"
+msgstr "トークン保管庫の鍵ファイルが存在しないか、使用できません"
+
+#: includes/accounts.php
+msgid "Token file is missing or insecure"
+msgstr "トークンファイルが存在しないか、安全ではありません"
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable; configure the key file or use a token file"
+msgstr "暗号化ストレージを利用できません。鍵ファイルを設定するか、トークンファイルを使用してください"
+
+#: includes/accounts.php
+msgid "Enter the 32-character hexadecimal Cloudflare account ID"
+msgstr "32 文字の16進数の Cloudflare アカウント ID を入力してください"
+
+#: includes/accounts.php
+msgid "Enter a name of 1 to 100 characters without control characters"
+msgstr "制御文字を含まない 1 ～ 100 文字の名前を入力してください"
+
+#: includes/accounts.php
+msgid "Choose an encrypted token or a token file"
+msgstr "暗号化トークンまたはトークンファイルを選択してください"
+
+#: includes/accounts.php
+msgid "Enter an API token"
+msgstr "API トークンを入力してください"
+
+#: includes/accounts.php
+msgid "Re-enter the token when changing the account ID"
+msgstr "アカウント ID を変更するときは、トークンを再入力してください"
+
+#: includes/accounts.php
+msgid "Enter an absolute path of at most 255 characters"
+msgstr "255 文字以内の絶対パスを入力してください"
+
+#: includes/accounts.php
+msgid "Must be 0 or 1"
+msgstr "0 または 1 を指定してください"
+
+#: includes/accounts.php
+msgid "Enter a whole number of seconds from 60 to 86400"
+msgstr "60 ～ 86400 の整数(秒)を入力してください"
+
+#: includes/accounts.php
+msgid "This Cloudflare account ID is already configured"
+msgstr "この Cloudflare アカウント ID は既に設定されています"
+
+#: includes/accounts.php
+msgid "Global API Keys are not accepted; use a scoped API token"
+msgstr "グローバル API キーは使用できません。スコープを限定した API トークンを使用してください"
+
+#: includes/accounts.php
+msgid "API token format is invalid"
+msgstr "API トークンの形式が無効です"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing, unreadable, insecure or malformed"
+msgstr "トークン保管庫の鍵ファイルが存在しない、読み取れない、安全でない、または形式が正しくありません"
+
+#: includes/accounts.php
+msgid "Stored API token could not be decrypted"
+msgstr "保存されている API トークンを復号できませんでした"
+
+#: includes/accounts.php
+msgid "Token file is missing, unreadable, not a regular file or too large"
+msgstr "トークンファイルが存在しない、読み取れない、通常のファイルではない、または大きすぎます"
+
+#: includes/accounts.php
+msgid "Token file path is not absolute, is a symlink, or the file is world-readable or world-writable"
+msgstr "トークンファイルのパスが絶対パスでない、シンボリックリンクである、またはファイルが全ユーザーに読み取り・書き込み可能です"
+
+#: includes/accounts.php
+msgid "API token could not be encrypted"
+msgstr "API トークンを暗号化できませんでした"
+
+#: includes/accounts.php
+msgid "Credential error"
+msgstr "認証情報のエラー"
+
+#: includes/accounts.php includes/settings.php
+msgid "Cloudflare"
+msgstr "Cloudflare"
+
+#: includes/accounts.php
+msgid "Encrypted in the Cacti database"
+msgstr "Cacti データベース内で暗号化"
+
+#: includes/accounts.php
+msgid "Token file on this server"
+msgstr "このサーバー上のトークンファイル"
+
+#: includes/accounts.php includes/viewer.php
+msgid "Account"
+msgstr "アカウント"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Name"
+msgstr "名前"
+
+#: includes/accounts.php
+msgid "A label for this account in Cacti."
+msgstr "Cacti でのこのアカウントのラベルです。"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Account ID"
+msgstr "アカウント ID"
+
+#: includes/accounts.php
+msgid "The 32-character Cloudflare account ID, shown in the dashboard URL and on the account overview page."
+msgstr "32 文字の Cloudflare アカウント ID です。ダッシュボードの URL とアカウントの概要ページに表示されます。"
+
+#: includes/accounts.php
+msgid "API Token"
+msgstr "API トークン"
+
+#: includes/accounts.php
+msgid "Token Storage"
+msgstr "トークンの保存先"
+
+#: includes/accounts.php
+msgid "Where the scoped API token is kept. Global API Keys are not accepted."
+msgstr "スコープを限定した API トークンの保存先です。グローバル API キーは使用できません。"
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable because the key file in Settings is missing or unusable; only token files can be used."
+msgstr "設定の鍵ファイルが存在しないか使用できないため、暗号化ストレージを利用できません。トークンファイルのみ使用できます。"
+
+#: includes/accounts.php
+msgid "Leave blank to keep the current token"
+msgstr "現在のトークンを維持するには空のままにします"
+
+#: includes/accounts.php
+msgid "A scoped API token with Account Cloudflare Tunnel Read permission."
+msgstr "Account Cloudflare Tunnel Read 権限を持つ、スコープを限定した API トークンです。"
+
+#: includes/accounts.php
+msgid "Token File"
+msgstr "トークンファイル"
+
+#: includes/accounts.php
+msgid "Absolute path to a file that contains only the token. It must be readable by the web server and poller users and must not be world-readable."
+msgstr "トークンだけを含むファイルの絶対パスです。Web サーバーとポーラーのユーザーが読み取れる必要があり、全ユーザーが読み取れる状態にしてはいけません。"
+
+#: includes/accounts.php
+msgid "Collection"
+msgstr "収集"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Enabled"
+msgstr "有効"
+
+#: includes/accounts.php
+msgid "Disabled accounts are not polled."
+msgstr "無効なアカウントはポーリングされません。"
+
+#: includes/accounts.php
+msgid "Collect Tunnels"
+msgstr "トンネルを収集"
+
+#: includes/accounts.php
+msgid "Discover Cloudflare Tunnels and their connectors."
+msgstr "Cloudflare トンネルとそのコネクターを検出します。"
+
+#: includes/accounts.php
+msgid "Collect Analytics"
+msgstr "アナリティクスを収集"
+
+#: includes/accounts.php
+msgid "Collect zone traffic analytics. This needs the Account Analytics Read and Analytics Read (Zone) permissions."
+msgstr "ゾーンのトラフィックのアナリティクスを収集します。Account Analytics Read と Analytics Read (Zone) の権限が必要です。"
+
+#: includes/accounts.php
+msgid "Create Graphs"
+msgstr "グラフを作成"
+
+#: includes/accounts.php
+msgid "Create graphs for each tunnel on the account's Cacti device. Turning this on needs the permission to edit Cacti devices."
+msgstr "アカウントの Cacti デバイス上に、トンネルごとのグラフを作成します。有効にするには、Cacti デバイスを編集する権限が必要です。"
+
+#: includes/accounts.php
+msgid "Discovery Interval"
+msgstr "検出間隔"
+
+#: includes/accounts.php
+msgid "Seconds between inventory refreshes, from 60 to 86400."
+msgstr "インベントリを更新する間隔(秒)です。60 ～ 86400 で指定します。"
+
+#: includes/accounts.php
+msgid "The token and its confirmation do not match"
+msgstr "トークンと確認用の入力が一致しません"
+
+#: includes/accounts_page.php
+msgid "Delete"
+msgstr "削除"
+
+#: includes/accounts_page.php
+msgid "Verify"
+msgstr "確認"
+
+#: includes/accounts_page.php
+msgid "Enable"
+msgstr "有効にする"
+
+#: includes/accounts_page.php
+msgid "Disable"
+msgstr "無効にする"
+
+#: includes/accounts_page.php
+msgid "Create Cacti Device"
+msgstr "Cacti デバイスを作成"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to change Cloudflare accounts."
+msgstr "Cloudflare アカウントを変更する権限がありません。"
+
+#: includes/accounts_page.php
+msgid "The Cloudflare account no longer exists."
+msgstr "この Cloudflare アカウントは既に存在しません。"
+
+#: includes/accounts_page.php
+msgid "The Cloudflare accounts could not be read. See the Cacti log for details."
+msgstr "Cloudflare アカウントを読み取れませんでした。詳細は Cacti のログを確認してください。"
+
+#: includes/accounts_page.php
+msgid "Create Graphs was left off: turning it on needs the permission to edit Cacti devices."
+msgstr "「グラフを作成」はオフのままです。有効にするには、Cacti デバイスを編集する権限が必要です。"
+
+#: includes/accounts_page.php
+msgid "Cacti device created"
+msgstr "Cacti デバイスを作成しました"
+
+#: includes/accounts_page.php
+msgid "A Cacti device already exists for this account"
+msgstr "このアカウントには既に Cacti デバイスがあります"
+
+#: includes/accounts_page.php
+msgid "The Cloudflare templates are not installed; see the Cacti log"
+msgstr "Cloudflare のテンプレートがインストールされていません。Cacti のログを確認してください"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices"
+msgstr "Cacti デバイスを作成する権限がありません"
+
+#: includes/accounts_page.php
+msgid "The Cacti device could not be created; see the Cacti log"
+msgstr "Cacti デバイスを作成できませんでした。Cacti のログを確認してください"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices."
+msgstr "Cacti デバイスを作成する権限がありません。"
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Delete the following Cloudflare Account. Its discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgid_plural "Click 'Continue' to Delete the following Cloudflare Accounts. Their discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgstr[0] "[続ける]をクリックすると、次の Cloudflare アカウントを削除します。検出済みのインベントリとジョブの状態は削除されますが、Cacti のデバイスとグラフは残ります。"
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Verify the following Cloudflare Account against the Cloudflare API."
+msgid_plural "Click 'Continue' to Verify the following Cloudflare Accounts against the Cloudflare API."
+msgstr[0] "[続ける]をクリックすると、次の Cloudflare アカウントを Cloudflare API で確認します。"
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Enable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Enable the following Cloudflare Accounts."
+msgstr[0] "[続ける]をクリックすると、次の Cloudflare アカウントを有効にします。"
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Disable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Disable the following Cloudflare Accounts."
+msgstr[0] "[続ける]をクリックすると、次の Cloudflare アカウントを無効にします。"
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to create a Cacti device for the following Cloudflare Account. An account that already has one is left as it is."
+msgid_plural "Click 'Continue' to create a Cacti device for each of the following Cloudflare Accounts. An account that already has one is left as it is."
+msgstr[0] "[続ける]をクリックすると、次の Cloudflare アカウントに Cacti デバイスを作成します。既にデバイスがあるアカウントは変更されません。"
+
+#: includes/accounts_page.php
+msgid "Cancel"
+msgstr "取り消し"
+
+#: includes/accounts_page.php
+msgid "Continue"
+msgstr "続ける"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Cloudflare Account [edit: %s]"
+msgstr "Cloudflare アカウント [編集: %s]"
+
+#: includes/accounts_page.php
+msgid "Cloudflare Account [new]"
+msgstr "Cloudflare アカウント [新規]"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Never"
+msgstr "なし"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Status"
+msgstr "状態"
+
+#: includes/accounts_page.php
+msgid "Message"
+msgstr "メッセージ"
+
+#: includes/accounts_page.php
+msgid "No"
+msgstr "いいえ"
+
+#: includes/accounts_page.php
+msgid "Token Stored"
+msgstr "トークン保存済み"
+
+#: includes/accounts_page.php
+msgid "Yes"
+msgstr "はい"
+
+#: includes/accounts_page.php
+msgid "Last Checked"
+msgstr "最終チェック"
+
+#: includes/accounts_page.php
+msgid "Last Verified"
+msgstr "最終確認"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Permission: %s"
+msgstr "権限: %s"
+
+#: includes/accounts_page.php
+msgid "Granted"
+msgstr "付与済み"
+
+#: includes/accounts_page.php
+msgid "Missing"
+msgstr "未付与"
+
+#: includes/accounts_page.php
+msgid "Connection Status"
+msgstr "接続状態"
+
+#: includes/accounts_page.php includes/settings.php includes/viewer.php
+msgid "Cloudflare Accounts"
+msgstr "Cloudflare アカウント"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Search"
+msgstr "検索"
+
+#: includes/accounts_page.php
+msgid "Accounts"
+msgstr "アカウント"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Default"
+msgstr "デフォルト"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Go"
+msgstr "Go"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Set/Refresh Filters"
+msgstr "フィルタの設定/更新"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear"
+msgstr "クリア"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear Filters"
+msgstr "絞り込み条件を解除する"
+
+#: includes/accounts_page.php
+msgid "The name of this account in Cacti."
+msgstr "Cacti でのこのアカウントの名前です。"
+
+#: includes/accounts_page.php
+msgid "Whether an API token is configured. The edit page shows where it is kept."
+msgstr "API トークンが設定されているかどうかを示します。保存先は編集ページで確認できます。"
+
+#: includes/accounts_page.php
+msgid "The result of the last Verify."
+msgstr "前回の確認の結果です。"
+
+#: includes/accounts_page.php
+msgid "ID"
+msgstr "ID"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "No Cloudflare Accounts Found"
+msgstr "Cloudflare アカウントが見つかりません"
+
+#: includes/settings.php
+msgid "Configuration"
+msgstr "構成"
+
+#: includes/settings.php includes/viewer.php
+msgid "Cloudflare Tunnels"
+msgstr "Cloudflare トンネル"
+
+#: includes/settings.php
+msgid "Management"
+msgstr "管理"
+
+#: includes/settings.php
+msgid "(edit)"
+msgstr "(編集)"
+
+#: includes/settings.php
+msgid "Actions"
+msgstr "操作"
+
+#: includes/settings.php includes/viewer.php
+msgid "Overview"
+msgstr "概要"
+
+#: includes/settings.php includes/viewer.php
+msgid "Tunnels"
+msgstr "トンネル"
+
+#: includes/settings.php includes/viewer.php
+msgid "Connectors"
+msgstr "コネクター"
+
+#: includes/settings.php
+msgid "Token Vault Key File"
+msgstr "トークン保管庫の鍵ファイル"
+
+#: includes/settings.php
+msgid "Absolute path to the 32-byte key used to encrypt stored API tokens. It must be readable by the web server and poller users and not world-readable. When the file is missing, only token files can be used."
+msgstr "保存する API トークンの暗号化に使用する 32 バイトの鍵の絶対パスです。Web サーバーとポーラーのユーザーが読み取れる必要があり、全ユーザーが読み取れる状態にしてはいけません。ファイルが存在しない場合は、トークンファイルのみ使用できます。"
+
+#: includes/settings.php
+msgid "Interactive Request Timeout"
+msgstr "対話リクエストのタイムアウト"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made from the web interface, such as Verify."
+msgstr "Web インターフェースから行う Cloudflare API リクエスト(「確認」など)に許容される合計時間(秒)です。"
+
+#: includes/settings.php
+msgid "Collector Request Timeout"
+msgstr "コレクターのリクエストのタイムアウト"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made by the background collector."
+msgstr "バックグラウンドのコレクターが行う Cloudflare API リクエストに許容される合計時間(秒)です。"
+
+#: includes/settings.php
+msgid "Log Level"
+msgstr "ログレベル"
+
+#: includes/settings.php
+msgid "The amount of detail the plugin writes to the Cacti log."
+msgstr "プラグインが Cacti のログに書き込む詳細度です。"
+
+#: includes/viewer.php
+msgid "The Cloudflare tunnels could not be read. See the Cacti log for details."
+msgstr "Cloudflare トンネルを読み取れませんでした。詳細は Cacti のログを確認してください。"
+
+#: includes/viewer.php
+msgid "Disabled"
+msgstr "無効"
+
+#: includes/viewer.php
+msgid "Not collected"
+msgstr "収集対象外"
+
+#: includes/viewer.php
+msgid "Collection failing"
+msgstr "収集に失敗しています"
+
+#: includes/viewer.php
+msgid "Not yet collected"
+msgstr "未収集"
+
+#: includes/viewer.php
+msgid "Down"
+msgstr "ダウン"
+
+#: includes/viewer.php
+msgid "Degraded"
+msgstr "低下"
+
+#: includes/viewer.php
+msgid "Healthy"
+msgstr "正常"
+
+#: includes/viewer.php
+msgid "Inactive"
+msgstr "非アクティブ"
+
+#: includes/viewer.php
+msgid "No active tunnels"
+msgstr "アクティブなトンネルがありません"
+
+#: includes/viewer.php
+msgid "The worst status among active tunnels, or Collection failing while discovery fails."
+msgstr "アクティブなトンネルの中で最も悪い状態です。検出が失敗している間は「収集に失敗しています」と表示されます。"
+
+#: includes/viewer.php
+msgid "Active"
+msgstr "アクティブ"
+
+#: includes/viewer.php
+msgid "Unavailable"
+msgstr "利用不可"
+
+#: includes/viewer.php
+msgid "Deleted"
+msgstr "削除済み"
+
+#: includes/viewer.php
+msgid "Last Successful Discovery"
+msgstr "最後に成功した検出"
+
+#: includes/viewer.php
+msgid "Consecutive Failures"
+msgstr "連続失敗回数"
+
+#: includes/viewer.php
+#, php-format
+msgid "Last error: %s"
+msgstr "最後のエラー: %s"
+
+#: includes/viewer.php
+msgid "Tunnel"
+msgstr "トンネル"
+
+#: includes/viewer.php
+msgid "Cloudflare Status"
+msgstr "Cloudflare の状態"
+
+#: includes/viewer.php
+msgid "The status Cloudflare reported at the last discovery."
+msgstr "前回の検出時に Cloudflare が報告した状態です。"
+
+#: includes/viewer.php
+msgid "Lifecycle"
+msgstr "ライフサイクル"
+
+#: includes/viewer.php
+msgid "Whether the last discoveries still found this tunnel."
+msgstr "直近の検出でこのトンネルが引き続き見つかったかどうかを示します。"
+
+#: includes/viewer.php
+msgid "Type"
+msgstr "タイプ"
+
+#: includes/viewer.php
+msgid "Connections"
+msgstr "接続数"
+
+#: includes/viewer.php
+msgid "Last Seen"
+msgstr "最終確認"
+
+#: includes/viewer.php
+msgid "Any"
+msgstr "任意"
+
+#: includes/viewer.php
+msgid "All"
+msgstr "すべて"
+
+#: includes/viewer.php
+msgid "No Cloudflare Tunnels Found"
+msgstr "Cloudflare トンネルが見つかりません"
+
+#: includes/viewer.php
+msgid "Choose a tunnel on the Tunnels tab."
+msgstr "「トンネル」タブでトンネルを選択してください。"
+
+#: includes/viewer.php
+msgid "The tunnel no longer exists."
+msgstr "このトンネルは既に存在しません。"
+
+#: includes/viewer.php
+#, php-format
+msgid "Connectors for %s"
+msgstr "%s のコネクター"
+
+#: includes/viewer.php
+msgid "Connector ID"
+msgstr "コネクター ID"
+
+#: includes/viewer.php
+msgid "Version"
+msgstr "バージョン"
+
+#: includes/viewer.php
+msgid "Architecture"
+msgstr "アーキテクチャ"
+
+#: includes/viewer.php
+msgid "Running Since"
+msgstr "実行開始"
+
+#: includes/viewer.php
+msgid "Data Centers"
+msgstr "データセンター"
+
+#: includes/viewer.php
+msgid "Origin IPs"
+msgstr "オリジン IP"
+
+#: includes/viewer.php
+#, php-format
+msgid "This tunnel is %s. These connectors were last seen while the tunnel was active."
+msgstr "このトンネルは %s です。これらのコネクターは、トンネルがアクティブだったときに最後に確認されたものです。"
+
+#: includes/viewer.php
+msgid "No connectors are running for this tunnel."
+msgstr "このトンネルで実行中のコネクターはありません。"

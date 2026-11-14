@@ -1,5 +1,6 @@
 * text=auto eol=lf
 *.png binary
+*.mo binary
 /tests export-ignore
 /features export-ignore
 /docs/superpowers export-ignore

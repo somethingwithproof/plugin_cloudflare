@@ -11,7 +11,7 @@ export CF_SMOKE_CACTI_TAG := $(notdir $(CACTI_REF))
 # interleave their resets.
 .NOTPARALLEL:
 
-.PHONY: test test-integration bdd stan cs lint74 db-up db-down ci coverage package templates cacti-src smoke smoke-up smoke-down screenshots
+.PHONY: test test-integration bdd stan cs lint74 i18n i18n-check db-up db-down ci coverage package templates cacti-src smoke smoke-up smoke-down screenshots
 
 test:
 	$(PHPUNIT) --testsuite unit
@@ -42,6 +42,16 @@ db-down:
 	$(COMPOSE) down -v
 
 ci: test test-integration bdd stan cs lint74
+
+# Regenerates locales/po/cacti.pot, merges it into each catalog and compiles
+# locales/LC_MESSAGES/*.mo. Needs GNU gettext.
+i18n:
+	sh locales/build_gettext.sh
+
+# Fails on a stale template, a missing, untranslated or fuzzy entry, or a
+# compiled catalog that differs from its source. Needs GNU gettext.
+i18n-check:
+	sh locales/build_gettext.sh --check
 
 # Needs pcov or xdebug and the test database; Sonar reads the clover file.
 # phpunit.xml.dist names the measured files. pcov instruments only src/ by

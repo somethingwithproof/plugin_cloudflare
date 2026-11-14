@@ -389,6 +389,20 @@ On the account form, Collect Tunnels and Discovery Interval control discovery,
 and Create Graphs controls graph creation. Collect Analytics is stored and has
 no effect in this release.
 
+## Languages
+
+The plugin ships translations into Spanish (Spain, `es-ES`), French
+(`fr-FR`), German (`de-DE`), Simplified Chinese (`zh-CN`) and Japanese
+(`ja-JP`). Cacti shows them once language support is on (Configuration >
+Settings > General > Language Support) and a user picks the language. A Latin
+American Spanish catalog (`es-419`) ships as well, but Cacti 1.2 has no Latin
+American Spanish locale to select, so it takes effect only when Cacti adds
+one; until then, choose Spanish (`es-ES`).
+
+Some text stays in English: the status values the plugin stores and shows
+as they are (`ok`, `active`, `unavailable`, `deleted`, and the tunnel status
+Cloudflare reports), and everything the plugin writes to the Cacti log.
+
 ## Uninstall and data retention
 
 Uninstall drops the plugin's own tables, which hold accounts, encrypted
@@ -476,6 +490,22 @@ Pull requests are welcome. Each commit needs a DCO sign-off
 to the Cacti glue should also pass `make smoke`. Plugin code must stay PHP
 7.4 compatible and follow Cacti's code style (tabs, single quotes, braces
 on the same line).
+
+### Translations
+
+Messages are marked with `__('...', 'cloudflare')`. `locales/build_gettext.sh`
+(`make i18n`, which needs GNU gettext) regenerates the template
+`locales/po/cacti.pot`, merges it into each catalog `locales/po/<locale>.po`
+and compiles `locales/LC_MESSAGES/<locale>.mo`; commit all three. CI runs
+`make i18n-check`, which fails when a catalog misses or has a fuzzy entry, a
+format string differs, or a compiled file is out of date, and the unit suite
+also checks placeholders, HTML tags and edge whitespace of every entry. A
+changed message therefore needs its translations updated in the same pull
+request. A new language is a new `<locale>.po` named as Cacti names its
+locales (for example `pt-BR`), added to `CatalogTest::LOCALES` and to the
+archive check in `tests/build/package.sh`. Keep Cloudflare, Cacti and Thold
+product names, API and GraphQL, and permission names such as
+`Account Cloudflare Tunnel Read`, as they are.
 
 ## Documentation
 

@@ -528,6 +528,31 @@ code="$(http "${admin_jar}" "${work}/admin-reenabled.html" "${page}")"
 require_accounts_page "${work}/admin-reenabled.html" "${code}"
 pass
 
+step='4c each language Cacti 1.2 offers shows the plugin catalog on the accounts page'
+# Cacti 1.2 has no Latin American Spanish locale, so es-419 ships for when it
+# does and is not requested here.
+po_translation() {
+	awk -v id="$2" '
+		$0 == "msgid \"" id "\"" { hit = 1; next }
+		hit && /^msgstr "/ { sub(/^msgstr "/, ""); sub(/"$/, ""); print; exit }
+		{ hit = 0 }
+	' "$1"
+}
+sql "REPLACE INTO settings (name, value) VALUES ('i18n_language_support', '1')"
+for loc in de-DE es-ES fr-FR ja-JP zh-CN; do
+	title="$(po_translation "${here}/../../locales/po/${loc}.po" 'Cloudflare Accounts')"
+	[[ -n "${title}" && "${title}" != 'Cloudflare Accounts' ]] || die "no ${loc} translation of the accounts page title"
+	code="$(http "${admin_jar}" "${work}/admin-${loc}.html" "${page}?language=${loc}")"
+	[[ "${code}" = '200' ]] || die "accounts page in ${loc} returned ${code}"
+	grep -qF -- "${title}" "${work}/admin-${loc}.html" || die "the ${loc} accounts page lacks '${title}'"
+done
+# Back to English for the steps below, which match English text.
+http "${admin_jar}" "${work}/admin-en.html" "${page}?language=en-US" >/dev/null
+sql "REPLACE INTO settings (name, value) VALUES ('i18n_language_support', '0')"
+code="$(http "${admin_jar}" "${work}/admin-en.html" "${page}")"
+require_accounts_page "${work}/admin-en.html" "${code}"
+pass
+
 step='5 a user with only Cloudflare: View is denied the accounts page'
 view_realm="$(sql "SELECT id + 100 FROM plugin_realms WHERE plugin = 'cloudflare' AND file = 'cloudflare.php'")"
 [[ -n "${view_realm}" ]] || die 'no realm for cloudflare.php'

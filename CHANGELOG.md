@@ -14,6 +14,9 @@ included.
 * feature: Install and upgrade copy the data query XML to resource/script_server/cloudflare_tunnels.xml, the plugin's only write outside its own directory; uninstall keeps the file with the devices, graphs, RRD files and templates
 * feature: Upgrade adds the resources and metric_mappings tables, the create_graphs account column and the connections_error_class tunnel column
 * feature: The collector skips its run and logs one line while a plugin upgrade is pending
+* feature: Translations into Spanish (es-ES, es-419), French, German, Simplified Chinese and Japanese; Cacti 1.2 has no Latin American Spanish locale, so es-419 takes effect only once Cacti adds one
+* feature: locales/build_gettext.sh regenerates locales/po/cacti.pot and the catalogs; CI and make i18n-check fail on a stale template, a missing, untranslated or fuzzy entry, or an out-of-date .mo; the release archive ships locales/po and locales/LC_MESSAGES
+* fix: Account validation errors and the stored account status messages are translated when shown; they stay English in the database
 
 --- 0.2.0 (unreleased) ---
 

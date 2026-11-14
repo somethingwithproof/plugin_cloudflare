@@ -53,6 +53,21 @@ for prefix in cloudflare/tests/ cloudflare/features/ cloudflare/vendor/ cloudfla
     fi
 done
 
+# The template, the sources and the compiled catalogs Cacti loads.
+for locale in de-DE es-419 es-ES fr-FR ja-JP zh-CN; do
+    for path in "cloudflare/locales/po/${locale}.po" "cloudflare/locales/LC_MESSAGES/${locale}.mo"; do
+        if ! grep -qxF -- "${path}" <<<"${listing}"; then
+            printf 'FAIL: %s is missing from %s\n' "${path}" "${archive}" >&2
+            status=1
+        fi
+    done
+done
+
+if ! grep -qxF -- cloudflare/locales/po/cacti.pot <<<"${listing}"; then
+    printf 'FAIL: cloudflare/locales/po/cacti.pot is missing from %s\n' "${archive}" >&2
+    status=1
+fi
+
 [[ "${status}" -eq 0 ]] || exit "${status}"
 
 printf '%s: %s entries\n' "${archive}" "$(wc -l <<<"${listing}" | tr -d ' ')"

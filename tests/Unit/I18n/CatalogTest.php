@@ -158,7 +158,14 @@ final class CatalogTest extends TestCase {
 			}
 		}
 
-		$this->assertStringNotContainsString("#, fuzzy\n", (string) file_get_contents(self::ROOT . '/locales/po/' . $locale . '.po'));
+		$source = (string) file_get_contents(self::ROOT . '/locales/po/' . $locale . '.po');
+
+		// A flag line can list several flags: "#, fuzzy, php-format".
+		$this->assertSame(0, preg_match('/^#,.*\bfuzzy\b/m', $source), 'fuzzy entry in ' . $locale);
+
+		// Cacti's __() formats a message only when it holds a plain placeholder,
+		// so a positional one (%1$s) would be printed literally.
+		$this->assertSame(0, preg_match('/^msgstr(\[\d+\])? ".*%\d+\$/m', $source), 'positional placeholder in ' . $locale);
 	}
 
 	/**

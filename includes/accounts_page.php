@@ -130,7 +130,7 @@ function cloudflare_accounts_keep_form(array $errors) : void {
 
 	raise_message(
 		'cloudflare_invalid',
-		implode('<br>', array_map('html_escape', array_values($errors))),
+		implode('<br>', array_map('html_escape', array_map('cloudflare_translate_message', array_values($errors)))),
 		MESSAGE_LEVEL_ERROR
 	);
 }
@@ -332,7 +332,7 @@ function cloudflare_accounts_execute(int $action, array $ids) : void {
 	$level = MESSAGE_LEVEL_INFO;
 
 	foreach ($verified as $account) {
-		$lines[] = html_escape($account->name() . ': ' . $account->statusMessage());
+		$lines[] = html_escape($account->name() . ': ' . cloudflare_translate_message($account->statusMessage()));
 
 		if ($account->status() !== 'ok') {
 			$level = MESSAGE_LEVEL_WARN;
@@ -561,7 +561,7 @@ function cloudflare_accounts_status(Account $account) : void {
 	// Labels and values are escaped here, once, and printed as built.
 	$rows = array(
 		__esc('Status', 'cloudflare')        => html_escape($account->status()),
-		__esc('Message', 'cloudflare')       => html_escape($account->statusMessage()),
+		__esc('Message', 'cloudflare')       => html_escape(cloudflare_translate_message($account->statusMessage())),
 		__esc('Token Stored', 'cloudflare')  => $account->hasToken() ? __esc('Yes', 'cloudflare') : __esc('No', 'cloudflare'),
 		__esc('Last Checked', 'cloudflare')  => html_escape(cloudflare_accounts_time($account->lastCheckedAt())),
 		__esc('Last Verified', 'cloudflare') => html_escape(cloudflare_accounts_time($account->lastVerifiedAt())),
@@ -789,7 +789,7 @@ function cloudflare_accounts_list() : void {
 			form_selectable_cell(html_escape($account->cfAccountId()), $id);
 			form_selectable_cell($account->hasToken() ? __esc('Yes', 'cloudflare') : __esc('No', 'cloudflare'), $id);
 			form_selectable_cell($account->isEnabled() ? __esc('Yes', 'cloudflare') : __esc('No', 'cloudflare'), $id);
-			form_selectable_cell(html_escape($account->status()), $id, '', '', html_escape($account->statusMessage()));
+			form_selectable_cell(html_escape($account->status()), $id, '', '', html_escape(cloudflare_translate_message($account->statusMessage())));
 			form_selectable_cell(html_escape(cloudflare_accounts_time($account->lastCheckedAt())), $id);
 			form_selectable_cell($id, $id, '', 'right');
 			form_checkbox_cell(html_escape($account->name()), $id);

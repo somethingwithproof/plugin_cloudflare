@@ -31,6 +31,67 @@ function cloudflare_plugin_enabled() : bool {
 }
 
 /**
+ * The fixed English sentences src/ stores or throws (AccountService and
+ * SecretException). src/ does not depend on Cacti, so it cannot call __();
+ * the pages translate them here at display time. A test fails when src/ gains
+ * a sentence this list does not hold.
+ *
+ * @return array<string, string> English sentence => translation
+ */
+function cloudflare_message_catalog() : array {
+	return array(
+		'Connection verified'                                                                            => __('Connection verified', 'cloudflare'),
+		'Token is not active; it may be expired or disabled'                                             => __('Token is not active; it may be expired or disabled', 'cloudflare'),
+		'Token is invalid or expired'                                                                    => __('Token is invalid or expired', 'cloudflare'),
+		'Token lacks the Account Cloudflare Tunnel Read permission'                                      => __('Token lacks the Account Cloudflare Tunnel Read permission', 'cloudflare'),
+		'Cloudflare API is unreachable; try again later'                                                 => __('Cloudflare API is unreachable; try again later', 'cloudflare'),
+		'Cloudflare API rate limit reached; try again later'                                             => __('Cloudflare API rate limit reached; try again later', 'cloudflare'),
+		'Cloudflare API request failed unexpectedly'                                                     => __('Cloudflare API request failed unexpectedly', 'cloudflare'),
+		'Token lacks the permissions needed to verify it'                                                => __('Token lacks the permissions needed to verify it', 'cloudflare'),
+		'Stored token cannot be decrypted'                                                               => __('Stored token cannot be decrypted', 'cloudflare'),
+		'Token vault key file is missing or unusable'                                                    => __('Token vault key file is missing or unusable', 'cloudflare'),
+		'Token file is missing or insecure'                                                              => __('Token file is missing or insecure', 'cloudflare'),
+		'Encrypted storage is unavailable; configure the key file or use a token file'                   => __('Encrypted storage is unavailable; configure the key file or use a token file', 'cloudflare'),
+		'Enter the 32-character hexadecimal Cloudflare account ID'                                       => __('Enter the 32-character hexadecimal Cloudflare account ID', 'cloudflare'),
+		'Enter a name of 1 to 100 characters without control characters'                                 => __('Enter a name of 1 to 100 characters without control characters', 'cloudflare'),
+		'Choose an encrypted token or a token file'                                                      => __('Choose an encrypted token or a token file', 'cloudflare'),
+		'Enter an API token'                                                                             => __('Enter an API token', 'cloudflare'),
+		'Re-enter the token when changing the account ID'                                                => __('Re-enter the token when changing the account ID', 'cloudflare'),
+		'Enter an absolute path of at most 255 characters'                                               => __('Enter an absolute path of at most 255 characters', 'cloudflare'),
+		'Must be 0 or 1'                                                                                 => __('Must be 0 or 1', 'cloudflare'),
+		'Enter a whole number of seconds from 60 to 86400'                                               => __('Enter a whole number of seconds from 60 to 86400', 'cloudflare'),
+		'This Cloudflare account ID is already configured'                                               => __('This Cloudflare account ID is already configured', 'cloudflare'),
+		'Global API Keys are not accepted; use a scoped API token'                                       => __('Global API Keys are not accepted; use a scoped API token', 'cloudflare'),
+		'API token format is invalid'                                                                    => __('API token format is invalid', 'cloudflare'),
+		'Token vault key file is missing, unreadable, insecure or malformed'                             => __('Token vault key file is missing, unreadable, insecure or malformed', 'cloudflare'),
+		'Stored API token could not be decrypted'                                                        => __('Stored API token could not be decrypted', 'cloudflare'),
+		'Token file is missing, unreadable, not a regular file or too large'                             => __('Token file is missing, unreadable, not a regular file or too large', 'cloudflare'),
+		'Token file path is not absolute, is a symlink, or the file is world-readable or world-writable' => __('Token file path is not absolute, is a symlink, or the file is world-readable or world-writable', 'cloudflare'),
+		'API token could not be encrypted'                                                               => __('API token could not be encrypted', 'cloudflare'),
+		'Credential error'                                                                               => __('Credential error', 'cloudflare'),
+	);
+}
+
+/**
+ * Translates a sentence from cloudflare_message_catalog(), including one a
+ * SecretException ends with ": <absolute path>". Anything else is returned as
+ * given, so a message no catalog entry covers still shows in English.
+ */
+function cloudflare_translate_message(string $message) : string {
+	$catalog = cloudflare_message_catalog();
+
+	if (isset($catalog[$message])) {
+		return $catalog[$message];
+	}
+
+	if (preg_match('#^(.+?): (/[^\x00-\x1f\x7f]*)\z#', $message, $m) === 1 && isset($catalog[$m[1]])) {
+		return $catalog[$m[1]] . ': ' . $m[2];
+	}
+
+	return $message;
+}
+
+/**
  * CactiShutdownHandler disables a plugin whose page dies with an uncaught
  * error, so each page ends here instead. Only the class is logged, since a
  * message may carry request or driver text. top_header() and bottom_footer()

@@ -161,6 +161,7 @@ one data source so that seven minutes of polling fill the graph.*
 ## Requirements
 
 - Cacti 1.2.25 through 1.2.31. Cacti 1.2.31 itself needs PHP 8.0 or later.
+  CI tests 1.2.31 only; 1.2.25 was last tested by hand on 2026-10-22.
 - PHP 7.4 through 8.4 with the `curl`, `openssl` and `pdo_mysql` extensions.
   The plugin refuses to enable without them.
 - MariaDB 10.6 or later, or MySQL 8.0 or later.

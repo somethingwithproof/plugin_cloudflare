@@ -123,6 +123,10 @@ msgid "Token file path is not absolute, is a symlink, or the file is world-reada
 msgstr "令牌文件路径不是绝对路径或是符号链接,或该文件可被所有用户读取或写入"
 
 #: includes/accounts.php
+msgid "Token file is not inside the Token File Directory"
+msgstr "令牌文件不在令牌文件目录中"
+
+#: includes/accounts.php
 msgid "API token could not be encrypted"
 msgstr "无法加密 API 令牌"
 
@@ -484,6 +488,14 @@ msgstr "令牌保管库密钥文件"
 #: includes/settings.php
 msgid "Absolute path to the 32-byte key used to encrypt stored API tokens. It must be readable by the web server and poller users and not world-readable. When the file is missing, only token files can be used."
 msgstr "用于加密已存储 API 令牌的 32 字节密钥的绝对路径。Web 服务器和轮询器的用户必须能够读取该文件,但不得允许所有用户读取。文件缺失时,只能使用令牌文件。"
+
+#: includes/settings.php
+msgid "Token File Directory"
+msgstr "令牌文件目录"
+
+#: includes/settings.php
+msgid "Absolute path of the directory that every account token file must be in. When empty, a token file may be anywhere the web server and poller users can read."
+msgstr "每个账户的令牌文件都必须位于该目录中，此处为其绝对路径。留空时，令牌文件可以位于 Web 服务器和轮询器用户能够读取的任何位置。"
 
 #: includes/settings.php
 msgid "Interactive Request Timeout"

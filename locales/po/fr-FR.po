@@ -123,6 +123,10 @@ msgid "Token file path is not absolute, is a symlink, or the file is world-reada
 msgstr "Le chemin du fichier de jeton n'est pas absolu ou est un lien symbolique, ou le fichier est lisible ou modifiable par tous"
 
 #: includes/accounts.php
+msgid "Token file is not inside the Token File Directory"
+msgstr "Le fichier de jeton ne se trouve pas dans le répertoire des fichiers de jeton"
+
+#: includes/accounts.php
 msgid "API token could not be encrypted"
 msgstr "Le jeton d'API n'a pas pu être chiffré"
 
@@ -489,6 +493,14 @@ msgstr "Fichier de clé du coffre de jetons"
 #: includes/settings.php
 msgid "Absolute path to the 32-byte key used to encrypt stored API tokens. It must be readable by the web server and poller users and not world-readable. When the file is missing, only token files can be used."
 msgstr "Chemin absolu de la clé de 32 octets utilisée pour chiffrer les jetons d'API enregistrés. Elle doit être lisible par les utilisateurs du serveur web et de l'agent de collecte, mais pas par tous. Si le fichier est absent, seuls les fichiers de jeton peuvent être utilisés."
+
+#: includes/settings.php
+msgid "Token File Directory"
+msgstr "Répertoire des fichiers de jeton"
+
+#: includes/settings.php
+msgid "Absolute path of the directory that every account token file must be in. When empty, a token file may be anywhere the web server and poller users can read."
+msgstr "Chemin absolu du répertoire dans lequel doit se trouver le fichier de jeton de chaque compte. S'il est vide, un fichier de jeton peut se trouver à tout emplacement lisible par les utilisateurs du serveur web et de l'agent de collecte."
 
 #: includes/settings.php
 msgid "Interactive Request Timeout"

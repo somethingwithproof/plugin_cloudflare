@@ -67,6 +67,7 @@ function cloudflare_message_catalog() : array {
 		'Stored API token could not be decrypted'                                                        => __('Stored API token could not be decrypted', 'cloudflare'),
 		'Token file is missing, unreadable, not a regular file or too large'                             => __('Token file is missing, unreadable, not a regular file or too large', 'cloudflare'),
 		'Token file path is not absolute, is a symlink, or the file is world-readable or world-writable' => __('Token file path is not absolute, is a symlink, or the file is world-readable or world-writable', 'cloudflare'),
+		'Token file is not inside the Token File Directory'                                              => __('Token file is not inside the Token File Directory', 'cloudflare'),
 		'API token could not be encrypted'                                                               => __('API token could not be encrypted', 'cloudflare'),
 		'Credential error'                                                                               => __('Credential error', 'cloudflare'),
 	);

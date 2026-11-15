@@ -490,9 +490,9 @@ every milestone below.
 
 | Milestone | Scope | State |
 |---|---|---|
-| 1. Foundation | Plugin lifecycle, permissions, account configuration, connection test | In review ([#1](https://github.com/somethingwithproof/plugin_cloudflare/pull/1)) |
-| 2. Discovery | Tunnel and connector discovery in a background collector, Overview, Tunnels and Connectors pages | Implemented, unreleased |
-| 3. Metrics | Tunnel health data sources, graph templates, outage handling that never records a fabricated zero | Implemented, unreleased |
+| 1. Foundation | Plugin lifecycle, permissions, account configuration, connection test | Implemented, unreleased ([#2](https://github.com/somethingwithproof/plugin_cloudflare/pull/2) to [#5](https://github.com/somethingwithproof/plugin_cloudflare/pull/5)) |
+| 2. Discovery | Tunnel and connector discovery in a background collector, Overview, Tunnels and Connectors pages | Implemented, unreleased ([#6](https://github.com/somethingwithproof/plugin_cloudflare/pull/6)) |
+| 3. Metrics | Tunnel health data sources, graph templates, outage handling that never records a fabricated zero | Implemented, unreleased ([#7](https://github.com/somethingwithproof/plugin_cloudflare/pull/7)) |
 | 4. Analytics and alerting | Plan-aware GraphQL analytics per zone, Thold thresholds with outage suppression | Planned |
 | 5. Hardening | Fault injection, TLA+ models of discovery and collection, full documentation | Planned |
 

@@ -8,7 +8,7 @@ from [`research/cloudflare-api-facts.md`](research/cloudflare-api-facts.md).
 
 | Component | Supported | Tested |
 |---|---|---|
-| Cacti | 1.2.25 through 1.2.31 (`compat = 1.2.25` in INFO) | 1.2.31 by `make smoke`; 1.2.25 by `make smoke CACTI_REF=release/1.2.25`. Both passed all 22 steps on 2026-10-22 |
+| Cacti | 1.2.25 through 1.2.31 (`compat = 1.2.25` in INFO) | 1.2.31 by `make smoke` in CI on every pull request. 1.2.25 only by hand with `make smoke CACTI_REF=release/1.2.25`, which last passed all 22 steps on 2026-10-22; changes after that date are not tested on 1.2.25 |
 | PHP | 7.4 through 8.4 | Unit tests on 7.4, 8.1, 8.2, 8.3, 8.4; integration on 7.4 and 8.3; smoke on 8.0; `php -l` on 7.4 |
 | Database | MariaDB 10.6 and later, MySQL 8.0 and later | CI: MariaDB 10.11, MySQL 8.4. Integration tests and BDD features also run locally on 2026-10-22 against MariaDB 10.6.28 and MySQL 8.0.46; not part of CI |
 | PHP extensions | `curl`, `openssl`, `pdo_mysql` | Checked by `plugin_cloudflare_check_config()` |
@@ -153,7 +153,9 @@ which the 1.2.31 script server accepts because it is under `base_path`.
 1.2.25 tag, tagged `cf-smoke-cacti:1.2.25`, and runs every smoke step,
 including device creation, graph creation and the RRD checks. The smoke has 22
 steps (`tests/docker/smoke.sh`). On 2026-10-22 all 22 passed on 1.2.31 and on
-1.2.25, with MariaDB 10.11.10.
+1.2.25, with MariaDB 10.11.10. The CI smoke job checks out only 1.2.31, so the
+1.2.25 result covers the code as of that date and is not repeated for later
+changes.
 
 The device and graph steps (5f to 5j) create the device over HTTP, run one due
 poll that reindexes and creates 9 graphs for the three fixture tunnels, and

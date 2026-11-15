@@ -411,6 +411,8 @@ Create Cacti Device tries again.
 Settings > Cloudflare holds:
 
 - **Token Vault Key File**: path to the vault key.
+- **Token File Directory**: when set, a token file outside it is refused. Empty by
+  default, which allows any path. See [docs/security.md](docs/security.md#token-file).
 - **Interactive Request Timeout**: total seconds for a request made from the
   web interface, such as Verify. Default 10; values outside 5 to 60 fall
   back to 10.

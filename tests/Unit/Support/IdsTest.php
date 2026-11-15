@@ -17,9 +17,9 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Unit\Support;
+namespace Somethingwithproof\Cloudflare\Tests\Unit\Support;
 
-use Cacti\PluginCloudflare\Support\Ids;
+use Somethingwithproof\Cloudflare\Support\Ids;
 use Eris\Generators;
 use Eris\TestTrait;
 use PHPUnit\Framework\TestCase;

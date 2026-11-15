@@ -17,15 +17,15 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Integration\Storage;
+namespace Somethingwithproof\Cloudflare\Tests\Integration\Storage;
 
-use Cacti\PluginCloudflare\Storage\Database;
-use Cacti\PluginCloudflare\Storage\DatabaseException;
-use Cacti\PluginCloudflare\Storage\Migrations\M001Foundation;
-use Cacti\PluginCloudflare\Storage\Migrations\M002Discovery;
-use Cacti\PluginCloudflare\Storage\Migrator;
-use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
-use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
+use Somethingwithproof\Cloudflare\Storage\Database;
+use Somethingwithproof\Cloudflare\Storage\DatabaseException;
+use Somethingwithproof\Cloudflare\Storage\Migrations\M001Foundation;
+use Somethingwithproof\Cloudflare\Storage\Migrations\M002Discovery;
+use Somethingwithproof\Cloudflare\Storage\Migrator;
+use Somethingwithproof\Cloudflare\Tests\Support\TestDatabase;
+use Somethingwithproof\Cloudflare\Tests\Integration\IntegrationTestCase;
 
 final class M002DiscoveryTest extends IntegrationTestCase {
 	const TUNNEL_UUID = '11111111-2222-3333-4444-555555555555';

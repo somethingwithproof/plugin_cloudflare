@@ -17,26 +17,26 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Integration\Account;
+namespace Somethingwithproof\Cloudflare\Tests\Integration\Account;
 
-use Cacti\PluginCloudflare\Account\AccountRepository;
-use Cacti\PluginCloudflare\Account\AccountService;
-use Cacti\PluginCloudflare\Account\ValidationException;
-use Cacti\PluginCloudflare\Api\CloudflareClient;
-use Cacti\PluginCloudflare\Api\RetryPolicy;
-use Cacti\PluginCloudflare\Auth\AccessDenied;
-use Cacti\PluginCloudflare\Auth\CallbackAuthorizer;
-use Cacti\PluginCloudflare\Http\Response;
-use Cacti\PluginCloudflare\Secret\TokenVault;
-use Cacti\PluginCloudflare\Storage\Database;
-use Cacti\PluginCloudflare\Storage\Migrator;
-use Cacti\PluginCloudflare\Tests\Support\FakeTransport;
-use Cacti\PluginCloudflare\Tests\Support\FrozenClock;
-use Cacti\PluginCloudflare\Tests\Support\RecordingSleeper;
-use Cacti\PluginCloudflare\Tests\Support\SecretAssertions;
-use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
+use Somethingwithproof\Cloudflare\Account\AccountRepository;
+use Somethingwithproof\Cloudflare\Account\AccountService;
+use Somethingwithproof\Cloudflare\Account\ValidationException;
+use Somethingwithproof\Cloudflare\Api\CloudflareClient;
+use Somethingwithproof\Cloudflare\Api\RetryPolicy;
+use Somethingwithproof\Cloudflare\Auth\AccessDenied;
+use Somethingwithproof\Cloudflare\Auth\CallbackAuthorizer;
+use Somethingwithproof\Cloudflare\Http\Response;
+use Somethingwithproof\Cloudflare\Secret\TokenVault;
+use Somethingwithproof\Cloudflare\Storage\Database;
+use Somethingwithproof\Cloudflare\Storage\Migrator;
+use Somethingwithproof\Cloudflare\Tests\Support\FakeTransport;
+use Somethingwithproof\Cloudflare\Tests\Support\FrozenClock;
+use Somethingwithproof\Cloudflare\Tests\Support\RecordingSleeper;
+use Somethingwithproof\Cloudflare\Tests\Support\SecretAssertions;
+use Somethingwithproof\Cloudflare\Tests\Support\TestDatabase;
 use OutOfBoundsException;
-use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
+use Somethingwithproof\Cloudflare\Tests\Integration\IntegrationTestCase;
 
 final class AccountServiceTest extends IntegrationTestCase {
 	use SecretAssertions;

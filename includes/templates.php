@@ -19,9 +19,9 @@
 
 require_once __DIR__ . '/bootstrap.php';
 
-use Cacti\PluginCloudflare\Metrics\Catalog;
-use Cacti\PluginCloudflare\Metrics\MetricMappingRepository;
-use Cacti\PluginCloudflare\Storage\Database;
+use Somethingwithproof\Cloudflare\Metrics\Catalog;
+use Somethingwithproof\Cloudflare\Metrics\MetricMappingRepository;
+use Somethingwithproof\Cloudflare\Storage\Database;
 
 if (!defined('CLOUDFLARE_TEMPLATES_LOCK')) {
 	define('CLOUDFLARE_TEMPLATES_LOCK', 'plugin_cloudflare_templates');

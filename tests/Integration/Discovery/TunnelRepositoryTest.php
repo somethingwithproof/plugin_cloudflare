@@ -17,18 +17,18 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Integration\Discovery;
+namespace Somethingwithproof\Cloudflare\Tests\Integration\Discovery;
 
-use Cacti\PluginCloudflare\Api\ConnectorRecord;
-use Cacti\PluginCloudflare\Api\TunnelRecord;
-use Cacti\PluginCloudflare\Discovery\Reconciler;
-use Cacti\PluginCloudflare\Discovery\TunnelRepository;
-use Cacti\PluginCloudflare\Storage\Database;
-use Cacti\PluginCloudflare\Storage\Migrator;
-use Cacti\PluginCloudflare\Tests\Support\FrozenClock;
-use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
+use Somethingwithproof\Cloudflare\Api\ConnectorRecord;
+use Somethingwithproof\Cloudflare\Api\TunnelRecord;
+use Somethingwithproof\Cloudflare\Discovery\Reconciler;
+use Somethingwithproof\Cloudflare\Discovery\TunnelRepository;
+use Somethingwithproof\Cloudflare\Storage\Database;
+use Somethingwithproof\Cloudflare\Storage\Migrator;
+use Somethingwithproof\Cloudflare\Tests\Support\FrozenClock;
+use Somethingwithproof\Cloudflare\Tests\Support\TestDatabase;
 use InvalidArgumentException;
-use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
+use Somethingwithproof\Cloudflare\Tests\Integration\IntegrationTestCase;
 
 final class TunnelRepositoryTest extends IntegrationTestCase {
 	const T0 = 1800000000;

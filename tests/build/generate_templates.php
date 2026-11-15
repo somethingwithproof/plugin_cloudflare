@@ -32,8 +32,8 @@
 
 require_once dirname(__DIR__, 2) . '/includes/autoload.php';
 
-use Cacti\PluginCloudflare\Metrics\Catalog;
-use Cacti\PluginCloudflare\Metrics\Metric;
+use Somethingwithproof\Cloudflare\Metrics\Catalog;
+use Somethingwithproof\Cloudflare\Metrics\Metric;
 
 /* include/global_arrays.php:1342 and :134-146 (1.2.19 to 1.2.31). */
 const CF_TPL_VERSION = '0103';

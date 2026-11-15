@@ -17,7 +17,7 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Storage;
+namespace Somethingwithproof\Cloudflare\Storage;
 
 use PDO;
 use PDOException;

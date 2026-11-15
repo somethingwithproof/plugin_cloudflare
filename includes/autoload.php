@@ -23,7 +23,7 @@
  */
 if (!function_exists('cloudflare_autoload')) {
 	function cloudflare_autoload(string $class) : void {
-		$prefix = 'Cacti\\PluginCloudflare\\';
+		$prefix = 'Somethingwithproof\\Cloudflare\\';
 
 		if (strncmp($class, $prefix, strlen($prefix)) !== 0) {
 			return;

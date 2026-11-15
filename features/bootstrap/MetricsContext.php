@@ -17,17 +17,17 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Features;
+namespace Somethingwithproof\Cloudflare\Features;
 
 use Behat\Behat\Context\Context;
-use Cacti\PluginCloudflare\Api\ErrorClass;
-use Cacti\PluginCloudflare\Http\Response;
-use Cacti\PluginCloudflare\Http\TransportException;
-use Cacti\PluginCloudflare\Metrics\Catalog;
-use Cacti\PluginCloudflare\Metrics\Metric;
-use Cacti\PluginCloudflare\Metrics\ObservationReader;
-use Cacti\PluginCloudflare\Tests\Support\FakeTransport;
-use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
+use Somethingwithproof\Cloudflare\Api\ErrorClass;
+use Somethingwithproof\Cloudflare\Http\Response;
+use Somethingwithproof\Cloudflare\Http\TransportException;
+use Somethingwithproof\Cloudflare\Metrics\Catalog;
+use Somethingwithproof\Cloudflare\Metrics\Metric;
+use Somethingwithproof\Cloudflare\Metrics\ObservationReader;
+use Somethingwithproof\Cloudflare\Tests\Support\FakeTransport;
+use Somethingwithproof\Cloudflare\Tests\Support\TestDatabase;
 use RuntimeException;
 use Throwable;
 

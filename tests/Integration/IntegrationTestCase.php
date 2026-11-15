@@ -17,9 +17,9 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Integration;
+namespace Somethingwithproof\Cloudflare\Tests\Integration;
 
-use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
+use Somethingwithproof\Cloudflare\Tests\Support\TestDatabase;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 

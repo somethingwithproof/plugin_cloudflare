@@ -21,11 +21,11 @@ require_once __DIR__ . '/bootstrap.php';
 require_once __DIR__ . '/accounts.php';
 require_once __DIR__ . '/cacti_objects.php';
 
-use Cacti\PluginCloudflare\Jobs\JobRepository;
-use Cacti\PluginCloudflare\Storage\Database;
-use Cacti\PluginCloudflare\Storage\DatabaseException;
-use Cacti\PluginCloudflare\Storage\Migrator;
-use Cacti\PluginCloudflare\Support\SystemClock;
+use Somethingwithproof\Cloudflare\Jobs\JobRepository;
+use Somethingwithproof\Cloudflare\Storage\Database;
+use Somethingwithproof\Cloudflare\Storage\DatabaseException;
+use Somethingwithproof\Cloudflare\Storage\Migrator;
+use Somethingwithproof\Cloudflare\Support\SystemClock;
 
 if (!defined('CLOUDFLARE_COLLECTOR_LOCK')) {
 	define('CLOUDFLARE_COLLECTOR_LOCK', 'plugin_cloudflare_collector');

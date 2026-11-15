@@ -17,7 +17,7 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Support;
+namespace Somethingwithproof\Cloudflare\Support;
 
 final class Ids {
 	public static function isAccountId(string $s): bool {

@@ -4,8 +4,8 @@ default:
       paths:
         - '%paths.base%/features'
       contexts:
-        - Cacti\PluginCloudflare\Features\AccountContext
-        - Cacti\PluginCloudflare\Features\DiscoveryContext
-        - Cacti\PluginCloudflare\Features\MetricsContext
+        - Somethingwithproof\Cloudflare\Features\AccountContext
+        - Somethingwithproof\Cloudflare\Features\DiscoveryContext
+        - Somethingwithproof\Cloudflare\Features\MetricsContext
   formatters:
     progress: ~

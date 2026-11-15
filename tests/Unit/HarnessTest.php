@@ -17,12 +17,12 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Unit;
+namespace Somethingwithproof\Cloudflare\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 
 final class HarnessTest extends TestCase {
 	public function testAutoloadsPluginNamespace(): void {
-		$this->assertTrue(class_exists('Cacti\\PluginCloudflare\\Version'));
+		$this->assertTrue(class_exists('Somethingwithproof\\Cloudflare\\Version'));
 	}
 }

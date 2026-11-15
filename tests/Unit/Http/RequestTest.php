@@ -17,13 +17,13 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Unit\Http;
+namespace Somethingwithproof\Cloudflare\Tests\Unit\Http;
 
-use Cacti\PluginCloudflare\Http\Request;
-use Cacti\PluginCloudflare\Http\Response;
-use Cacti\PluginCloudflare\Http\TransportException;
-use Cacti\PluginCloudflare\Tests\Support\FakeTransport;
-use Cacti\PluginCloudflare\Tests\Support\SecretAssertions;
+use Somethingwithproof\Cloudflare\Http\Request;
+use Somethingwithproof\Cloudflare\Http\Response;
+use Somethingwithproof\Cloudflare\Http\TransportException;
+use Somethingwithproof\Cloudflare\Tests\Support\FakeTransport;
+use Somethingwithproof\Cloudflare\Tests\Support\SecretAssertions;
 use LogicException;
 use PHPUnit\Framework\TestCase;
 

@@ -17,11 +17,11 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Unit\Glue;
+namespace Somethingwithproof\Cloudflare\Tests\Unit\Glue;
 
-use Cacti\PluginCloudflare\Account\Account;
-use Cacti\PluginCloudflare\Account\ValidationException;
-use Cacti\PluginCloudflare\Tests\Support\SecretAssertions;
+use Somethingwithproof\Cloudflare\Account\Account;
+use Somethingwithproof\Cloudflare\Account\ValidationException;
+use Somethingwithproof\Cloudflare\Tests\Support\SecretAssertions;
 use PHPUnit\Framework\TestCase;
 
 final class AccountsPageTest extends TestCase {

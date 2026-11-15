@@ -17,9 +17,9 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Support;
+namespace Somethingwithproof\Cloudflare\Tests\Support;
 
-use Cacti\PluginCloudflare\Support\Sleeper;
+use Somethingwithproof\Cloudflare\Support\Sleeper;
 
 final class RecordingSleeper implements Sleeper {
 	/** @var array<int, int> */

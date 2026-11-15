@@ -17,10 +17,10 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Api;
+namespace Somethingwithproof\Cloudflare\Api;
 
-use Cacti\PluginCloudflare\Support\Clock;
-use Cacti\PluginCloudflare\Support\Sleeper;
+use Somethingwithproof\Cloudflare\Support\Clock;
+use Somethingwithproof\Cloudflare\Support\Sleeper;
 
 final class RetryPolicy {
 	/** @var Sleeper */

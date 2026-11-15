@@ -17,7 +17,7 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Metrics;
+namespace Somethingwithproof\Cloudflare\Metrics;
 
 use InvalidArgumentException;
 

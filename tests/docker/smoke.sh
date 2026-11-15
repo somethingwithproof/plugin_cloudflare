@@ -812,7 +812,7 @@ rrd="$(blog_rrd)"
 blog_status="$(sql "SELECT cf_status FROM plugin_cloudflare_tunnels WHERE account_id = ${account_id} AND name = 'blog'")"
 # shellcheck disable=SC2016 # PHP source; $argv is PHP's, not the shell's.
 blog_health="$("${dc[@]}" exec -T web php -r 'require "plugins/cloudflare/includes/autoload.php";
-	echo Cacti\PluginCloudflare\Metrics\Catalog::HEALTH[$argv[1]];' "${blog_status}")"
+	echo Somethingwithproof\Cloudflare\Metrics\Catalog::HEALTH[$argv[1]];' "${blog_status}")"
 [[ "${blog_status}|${blog_health}" = 'healthy|3' ]] || die "blog is ${blog_status}, health ${blog_health}"
 [[ "$(last_value "${rrd}" connectors)" = '1' ]] || die "connectors is $(last_value "${rrd}" connectors), expected 1"
 [[ "$(last_value "${rrd}" connections)" = '1' ]] || die "connections is $(last_value "${rrd}" connections), expected 1"

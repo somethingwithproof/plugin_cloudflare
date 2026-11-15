@@ -17,9 +17,9 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Http;
+namespace Somethingwithproof\Cloudflare\Http;
 
-use Cacti\PluginCloudflare\Support\Redactor;
+use Somethingwithproof\Cloudflare\Support\Redactor;
 
 /**
  * The plugin's only network I/O. The policy check runs before curl_init(),

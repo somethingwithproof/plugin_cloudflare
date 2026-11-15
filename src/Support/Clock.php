@@ -17,7 +17,7 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Support;
+namespace Somethingwithproof\Cloudflare\Support;
 
 interface Clock {
 	public function now(): int;

@@ -17,7 +17,7 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Api;
+namespace Somethingwithproof\Cloudflare\Api;
 
 final class TunnelRecord {
 	/** @var string */

@@ -17,9 +17,9 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Unit\Storage;
+namespace Somethingwithproof\Cloudflare\Tests\Unit\Storage;
 
-use Cacti\PluginCloudflare\Storage\DatabaseException;
+use Somethingwithproof\Cloudflare\Storage\DatabaseException;
 use PHPUnit\Framework\TestCase;
 
 final class DatabaseExceptionTest extends TestCase {

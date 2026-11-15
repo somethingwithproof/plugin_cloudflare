@@ -17,18 +17,18 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Integration\Glue;
+namespace Somethingwithproof\Cloudflare\Tests\Integration\Glue;
 
-use Cacti\PluginCloudflare\Api\ConnectorRecord;
-use Cacti\PluginCloudflare\Api\ErrorClass;
-use Cacti\PluginCloudflare\Api\TunnelRecord;
-use Cacti\PluginCloudflare\Discovery\Reconciler;
-use Cacti\PluginCloudflare\Jobs\JobRepository;
-use Cacti\PluginCloudflare\Jobs\Lease;
-use Cacti\PluginCloudflare\Storage\Database;
-use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
-use Cacti\PluginCloudflare\Tests\Support\FrozenClock;
-use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
+use Somethingwithproof\Cloudflare\Api\ConnectorRecord;
+use Somethingwithproof\Cloudflare\Api\ErrorClass;
+use Somethingwithproof\Cloudflare\Api\TunnelRecord;
+use Somethingwithproof\Cloudflare\Discovery\Reconciler;
+use Somethingwithproof\Cloudflare\Jobs\JobRepository;
+use Somethingwithproof\Cloudflare\Jobs\Lease;
+use Somethingwithproof\Cloudflare\Storage\Database;
+use Somethingwithproof\Cloudflare\Tests\Integration\IntegrationTestCase;
+use Somethingwithproof\Cloudflare\Tests\Support\FrozenClock;
+use Somethingwithproof\Cloudflare\Tests\Support\TestDatabase;
 
 /**
  * Drives the cloudflare.php handlers through the glue stubs against the

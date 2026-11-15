@@ -17,18 +17,18 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Integration\Jobs;
+namespace Somethingwithproof\Cloudflare\Tests\Integration\Jobs;
 
-use Cacti\PluginCloudflare\Api\ErrorClass;
-use Cacti\PluginCloudflare\Jobs\JobRepository;
-use Cacti\PluginCloudflare\Jobs\Lease;
-use Cacti\PluginCloudflare\Jobs\LeaseLost;
-use Cacti\PluginCloudflare\Storage\Database;
-use Cacti\PluginCloudflare\Storage\DatabaseException;
-use Cacti\PluginCloudflare\Storage\Migrator;
-use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
-use Cacti\PluginCloudflare\Tests\Support\FrozenClock;
-use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
+use Somethingwithproof\Cloudflare\Api\ErrorClass;
+use Somethingwithproof\Cloudflare\Jobs\JobRepository;
+use Somethingwithproof\Cloudflare\Jobs\Lease;
+use Somethingwithproof\Cloudflare\Jobs\LeaseLost;
+use Somethingwithproof\Cloudflare\Storage\Database;
+use Somethingwithproof\Cloudflare\Storage\DatabaseException;
+use Somethingwithproof\Cloudflare\Storage\Migrator;
+use Somethingwithproof\Cloudflare\Tests\Integration\IntegrationTestCase;
+use Somethingwithproof\Cloudflare\Tests\Support\FrozenClock;
+use Somethingwithproof\Cloudflare\Tests\Support\TestDatabase;
 use InvalidArgumentException;
 
 final class JobRepositoryTest extends IntegrationTestCase {

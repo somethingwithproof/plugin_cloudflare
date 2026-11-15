@@ -17,16 +17,16 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Integration\Glue;
+namespace Somethingwithproof\Cloudflare\Tests\Integration\Glue;
 
-use Cacti\PluginCloudflare\Account\AccountRepository;
-use Cacti\PluginCloudflare\Discovery\DiscoveryService;
-use Cacti\PluginCloudflare\Metrics\ResourceRepository;
-use Cacti\PluginCloudflare\Storage\Database;
-use Cacti\PluginCloudflare\Storage\Migrator;
-use Cacti\PluginCloudflare\Support\SystemClock;
-use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
-use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
+use Somethingwithproof\Cloudflare\Account\AccountRepository;
+use Somethingwithproof\Cloudflare\Discovery\DiscoveryService;
+use Somethingwithproof\Cloudflare\Metrics\ResourceRepository;
+use Somethingwithproof\Cloudflare\Storage\Database;
+use Somethingwithproof\Cloudflare\Storage\Migrator;
+use Somethingwithproof\Cloudflare\Support\SystemClock;
+use Somethingwithproof\Cloudflare\Tests\Integration\IntegrationTestCase;
+use Somethingwithproof\Cloudflare\Tests\Support\TestDatabase;
 use PDO;
 use RuntimeException;
 

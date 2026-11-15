@@ -17,7 +17,7 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Secret;
+namespace Somethingwithproof\Cloudflare\Secret;
 
 final class TokenFile {
 	private const MAX_BYTES = 4096;

@@ -17,16 +17,16 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Integration\Metrics;
+namespace Somethingwithproof\Cloudflare\Tests\Integration\Metrics;
 
-use Cacti\PluginCloudflare\Account\AccountRepository;
-use Cacti\PluginCloudflare\Metrics\ResourceRepository;
-use Cacti\PluginCloudflare\Storage\Database;
-use Cacti\PluginCloudflare\Storage\DatabaseException;
-use Cacti\PluginCloudflare\Storage\Migrator;
-use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
-use Cacti\PluginCloudflare\Tests\Support\FrozenClock;
-use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
+use Somethingwithproof\Cloudflare\Account\AccountRepository;
+use Somethingwithproof\Cloudflare\Metrics\ResourceRepository;
+use Somethingwithproof\Cloudflare\Storage\Database;
+use Somethingwithproof\Cloudflare\Storage\DatabaseException;
+use Somethingwithproof\Cloudflare\Storage\Migrator;
+use Somethingwithproof\Cloudflare\Tests\Integration\IntegrationTestCase;
+use Somethingwithproof\Cloudflare\Tests\Support\FrozenClock;
+use Somethingwithproof\Cloudflare\Tests\Support\TestDatabase;
 use InvalidArgumentException;
 
 final class ResourceRepositoryTest extends IntegrationTestCase {

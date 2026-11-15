@@ -17,7 +17,7 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Unit\Glue;
+namespace Somethingwithproof\Cloudflare\Tests\Unit\Glue;
 
 use PHPUnit\Framework\TestCase;
 
@@ -34,7 +34,7 @@ final class AutoloadTest extends TestCase {
 	public function testLoaderMapsAPluginClassToItsSourceFile(): void {
 		require_once self::ROOT . '/includes/autoload.php';
 
-		$class = 'Cacti\\PluginCloudflare\\Support\\Redactor';
+		$class = 'Somethingwithproof\\Cloudflare\\Support\\Redactor';
 		$this->assertFalse(class_exists($class, false));
 
 		cloudflare_autoload($class);
@@ -48,11 +48,11 @@ final class AutoloadTest extends TestCase {
 		$before = get_included_files();
 
 		cloudflare_autoload('Other\\Vendor\\Thing');
-		cloudflare_autoload('Cacti\\PluginCloudflare\\..\\..\\composer');
-		cloudflare_autoload('Cacti\\PluginCloudflare\\Support/Redactor');
-		cloudflare_autoload('Cacti\\PluginCloudflare\\Nowhere\\Missing');
+		cloudflare_autoload('Somethingwithproof\\Cloudflare\\..\\..\\composer');
+		cloudflare_autoload('Somethingwithproof\\Cloudflare\\Support/Redactor');
+		cloudflare_autoload('Somethingwithproof\\Cloudflare\\Nowhere\\Missing');
 
 		$this->assertSame($before, get_included_files());
-		$this->assertFalse(class_exists('Cacti\\PluginCloudflare\\Support\\Redactor', false));
+		$this->assertFalse(class_exists('Somethingwithproof\\Cloudflare\\Support\\Redactor', false));
 	}
 }

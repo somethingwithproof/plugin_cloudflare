@@ -17,11 +17,11 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Storage;
+namespace Somethingwithproof\Cloudflare\Storage;
 
-use Cacti\PluginCloudflare\Storage\Migrations\M001Foundation;
-use Cacti\PluginCloudflare\Storage\Migrations\M002Discovery;
-use Cacti\PluginCloudflare\Storage\Migrations\M003Metrics;
+use Somethingwithproof\Cloudflare\Storage\Migrations\M001Foundation;
+use Somethingwithproof\Cloudflare\Storage\Migrations\M002Discovery;
+use Somethingwithproof\Cloudflare\Storage\Migrations\M003Metrics;
 use InvalidArgumentException;
 
 final class Migrator {

@@ -17,7 +17,7 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Support;
+namespace Somethingwithproof\Cloudflare\Tests\Support;
 
 /**
  * PHPUnit failure messages print both operands, so string assertions on a

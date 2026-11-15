@@ -17,10 +17,10 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Storage\Migrations;
+namespace Somethingwithproof\Cloudflare\Storage\Migrations;
 
-use Cacti\PluginCloudflare\Storage\Database;
-use Cacti\PluginCloudflare\Storage\Migration;
+use Somethingwithproof\Cloudflare\Storage\Database;
+use Somethingwithproof\Cloudflare\Storage\Migration;
 
 final class M002Discovery implements Migration {
 	public function version(): int {

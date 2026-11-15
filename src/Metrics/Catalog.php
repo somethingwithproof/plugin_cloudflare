@@ -17,7 +17,7 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Metrics;
+namespace Somethingwithproof\Cloudflare\Metrics;
 
 /**
  * The single source for metric names, data source names and RRD bounds.

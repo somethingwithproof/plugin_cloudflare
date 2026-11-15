@@ -17,18 +17,18 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Integration\Storage;
+namespace Somethingwithproof\Cloudflare\Tests\Integration\Storage;
 
-use Cacti\PluginCloudflare\Storage\Database;
-use Cacti\PluginCloudflare\Storage\Migration;
-use Cacti\PluginCloudflare\Storage\DatabaseException;
-use Cacti\PluginCloudflare\Storage\Migrations\M001Foundation;
-use Cacti\PluginCloudflare\Storage\Migrator;
-use Cacti\PluginCloudflare\Tests\Support\ReleaseLockFailingStatement;
-use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
+use Somethingwithproof\Cloudflare\Storage\Database;
+use Somethingwithproof\Cloudflare\Storage\Migration;
+use Somethingwithproof\Cloudflare\Storage\DatabaseException;
+use Somethingwithproof\Cloudflare\Storage\Migrations\M001Foundation;
+use Somethingwithproof\Cloudflare\Storage\Migrator;
+use Somethingwithproof\Cloudflare\Tests\Support\ReleaseLockFailingStatement;
+use Somethingwithproof\Cloudflare\Tests\Support\TestDatabase;
 use PDO;
 use InvalidArgumentException;
-use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
+use Somethingwithproof\Cloudflare\Tests\Integration\IntegrationTestCase;
 
 final class MigratorTest extends IntegrationTestCase {
 	/** @var Database */

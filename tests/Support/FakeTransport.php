@@ -17,12 +17,12 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Support;
+namespace Somethingwithproof\Cloudflare\Tests\Support;
 
-use Cacti\PluginCloudflare\Http\HttpTransport;
-use Cacti\PluginCloudflare\Http\Request;
-use Cacti\PluginCloudflare\Http\Response;
-use Cacti\PluginCloudflare\Http\TransportException;
+use Somethingwithproof\Cloudflare\Http\HttpTransport;
+use Somethingwithproof\Cloudflare\Http\Request;
+use Somethingwithproof\Cloudflare\Http\Response;
+use Somethingwithproof\Cloudflare\Http\TransportException;
 use InvalidArgumentException;
 use LogicException;
 

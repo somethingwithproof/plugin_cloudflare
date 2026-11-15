@@ -17,7 +17,7 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Unit\Features;
+namespace Somethingwithproof\Cloudflare\Tests\Unit\Features;
 
 use PHPUnit\Framework\TestCase;
 

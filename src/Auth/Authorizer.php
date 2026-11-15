@@ -17,7 +17,7 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Auth;
+namespace Somethingwithproof\Cloudflare\Auth;
 
 interface Authorizer {
 	public function canConfigure(): bool;

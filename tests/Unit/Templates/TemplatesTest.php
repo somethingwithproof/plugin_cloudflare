@@ -17,10 +17,10 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Unit\Templates;
+namespace Somethingwithproof\Cloudflare\Tests\Unit\Templates;
 
-use Cacti\PluginCloudflare\Metrics\Catalog;
-use Cacti\PluginCloudflare\Metrics\Metric;
+use Somethingwithproof\Cloudflare\Metrics\Catalog;
+use Somethingwithproof\Cloudflare\Metrics\Metric;
 use PHPUnit\Framework\TestCase;
 use SimpleXMLElement;
 

@@ -17,7 +17,7 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Auth;
+namespace Somethingwithproof\Cloudflare\Auth;
 
 /**
  * The plugin glue passes a closure over api_user_realm_auth() so src/ never

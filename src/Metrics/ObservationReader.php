@@ -17,14 +17,14 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Metrics;
+namespace Somethingwithproof\Cloudflare\Metrics;
 
-use Cacti\PluginCloudflare\Api\ErrorClass;
-use Cacti\PluginCloudflare\Jobs\JobRepository;
-use Cacti\PluginCloudflare\Storage\Database;
-use Cacti\PluginCloudflare\Support\Clock;
-use Cacti\PluginCloudflare\Support\Ids;
-use Cacti\PluginCloudflare\Version;
+use Somethingwithproof\Cloudflare\Api\ErrorClass;
+use Somethingwithproof\Cloudflare\Jobs\JobRepository;
+use Somethingwithproof\Cloudflare\Storage\Database;
+use Somethingwithproof\Cloudflare\Support\Clock;
+use Somethingwithproof\Cloudflare\Support\Ids;
+use Somethingwithproof\Cloudflare\Version;
 
 /**
  * Turns stored tunnel state into observations. Anything this class cannot

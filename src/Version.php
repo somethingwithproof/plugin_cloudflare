@@ -17,7 +17,7 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare;
+namespace Somethingwithproof\Cloudflare;
 
 final class Version {
 	const PLUGIN = '0.3.0';

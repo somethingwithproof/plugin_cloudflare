@@ -17,9 +17,9 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Support;
+namespace Somethingwithproof\Cloudflare\Tests\Support;
 
-use Cacti\PluginCloudflare\Support\Clock;
+use Somethingwithproof\Cloudflare\Support\Clock;
 
 final class FrozenClock implements Clock {
 	/** @var int */

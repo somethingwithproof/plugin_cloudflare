@@ -17,14 +17,14 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Api;
+namespace Somethingwithproof\Cloudflare\Api;
 
-use Cacti\PluginCloudflare\Http\HttpTransport;
-use Cacti\PluginCloudflare\Http\Request;
-use Cacti\PluginCloudflare\Http\Response;
-use Cacti\PluginCloudflare\Http\TransportException;
-use Cacti\PluginCloudflare\Support\Ids;
-use Cacti\PluginCloudflare\Support\Redactor;
+use Somethingwithproof\Cloudflare\Http\HttpTransport;
+use Somethingwithproof\Cloudflare\Http\Request;
+use Somethingwithproof\Cloudflare\Http\Response;
+use Somethingwithproof\Cloudflare\Http\TransportException;
+use Somethingwithproof\Cloudflare\Support\Ids;
+use Somethingwithproof\Cloudflare\Support\Redactor;
 use DateTimeImmutable;
 use Exception;
 

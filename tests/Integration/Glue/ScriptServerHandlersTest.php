@@ -17,15 +17,15 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Integration\Glue;
+namespace Somethingwithproof\Cloudflare\Tests\Integration\Glue;
 
-use Cacti\PluginCloudflare\Metrics\Catalog;
-use Cacti\PluginCloudflare\Metrics\ObservationReader;
-use Cacti\PluginCloudflare\Storage\Database;
-use Cacti\PluginCloudflare\Storage\Migrator;
-use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
-use Cacti\PluginCloudflare\Tests\Support\FrozenClock;
-use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
+use Somethingwithproof\Cloudflare\Metrics\Catalog;
+use Somethingwithproof\Cloudflare\Metrics\ObservationReader;
+use Somethingwithproof\Cloudflare\Storage\Database;
+use Somethingwithproof\Cloudflare\Storage\Migrator;
+use Somethingwithproof\Cloudflare\Tests\Integration\IntegrationTestCase;
+use Somethingwithproof\Cloudflare\Tests\Support\FrozenClock;
+use Somethingwithproof\Cloudflare\Tests\Support\TestDatabase;
 use PDO;
 
 /**
@@ -311,7 +311,7 @@ final class ScriptServerHandlersTest extends IntegrationTestCase {
 		$logged = cloudflare_glue_calls('cacti_log');
 		$this->assertCount(3, $logged);
 		foreach ($logged as $call) {
-			$this->assertSame('CLOUDFLARE: script server failed (Cacti\PluginCloudflare\Storage\DatabaseException)', $call[0]);
+			$this->assertSame('CLOUDFLARE: script server failed (Somethingwithproof\Cloudflare\Storage\DatabaseException)', $call[0]);
 			$this->assertSame(POLLER_VERBOSITY_HIGH, $call[3]);
 		}
 	}

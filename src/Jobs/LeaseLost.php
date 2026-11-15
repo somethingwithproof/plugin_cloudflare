@@ -17,7 +17,7 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Jobs;
+namespace Somethingwithproof\Cloudflare\Jobs;
 
 use RuntimeException;
 

@@ -19,8 +19,8 @@
 
 require_once __DIR__ . '/autoload.php';
 
-use Cacti\PluginCloudflare\Account\Account;
-use Cacti\PluginCloudflare\Account\ValidationException;
+use Somethingwithproof\Cloudflare\Account\Account;
+use Somethingwithproof\Cloudflare\Account\ValidationException;
 
 /**
  * Cacti keeps realms loaded and config_arrays enabled while a plugin is

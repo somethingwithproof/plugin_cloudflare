@@ -17,7 +17,7 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Account;
+namespace Somethingwithproof\Cloudflare\Account;
 
 use RuntimeException;
 

@@ -17,12 +17,12 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Features;
+namespace Somethingwithproof\Cloudflare\Features;
 
 use Behat\Behat\Context\Context;
-use Cacti\PluginCloudflare\Auth\AccessDenied;
-use Cacti\PluginCloudflare\Http\Response;
-use Cacti\PluginCloudflare\Tests\Support\FakeTransport;
+use Somethingwithproof\Cloudflare\Auth\AccessDenied;
+use Somethingwithproof\Cloudflare\Http\Response;
+use Somethingwithproof\Cloudflare\Tests\Support\FakeTransport;
 use RuntimeException;
 
 /**

@@ -17,7 +17,7 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Http;
+namespace Somethingwithproof\Cloudflare\Http;
 
 /**
  * The only gate between a built URL and the network. It accepts a URL only

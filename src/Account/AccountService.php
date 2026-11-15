@@ -17,19 +17,19 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Account;
+namespace Somethingwithproof\Cloudflare\Account;
 
-use Cacti\PluginCloudflare\Api\ApiException;
-use Cacti\PluginCloudflare\Api\CloudflareClient;
-use Cacti\PluginCloudflare\Api\ErrorClass;
-use Cacti\PluginCloudflare\Auth\AccessDenied;
-use Cacti\PluginCloudflare\Auth\Authorizer;
-use Cacti\PluginCloudflare\Secret\SecretException;
-use Cacti\PluginCloudflare\Secret\TokenPolicy;
-use Cacti\PluginCloudflare\Secret\TokenVault;
-use Cacti\PluginCloudflare\Storage\DatabaseException;
-use Cacti\PluginCloudflare\Support\Clock;
-use Cacti\PluginCloudflare\Support\Ids;
+use Somethingwithproof\Cloudflare\Api\ApiException;
+use Somethingwithproof\Cloudflare\Api\CloudflareClient;
+use Somethingwithproof\Cloudflare\Api\ErrorClass;
+use Somethingwithproof\Cloudflare\Auth\AccessDenied;
+use Somethingwithproof\Cloudflare\Auth\Authorizer;
+use Somethingwithproof\Cloudflare\Secret\SecretException;
+use Somethingwithproof\Cloudflare\Secret\TokenPolicy;
+use Somethingwithproof\Cloudflare\Secret\TokenVault;
+use Somethingwithproof\Cloudflare\Storage\DatabaseException;
+use Somethingwithproof\Cloudflare\Support\Clock;
+use Somethingwithproof\Cloudflare\Support\Ids;
 use OutOfBoundsException;
 
 /**

@@ -17,7 +17,7 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Unit\Glue;
+namespace Somethingwithproof\Cloudflare\Tests\Unit\Glue;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionFunction;
@@ -132,7 +132,7 @@ final class ScriptServerTest extends TestCase {
 		$this->assertCount(4, $logged);
 		foreach ($logged as $call) {
 			$this->assertSame(
-				array('CLOUDFLARE: script server failed (Cacti\PluginCloudflare\Storage\DatabaseException)',
+				array('CLOUDFLARE: script server failed (Somethingwithproof\Cloudflare\Storage\DatabaseException)',
 					false, 'CLOUDFLARE', POLLER_VERBOSITY_HIGH),
 				$call
 			);

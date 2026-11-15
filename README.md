@@ -21,7 +21,7 @@ In Cacti it copies one data query XML into `resource/script_server/` and
 creates devices, graphs and templates through Cacti's own APIs, with no core
 file changes.
 
-**Status: Milestone 3.** The plugin configures Cloudflare accounts, tests
+**Status: Milestone 3, released as 0.3.0.** The plugin configures Cloudflare accounts, tests
 their tokens, discovers their tunnels and connectors, and graphs each tunnel's
 health, connectors, connections and connector versions. It does not collect
 zone analytics yet.
@@ -173,7 +173,9 @@ See [docs/compatibility.md](docs/compatibility.md) for what is tested.
 ## Install
 
 1. Put the plugin in Cacti's `plugins/cloudflare` directory, either by
-   extracting a release archive (`make package` builds one) or with a git
+   extracting the archive from
+   [GitHub Releases](https://github.com/somethingwithproof/plugin_cloudflare/releases)
+   (`make package` builds the same archive from a checkout) or with a git
    clone. The directory must be named `cloudflare`.
 2. Install and enable it from Console > Configuration > Plugins, or with the
    CLI as the web server user:
@@ -492,9 +494,9 @@ every milestone below.
 
 | Milestone | Scope | State |
 |---|---|---|
-| 1. Foundation | Plugin lifecycle, permissions, account configuration, connection test | Implemented, unreleased ([#2](https://github.com/somethingwithproof/plugin_cloudflare/pull/2) to [#5](https://github.com/somethingwithproof/plugin_cloudflare/pull/5)) |
-| 2. Discovery | Tunnel and connector discovery in a background collector, Overview, Tunnels and Connectors pages | Implemented, unreleased ([#6](https://github.com/somethingwithproof/plugin_cloudflare/pull/6)) |
-| 3. Metrics | Tunnel health data sources, graph templates, outage handling that never records a fabricated zero | Implemented, unreleased ([#7](https://github.com/somethingwithproof/plugin_cloudflare/pull/7)) |
+| 1. Foundation | Plugin lifecycle, permissions, account configuration, connection test | Released in 0.3.0 ([#2](https://github.com/somethingwithproof/plugin_cloudflare/pull/2) to [#5](https://github.com/somethingwithproof/plugin_cloudflare/pull/5)) |
+| 2. Discovery | Tunnel and connector discovery in a background collector, Overview, Tunnels and Connectors pages | Released in 0.3.0 ([#6](https://github.com/somethingwithproof/plugin_cloudflare/pull/6)) |
+| 3. Metrics | Tunnel health data sources, graph templates, outage handling that never records a fabricated zero | Released in 0.3.0 ([#7](https://github.com/somethingwithproof/plugin_cloudflare/pull/7)) |
 | 4. Analytics and alerting | Plan-aware GraphQL analytics per zone, Thold thresholds with outage suppression | Planned |
 | 5. Hardening | Fault injection, TLA+ models of discovery and collection, full documentation | Planned |
 

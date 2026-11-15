@@ -1,6 +1,6 @@
 ## ChangeLog
 
---- 0.3.0 (unreleased) ---
+--- 0.3.0 (2026-11-15) ---
 
 Milestone 3: tunnel metrics and graphs. Zone analytics and alerting are not
 included.
@@ -22,7 +22,7 @@ included.
 * fix: Account validation errors and the stored account status messages are translated when shown; they stay English in the database
 * chore: The PHP namespace is now Somethingwithproof\Cloudflare instead of Cacti\PluginCloudflare; this plugin is not part of the Cacti project. Code outside the plugin does not use its classes, so nothing else changes
 
---- 0.2.0 (unreleased) ---
+--- 0.2.0 (not released separately; included in 0.3.0) ---
 
 Milestone 2: tunnel and connector discovery. Graphs and analytics are not
 included.
@@ -35,7 +35,7 @@ included.
 * feature: Upgrade from 0.1.0 adds the tunnel and connector tables and registers the poller_bottom hook with the plugin's current enabled state
 * feature: After replacing the files, open Console > Configuration > Plugins or Cloudflare Accounts once as an admin, so the migration runs and the poller hook is registered; until then nothing is collected
 
---- 0.1.0 (unreleased) ---
+--- 0.1.0 (not released separately; included in 0.3.0) ---
 
 Milestone 1: account configuration and a connection test. Tunnel discovery,
 graphs and analytics are not included.

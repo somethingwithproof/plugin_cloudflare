@@ -175,7 +175,8 @@ See [docs/compatibility.md](docs/compatibility.md) for what is tested.
 1. Put the plugin in Cacti's `plugins/cloudflare` directory, either by
    extracting the archive from
    [GitHub Releases](https://github.com/somethingwithproof/plugin_cloudflare/releases)
-   (`make package` builds the same archive from a checkout) or with a git
+   (`make package` run in a checkout of the release tag builds the same
+   archive) or with a git
    clone. The directory must be named `cloudflare`.
 2. Install and enable it from Console > Configuration > Plugins, or with the
    CLI as the web server user:
@@ -488,8 +489,9 @@ Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
 
 ## Roadmap
 
-Each milestone ships as a 0.x release: Milestone 1 is 0.1.0, Milestone 2 is
-0.2.0, and so on. Version 1.0.0 is reserved for the release that completes
+Each milestone ships as a 0.x release numbered after it: Milestone 3 is
+0.3.0, Milestone 4 will be 0.4.0. Milestones 1 and 2 were not released on
+their own and are part of 0.3.0. Version 1.0.0 is reserved for the release that completes
 every milestone below.
 
 | Milestone | Scope | State |

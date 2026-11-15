@@ -17,12 +17,12 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Unit\Metrics;
+namespace Somethingwithproof\Cloudflare\Tests\Unit\Metrics;
 
-use Cacti\PluginCloudflare\Metrics\Catalog;
-use Cacti\PluginCloudflare\Metrics\Metric;
-use Cacti\PluginCloudflare\Metrics\Observation;
-use Cacti\PluginCloudflare\Metrics\ObservationReader;
+use Somethingwithproof\Cloudflare\Metrics\Catalog;
+use Somethingwithproof\Cloudflare\Metrics\Metric;
+use Somethingwithproof\Cloudflare\Metrics\Observation;
+use Somethingwithproof\Cloudflare\Metrics\ObservationReader;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 

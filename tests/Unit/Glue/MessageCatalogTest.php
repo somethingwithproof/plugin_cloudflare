@@ -17,10 +17,10 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Unit\Glue;
+namespace Somethingwithproof\Cloudflare\Tests\Unit\Glue;
 
-use Cacti\PluginCloudflare\Account\AccountService;
-use Cacti\PluginCloudflare\Secret\SecretException;
+use Somethingwithproof\Cloudflare\Account\AccountService;
+use Somethingwithproof\Cloudflare\Secret\SecretException;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 

@@ -17,7 +17,7 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Unit\Glue;
+namespace Somethingwithproof\Cloudflare\Tests\Unit\Glue;
 
 use PDO;
 use PHPUnit\Framework\TestCase;
@@ -124,7 +124,7 @@ final class PollingContractTest extends TestCase {
 		$this->assertSame(1, $status);
 		$this->assertFalse($called);
 		$this->assertSame(
-			array('CLOUDFLARE: collector failed (Cacti\PluginCloudflare\Storage\DatabaseException)'),
+			array('CLOUDFLARE: collector failed (Somethingwithproof\Cloudflare\Storage\DatabaseException)'),
 			self::loggedLines()
 		);
 	}

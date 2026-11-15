@@ -17,19 +17,19 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Integration\Metrics;
+namespace Somethingwithproof\Cloudflare\Tests\Integration\Metrics;
 
-use Cacti\PluginCloudflare\Api\ConnectorRecord;
-use Cacti\PluginCloudflare\Discovery\Reconciler;
-use Cacti\PluginCloudflare\Metrics\Catalog;
-use Cacti\PluginCloudflare\Metrics\Observation;
-use Cacti\PluginCloudflare\Metrics\ObservationReader;
-use Cacti\PluginCloudflare\Storage\Database;
-use Cacti\PluginCloudflare\Storage\Migrator;
-use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
-use Cacti\PluginCloudflare\Tests\Support\FrozenClock;
-use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
-use Cacti\PluginCloudflare\Version;
+use Somethingwithproof\Cloudflare\Api\ConnectorRecord;
+use Somethingwithproof\Cloudflare\Discovery\Reconciler;
+use Somethingwithproof\Cloudflare\Metrics\Catalog;
+use Somethingwithproof\Cloudflare\Metrics\Observation;
+use Somethingwithproof\Cloudflare\Metrics\ObservationReader;
+use Somethingwithproof\Cloudflare\Storage\Database;
+use Somethingwithproof\Cloudflare\Storage\Migrator;
+use Somethingwithproof\Cloudflare\Tests\Integration\IntegrationTestCase;
+use Somethingwithproof\Cloudflare\Tests\Support\FrozenClock;
+use Somethingwithproof\Cloudflare\Tests\Support\TestDatabase;
+use Somethingwithproof\Cloudflare\Version;
 
 final class ObservationReaderTest extends IntegrationTestCase {
 	const T0 = 1800000000;

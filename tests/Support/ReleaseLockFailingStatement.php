@@ -17,7 +17,7 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Support;
+namespace Somethingwithproof\Cloudflare\Tests\Support;
 
 use PDOException;
 use PDOStatement;

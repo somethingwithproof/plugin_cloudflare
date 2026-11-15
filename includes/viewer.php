@@ -20,12 +20,12 @@
 require_once __DIR__ . '/bootstrap.php';
 require_once __DIR__ . '/accounts.php';
 
-use Cacti\PluginCloudflare\Account\Account;
-use Cacti\PluginCloudflare\Account\AccountRepository;
-use Cacti\PluginCloudflare\Discovery\TunnelRepository;
-use Cacti\PluginCloudflare\Jobs\JobRepository;
-use Cacti\PluginCloudflare\Storage\DatabaseException;
-use Cacti\PluginCloudflare\Support\SystemClock;
+use Somethingwithproof\Cloudflare\Account\Account;
+use Somethingwithproof\Cloudflare\Account\AccountRepository;
+use Somethingwithproof\Cloudflare\Discovery\TunnelRepository;
+use Somethingwithproof\Cloudflare\Jobs\JobRepository;
+use Somethingwithproof\Cloudflare\Storage\DatabaseException;
+use Somethingwithproof\Cloudflare\Support\SystemClock;
 
 /*
  * Handlers for cloudflare.php. They read the plugin tables and nothing

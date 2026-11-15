@@ -17,15 +17,15 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Integration\Storage;
+namespace Somethingwithproof\Cloudflare\Tests\Integration\Storage;
 
-use Cacti\PluginCloudflare\Storage\Database;
-use Cacti\PluginCloudflare\Storage\DatabaseException;
-use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
+use Somethingwithproof\Cloudflare\Storage\Database;
+use Somethingwithproof\Cloudflare\Storage\DatabaseException;
+use Somethingwithproof\Cloudflare\Tests\Support\TestDatabase;
 use Eris\Generators;
 use Eris\TestTrait;
 use PDO;
-use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
+use Somethingwithproof\Cloudflare\Tests\Integration\IntegrationTestCase;
 use RuntimeException;
 
 final class DatabaseTest extends IntegrationTestCase {

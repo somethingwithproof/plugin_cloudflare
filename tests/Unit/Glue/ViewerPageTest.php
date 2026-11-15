@@ -17,9 +17,9 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Unit\Glue;
+namespace Somethingwithproof\Cloudflare\Tests\Unit\Glue;
 
-use Cacti\PluginCloudflare\Account\Account;
+use Somethingwithproof\Cloudflare\Account\Account;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
@@ -271,7 +271,7 @@ final class ViewerPageTest extends TestCase {
 			return strpos($key, 'nosort') === false;
 		});
 		$this->assertNotEmpty($sortable);
-		$this->assertSame(array(), array_diff($sortable, \Cacti\PluginCloudflare\Discovery\TunnelRepository::SORT_COLUMNS));
+		$this->assertSame(array(), array_diff($sortable, \Somethingwithproof\Cloudflare\Discovery\TunnelRepository::SORT_COLUMNS));
 
 		$refused = array(
 			'sort_column'    => array('name; DROP TABLE plugin_cloudflare_tunnels', 'id', 'NAME'),

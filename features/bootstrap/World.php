@@ -17,24 +17,24 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Features;
+namespace Somethingwithproof\Cloudflare\Features;
 
-use Cacti\PluginCloudflare\Account\AccountRepository;
-use Cacti\PluginCloudflare\Account\AccountService;
-use Cacti\PluginCloudflare\Account\CredentialResolver;
-use Cacti\PluginCloudflare\Api\CloudflareClient;
-use Cacti\PluginCloudflare\Api\RetryPolicy;
-use Cacti\PluginCloudflare\Auth\CallbackAuthorizer;
-use Cacti\PluginCloudflare\Discovery\DiscoveryService;
-use Cacti\PluginCloudflare\Discovery\Reconciler;
-use Cacti\PluginCloudflare\Jobs\JobRepository;
-use Cacti\PluginCloudflare\Secret\TokenVault;
-use Cacti\PluginCloudflare\Storage\Database;
-use Cacti\PluginCloudflare\Storage\Migrator;
-use Cacti\PluginCloudflare\Tests\Support\FakeTransport;
-use Cacti\PluginCloudflare\Tests\Support\FrozenClock;
-use Cacti\PluginCloudflare\Tests\Support\RecordingSleeper;
-use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
+use Somethingwithproof\Cloudflare\Account\AccountRepository;
+use Somethingwithproof\Cloudflare\Account\AccountService;
+use Somethingwithproof\Cloudflare\Account\CredentialResolver;
+use Somethingwithproof\Cloudflare\Api\CloudflareClient;
+use Somethingwithproof\Cloudflare\Api\RetryPolicy;
+use Somethingwithproof\Cloudflare\Auth\CallbackAuthorizer;
+use Somethingwithproof\Cloudflare\Discovery\DiscoveryService;
+use Somethingwithproof\Cloudflare\Discovery\Reconciler;
+use Somethingwithproof\Cloudflare\Jobs\JobRepository;
+use Somethingwithproof\Cloudflare\Secret\TokenVault;
+use Somethingwithproof\Cloudflare\Storage\Database;
+use Somethingwithproof\Cloudflare\Storage\Migrator;
+use Somethingwithproof\Cloudflare\Tests\Support\FakeTransport;
+use Somethingwithproof\Cloudflare\Tests\Support\FrozenClock;
+use Somethingwithproof\Cloudflare\Tests\Support\RecordingSleeper;
+use Somethingwithproof\Cloudflare\Tests\Support\TestDatabase;
 use PDOException;
 use RuntimeException;
 

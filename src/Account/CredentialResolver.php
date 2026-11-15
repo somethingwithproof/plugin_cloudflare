@@ -17,12 +17,12 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Account;
+namespace Somethingwithproof\Cloudflare\Account;
 
-use Cacti\PluginCloudflare\Secret\SecretException;
-use Cacti\PluginCloudflare\Secret\TokenFile;
-use Cacti\PluginCloudflare\Secret\TokenPolicy;
-use Cacti\PluginCloudflare\Secret\TokenVault;
+use Somethingwithproof\Cloudflare\Secret\SecretException;
+use Somethingwithproof\Cloudflare\Secret\TokenFile;
+use Somethingwithproof\Cloudflare\Secret\TokenPolicy;
+use Somethingwithproof\Cloudflare\Secret\TokenVault;
 use OutOfBoundsException;
 
 /**

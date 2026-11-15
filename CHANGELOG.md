@@ -17,6 +17,7 @@ included.
 * feature: Translations into Spanish (es-ES, es-419), French, German, Simplified Chinese and Japanese; Cacti 1.2 has no Latin American Spanish locale, so es-419 takes effect only once Cacti adds one
 * feature: locales/build_gettext.sh regenerates locales/po/cacti.pot and the catalogs; CI and make i18n-check fail on a stale template, a missing, untranslated or fuzzy entry, or an out-of-date .mo; the release archive ships locales/po and locales/LC_MESSAGES
 * fix: Account validation errors and the stored account status messages are translated when shown; they stay English in the database
+* chore: The PHP namespace is now Somethingwithproof\Cloudflare instead of Cacti\PluginCloudflare; this plugin is not part of the Cacti project. Code outside the plugin does not use its classes, so nothing else changes
 
 --- 0.2.0 (unreleased) ---
 

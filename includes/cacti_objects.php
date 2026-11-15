@@ -20,11 +20,11 @@
 require_once __DIR__ . '/bootstrap.php';
 require_once __DIR__ . '/templates.php';
 
-use Cacti\PluginCloudflare\Account\Account;
-use Cacti\PluginCloudflare\Metrics\ResourceRepository;
-use Cacti\PluginCloudflare\Storage\Database;
-use Cacti\PluginCloudflare\Storage\DatabaseException;
-use Cacti\PluginCloudflare\Support\SystemClock;
+use Somethingwithproof\Cloudflare\Account\Account;
+use Somethingwithproof\Cloudflare\Metrics\ResourceRepository;
+use Somethingwithproof\Cloudflare\Storage\Database;
+use Somethingwithproof\Cloudflare\Storage\DatabaseException;
+use Somethingwithproof\Cloudflare\Support\SystemClock;
 
 /**
  * A Cacti device is a host.php object, so the Configure realm alone must

@@ -17,10 +17,10 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Metrics;
+namespace Somethingwithproof\Cloudflare\Metrics;
 
-use Cacti\PluginCloudflare\Storage\Database;
-use Cacti\PluginCloudflare\Version;
+use Somethingwithproof\Cloudflare\Storage\Database;
+use Somethingwithproof\Cloudflare\Version;
 
 /**
  * Records which RRD data source of which data template holds each catalog

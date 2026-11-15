@@ -17,18 +17,18 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Integration\Account;
+namespace Somethingwithproof\Cloudflare\Tests\Integration\Account;
 
-use Cacti\PluginCloudflare\Account\AccountRepository;
-use Cacti\PluginCloudflare\Account\CredentialResolver;
-use Cacti\PluginCloudflare\Secret\SecretException;
-use Cacti\PluginCloudflare\Secret\TokenVault;
-use Cacti\PluginCloudflare\Storage\Database;
-use Cacti\PluginCloudflare\Storage\Migrator;
-use Cacti\PluginCloudflare\Tests\Support\SecretAssertions;
-use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
+use Somethingwithproof\Cloudflare\Account\AccountRepository;
+use Somethingwithproof\Cloudflare\Account\CredentialResolver;
+use Somethingwithproof\Cloudflare\Secret\SecretException;
+use Somethingwithproof\Cloudflare\Secret\TokenVault;
+use Somethingwithproof\Cloudflare\Storage\Database;
+use Somethingwithproof\Cloudflare\Storage\Migrator;
+use Somethingwithproof\Cloudflare\Tests\Support\SecretAssertions;
+use Somethingwithproof\Cloudflare\Tests\Support\TestDatabase;
 use OutOfBoundsException;
-use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
+use Somethingwithproof\Cloudflare\Tests\Integration\IntegrationTestCase;
 
 final class CredentialResolverTest extends IntegrationTestCase {
 	use SecretAssertions;

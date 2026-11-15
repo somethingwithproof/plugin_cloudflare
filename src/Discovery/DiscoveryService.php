@@ -17,20 +17,20 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Discovery;
+namespace Somethingwithproof\Cloudflare\Discovery;
 
-use Cacti\PluginCloudflare\Account\Account;
-use Cacti\PluginCloudflare\Account\AccountRepository;
-use Cacti\PluginCloudflare\Account\CredentialResolver;
-use Cacti\PluginCloudflare\Api\ApiException;
-use Cacti\PluginCloudflare\Api\CloudflareClient;
-use Cacti\PluginCloudflare\Api\ErrorClass;
-use Cacti\PluginCloudflare\Jobs\JobRepository;
-use Cacti\PluginCloudflare\Jobs\Lease;
-use Cacti\PluginCloudflare\Jobs\LeaseLost;
-use Cacti\PluginCloudflare\Secret\SecretException;
-use Cacti\PluginCloudflare\Storage\Database;
-use Cacti\PluginCloudflare\Support\Clock;
+use Somethingwithproof\Cloudflare\Account\Account;
+use Somethingwithproof\Cloudflare\Account\AccountRepository;
+use Somethingwithproof\Cloudflare\Account\CredentialResolver;
+use Somethingwithproof\Cloudflare\Api\ApiException;
+use Somethingwithproof\Cloudflare\Api\CloudflareClient;
+use Somethingwithproof\Cloudflare\Api\ErrorClass;
+use Somethingwithproof\Cloudflare\Jobs\JobRepository;
+use Somethingwithproof\Cloudflare\Jobs\Lease;
+use Somethingwithproof\Cloudflare\Jobs\LeaseLost;
+use Somethingwithproof\Cloudflare\Secret\SecretException;
+use Somethingwithproof\Cloudflare\Storage\Database;
+use Somethingwithproof\Cloudflare\Support\Clock;
 use InvalidArgumentException;
 use Throwable;
 

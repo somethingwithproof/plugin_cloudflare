@@ -17,11 +17,11 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Integration\Support;
+namespace Somethingwithproof\Cloudflare\Tests\Integration\Support;
 
-use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
+use Somethingwithproof\Cloudflare\Tests\Support\TestDatabase;
 use PDO;
-use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
+use Somethingwithproof\Cloudflare\Tests\Integration\IntegrationTestCase;
 
 final class TestDatabaseTest extends IntegrationTestCase {
 	protected function setUp(): void {

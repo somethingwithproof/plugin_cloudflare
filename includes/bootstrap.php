@@ -19,24 +19,24 @@
 
 require_once __DIR__ . '/autoload.php';
 
-use Cacti\PluginCloudflare\Account\AccountRepository;
-use Cacti\PluginCloudflare\Account\AccountService;
-use Cacti\PluginCloudflare\Account\CredentialResolver;
-use Cacti\PluginCloudflare\Api\CloudflareClient;
-use Cacti\PluginCloudflare\Api\RetryPolicy;
-use Cacti\PluginCloudflare\Auth\CallbackAuthorizer;
-use Cacti\PluginCloudflare\Discovery\DiscoveryService;
-use Cacti\PluginCloudflare\Discovery\Reconciler;
-use Cacti\PluginCloudflare\Http\CurlTransport;
-use Cacti\PluginCloudflare\Http\OutboundPolicy;
-use Cacti\PluginCloudflare\Jobs\JobRepository;
-use Cacti\PluginCloudflare\Secret\SecretException;
-use Cacti\PluginCloudflare\Secret\TokenVault;
-use Cacti\PluginCloudflare\Storage\Database;
-use Cacti\PluginCloudflare\Storage\DatabaseException;
-use Cacti\PluginCloudflare\Support\Sleeper;
-use Cacti\PluginCloudflare\Support\SystemClock;
-use Cacti\PluginCloudflare\Support\SystemSleeper;
+use Somethingwithproof\Cloudflare\Account\AccountRepository;
+use Somethingwithproof\Cloudflare\Account\AccountService;
+use Somethingwithproof\Cloudflare\Account\CredentialResolver;
+use Somethingwithproof\Cloudflare\Api\CloudflareClient;
+use Somethingwithproof\Cloudflare\Api\RetryPolicy;
+use Somethingwithproof\Cloudflare\Auth\CallbackAuthorizer;
+use Somethingwithproof\Cloudflare\Discovery\DiscoveryService;
+use Somethingwithproof\Cloudflare\Discovery\Reconciler;
+use Somethingwithproof\Cloudflare\Http\CurlTransport;
+use Somethingwithproof\Cloudflare\Http\OutboundPolicy;
+use Somethingwithproof\Cloudflare\Jobs\JobRepository;
+use Somethingwithproof\Cloudflare\Secret\SecretException;
+use Somethingwithproof\Cloudflare\Secret\TokenVault;
+use Somethingwithproof\Cloudflare\Storage\Database;
+use Somethingwithproof\Cloudflare\Storage\DatabaseException;
+use Somethingwithproof\Cloudflare\Support\Sleeper;
+use Somethingwithproof\Cloudflare\Support\SystemClock;
+use Somethingwithproof\Cloudflare\Support\SystemSleeper;
 
 if (!defined('CLOUDFLARE_DEFAULT_KEY_FILE')) {
 	define('CLOUDFLARE_DEFAULT_KEY_FILE', '/etc/cacti/cloudflare.key');

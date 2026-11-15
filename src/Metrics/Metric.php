@@ -17,7 +17,7 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Metrics;
+namespace Somethingwithproof\Cloudflare\Metrics;
 
 final class Metric {
 	public const GAUGE   = 'GAUGE';

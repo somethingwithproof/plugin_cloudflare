@@ -17,7 +17,7 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Support;
+namespace Somethingwithproof\Cloudflare\Support;
 
 interface Sleeper {
 	public function sleep(int $seconds): void;

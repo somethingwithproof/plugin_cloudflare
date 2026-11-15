@@ -17,13 +17,13 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Integration\Http;
+namespace Somethingwithproof\Cloudflare\Tests\Integration\Http;
 
-use Cacti\PluginCloudflare\Http\CurlTransport;
-use Cacti\PluginCloudflare\Http\OutboundPolicy;
-use Cacti\PluginCloudflare\Http\Request;
-use Cacti\PluginCloudflare\Http\TransportException;
-use Cacti\PluginCloudflare\Tests\Support\SecretAssertions;
+use Somethingwithproof\Cloudflare\Http\CurlTransport;
+use Somethingwithproof\Cloudflare\Http\OutboundPolicy;
+use Somethingwithproof\Cloudflare\Http\Request;
+use Somethingwithproof\Cloudflare\Http\TransportException;
+use Somethingwithproof\Cloudflare\Tests\Support\SecretAssertions;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 

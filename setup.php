@@ -21,8 +21,8 @@ require_once __DIR__ . '/includes/bootstrap.php';
 require_once __DIR__ . '/includes/accounts.php';
 require_once __DIR__ . '/includes/templates.php';
 
-use Cacti\PluginCloudflare\Storage\DatabaseException;
-use Cacti\PluginCloudflare\Storage\Migrator;
+use Somethingwithproof\Cloudflare\Storage\DatabaseException;
+use Somethingwithproof\Cloudflare\Storage\Migrator;
 
 /*
  * api_plugin_valid_entrypoint() (lib/plugins.php:1124) rejects hook and

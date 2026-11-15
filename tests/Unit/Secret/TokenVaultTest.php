@@ -17,14 +17,14 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Unit\Secret;
+namespace Somethingwithproof\Cloudflare\Tests\Unit\Secret;
 
-use Cacti\PluginCloudflare\Secret\SecretException;
-use Cacti\PluginCloudflare\Secret\TokenVault;
+use Somethingwithproof\Cloudflare\Secret\SecretException;
+use Somethingwithproof\Cloudflare\Secret\TokenVault;
 use Eris\Generators;
 use Eris\TestTrait;
 use LogicException;
-use Cacti\PluginCloudflare\Tests\Support\SecretAssertions;
+use Somethingwithproof\Cloudflare\Tests\Support\SecretAssertions;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 

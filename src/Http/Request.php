@@ -17,7 +17,7 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Http;
+namespace Somethingwithproof\Cloudflare\Http;
 
 use LogicException;
 

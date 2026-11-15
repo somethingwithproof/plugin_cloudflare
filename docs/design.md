@@ -26,7 +26,7 @@ come from `docs/research/cloudflare-api-facts.md`, which cites its sources.
 ## Code layout
 
 Cacti glue is procedural, as in Thold and Syslog. Logic that can be tested
-without Cacti lives in `src/` under `Cacti\PluginCloudflare\` and has no
+without Cacti lives in `src/` under `Somethingwithproof\Cloudflare\` and has no
 dependency on Cacti globals. Only the glue files call Cacti functions.
 
 ```

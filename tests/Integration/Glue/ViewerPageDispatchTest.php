@@ -17,10 +17,10 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Integration\Glue;
+namespace Somethingwithproof\Cloudflare\Tests\Integration\Glue;
 
-use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
-use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
+use Somethingwithproof\Cloudflare\Tests\Integration\IntegrationTestCase;
+use Somethingwithproof\Cloudflare\Tests\Support\TestDatabase;
 
 /**
  * Includes cloudflare.php itself from a stand-in Cacti tree whose

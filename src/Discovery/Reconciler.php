@@ -17,12 +17,12 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Discovery;
+namespace Somethingwithproof\Cloudflare\Discovery;
 
-use Cacti\PluginCloudflare\Api\ConnectorRecord;
-use Cacti\PluginCloudflare\Api\TunnelRecord;
-use Cacti\PluginCloudflare\Storage\Database;
-use Cacti\PluginCloudflare\Support\Clock;
+use Somethingwithproof\Cloudflare\Api\ConnectorRecord;
+use Somethingwithproof\Cloudflare\Api\TunnelRecord;
+use Somethingwithproof\Cloudflare\Storage\Database;
+use Somethingwithproof\Cloudflare\Support\Clock;
 
 /**
  * Applies a complete listing to the stored inventory. Callers pass only a

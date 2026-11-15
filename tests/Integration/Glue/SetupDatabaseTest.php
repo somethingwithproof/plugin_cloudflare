@@ -17,16 +17,16 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Integration\Glue;
+namespace Somethingwithproof\Cloudflare\Tests\Integration\Glue;
 
-use Cacti\PluginCloudflare\Storage\Database;
-use Cacti\PluginCloudflare\Storage\DatabaseException;
-use Cacti\PluginCloudflare\Storage\Migrations\M001Foundation;
-use Cacti\PluginCloudflare\Storage\Migrations\M002Discovery;
-use Cacti\PluginCloudflare\Storage\Migrator;
-use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
+use Somethingwithproof\Cloudflare\Storage\Database;
+use Somethingwithproof\Cloudflare\Storage\DatabaseException;
+use Somethingwithproof\Cloudflare\Storage\Migrations\M001Foundation;
+use Somethingwithproof\Cloudflare\Storage\Migrations\M002Discovery;
+use Somethingwithproof\Cloudflare\Storage\Migrator;
+use Somethingwithproof\Cloudflare\Tests\Support\TestDatabase;
 use PDO;
-use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
+use Somethingwithproof\Cloudflare\Tests\Integration\IntegrationTestCase;
 
 /**
  * Runs the lifecycle functions against real MariaDB through the same

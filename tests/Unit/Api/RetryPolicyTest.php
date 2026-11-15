@@ -17,13 +17,13 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Unit\Api;
+namespace Somethingwithproof\Cloudflare\Tests\Unit\Api;
 
-use Cacti\PluginCloudflare\Api\ApiException;
-use Cacti\PluginCloudflare\Api\ErrorClass;
-use Cacti\PluginCloudflare\Api\RetryPolicy;
-use Cacti\PluginCloudflare\Tests\Support\FrozenClock;
-use Cacti\PluginCloudflare\Tests\Support\RecordingSleeper;
+use Somethingwithproof\Cloudflare\Api\ApiException;
+use Somethingwithproof\Cloudflare\Api\ErrorClass;
+use Somethingwithproof\Cloudflare\Api\RetryPolicy;
+use Somethingwithproof\Cloudflare\Tests\Support\FrozenClock;
+use Somethingwithproof\Cloudflare\Tests\Support\RecordingSleeper;
 use PHPUnit\Framework\TestCase;
 
 final class RetryPolicyTest extends TestCase {

@@ -17,14 +17,14 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Unit\Glue;
+namespace Somethingwithproof\Cloudflare\Tests\Unit\Glue;
 
-use Cacti\PluginCloudflare\Api\ApiException;
-use Cacti\PluginCloudflare\Api\CloudflareClient;
-use Cacti\PluginCloudflare\Api\ErrorClass;
-use Cacti\PluginCloudflare\Http\Response;
-use Cacti\PluginCloudflare\Tests\Support\FakeTransport;
-use Cacti\PluginCloudflare\Tests\Support\RecordingSleeper;
+use Somethingwithproof\Cloudflare\Api\ApiException;
+use Somethingwithproof\Cloudflare\Api\CloudflareClient;
+use Somethingwithproof\Cloudflare\Api\ErrorClass;
+use Somethingwithproof\Cloudflare\Http\Response;
+use Somethingwithproof\Cloudflare\Tests\Support\FakeTransport;
+use Somethingwithproof\Cloudflare\Tests\Support\RecordingSleeper;
 use PHPUnit\Framework\TestCase;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;

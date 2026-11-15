@@ -17,11 +17,11 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Jobs;
+namespace Somethingwithproof\Cloudflare\Jobs;
 
-use Cacti\PluginCloudflare\Api\ErrorClass;
-use Cacti\PluginCloudflare\Storage\Database;
-use Cacti\PluginCloudflare\Support\Clock;
+use Somethingwithproof\Cloudflare\Api\ErrorClass;
+use Somethingwithproof\Cloudflare\Storage\Database;
+use Somethingwithproof\Cloudflare\Support\Clock;
 use InvalidArgumentException;
 
 final class JobRepository {

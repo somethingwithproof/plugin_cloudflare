@@ -17,14 +17,14 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Integration\Glue;
+namespace Somethingwithproof\Cloudflare\Tests\Integration\Glue;
 
-use Cacti\PluginCloudflare\Tests\Support\ReleaseLockFailingStatement;
-use Cacti\PluginCloudflare\Tests\Support\SecretAssertions;
-use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
+use Somethingwithproof\Cloudflare\Tests\Support\ReleaseLockFailingStatement;
+use Somethingwithproof\Cloudflare\Tests\Support\SecretAssertions;
+use Somethingwithproof\Cloudflare\Tests\Support\TestDatabase;
 use PDO;
 use PDOStatement;
-use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
+use Somethingwithproof\Cloudflare\Tests\Integration\IntegrationTestCase;
 
 /**
  * Drives the cloudflare_accounts.php handlers through the glue stubs, with
@@ -779,7 +779,7 @@ final class AccountsPageHandlersTest extends IntegrationTestCase {
 		$this->assertSame('', cloudflare_accounts_actions());
 	}
 
-	private function account(int $id): \Cacti\PluginCloudflare\Account\Account {
+	private function account(int $id): \Somethingwithproof\Cloudflare\Account\Account {
 		$account = cloudflare_accounts_find(cloudflare_account_service(), $id);
 		$this->assertNotNull($account);
 
@@ -1097,7 +1097,7 @@ final class AccountsPageHandlersTest extends IntegrationTestCase {
 
 		$logged = cloudflare_glue_calls('cacti_log');
 		$this->assertSame(
-			array('CLOUDFLARE: account ' . $id . ' device lock release failed (Cacti\PluginCloudflare\Storage\DatabaseException)', false, 'CLOUDFLARE', POLLER_VERBOSITY_LOW),
+			array('CLOUDFLARE: account ' . $id . ' device lock release failed (Somethingwithproof\Cloudflare\Storage\DatabaseException)', false, 'CLOUDFLARE', POLLER_VERBOSITY_LOW),
 			end($logged)
 		);
 		$this->assertSame(array($id => 1), $this->deviceRows());
@@ -1114,8 +1114,8 @@ final class AccountsPageHandlersTest extends IntegrationTestCase {
 		try {
 			cloudflare_create_device($this->account($id));
 			$this->fail('the DatabaseException must propagate');
-		} catch (\Cacti\PluginCloudflare\Storage\DatabaseException $e) {
-			$this->assertSame(\Cacti\PluginCloudflare\Storage\DatabaseException::class, get_class($e));
+		} catch (\Somethingwithproof\Cloudflare\Storage\DatabaseException $e) {
+			$this->assertSame(\Somethingwithproof\Cloudflare\Storage\DatabaseException::class, get_class($e));
 		}
 
 		$this->assertSame(array(array(1)), cloudflare_glue_calls('api_device_remove'));

@@ -17,28 +17,28 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Integration\Discovery;
+namespace Somethingwithproof\Cloudflare\Tests\Integration\Discovery;
 
-use Cacti\PluginCloudflare\Account\AccountRepository;
-use Cacti\PluginCloudflare\Account\CredentialResolver;
-use Cacti\PluginCloudflare\Api\CloudflareClient;
-use Cacti\PluginCloudflare\Api\ErrorClass;
-use Cacti\PluginCloudflare\Api\RetryPolicy;
-use Cacti\PluginCloudflare\Discovery\DiscoveryService;
-use Cacti\PluginCloudflare\Discovery\Reconciler;
-use Cacti\PluginCloudflare\Http\Request;
-use Cacti\PluginCloudflare\Http\Response;
-use Cacti\PluginCloudflare\Http\TransportException;
-use Cacti\PluginCloudflare\Jobs\JobRepository;
-use Cacti\PluginCloudflare\Storage\Database;
-use Cacti\PluginCloudflare\Storage\DatabaseException;
-use Cacti\PluginCloudflare\Storage\Migrator;
-use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
-use Cacti\PluginCloudflare\Tests\Support\FakeTransport;
-use Cacti\PluginCloudflare\Tests\Support\FrozenClock;
-use Cacti\PluginCloudflare\Tests\Support\RecordingSleeper;
-use Cacti\PluginCloudflare\Tests\Support\SecretAssertions;
-use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
+use Somethingwithproof\Cloudflare\Account\AccountRepository;
+use Somethingwithproof\Cloudflare\Account\CredentialResolver;
+use Somethingwithproof\Cloudflare\Api\CloudflareClient;
+use Somethingwithproof\Cloudflare\Api\ErrorClass;
+use Somethingwithproof\Cloudflare\Api\RetryPolicy;
+use Somethingwithproof\Cloudflare\Discovery\DiscoveryService;
+use Somethingwithproof\Cloudflare\Discovery\Reconciler;
+use Somethingwithproof\Cloudflare\Http\Request;
+use Somethingwithproof\Cloudflare\Http\Response;
+use Somethingwithproof\Cloudflare\Http\TransportException;
+use Somethingwithproof\Cloudflare\Jobs\JobRepository;
+use Somethingwithproof\Cloudflare\Storage\Database;
+use Somethingwithproof\Cloudflare\Storage\DatabaseException;
+use Somethingwithproof\Cloudflare\Storage\Migrator;
+use Somethingwithproof\Cloudflare\Tests\Integration\IntegrationTestCase;
+use Somethingwithproof\Cloudflare\Tests\Support\FakeTransport;
+use Somethingwithproof\Cloudflare\Tests\Support\FrozenClock;
+use Somethingwithproof\Cloudflare\Tests\Support\RecordingSleeper;
+use Somethingwithproof\Cloudflare\Tests\Support\SecretAssertions;
+use Somethingwithproof\Cloudflare\Tests\Support\TestDatabase;
 use OutOfBoundsException;
 
 final class DiscoveryServiceTest extends IntegrationTestCase {

@@ -17,10 +17,10 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Unit\Support;
+namespace Somethingwithproof\Cloudflare\Tests\Unit\Support;
 
-use Cacti\PluginCloudflare\Support\Redactor;
-use Cacti\PluginCloudflare\Tests\Support\SecretAssertions;
+use Somethingwithproof\Cloudflare\Support\Redactor;
+use Somethingwithproof\Cloudflare\Tests\Support\SecretAssertions;
 use PHPUnit\Framework\TestCase;
 
 final class RedactorTest extends TestCase {

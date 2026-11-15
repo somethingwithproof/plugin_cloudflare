@@ -17,9 +17,9 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Discovery;
+namespace Somethingwithproof\Cloudflare\Discovery;
 
-use Cacti\PluginCloudflare\Storage\Database;
+use Somethingwithproof\Cloudflare\Storage\Database;
 use InvalidArgumentException;
 
 final class TunnelRepository {

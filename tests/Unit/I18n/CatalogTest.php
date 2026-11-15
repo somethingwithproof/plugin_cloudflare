@@ -17,7 +17,7 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Unit\I18n;
+namespace Somethingwithproof\Cloudflare\Tests\Unit\I18n;
 
 use PHPUnit\Framework\TestCase;
 

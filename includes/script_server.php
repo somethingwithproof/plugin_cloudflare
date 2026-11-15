@@ -22,10 +22,10 @@
  * include/cli_check.php, so cloudflare_db() finds the poller's handle. */
 require_once __DIR__ . '/bootstrap.php';
 
-use Cacti\PluginCloudflare\Metrics\Catalog;
-use Cacti\PluginCloudflare\Metrics\ObservationReader;
-use Cacti\PluginCloudflare\Support\Ids;
-use Cacti\PluginCloudflare\Support\SystemClock;
+use Somethingwithproof\Cloudflare\Metrics\Catalog;
+use Somethingwithproof\Cloudflare\Metrics\ObservationReader;
+use Somethingwithproof\Cloudflare\Support\Ids;
+use Somethingwithproof\Cloudflare\Support\SystemClock;
 
 /**
  * Answers one script server call from the plugin tables. Arguments arrive

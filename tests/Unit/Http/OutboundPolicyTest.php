@@ -17,10 +17,10 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Unit\Http;
+namespace Somethingwithproof\Cloudflare\Tests\Unit\Http;
 
-use Cacti\PluginCloudflare\Http\OutboundPolicy;
-use Cacti\PluginCloudflare\Http\TransportException;
+use Somethingwithproof\Cloudflare\Http\OutboundPolicy;
+use Somethingwithproof\Cloudflare\Http\TransportException;
 use PHPUnit\Framework\TestCase;
 
 final class OutboundPolicyTest extends TestCase {

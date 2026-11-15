@@ -20,11 +20,11 @@
 require_once __DIR__ . '/accounts.php';
 require_once __DIR__ . '/cacti_objects.php';
 
-use Cacti\PluginCloudflare\Account\Account;
-use Cacti\PluginCloudflare\Account\AccountService;
-use Cacti\PluginCloudflare\Account\ValidationException;
-use Cacti\PluginCloudflare\Auth\AccessDenied;
-use Cacti\PluginCloudflare\Storage\DatabaseException;
+use Somethingwithproof\Cloudflare\Account\Account;
+use Somethingwithproof\Cloudflare\Account\AccountService;
+use Somethingwithproof\Cloudflare\Account\ValidationException;
+use Somethingwithproof\Cloudflare\Auth\AccessDenied;
+use Somethingwithproof\Cloudflare\Storage\DatabaseException;
 
 /*
  * Handlers for cloudflare_accounts.php. A handler that ends in a redirect

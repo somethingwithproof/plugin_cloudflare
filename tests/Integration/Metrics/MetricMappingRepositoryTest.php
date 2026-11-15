@@ -17,16 +17,16 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Integration\Metrics;
+namespace Somethingwithproof\Cloudflare\Tests\Integration\Metrics;
 
-use Cacti\PluginCloudflare\Metrics\Catalog;
-use Cacti\PluginCloudflare\Metrics\Metric;
-use Cacti\PluginCloudflare\Metrics\MetricMappingRepository;
-use Cacti\PluginCloudflare\Storage\Database;
-use Cacti\PluginCloudflare\Storage\Migrator;
-use Cacti\PluginCloudflare\Tests\Integration\IntegrationTestCase;
-use Cacti\PluginCloudflare\Tests\Support\TestDatabase;
-use Cacti\PluginCloudflare\Version;
+use Somethingwithproof\Cloudflare\Metrics\Catalog;
+use Somethingwithproof\Cloudflare\Metrics\Metric;
+use Somethingwithproof\Cloudflare\Metrics\MetricMappingRepository;
+use Somethingwithproof\Cloudflare\Storage\Database;
+use Somethingwithproof\Cloudflare\Storage\Migrator;
+use Somethingwithproof\Cloudflare\Tests\Integration\IntegrationTestCase;
+use Somethingwithproof\Cloudflare\Tests\Support\TestDatabase;
+use Somethingwithproof\Cloudflare\Version;
 
 final class MetricMappingRepositoryTest extends IntegrationTestCase {
 	private const DATA_TEMPLATE = '0a8e0fd46e03c70b32a5908fc0463e17';

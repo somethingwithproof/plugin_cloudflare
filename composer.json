@@ -14,13 +14,13 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"Cacti\\PluginCloudflare\\": "src/"
+			"Somethingwithproof\\Cloudflare\\": "src/"
 		}
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"Cacti\\PluginCloudflare\\Tests\\": "tests/",
-			"Cacti\\PluginCloudflare\\Features\\": "features/bootstrap/"
+			"Somethingwithproof\\Cloudflare\\Tests\\": "tests/",
+			"Somethingwithproof\\Cloudflare\\Features\\": "features/bootstrap/"
 		}
 	},
 	"require-dev": {

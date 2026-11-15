@@ -17,7 +17,7 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Secret;
+namespace Somethingwithproof\Cloudflare\Secret;
 
 final class TokenPolicy {
 	/**

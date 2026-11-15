@@ -17,10 +17,10 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Tests\Unit\Http;
+namespace Somethingwithproof\Cloudflare\Tests\Unit\Http;
 
-use Cacti\PluginCloudflare\Http\CurlTransport;
-use Cacti\PluginCloudflare\Http\Request;
+use Somethingwithproof\Cloudflare\Http\CurlTransport;
+use Somethingwithproof\Cloudflare\Http\Request;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 

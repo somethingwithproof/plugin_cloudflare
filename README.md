@@ -101,7 +101,7 @@ flowchart LR
 - **Cacti glue** (`setup.php`, `includes/`, the page scripts) registers
   hooks and realms, renders pages with Cacti's own helpers, and delegates
   every action to the library in `src/`.
-- **The library** (`src/`, namespace `Cacti\PluginCloudflare\`) has no
+- **The library** (`src/`, namespace `Somethingwithproof\Cloudflare\`) has no
   dependency on Cacti globals, so it is tested against a real database and
   a fake HTTP transport without a running Cacti.
 - **One outbound path.** `CurlTransport` is the only code that touches the

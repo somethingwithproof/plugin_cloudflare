@@ -17,7 +17,7 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Account;
+namespace Somethingwithproof\Cloudflare\Account;
 
 /**
  * Read model of one account row. Neither the ciphertext nor where the token

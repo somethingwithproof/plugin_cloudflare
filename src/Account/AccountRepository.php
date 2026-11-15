@@ -17,9 +17,9 @@
  * more details.
  */
 
-namespace Cacti\PluginCloudflare\Account;
+namespace Somethingwithproof\Cloudflare\Account;
 
-use Cacti\PluginCloudflare\Storage\Database;
+use Somethingwithproof\Cloudflare\Storage\Database;
 use InvalidArgumentException;
 use OutOfBoundsException;
 

@@ -85,6 +85,10 @@ function cloudflare_db() : Database {
  * Returns null when the key file is missing or unusable; the account page
  * then offers only the token file source.
  */
+function cloudflare_token_directory() : string {
+	return trim((string) read_config_option('cloudflare_token_dir'));
+}
+
 function cloudflare_vault() : ?TokenVault {
 	$path = trim((string) read_config_option('cloudflare_key_file'));
 
@@ -163,7 +167,8 @@ function cloudflare_account_service() : AccountService {
 		new SystemClock(),
 		function (string $line) : void {
 			cacti_log($line, false, 'CLOUDFLARE');
-		}
+		},
+		cloudflare_token_directory()
 	);
 }
 
@@ -182,7 +187,7 @@ function cloudflare_discovery_service() : DiscoveryService {
 
 	return new DiscoveryService(
 		$accounts,
-		new CredentialResolver($accounts, cloudflare_vault()),
+		new CredentialResolver($accounts, cloudflare_vault(), cloudflare_token_directory()),
 		cloudflare_client(
 			CLOUDFLARE_CONNECT_TIMEOUT,
 			cloudflare_setting_int('cloudflare_poller_timeout', 20, 5, 60),

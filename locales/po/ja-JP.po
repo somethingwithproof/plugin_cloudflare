@@ -123,6 +123,10 @@ msgid "Token file path is not absolute, is a symlink, or the file is world-reada
 msgstr "トークンファイルのパスが絶対パスでない、シンボリックリンクである、またはファイルが全ユーザーに読み取り・書き込み可能です"
 
 #: includes/accounts.php
+msgid "Token file is not inside the Token File Directory"
+msgstr "トークンファイルがトークンファイルのディレクトリ内にありません"
+
+#: includes/accounts.php
 msgid "API token could not be encrypted"
 msgstr "API トークンを暗号化できませんでした"
 
@@ -484,6 +488,14 @@ msgstr "トークン保管庫の鍵ファイル"
 #: includes/settings.php
 msgid "Absolute path to the 32-byte key used to encrypt stored API tokens. It must be readable by the web server and poller users and not world-readable. When the file is missing, only token files can be used."
 msgstr "保存する API トークンの暗号化に使用する 32 バイトの鍵の絶対パスです。Web サーバーとポーラーのユーザーが読み取れる必要があり、全ユーザーが読み取れる状態にしてはいけません。ファイルが存在しない場合は、トークンファイルのみ使用できます。"
+
+#: includes/settings.php
+msgid "Token File Directory"
+msgstr "トークンファイルのディレクトリ"
+
+#: includes/settings.php
+msgid "Absolute path of the directory that every account token file must be in. When empty, a token file may be anywhere the web server and poller users can read."
+msgstr "各アカウントのトークンファイルを置くディレクトリの絶対パスです。空の場合、トークンファイルは Web サーバーとポーラーのユーザーが読み取れる場所であればどこにでも置けます。"
 
 #: includes/settings.php
 msgid "Interactive Request Timeout"

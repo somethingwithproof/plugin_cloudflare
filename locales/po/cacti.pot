@@ -126,6 +126,10 @@ msgid "Token file path is not absolute, is a symlink, or the file is world-reada
 msgstr ""
 
 #: includes/accounts.php
+msgid "Token file is not inside the Token File Directory"
+msgstr ""
+
+#: includes/accounts.php
 msgid "API token could not be encrypted"
 msgstr ""
 
@@ -491,6 +495,14 @@ msgstr ""
 
 #: includes/settings.php
 msgid "Absolute path to the 32-byte key used to encrypt stored API tokens. It must be readable by the web server and poller users and not world-readable. When the file is missing, only token files can be used."
+msgstr ""
+
+#: includes/settings.php
+msgid "Token File Directory"
+msgstr ""
+
+#: includes/settings.php
+msgid "Absolute path of the directory that every account token file must be in. When empty, a token file may be anywhere the web server and poller users can read."
 msgstr ""
 
 #: includes/settings.php

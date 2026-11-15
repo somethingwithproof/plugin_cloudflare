@@ -106,7 +106,7 @@ final class AccountServiceTest extends IntegrationTestCase {
 	/**
 	 * @param TokenVault|null|false $vault false means the default vault
 	 */
-	private function service($vault = false, int $now = self::NOW): AccountService {
+	private function service($vault = false, int $now = self::NOW, string $tokenDirectory = ''): AccountService {
 		$clock  = new FrozenClock($now);
 		$client = new CloudflareClient($this->transport, new RetryPolicy($clock, new RecordingSleeper()));
 
@@ -120,7 +120,8 @@ final class AccountServiceTest extends IntegrationTestCase {
 			$clock,
 			function (string $line): void {
 				$this->logged[] = $line;
-			}
+			},
+			$tokenDirectory
 		);
 	}
 
@@ -524,6 +525,17 @@ final class AccountServiceTest extends IntegrationTestCase {
 
 		$id      = $this->service()->save(null, $this->input(array('token_source' => 'file', 'token_file' => $path)));
 		$account = $this->service()->verify($id);
+
+		$this->assertSame('error', $account->status());
+		$this->assertSame('Token file is missing or insecure', $account->statusMessage());
+		$this->assertSame(array(), $this->transport->requests());
+	}
+
+	public function testTokenFileOutsideTokenDirectoryIsNeverRead(): void {
+		$path = $this->secretFile('token', $this->token);
+
+		$id      = $this->service()->save(null, $this->input(array('token_source' => 'file', 'token_file' => $path)));
+		$account = $this->service(false, self::NOW, $this->dir . '/absent')->verify($id);
 
 		$this->assertSame('error', $account->status());
 		$this->assertSame('Token file is missing or insecure', $account->statusMessage());

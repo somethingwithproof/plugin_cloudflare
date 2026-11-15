@@ -388,7 +388,7 @@ final class ViewerPageTest extends TestCase {
 		$this->assertStringContainsString('permission_denied.php', $guard[1][0]);
 		$this->assertStringContainsString('exit;', $guard[1][0]);
 		$this->assertGreaterThan((int) strpos($source, "include('./include/auth.php');"), $guard[0][1]);
-		$this->assertLessThan((int) strpos($source, 'plugin_cloudflare_upgrade();'), $guard[0][1]);
+		$this->assertLessThan((int) strpos($source, 'top_header();'), $guard[0][1]);
 
 		/* The same harness with the plugin enabled does draw the page. */
 		list($output, $calls) = $this->runPage(true, array());

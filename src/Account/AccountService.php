@@ -98,7 +98,8 @@ final class AccountService {
 		CloudflareClient $client,
 		?TokenVault $vault,
 		Clock $clock,
-		?callable $log = null
+		?callable $log = null,
+		string $tokenDirectory = ''
 	) {
 		$this->repo   = $repo;
 		$this->auth   = $auth;
@@ -107,7 +108,7 @@ final class AccountService {
 		$this->clock  = $clock;
 		$this->log    = $log;
 
-		$this->credentials = new CredentialResolver($repo, $vault);
+		$this->credentials = new CredentialResolver($repo, $vault, $tokenDirectory);
 	}
 
 	/**

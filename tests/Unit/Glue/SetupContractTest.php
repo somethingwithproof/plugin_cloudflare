@@ -121,6 +121,7 @@ final class SetupContractTest extends TestCase {
 
 		$this->assertSame('Cloudflare', $GLOBALS['tabs']['cloudflare']);
 		$this->assertArrayHasKey('cloudflare_key_file', $GLOBALS['settings']['cloudflare']);
+		$this->assertSame('', $GLOBALS['settings']['cloudflare']['cloudflare_token_dir']['default']);
 		$this->assertSame(array(), cloudflare_glue_calls('db_fetch_cell_prepared'));
 
 		cloudflare_glue_reset();

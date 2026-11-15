@@ -166,6 +166,31 @@ final class CredentialResolverTest extends IntegrationTestCase {
 		}));
 	}
 
+	public function testTokenDirectoryConfinesFileSource(): void {
+		mkdir($this->dir . '/tokens', 0700);
+		$inside  = $this->secretFile('tokens/token', $this->token);
+		$outside = $this->secretFile('token', $this->token);
+		$in      = $this->insertAccount(array('token_source' => 'file', 'token_ciphertext' => null, 'token_file' => $inside));
+		$out     = $this->insertAccount(array(
+			'cf_account_id'    => str_repeat('b', 32),
+			'token_source'     => 'file',
+			'token_ciphertext' => null,
+			'token_file'       => $outside,
+		));
+		$resolver = new CredentialResolver(new AccountRepository($this->database()), null, $this->dir . '/tokens');
+
+		try {
+			$this->assertSecretEquals($this->token, $resolver->resolve($in));
+			$this->assertSame('file_outside_directory', $this->reasonOf(function () use ($resolver, $out): void {
+				$resolver->resolve($out);
+			}));
+			$this->assertSecretEquals($this->token, $this->resolver(null)->resolve($out));
+		} finally {
+			unlink($inside);
+			rmdir($this->dir . '/tokens');
+		}
+	}
+
 	/* No account row exists, so a pass shows the material alone is used and nothing is read again. */
 	public function testResolvesGivenMaterialWithoutReadingTheAccount(): void {
 		$material = array(

@@ -123,6 +123,18 @@ function cloudflare_config_settings() : void {
 			'max_length'    => '255',
 			'size'          => '60'
 		),
+		'cloudflare_token_dir' => array(
+			'friendly_name' => __('Token File Directory', 'cloudflare'),
+			'description'   => __(
+				'Absolute path of the directory that every account token file must be in. When empty, a token file may be ' .
+				'anywhere the web server and poller users can read.',
+				'cloudflare'
+			),
+			'method'        => 'textbox',
+			'default'       => '',
+			'max_length'    => '255',
+			'size'          => '60'
+		),
 		'cloudflare_ui_timeout' => array(
 			'friendly_name' => __('Interactive Request Timeout', 'cloudflare'),
 			'description'   => __(

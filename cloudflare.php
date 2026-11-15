@@ -32,9 +32,10 @@ if (!cloudflare_plugin_enabled()) {
 
 set_default_action('overview');
 
+/* No upgrade here: this page is in the View realm, and an upgrade migrates
+ * the schema and writes outside the plugin directory. Plugins, Settings and
+ * Cloudflare Accounts run it. */
 try {
-	plugin_cloudflare_upgrade();
-
 	top_header();
 
 	switch (get_request_var('action')) {

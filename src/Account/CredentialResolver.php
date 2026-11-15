@@ -39,12 +39,17 @@ final class CredentialResolver {
 	/** @var TokenVault|null */
 	private $vault;
 
+	/** @var string */
+	private $tokenDirectory;
+
 	/**
-	 * @param TokenVault|null $vault null when the key file is missing; only the file source is then accepted
+	 * @param TokenVault|null $vault          null when the key file is missing; only the file source is then accepted
+	 * @param string          $tokenDirectory '' allows a token file anywhere
 	 */
-	public function __construct(AccountRepository $repo, ?TokenVault $vault) {
-		$this->repo  = $repo;
-		$this->vault = $vault;
+	public function __construct(AccountRepository $repo, ?TokenVault $vault, string $tokenDirectory = '') {
+		$this->repo           = $repo;
+		$this->vault          = $vault;
+		$this->tokenDirectory = $tokenDirectory;
 	}
 
 	/**
@@ -71,7 +76,7 @@ final class CredentialResolver {
 		array $material
 	): string {
 		if ($material['source'] === 'file') {
-			$token = TokenFile::read((string) $material['file']);
+			$token = TokenFile::read((string) $material['file'], $this->tokenDirectory);
 		} elseif ($this->vault === null) {
 			throw new SecretException(SecretException::KEY_UNAVAILABLE);
 		} elseif ($material['ciphertext'] === null) {

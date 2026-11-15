@@ -39,19 +39,23 @@ final class TokenFileTest extends TestCase {
 	}
 
 	protected function tearDown(): void {
-		foreach ((array) scandir($this->dir) as $name) {
+		self::remove($this->dir);
+	}
+
+	private static function remove(string $dir): void {
+		foreach ((array) scandir($dir) as $name) {
 			if ($name === '.' || $name === '..') {
 				continue;
 			}
 
-			$path = $this->dir . '/' . $name;
+			$path = $dir . '/' . $name;
 			if (is_dir($path) && !is_link($path)) {
-				rmdir($path);
+				self::remove($path);
 			} else {
 				unlink($path);
 			}
 		}
-		rmdir($this->dir);
+		rmdir($dir);
 	}
 
 	private function tokenFile(string $contents, int $mode = 0600, string $name = 'token'): string {
@@ -62,9 +66,9 @@ final class TokenFileTest extends TestCase {
 		return $path;
 	}
 
-	private function assertRejected(int $code, string $path): void {
+	private function assertRejected(int $code, string $path, string $directory = ''): void {
 		try {
-			TokenFile::read($path);
+			TokenFile::read($path, $directory);
 		} catch (SecretException $e) {
 			$this->assertSame($code, $e->getCode(), $e->getReason());
 			$this->assertNotLeaked($this->token, $e->getMessage(), 'message');
@@ -181,6 +185,66 @@ final class TokenFileTest extends TestCase {
 			$this->assertSame(SecretException::INVALID, $e->getCode());
 			$this->assertNotLeaked('s3cr3t', $e->getMessage(), 'message');
 		}
+	}
+
+	public function testTokenInsideDirectoryAccepted(): void {
+		mkdir($this->dir . '/allowed', 0700);
+		$path = $this->tokenFile($this->token, 0600, 'allowed/token');
+
+		$this->assertSecretEquals($this->token, TokenFile::read($path, $this->dir . '/allowed'));
+		$this->assertSecretEquals($this->token, TokenFile::read($path, $this->dir . '/allowed/'));
+		$this->assertSecretEquals($this->token, TokenFile::read($path, '/'));
+	}
+
+	/* The same reason for a real and a missing file, so the path setting cannot probe the filesystem. */
+	public function testTokenOutsideDirectoryRejectedWhetherOrNotItExists(): void {
+		mkdir($this->dir . '/allowed', 0700);
+		$outside = $this->tokenFile($this->token);
+
+		$this->assertRejected(SecretException::FILE_OUTSIDE, $outside, $this->dir . '/allowed');
+		$this->assertRejected(SecretException::FILE_OUTSIDE, $this->dir . '/absent', $this->dir . '/allowed');
+		$this->assertRejected(SecretException::FILE_OUTSIDE, '/etc/passwd', $this->dir . '/allowed');
+	}
+
+	public function testDirectoryPrefixIsNotContainment(): void {
+		mkdir($this->dir . '/allowed', 0700);
+		mkdir($this->dir . '/allowed-not', 0700);
+		$path = $this->tokenFile($this->token, 0600, 'allowed-not/token');
+
+		$this->assertRejected(SecretException::FILE_OUTSIDE, $path, $this->dir . '/allowed');
+	}
+
+	public function testDotSegmentsRejected(): void {
+		mkdir($this->dir . '/allowed', 0700);
+		$this->tokenFile($this->token);
+
+		$this->assertRejected(SecretException::FILE_OUTSIDE, $this->dir . '/allowed/../token', $this->dir . '/allowed');
+		$this->assertRejected(SecretException::FILE_OUTSIDE, $this->dir . '/allowed/./../token', $this->dir . '/allowed');
+		$this->assertRejected(SecretException::FILE_OUTSIDE, $this->dir . '/allowed/', $this->dir . '/allowed');
+	}
+
+	public function testSymlinkedSubdirectoryLeadingOutRejected(): void {
+		mkdir($this->dir . '/allowed', 0700);
+		mkdir($this->dir . '/elsewhere', 0700);
+		$this->tokenFile($this->token, 0600, 'elsewhere/token');
+		symlink($this->dir . '/elsewhere', $this->dir . '/allowed/link');
+
+		$this->assertRejected(SecretException::FILE_OUTSIDE, $this->dir . '/allowed/link/token', $this->dir . '/allowed');
+	}
+
+	public function testSymlinkInsideDirectoryStillRejected(): void {
+		mkdir($this->dir . '/allowed', 0700);
+		$target = $this->tokenFile($this->token, 0600, 'allowed/token');
+		symlink($target, $this->dir . '/allowed/link');
+
+		$this->assertRejected(SecretException::FILE_INSECURE, $this->dir . '/allowed/link', $this->dir . '/allowed');
+	}
+
+	public function testMissingOrRelativeDirectoryRejectsEverything(): void {
+		$path = $this->tokenFile($this->token);
+
+		$this->assertRejected(SecretException::FILE_OUTSIDE, $path, $this->dir . '/absent');
+		$this->assertRejected(SecretException::FILE_OUTSIDE, $path, $path);
 	}
 
 	public function testMessageNamesAbsolutePath(): void {

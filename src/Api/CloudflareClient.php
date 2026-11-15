@@ -172,14 +172,21 @@ final class CloudflareClient {
 			}
 
 			/*
-			 * A delete between pages shifts later pages by one item and lowers
-			 * their total, so the running count would still match and a live
-			 * tunnel would be missing. Pin page 1's total instead.
+			 * A delete between pages shifts later pages by one item. When
+			 * total_count counts only live tunnels it drops too, so pinning
+			 * page 1's total catches that. The schema says total_count ignores
+			 * search parameters, so it may also count deleted tunnels and stay
+			 * unchanged after a delete; the guard is then a partial check, and a
+			 * tunnel missed that way is listed by the next cycle.
 			 */
 			if ($total === null) {
 				$total = $info['total_count'];
 			} elseif ($info['total_count'] !== $total) {
 				throw new ApiException(ErrorClass::MALFORMED, 200, array(), 'tunnel listing total changed between pages');
+			}
+
+			if (count($items) > self::PAGE_SIZE) {
+				throw new ApiException(ErrorClass::MALFORMED, 200, array(), 'tunnel listing page exceeds per_page');
 			}
 
 			foreach ($items as $item) {
@@ -192,11 +199,9 @@ final class CloudflareClient {
 				$tunnels[]         = $tunnel;
 			}
 
-			if (count($tunnels) >= $total) {
+			// total_count may not be the filtered count, so only a short page ends the listing.
+			if (count($items) < self::PAGE_SIZE) {
 				return $tunnels;
-			}
-			if ($items === array()) {
-				throw new ApiException(ErrorClass::MALFORMED, 200, array(), 'tunnel listing ended before total_count');
 			}
 		}
 

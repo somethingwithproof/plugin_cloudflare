@@ -123,6 +123,10 @@ msgid "Token file path is not absolute, is a symlink, or the file is world-reada
 msgstr "Der Pfad der Token-Datei ist nicht absolut oder ein symbolischer Link, oder die Datei ist für alle lesbar oder beschreibbar"
 
 #: includes/accounts.php
+msgid "Token file is not inside the Token File Directory"
+msgstr "Die Token-Datei liegt nicht im Verzeichnis für Token-Dateien"
+
+#: includes/accounts.php
 msgid "API token could not be encrypted"
 msgstr "Das API-Token konnte nicht verschlüsselt werden"
 
@@ -489,6 +493,14 @@ msgstr "Schlüsseldatei des Token-Tresors"
 #: includes/settings.php
 msgid "Absolute path to the 32-byte key used to encrypt stored API tokens. It must be readable by the web server and poller users and not world-readable. When the file is missing, only token files can be used."
 msgstr "Absoluter Pfad zum 32-Byte-Schlüssel, mit dem gespeicherte API-Tokens verschlüsselt werden. Er muss für die Benutzer des Webservers und des Pollers lesbar, aber nicht für alle lesbar sein. Fehlt die Datei, können nur Token-Dateien verwendet werden."
+
+#: includes/settings.php
+msgid "Token File Directory"
+msgstr "Verzeichnis für Token-Dateien"
+
+#: includes/settings.php
+msgid "Absolute path of the directory that every account token file must be in. When empty, a token file may be anywhere the web server and poller users can read."
+msgstr "Absoluter Pfad des Verzeichnisses, in dem die Token-Datei jedes Kontos liegen muss. Ist er leer, darf eine Token-Datei überall liegen, wo die Benutzer des Webservers und des Pollers sie lesen können."
 
 #: includes/settings.php
 msgid "Interactive Request Timeout"

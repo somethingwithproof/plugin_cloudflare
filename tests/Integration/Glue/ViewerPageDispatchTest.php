@@ -19,6 +19,8 @@
 
 namespace Somethingwithproof\Cloudflare\Tests\Integration\Glue;
 
+use Somethingwithproof\Cloudflare\Storage\Database;
+use Somethingwithproof\Cloudflare\Storage\Migrator;
 use Somethingwithproof\Cloudflare\Tests\Integration\IntegrationTestCase;
 use Somethingwithproof\Cloudflare\Tests\Support\TestDatabase;
 
@@ -65,8 +67,9 @@ final class ViewerPageDispatchTest extends IntegrationTestCase {
 		$GLOBALS['config']            = array('url_path' => '/cacti/');
 		$GLOBALS['item_rows']         = array();
 
-		/* An installed plugin, so the page's upgrade call creates the schema. */
+		/* An installed plugin whose upgrade has already run. */
 		$GLOBALS['cloudflare_glue']['cell'] = '0.3.0';
+		(new Migrator(new Database(TestDatabase::pdo()), Migrator::defaultMigrations()))->migrate();
 
 		$_REQUEST = array();
 		$_SESSION = array();
@@ -100,15 +103,32 @@ final class ViewerPageDispatchTest extends IntegrationTestCase {
 		return $output;
 	}
 
-	public function testDefaultActionUpgradesThenDrawsTheOverview(): void {
+	public function testDefaultActionDrawsTheOverview(): void {
 		$output = $this->page();
 
 		$this->assertSame(realpath($this->cacti), getcwd());
-		$this->assertCount(1, cloudflare_glue_calls('db_fetch_cell_prepared'), 'upgrade ran');
+		$this->assertSame(array(), cloudflare_glue_calls('db_fetch_cell_prepared'), 'no upgrade');
 		$this->assertCount(1, cloudflare_glue_calls('top_header'));
 		$this->assertCount(1, cloudflare_glue_calls('bottom_footer'));
 		$this->assertStringContainsString(self::TAB . "overview'>", $output);
 		$this->assertStringContainsString('No Cloudflare Accounts Found', $output);
+	}
+
+	/* A View user's request must not migrate, import templates or write the data query file. */
+	public function testPendingUpgradeIsNotRunByTheViewer(): void {
+		TestDatabase::reset();
+		$GLOBALS['cloudflare_glue']['cell'] = '0.2.0';
+
+		$output = $this->page();
+
+		$this->assertSame(array(), cloudflare_glue_calls('db_fetch_cell_prepared'));
+		$this->assertSame(array(), cloudflare_glue_calls('import_xml_data'));
+		$this->assertSame(
+			array(),
+			TestDatabase::pdo()->query("SHOW TABLES LIKE 'plugin_cloudflare%'")->fetchAll(),
+			'no migration ran'
+		);
+		$this->assertStringContainsString('The Cloudflare tunnels could not be read.', $output);
 	}
 
 	public function testTunnelsActionDrawsTheFilteredList(): void {
@@ -138,6 +158,7 @@ final class ViewerPageDispatchTest extends IntegrationTestCase {
 	 * and that log call throws to stand in for any unexpected error.
 	 */
 	public function testUnexpectedErrorIsLoggedByClassAndRendered(): void {
+		TestDatabase::reset();
 		$GLOBALS['cloudflare_glue']['cell'] = false;
 		$thrown                             = false;
 		$GLOBALS['cloudflare_glue']['on_log'] = function () use (&$thrown): void {

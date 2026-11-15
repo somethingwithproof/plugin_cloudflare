@@ -5,6 +5,9 @@
 Milestone 3: tunnel metrics and graphs. Zone analytics and alerting are not
 included.
 
+* issue: The tunnel listing ends at the first page shorter than per_page instead of trusting total_count, which the API schema describes as the total without search parameters; an account whose total_count also counted deleted tunnels would otherwise fail discovery as malformed
+* issue: The Cloudflare Tunnels page no longer runs the plugin upgrade, so a user with only Cloudflare: View cannot start a migration or template import
+* feature: Token File Directory setting; when set, a token file outside that directory is refused before it is opened
 * feature: ss_cloudflare.php is a script server data query that reads each tunnel's health, connectors, connections, connector versions, collection age and collection failures from the plugin tables and never calls Cloudflare
 * feature: Health, connectors, connections and versions are printed only when the account's last discovery was ok or partial, the tunnel is active and the reading is no older than twice the Discovery Interval plus 60 seconds; otherwise they are U, so a gap in a graph never records a zero
 * feature: Collection age and collection failures stay printed during an outage and are U only for a deleted tunnel or one whose connections were never refreshed

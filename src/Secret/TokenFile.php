@@ -26,13 +26,24 @@ final class TokenFile {
 	 * The mode and size checks use fstat() on the open handle so they describe
 	 * the file actually read. is_file() runs first so a FIFO cannot block
 	 * fopen().
+	 *
+	 * $directory, when not '', confines the path before anything else touches
+	 * the filesystem, so a path outside it reveals nothing about the file.
 	 */
-	public static function read(string $path): string {
+	public static function read(string $path, string $directory = ''): string {
 		if (strpos($path, "\0") !== false) {
 			throw new SecretException(SecretException::FILE_UNAVAILABLE);
 		}
 
-		if ($path === '' || $path[0] !== '/' || is_link($path)) {
+		if ($path === '' || $path[0] !== '/') {
+			throw new SecretException(SecretException::FILE_INSECURE, $path);
+		}
+
+		if ($directory !== '' && !self::inside($path, $directory)) {
+			throw new SecretException(SecretException::FILE_OUTSIDE, $path);
+		}
+
+		if (is_link($path)) {
 			throw new SecretException(SecretException::FILE_INSECURE, $path);
 		}
 
@@ -72,5 +83,23 @@ final class TokenFile {
 		TokenPolicy::validate($token);
 
 		return $token;
+	}
+
+	/**
+	 * The parent is resolved, so a symlinked directory cannot lead out; the
+	 * file itself must not be a symlink, which read() checks next.
+	 */
+	private static function inside(string $path, string $directory): bool {
+		if (preg_match('#(^|/)\.\.?(/|\z)#', $path) === 1 || substr($path, -1) === '/') {
+			return false;
+		}
+
+		$root   = realpath($directory);
+		$parent = realpath(dirname($path));
+		if ($root === false || $parent === false || !is_dir($root)) {
+			return false;
+		}
+
+		return strpos($parent . '/', rtrim($root, '/') . '/') === 0;
 	}
 }

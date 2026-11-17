@@ -296,6 +296,48 @@ final class CloudflareClient {
 	}
 
 	/**
+	 * Only internal fixed queries call this method. GraphQL can return
+	 * partial data with HTTP 200; errors invalidate the entire observation.
+	 * @param array<string, mixed> $variables
+	 * @return array<string, mixed>
+	 */
+	public function graphql(
+		string $query,
+		array $variables,
+		#[\SensitiveParameter]
+		string $token
+	): array {
+		if ($token === '') {
+			throw new ApiException(ErrorClass::CONFIG);
+		}
+
+		$body = json_encode(array('query' => $query, 'variables' => $variables), JSON_THROW_ON_ERROR);
+
+		return $this->retry->run(function () use ($body, $token): array {
+			try {
+				$response = $this->transport->send(new Request('POST', $this->baseUrl . '/graphql', array('Authorization' => 'Bearer ' . $token, 'Content-Type' => 'application/json', 'Accept' => 'application/json'), $body), $this->connectTimeout, $this->totalTimeout);
+			} catch (TransportException $e) {
+				throw new ApiException($e->getErrorClass() === TransportException::TRANSIENT ? ErrorClass::TRANSIENT : ErrorClass::CONFIG);
+			}
+
+			$status = $response->status();
+
+			if ($status < 200 || $status >= 300) {
+				$retry = $response->header('retry-after');
+				throw new ApiException(self::classifyHttp($status, array()), $status, array(), '', $status === 429 && $retry !== null && ctype_digit($retry) ? min(86400, (int) $retry) : null);
+			}
+
+			$decoded = json_decode($response->body(), true);
+
+			if (!is_array($decoded) || (isset($decoded['errors']) && !is_array($decoded['errors'])) || !empty($decoded['errors']) || !isset($decoded['data']) || !is_array($decoded['data'])) {
+				throw new ApiException(ErrorClass::MALFORMED, $status, array(), 'GraphQL query failed or returned partial data');
+			}
+
+			return $decoded['data'];
+		});
+	}
+
+	/**
 	 * @return array<string, mixed>
 	 *
 	 * @throws ApiException

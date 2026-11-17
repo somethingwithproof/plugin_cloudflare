@@ -1,0 +1,108 @@
+<!--
+SPDX-FileCopyrightText: 2026 Thomas Vincent <thomasvincent@gmail.com>
+SPDX-License-Identifier: GPL-2.0-or-later
+-->
+<templates>
+	<template1>
+		<hash>d9a5697aa43ae905869f548a97aaa064</hash>
+		<name>Cloudflare - Tunnel connectors below one</name>
+		<data_template_id>0a8e0fd46e03c70b32a5908fc0463e17</data_template_id>
+		<data_template_name>Cloudflare Tunnel</data_template_name>
+		<data_source_id>cb54b07ebb3eb867dd9470f58c7c75c8</data_source_id>
+		<data_source_name>connectors</data_source_name>
+		<data_source_friendly>Tunnel connectors below one</data_source_friendly>
+		<thold_enabled>on</thold_enabled>
+		<thold_type>0</thold_type>
+		<thold_hi />
+		<thold_low>1</thold_low>
+		<thold_fail_trigger>2</thold_fail_trigger>
+		<data_type>0</data_type>
+		<repeat_alert>0</repeat_alert>
+		<restored_alert />
+	</template1>
+	<template2>
+		<hash>90df494159cc408c55427bfa022bc1e2</hash>
+		<name>Cloudflare - Tunnel down</name>
+		<data_template_id>0a8e0fd46e03c70b32a5908fc0463e17</data_template_id>
+		<data_template_name>Cloudflare Tunnel</data_template_name>
+		<data_source_id>2d3385c730b36518b60e2abc40d1a859</data_source_id>
+		<data_source_name>health</data_source_name>
+		<data_source_friendly>Tunnel down</data_source_friendly>
+		<thold_enabled>on</thold_enabled>
+		<thold_type>0</thold_type>
+		<thold_hi />
+		<thold_low>1.5</thold_low>
+		<thold_fail_trigger>2</thold_fail_trigger>
+		<data_type>0</data_type>
+		<repeat_alert>0</repeat_alert>
+		<restored_alert />
+	</template2>
+	<template3>
+		<hash>9a6feceebedfb6fd9da15e454a7919df</hash>
+		<name>Cloudflare - Repeated collection failures</name>
+		<data_template_id>0a8e0fd46e03c70b32a5908fc0463e17</data_template_id>
+		<data_template_name>Cloudflare Tunnel</data_template_name>
+		<data_source_id>80580612a1c50f4114b5e867aa1ce33b</data_source_id>
+		<data_source_name>collect_fail</data_source_name>
+		<data_source_friendly>Repeated collection failures</data_source_friendly>
+		<thold_enabled>on</thold_enabled>
+		<thold_type>0</thold_type>
+		<thold_hi>2</thold_hi>
+		<thold_low />
+		<thold_fail_trigger>2</thold_fail_trigger>
+		<data_type>0</data_type>
+		<repeat_alert>0</repeat_alert>
+		<restored_alert />
+	</template3>
+	<template4>
+		<hash>74ad3bbfec191e6785f38f71cfe2f5a3</hash>
+		<name>Cloudflare - Tunnel collection stale</name>
+		<data_template_id>0a8e0fd46e03c70b32a5908fc0463e17</data_template_id>
+		<data_template_name>Cloudflare Tunnel</data_template_name>
+		<data_source_id>76cc42e7a0f92ec39628cf9314186567</data_source_id>
+		<data_source_name>collect_age</data_source_name>
+		<data_source_friendly>Tunnel collection stale</data_source_friendly>
+		<thold_enabled>on</thold_enabled>
+		<thold_type>0</thold_type>
+		<thold_hi>660</thold_hi>
+		<thold_low />
+		<thold_fail_trigger>2</thold_fail_trigger>
+		<data_type>0</data_type>
+		<repeat_alert>0</repeat_alert>
+		<restored_alert />
+	</template4>
+	<template5>
+		<hash>9653b9cd8127c57a09793250370ab4cd</hash>
+		<name>Cloudflare - Zone HTTP 5xx above five percent</name>
+		<data_template_id>2a082d0ac8ee375c38588394942f04c0</data_template_id>
+		<data_template_name>Cloudflare Zone</data_template_name>
+		<data_source_id>4877bc786cf96c62ed7ac65eb2e28f47</data_source_id>
+		<data_source_name>error_pct</data_source_name>
+		<data_source_friendly>Zone HTTP 5xx above five percent</data_source_friendly>
+		<thold_enabled>on</thold_enabled>
+		<thold_type>0</thold_type>
+		<thold_hi>5</thold_hi>
+		<thold_low />
+		<thold_fail_trigger>2</thold_fail_trigger>
+		<data_type>0</data_type>
+		<repeat_alert>0</repeat_alert>
+		<restored_alert />
+	</template5>
+	<template6>
+		<hash>5e7d599c2417e4f7ab66be90ccb22551</hash>
+		<name>Cloudflare - Zone collection stale</name>
+		<data_template_id>2a082d0ac8ee375c38588394942f04c0</data_template_id>
+		<data_template_name>Cloudflare Zone</data_template_name>
+		<data_source_id>0ecd8c2b4cbdf09d49abb163e926b830</data_source_id>
+		<data_source_name>age</data_source_name>
+		<data_source_friendly>Zone collection stale</data_source_friendly>
+		<thold_enabled>on</thold_enabled>
+		<thold_type>0</thold_type>
+		<thold_hi>660</thold_hi>
+		<thold_low />
+		<thold_fail_trigger>2</thold_fail_trigger>
+		<data_type>0</data_type>
+		<repeat_alert>0</repeat_alert>
+		<restored_alert />
+	</template6>
+</templates>

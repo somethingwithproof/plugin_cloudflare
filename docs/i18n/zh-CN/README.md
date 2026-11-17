@@ -1,4 +1,4 @@
-<!-- Source: README.md; SHA256: 6173976c488e04ddd3ba65cf477eacc3df3b716cfe9a12bbf5723c2ca0e5d877 -->
+<!-- Source: README.md; SHA256: f8de0e02c5904e15bfa4c71edcaab219e5e5d4f6d9dbe589f4ed16351df6bf4d -->
 
 <!-- translations:start -->
 [English](../../../README.md) | [简体中文](README.md) | [हिन्दी](../hi-IN/README.md) | [Español (España)](../es-ES/README.md) | [Español (Latinoamérica)](../es-419/README.md) | [العربية](../ar-SA/README.md)
@@ -24,7 +24,9 @@
 
 这是一个正在开发的 Cacti 1.2 插件，用于监控 Cloudflare Tunnels 和区域分析数据。它使用限定作用域的 API 令牌读取 Cloudflare API，从不更改 Cloudflare，并将数据保存在自己的表中。在 Cacti 内，它将一个数据查询 XML 复制到 `resource/script_server/`，并通过 Cacti 自身的 API 创建设备、图表和模板，不修改核心文件。
 
-**状态：里程碑 3，已作为 0.3.0 发布。** 插件可配置 Cloudflare 账户、测试令牌、发现隧道和连接器，并绘制各隧道的健康状态、连接器、连接和连接器版本。尚未采集区域分析数据。
+**状态：0.4.0-dev，尚未发布。** 最新稳定版本为 0.3.0。开发版本新增 CSV 清单导出、显式退役已删除的隧道、缓存的区域分析和可选 Thold 模板。真实云账户和部署环境的验证仍待完成。
+
+下表描述 0.3.0 稳定版本。开发版本的新增功能见后面的操作工作流与区域分析。
 
 | 现已提供 | 计划中 |
 |---|---|
@@ -328,6 +330,14 @@ Settings > Cloudflare 包含：
 详情和已知限制见 [docs/security.md](docs/security.md)。请按照 [SECURITY.md](../../../SECURITY.md) 私下报告漏洞。
 
 <a id="roadmap"></a>
+## 操作工作流与区域分析
+
+开发版本可显式退役已删除的隧道，按区域能力采集并缓存分析数据，并提供 Cacti 和 Thold 模板。这些新增功能尚未发布，也未完成真实账户验证。设置方法、指标含义和验证范围见[英文说明](../../analytics-and-alerting.md)。
+
+### 清单导出
+
+隧道和连接器页面为 Cloudflare: View 用户提供导出功能。隧道 CSV 保留账户、生命周期、状态、搜索和排序条件，并包含所有匹配页面。连接器 CSV 包含所选隧道的版本、架构、数据中心和源地址。下载仅读取缓存记录；未知数量留空，类似公式的单元格前加单引号以安全导入电子表格。
+
 ## 路线图
 
 各里程碑作为对应编号的 0.x 版本发布：里程碑 3 为 0.3.0，里程碑 4 将为 0.4.0。里程碑 1 和 2 未单独发布，已包含在 0.3.0 中。1.0.0 保留给完成以下所有里程碑的版本。

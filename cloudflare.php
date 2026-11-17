@@ -36,9 +36,19 @@ set_default_action('overview');
  * the schema and writes outside the plugin directory. Plugins, Settings and
  * Cloudflare Accounts run it. */
 try {
+	if (get_filter_request_var('export') && in_array(get_request_var('action'), array('tunnels', 'connectors'), true)) {
+		cloudflare_viewer_export((string) get_request_var('action'));
+		exit;
+	}
+
 	top_header();
 
 	switch (get_request_var('action')) {
+		case 'analytics':
+			cloudflare_viewer_tabs('analytics');
+			cloudflare_viewer_analytics();
+
+			break;
 		case 'tunnels':
 			cloudflare_viewer_tabs('tunnels');
 			cloudflare_viewer_tunnels();

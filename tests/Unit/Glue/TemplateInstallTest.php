@@ -125,6 +125,7 @@ final class TemplateInstallTest extends TestCase {
 		$pdo->sqliteCreateFunction('RELEASE_LOCK', function (): int {
 			return 1;
 		}, 1);
+		$pdo->exec('CREATE TABLE plugin_cloudflare_accounts (enabled INTEGER, collect_analytics INTEGER)');
 		$pdo->exec('CREATE TABLE plugin_cloudflare_metric_mappings (
 			metric_name VARCHAR(64) NOT NULL PRIMARY KEY,
 			schema_version INTEGER NOT NULL,
@@ -210,6 +211,16 @@ final class TemplateInstallTest extends TestCase {
 			(array) scandir($this->base . '/resource/script_server'),
 			array('.', '..')
 		)), 'no temporary file is left behind');
+	}
+
+	public function testAnalyticsOptInInstallsZoneResourcesOnce(): void {
+		$this->assertNotNull($this->pdo);
+		$this->pdo->exec('INSERT INTO plugin_cloudflare_accounts VALUES (1, 1)');
+		$this->assertTrue(cloudflare_templates_install());
+		$this->assertFileEquals(self::ROOT . '/templates/resource/cloudflare_zones.xml', dirname($this->target()) . '/cloudflare_zones.xml');
+		$this->assertCount(2, cloudflare_glue_calls('import_xml_data'));
+		$this->assertTrue(cloudflare_templates_install());
+		$this->assertCount(2, cloudflare_glue_calls('import_xml_data'));
 	}
 
 	public function testChangedTemplateReimports(): void {

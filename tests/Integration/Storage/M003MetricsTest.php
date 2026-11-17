@@ -108,12 +108,12 @@ final class M003MetricsTest extends IntegrationTestCase {
 
 		$accountId = $this->insertAccount();
 
-		$this->assertSame(array(3), $this->migrator()->migrate());
+		$this->assertSame(array(3, 4, 5), $this->migrator()->migrate());
 		$this->assertTrue($this->tableExists('plugin_cloudflare_resources'));
 		$this->assertTrue($this->tableExists('plugin_cloudflare_metric_mappings'));
 		$this->assertSame(1, $this->columnCount('plugin_cloudflare_tunnels', 'connections_error_class'));
 		$this->assertSame(1, $this->columnCount('plugin_cloudflare_accounts', 'create_graphs'));
-		$this->assertSame(3, $this->migrator()->currentVersion());
+		$this->assertSame(5, $this->migrator()->currentVersion());
 		$this->assertSame('0', (string) $this->db->fetchCell(
 			'SELECT create_graphs FROM plugin_cloudflare_accounts WHERE id = ?',
 			array($accountId)

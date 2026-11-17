@@ -21,14 +21,13 @@
 A Cacti 1.2 plugin that is being built to monitor Cloudflare Tunnels and
 zone analytics. It reads from the Cloudflare API with scoped API tokens,
 never changes anything in Cloudflare, and keeps its data in its own tables.
-In Cacti it copies one data query XML into `resource/script_server/` and
+In Cacti it copies data query XML files into `resource/script_server/` and
 creates devices, graphs and templates through Cacti's own APIs, with no core
 file changes.
 
-**Status: Milestone 3, released as 0.3.0.** The plugin configures Cloudflare accounts, tests
-their tokens, discovers their tunnels and connectors, and graphs each tunnel's
-health, connectors, connections and connector versions. It does not collect
-zone analytics yet.
+**Status: 0.4.0-dev, unreleased.** The last released version is 0.3.0. The development version adds CSV inventory exports, explicit retirement of deleted tunnels, cached zone analytics and optional Thold templates. Live-provider and deployment qualification remains pending.
+
+The table below describes the 0.3.0 stable release. Development additions are described under Operator workflows and zone analytics below.
 
 | Available now | Planned |
 |---|---|
@@ -493,8 +492,7 @@ the old device in Cacti once its history is no longer needed.
   upgrade changes the shipped template XML.
 - The account's device must stay on the main poller. The plugin's tables are
   in the main database and the script reads them there.
-- Deleted tunnels stay in the data query index, with their graphs and RRD
-  files, and print `U`.
+- Deleted tunnels stay in the data query index and print `U` until an administrator explicitly retires them. Retirement removes only the plugin-recorded graphs and unshared data sources through Cacti; the inventory row stays visible. Cacti controls RRD cleanup.
 - Cacti disables a plugin whose code ends in a true fatal error, such as
   running out of memory. See [docs/security.md](docs/security.md).
 
@@ -514,6 +512,14 @@ the old device in Cacti once its history is no longer needed.
 
 Details and known limitations are in [docs/security.md](docs/security.md).
 Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
+
+## Operator workflows and zone analytics
+
+Development additions include explicit retirement of deleted tunnels, capability-aware zone analytics and importable Thold templates. These additions have no release tag or live-account qualification yet. See [docs/analytics-and-alerting.md](docs/analytics-and-alerting.md) for setup, metric semantics and verification limits.
+
+### Inventory exports
+
+The Tunnels and Connectors pages offer Export for the Cloudflare: View realm. Tunnel CSV files include every matching row, using the active account, lifecycle, status, search and sort settings across all pages. Connector CSV files include versions, architecture, data centers and origin addresses for the selected tunnel. Downloads read cached records only. Unknown counts are blank; formula-like cells are prefixed with an apostrophe for safe spreadsheet import.
 
 ## Roadmap
 

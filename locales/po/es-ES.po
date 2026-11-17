@@ -344,11 +344,11 @@ msgid_plural "Click 'Continue' to create a Cacti device for each of the followin
 msgstr[0] "Haga clic en 'Continuar' para crear un dispositivo de Cacti para la siguiente cuenta de Cloudflare. Una cuenta que ya tenga uno se deja como está."
 msgstr[1] "Haga clic en 'Continuar' para crear un dispositivo de Cacti para cada una de las siguientes cuentas de Cloudflare. Una cuenta que ya tenga uno se deja como está."
 
-#: includes/accounts_page.php
+#: includes/accounts_page.php includes/tunnel_retirement.php
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: includes/accounts_page.php
+#: includes/accounts_page.php includes/tunnel_retirement.php
 msgid "Continue"
 msgstr "Continuar"
 
@@ -542,9 +542,25 @@ msgstr "Nivel de registro"
 msgid "The amount of detail the plugin writes to the Cacti log."
 msgstr "El nivel de detalle que el plugin escribe en el registro de Cacti."
 
+#: includes/tunnel_retirement.php
+msgid "The tunnel could not be retired. Check permissions and retry after collection finishes."
+msgstr "No se pudo retirar el túnel. Compruebe los permisos e inténtelo después de la recopilación."
+
+#: includes/tunnel_retirement.php includes/viewer.php
+msgid "Retire tunnel"
+msgstr "Retirar túnel"
+
+#: includes/tunnel_retirement.php
+msgid "Retiring removes the graphs and unshared data sources created for this deleted tunnel. Cacti controls RRD cleanup. The inventory record is kept."
+msgstr "La retirada elimina los gráficos y las fuentes de datos no compartidas creados para este túnel eliminado. Cacti controla la limpieza de los archivos RRD. El registro de inventario se conserva."
+
 #: includes/viewer.php
 msgid "The Cloudflare tunnels could not be read. See the Cacti log for details."
 msgstr "No se pudieron leer los túneles de Cloudflare. Consulte el registro de Cacti para obtener más detalles."
+
+#: includes/viewer.php
+msgid "Zone Analytics"
+msgstr "Análisis de zonas"
 
 #: includes/viewer.php
 msgid "Disabled"
@@ -700,6 +716,26 @@ msgstr "Este túnel está %s. Estos conectores se vieron por última vez mientra
 #: includes/viewer.php
 msgid "No connectors are running for this tunnel."
 msgstr "No hay conectores en ejecución para este túnel."
+
+#: includes/viewer.php
+msgid "Export"
+msgstr "Exportar"
+
+#: includes/viewer.php
+msgid "Bytes/s"
+msgstr "Bytes/s"
+
+#: includes/viewer.php
+msgid "HTTP 5xx (%)"
+msgstr "HTTP 5xx (%)"
+
+#: includes/viewer.php
+msgid "Requests/s"
+msgstr "Solicitudes/s"
+
+#: includes/viewer.php
+msgid "Zone"
+msgstr "Zona"
 
 #: setup.php
 msgid "Cloudflare: Operator"

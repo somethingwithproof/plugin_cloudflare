@@ -22,6 +22,8 @@ namespace Somethingwithproof\Cloudflare\Storage;
 use Somethingwithproof\Cloudflare\Storage\Migrations\M001Foundation;
 use Somethingwithproof\Cloudflare\Storage\Migrations\M002Discovery;
 use Somethingwithproof\Cloudflare\Storage\Migrations\M003Metrics;
+use Somethingwithproof\Cloudflare\Storage\Migrations\M004Retirement;
+use Somethingwithproof\Cloudflare\Storage\Migrations\M005Analytics;
 use InvalidArgumentException;
 
 final class Migrator {
@@ -59,7 +61,7 @@ final class Migrator {
 	 * @return Migration[]
 	 */
 	public static function defaultMigrations(): array {
-		return array(new M001Foundation(), new M002Discovery(), new M003Metrics());
+		return array(new M001Foundation(), new M002Discovery(), new M003Metrics(), new M004Retirement(), new M005Analytics());
 	}
 
 	/**
@@ -145,6 +147,7 @@ final class Migrator {
 		}
 
 		$first = array(
+			'plugin_cloudflare_zones',
 			'plugin_cloudflare_resources',
 			'plugin_cloudflare_metric_mappings',
 			'plugin_cloudflare_connectors',

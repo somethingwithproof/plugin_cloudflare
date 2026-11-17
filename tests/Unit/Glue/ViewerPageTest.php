@@ -362,6 +362,8 @@ final class ViewerPageTest extends TestCase {
 			);
 		}
 
+		$GLOBALS['cloudflare_glue']['realm'] = false;
+
 		self::capture(function () use ($tunnels): void {
 			cloudflare_viewer_tunnel_table($tunnels, array(), false);
 		});
@@ -371,6 +373,27 @@ final class ViewerPageTest extends TestCase {
 		$this->assertSame(array('unavailable', '-', '-'), array($rows[1][2], $rows[1][4], $rows[1][5]));
 		$this->assertSame(array('deleted', '-', '-'), array($rows[2][2], $rows[2][4], $rows[2][5]));
 		$this->assertStringNotContainsString('<b>', var_export($GLOBALS['cloudflare_glue']['calls'], true));
+	}
+
+	public function testCsvNeutralizesFormulasWithoutLosingCommasQuotesOrUnicode(): void {
+		$stream = fopen('php://temp', 'w+');
+		$this->assertIsResource($stream);
+		$input = array('=1+1', '+cmd', '-2', '@SUM(A1)', " \t=1", "\ttext", "\rtext", 'normal', 'a,b', '"quoted"', '日本語', null, 0);
+		cloudflare_viewer_csv_row($stream, $input);
+		rewind($stream);
+		$row = fgetcsv($stream, 0, ',', '"', '');
+		fclose($stream);
+		$this->assertSame(array("'=1+1", "'+cmd", "'-2", "'@SUM(A1)", "' \t=1", "'\ttext", "'\rtext", 'normal', 'a,b', '"quoted"', '日本語', '', '0'), $row);
+	}
+
+	public function testExportLinkPreservesFiltersAndEscapesUntrustedSearch(): void {
+		$html = self::capture(function (): void {
+			cloudflare_viewer_export_link('tunnels', array('account_id' => 4, 'filter' => 'a&<b>', 'sort_column' => 'name', 'sort_direction' => 'DESC'));
+		});
+		preg_match("/href='([^']+)'/", $html, $match);
+		parse_str((string) parse_url(html_entity_decode($match[1], ENT_QUOTES, 'UTF-8'), PHP_URL_QUERY), $query);
+		$this->assertSame(array('action' => 'tunnels', 'export' => '1', 'account_id' => '4', 'filter' => 'a&<b>', 'sort_column' => 'name', 'sort_direction' => 'DESC'), $query);
+		$this->assertStringNotContainsString('<b>', $html);
 	}
 
 	public function testDisabledPluginDenied(): void {
@@ -410,7 +433,7 @@ final class ViewerPageTest extends TestCase {
 		$this->assertSame(0, preg_match_all('#\becho\b#', $source));
 
 		preg_match_all("#case '([a-z_]+)':#", (string) file_get_contents(self::ROOT . '/cloudflare.php'), $cases);
-		$this->assertSame(array(), array_diff($cases[1], array('overview', 'tunnels', 'connectors')));
+		$this->assertSame(array(), array_diff($cases[1], array('overview', 'tunnels', 'connectors', 'analytics')));
 
 		/* An action the page does not know draws the overview and writes nothing. */
 		list($output, $calls) = $this->runPage(true, array('action' => 'save', 'id' => '1'));

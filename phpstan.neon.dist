@@ -12,5 +12,6 @@ parameters:
 		- cloudflare_accounts.php
 		- poller_cloudflare.php
 		- ss_cloudflare.php
+		- ss_cloudflare_zones.php
 	bootstrapFiles:
 		- tests/Support/CactiGlueStubs.php

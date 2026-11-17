@@ -87,7 +87,9 @@ function cloudflare_templates_install(int $lock_timeout = 10) : bool {
 		}
 
 		try {
-			return cloudflare_templates_install_locked($db, $target);
+			return cloudflare_templates_install_locked($db, $target) && (
+				(int) $db->fetchCell('SELECT COUNT(*) FROM plugin_cloudflare_accounts WHERE enabled = 1 AND collect_analytics = 1') === 0 || cloudflare_zone_templates_install()
+			);
 		} finally {
 			$db->releaseLock(CLOUDFLARE_TEMPLATES_LOCK);
 		}
@@ -136,11 +138,11 @@ function cloudflare_templates_install_locked(Database $db, string $target) : boo
  * poller never reads a half-written XML. The 'x' mode refuses an existing
  * name, so a planted link at the temporary path is never followed.
  */
-function cloudflare_templates_copy_resource(string $target) : bool {
-	$sha = hash_file('sha256', CLOUDFLARE_TEMPLATES_RESOURCE);
+function cloudflare_templates_copy_resource(string $target, string $source = CLOUDFLARE_TEMPLATES_RESOURCE) : bool {
+	$sha = hash_file('sha256', $source);
 
 	if ($sha === false) {
-		cacti_log('CLOUDFLARE: cannot read ' . CLOUDFLARE_TEMPLATES_RESOURCE, false, 'CLOUDFLARE', POLLER_VERBOSITY_LOW);
+		cacti_log('CLOUDFLARE: cannot read ' . $source, false, 'CLOUDFLARE', POLLER_VERBOSITY_LOW);
 
 		return false;
 	}
@@ -151,7 +153,7 @@ function cloudflare_templates_copy_resource(string $target) : bool {
 		return true;
 	}
 
-	$content = (string) file_get_contents(CLOUDFLARE_TEMPLATES_RESOURCE);
+	$content = (string) file_get_contents($source);
 	$temp    = dirname($target) . '/.cloudflare_tunnels.xml.' . bin2hex(random_bytes(8));
 	$handle  = @fopen($temp, 'xb');
 
@@ -303,4 +305,36 @@ function cloudflare_template_id(string $table, string $key) : ?int {
 	$id = db_fetch_cell_prepared('SELECT id FROM `' . $table . '` WHERE hash = ?', array(cloudflare_template_hash($key)));
 
 	return (is_numeric($id) && (int) $id > 0) ? (int) $id : null;
+}
+
+function cloudflare_zone_templates_install() : bool {
+	$base = cloudflare_templates_resource_path();
+
+	if ($base === '') {
+		return false;
+	}
+
+	$target = dirname($base) . '/cloudflare_zones.xml';
+
+	if (!cloudflare_templates_copy_resource($target, dirname(__DIR__) . '/templates/resource/cloudflare_zones.xml')) {
+		return false;
+	}
+
+	$xml = file_get_contents(dirname(__DIR__) . '/templates/cloudflare_zones_templates.xml');
+
+	if ($xml === false) {
+		return false;
+	}
+
+	$sha = hash('sha256', $xml);
+
+	if (read_config_option('cloudflare_zones_templates_sha256', true) !== $sha) {
+		if (!cloudflare_templates_import($xml)) {
+			return false;
+		}
+
+		set_config_option('cloudflare_zones_templates_sha256', $sha);
+	}
+
+	return true;
 }

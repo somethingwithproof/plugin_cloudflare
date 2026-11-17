@@ -34,11 +34,13 @@ permission:
   tunnel's connectors
 
 Discovery needs no permission beyond the tunnel read permission that Verify
-already checks. If Cloudflare refuses the tunnel listing during a run, the
-run fails as `auth` or `permission`. Only `transient`, `rate_limited`, `auth`
-and `permission` failures before a complete listing count toward the outage
-streak. Three such outages in a row mark the account's active tunnels
-`unavailable`; a complete listing resets the streak.
+already checks. If Cloudflare refuses the tunnel listing during a run, the run
+fails as `auth` or `permission`. Only failures to read Cloudflare at all
+(`transient`, `rate_limited`, `auth`, or `permission`) increment the outage
+counter. Other failures neither increment nor reset it. Three counted outages
+without a complete listing between them mark the account's active tunnels
+`unavailable`. A complete listing resets the counter and restores the tunnels,
+even if reading connections later in that run fails.
 
 Token verification (`/tokens/verify`) needs no permission. Both account-owned
 and user-owned tokens work. A user-owned token gets HTTP 401 from the account

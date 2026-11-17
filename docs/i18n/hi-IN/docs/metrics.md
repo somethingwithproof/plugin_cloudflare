@@ -1,4 +1,4 @@
-<!-- Source: docs/metrics.md; SHA256: 67934fe28c90461f532eede51d8ec95ad0fdc81345ddd0a6c0d72d063b7b789a -->
+<!-- Source: docs/metrics.md; SHA256: c6b94acea49d9d6a2ec73a6a35e82dbe005ee48017ba37e3e7960a8486c64c20 -->
 
 <a id="metrics"></a>
 # मेट्रिक
@@ -57,7 +57,7 @@ age    = now - observed_at
 3. `observed_at` null हो: `never_collected`।
 4. आयु -60 से कम हो: `clock_skew`। आयु विंडो से अधिक हो: `stale`।
 5. केवल कनेक्शन मेट्रिक: रीफ़्रेश के बाद का प्रयास टनल का `connections_error_class` देता है; वह सहेजा न हो तो `transient` मिलता है।
-6. संग्रहीत मान स्वयं। Null `connector_count` या `connection_count` से `never_collected` मिलता है, भले ही `connections_refreshed_at` सेट हो। स्वास्थ्य तालिका से बाहर की Cloudflare स्थिति केवल स्वास्थ्य के लिए `malformed` देती है; अन्य मेट्रिक अप्रभावित रहते हैं। `versions` मौजूदा टनल कनेक्टरों में अलग-अलग cloudflared संस्करण गिनता है; इसलिए null `connector_count` से `versions` भी `never_collected` कारण के साथ अज्ञात होता है।
+6. संग्रहीत मान स्वयं। Null `connector_count` या `connection_count` से `never_collected` मिलता है, भले ही `connections_refreshed_at` सेट हो। स्वास्थ्य तालिका से बाहर की Cloudflare स्थिति केवल स्वास्थ्य के लिए `malformed` देती है; अन्य मेट्रिक अप्रभावित रहते हैं। `versions` संग्रहीत कनेक्टरों के अलग-अलग संस्करण मान गिनता है, कनेक्टर पंक्तियाँ नहीं। खोज इन पंक्तियों को `connector_count` के साथ सहेजती है; इसलिए null `connector_count` से `versions` भी `never_collected` कारण के साथ अज्ञात होता है।
 
 विफल कार्य पहले जाँचा जाता है क्योंकि वही बाकी स्थितियों को समझाता है। बार-बार बाधा आने पर खोज टनल को `unavailable` चिह्नित करती है, इसलिए कार्य का त्रुटि वर्ग अधिक उपयोगी कारण है।
 

@@ -166,7 +166,7 @@ print json_encode($results);
 PHP;
 		$fixture = $this->keyDir . '/settings.php';
 		file_put_contents($fixture, str_replace('PLUGIN_ROOT', $root, $script));
-		$process = proc_open([$cgi, '-q', $fixture], [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, null, ['REDIRECT_STATUS' => '200', 'SCRIPT_FILENAME' => $fixture, 'REQUEST_METHOD' => 'GET']);
+		$process = proc_open([$cgi, '-d', 'opcache.jit=0', '-q', $fixture], [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, null, ['REDIRECT_STATUS' => '200', 'SCRIPT_FILENAME' => $fixture, 'REQUEST_METHOD' => 'GET']);
 		$this->assertIsResource($process);
 		$output = (string) stream_get_contents($pipes[1]);
 		$error = (string) stream_get_contents($pipes[2]);
@@ -257,6 +257,36 @@ PHP;
 
 		foreach (cloudflare_glue_calls('cacti_log') as $call) {
 			$this->assertStringNotContainsString('improperly', (string) $call[0]);
+		}
+	}
+
+	public function testForcedOperatorSetupRefreshesDefinitionsWithoutCatalogChecks(): void {
+		$GLOBALS['cloudflare_glue']['cell'] = static function (): void {
+			throw new \LogicException('forced setup must not check for existing definitions');
+		};
+		cloudflare_setup_operator(true);
+		$this->assertSame([['cloudflare', 'cloudflare_operator.php', 'Cloudflare: Operator', false]], cloudflare_glue_calls('api_plugin_register_realm'));
+		$this->assertSame([['cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', true]], cloudflare_glue_calls('api_plugin_register_hook'));
+		$this->assertSame([], cloudflare_glue_calls('db_fetch_cell_prepared'));
+	}
+
+	public function testUnchangedOperatorSetupDoesNotReregisterExistingDefinitions(): void {
+		$GLOBALS['cloudflare_glue']['cell'] = 1;
+		cloudflare_setup_operator(false);
+		$this->assertSame([], cloudflare_glue_calls('api_plugin_register_realm'));
+		$this->assertSame([], cloudflare_glue_calls('api_plugin_register_hook'));
+		$this->assertCount(2, cloudflare_glue_calls('db_fetch_cell_prepared'));
+	}
+
+	public function testUnchangedOperatorSetupRepairsOnlyMissingDefinitions(): void {
+		foreach ([[0, 1], [1, 0], [0, 0]] as [$realmExists, $hookExists]) {
+			cloudflare_glue_reset();
+			$GLOBALS['cloudflare_glue']['cell'] = static function (string $sql) use ($realmExists, $hookExists): int {
+				return strpos($sql, 'plugin_realms') !== false ? $realmExists : $hookExists;
+			};
+			cloudflare_setup_operator(false);
+			$this->assertSame($realmExists ? [] : [['cloudflare', 'cloudflare_operator.php', 'Cloudflare: Operator', false]], cloudflare_glue_calls('api_plugin_register_realm'));
+			$this->assertSame($hookExists ? [] : [['cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', true]], cloudflare_glue_calls('api_plugin_register_hook'));
 		}
 	}
 

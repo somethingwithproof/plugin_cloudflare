@@ -27,8 +27,10 @@ Each request sets:
 - `CURLOPT_PROTOCOLS` to HTTPS only
 - `CURLOPT_FOLLOWLOCATION` off and `CURLOPT_MAXREDIRS` 0
 - `CURLOPT_SSL_VERIFYPEER` on and `CURLOPT_SSL_VERIFYHOST` 2
-- a connect timeout of 5 seconds and a total timeout from the "Interactive
-  Request Timeout" setting (default 10, accepted range 5 to 60 seconds)
+- a connect timeout of 5 seconds; the total timeout comes from "Interactive
+  Request Timeout" for web interface requests (default 10 seconds) or
+  "Collector Request Timeout" for background collection (default 20 seconds).
+  Both settings accept 5 to 60 seconds
 - `CURLOPT_NOPROXY` to `*`, so proxy environment variables are ignored
 - a 5 MiB response cap; a larger body aborts the transfer
 
@@ -352,9 +354,10 @@ templates or `resource/script_server/cloudflare_tunnels.xml`.
   administrator has to enable it again. The pages catch `Throwable` and log the
   class name, so an ordinary exception such as a missing table shows a fixed
   message and does not reach Cacti's shutdown handler.
-- Three consecutive outage-class failures mark an account's active tunnels
-  `unavailable`, including when the cause is a long rate limit. The next
-  complete listing restores them.
+- Three counted outage-class failures without a complete listing between them
+  mark an account's active tunnels `unavailable`, including when the cause is
+  a long rate limit. Other failures neither increment nor reset the outage
+  counter. The next complete listing resets it and restores the tunnels.
 - The plugin overwrites administrator edits to the imported templates when an
   upgrade changes the shipped template XML, and the device must stay on the
   main poller. See the README's known limitations.

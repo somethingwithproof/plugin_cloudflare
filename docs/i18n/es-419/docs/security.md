@@ -1,4 +1,4 @@
-<!-- Source: docs/security.md; SHA256: 5d99697b7e6536549c5b576910e0e32c81099ef3eb0ed2973904d70742bcc377 -->
+<!-- Source: docs/security.md; SHA256: 686c0b06d983411f2dfeb405c08f6eea0b8a6f983bb25760d3de0dcf05f96d83 -->
 
 <a id="security"></a>
 # Seguridad
@@ -19,7 +19,7 @@ Cada solicitud establece:
 - `CURLOPT_PROTOCOLS` exclusivamente en HTTPS.
 - `CURLOPT_FOLLOWLOCATION` desactivado y `CURLOPT_MAXREDIRS` en 0.
 - `CURLOPT_SSL_VERIFYPEER` activado y `CURLOPT_SSL_VERIFYHOST` en 2.
-- Un tiempo máximo de conexión de 5 segundos y un tiempo máximo total definido por «Interactive Request Timeout» (10 segundos de forma predeterminada; intervalo admitido de 5 a 60 segundos). Esta opción se aplica a solicitudes de la interfaz; el recolector usa «Collector Request Timeout» (20 segundos de forma predeterminada).
+- Un tiempo máximo de conexión de 5 segundos; el tiempo máximo total procede de «Interactive Request Timeout» para las solicitudes de la interfaz web (10 segundos de forma predeterminada) o de «Collector Request Timeout» para la recopilación en segundo plano (20 segundos de forma predeterminada). Ambas opciones admiten de 5 a 60 segundos.
 - `CURLOPT_NOPROXY` en `*`, para ignorar las variables de entorno del proxy.
 - Un límite de respuesta de 5 MiB; un cuerpo mayor interrumpe la transferencia.
 
@@ -151,6 +151,6 @@ La desinstalación elimina las tablas del complemento, incluidos los textos cifr
 - Los problemas de permisos de archivos aparecen durante Verify, no al guardar.
 - `TokenFile` solo rechaza un enlace simbólico en el último componente de la ruta; no comprueba los directorios padres salvo que esté configurado Token File Directory.
 - Cacti desactiva un complemento cuyo código termine con un error fatal real, como agotar la memoria, superar `max_execution_time` o sufrir un error de compilación. Ningún `catch` puede interceptarlos y el complemento no puede evitarlos; un administrador debe volver a activarlo. Las páginas capturan `Throwable` y registran el nombre de la clase, de modo que una excepción normal, como una tabla ausente, muestra un mensaje fijo y no llega al manejador de cierre de Cacti.
-- Tres fallos consecutivos de la clase de interrupción marcan los túneles activos de una cuenta como `unavailable`, incluso cuando la causa es un límite de tasa prolongado. El siguiente listado completo los restablece.
+- Tres fallos contabilizados de la clase de interrupción sin un listado completo intermedio marcan los túneles activos de una cuenta como `unavailable`, incluso cuando la causa es un límite de tasa prolongado. Los demás fallos no incrementan ni reinician el contador de interrupciones. El siguiente listado completo lo reinicia y restablece los túneles.
 - El complemento sobrescribe las modificaciones del administrador en las plantillas importadas cuando una actualización cambia el XML distribuido, y el dispositivo debe permanecer en el sondeador principal. Consulte las limitaciones conocidas del README.
 - Verify se ejecuta dentro de la solicitud web. Una operación puede realizar hasta cuatro solicitudes (verificación de cuenta, verificación de usuario, comprobación de túneles y comprobación de zonas), cada una limitada por los tiempos anteriores y con un máximo de un reintento.

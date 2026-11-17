@@ -227,20 +227,20 @@ function cloudflare_auth_alternate_realms() : void {
 
 /** Register the operator realm and hook only when installing, upgrading or repairing missing rows. */
 function cloudflare_setup_operator(bool $force = true) : void {
-	$realmExists = $force || (int) db_fetch_cell_prepared(
+	$registerRealm = $force || (int) db_fetch_cell_prepared(
 		'SELECT COUNT(*) FROM plugin_realms WHERE plugin = ? AND file = ?',
 		array('cloudflare', 'cloudflare_operator.php')
-	) > 0;
-	$hookExists = $force || (int) db_fetch_cell_prepared(
+	) === 0;
+	$registerHook = $force || (int) db_fetch_cell_prepared(
 		'SELECT COUNT(*) FROM plugin_hooks WHERE name = ? AND hook = ?',
 		array('cloudflare', 'auth_alternate_realms')
-	) > 0;
+	) === 0;
 
-	if (!$realmExists) {
+	if ($registerRealm) {
 		api_plugin_register_realm('cloudflare', 'cloudflare_operator.php', __('Cloudflare: Operator', 'cloudflare'), false);
 	}
 
-	if (!$hookExists) {
+	if ($registerHook) {
 		api_plugin_register_hook('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', cloudflare_plugin_enabled());
 	}
 }

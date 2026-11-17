@@ -117,7 +117,10 @@ final class AccountsPageDispatchTest extends IntegrationTestCase {
 
 		$this->assertSame(realpath($this->cacti), getcwd());
 		$this->assertSame(array(array('cloudflare')), array_slice(cloudflare_glue_calls('api_plugin_is_enabled'), 0, 1));
-		$this->assertCount(1, cloudflare_glue_calls('db_fetch_cell_prepared'), 'upgrade ran');
+		$versionQueries = array_filter(cloudflare_glue_calls('db_fetch_cell_prepared'), static function (array $call): bool {
+			return isset($call[0]) && is_string($call[0]) && strpos($call[0], 'SELECT version FROM plugin_config') !== false;
+		});
+		$this->assertCount(1, $versionQueries, 'upgrade ran once');
 		$this->assertSame(array('Cloudflare Accounts', ''), self::boxTitles());
 		$this->assertCount(1, cloudflare_glue_calls('top_header'));
 		$this->assertCount(1, cloudflare_glue_calls('bottom_footer'));

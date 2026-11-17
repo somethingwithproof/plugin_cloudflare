@@ -190,4 +190,52 @@ final class OperatorTest extends TestCase {
 		$this->assertSame([7], array_keys($session['entries']));
 		$this->assertSame(3, $session['user']);
 	}
+
+	public function testOperatorPageContainsARepeatedTemplateFailureAndKeepsServiceUnavailable(): void {
+		$cacti = sys_get_temp_dir() . '/cf-operator-' . bin2hex(random_bytes(6));
+		mkdir($cacti . '/include', 0700, true);
+		mkdir($cacti . '/plugins/cloudflare/includes', 0700, true);
+		$root = dirname(__DIR__, 3);
+		$auth = '<?php require_once ' . var_export($root . '/tests/Support/CactiGlueStubs.php', true) . ";\n" . <<<'PHP'
+cloudflare_glue_reset();
+$GLOBALS['cloudflare_glue']['page'] = 'cloudflare_operator.php';
+$GLOBALS['cloudflare_glue']['on_top'] = static function (): void { throw new LogicException('private template detail'); };
+$GLOBALS['user_auth_realm_filenames'] = ['cloudflare.php' => 101, 'cloudflare_operator.php' => 102, 'cloudflare_accounts.php' => 103];
+$GLOBALS['cloudflare_test_realms'] = [102];
+$GLOBALS['current_user'] = ['id' => 2, 'enabled' => 'on'];
+$_SESSION = ['sess_user_id' => 2];
+PHP;
+		file_put_contents($cacti . '/include/auth.php', $auth);
+		file_put_contents($cacti . '/plugins/cloudflare/setup.php', '<?php require_once ' . var_export($root . '/setup.php', true) . ';');
+		file_put_contents($cacti . '/plugins/cloudflare/includes/operator.php', '<?php function cloudflare_operator_rows(): array { return []; }');
+		$code = 'include ' . var_export($root . '/cloudflare_operator.php', true) . '; print json_encode([http_response_code(), cloudflare_glue_calls("cacti_log")]);';
+
+		try {
+			$process = proc_open([PHP_BINARY, '-d', 'opcache.jit=0', '-r', $code], [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, $cacti . '/plugins/cloudflare');
+			$this->assertIsResource($process);
+			$output = (string) stream_get_contents($pipes[1]);
+			$error = (string) stream_get_contents($pipes[2]);
+			fclose($pipes[1]);
+			fclose($pipes[2]);
+			$status = proc_close($process);
+			$this->assertSame(0, $status);
+			$this->assertSame('', $error);
+			$result = json_decode($output, true);
+			$this->assertSame(503, $result[0]);
+			$this->assertSame([
+				'CLOUDFLARE: operator page failed (LogicException)',
+				'CLOUDFLARE: operator error page failed (LogicException)',
+			], array_column($result[1], 0));
+			$this->assertStringNotContainsString('private template detail', $output);
+		} finally {
+			unlink($cacti . '/include/auth.php');
+			unlink($cacti . '/plugins/cloudflare/setup.php');
+			unlink($cacti . '/plugins/cloudflare/includes/operator.php');
+			rmdir($cacti . '/plugins/cloudflare/includes');
+			rmdir($cacti . '/plugins/cloudflare');
+			rmdir($cacti . '/plugins');
+			rmdir($cacti . '/include');
+			rmdir($cacti);
+		}
+	}
 }

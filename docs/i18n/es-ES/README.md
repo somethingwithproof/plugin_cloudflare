@@ -1,4 +1,4 @@
-<!-- Source: README.md; SHA256: 522df740c611a73b1b6fef8340d61403b268fee588d1029b2e842e7f099bbb64 -->
+<!-- Source: README.md; SHA256: 6173976c488e04ddd3ba65cf477eacc3df3b716cfe9a12bbf5723c2ca0e5d877 -->
 
 <!-- translations:start -->
 [English](../../../README.md) | [简体中文](../zh-CN/README.md) | [हिन्दी](../hi-IN/README.md) | [Español (España)](README.md) | [Español (Latinoamérica)](../es-419/README.md) | [العربية](../ar-SA/README.md)
@@ -242,9 +242,9 @@ Un túnel tiene un ciclo de vida independiente del estado de Cloudflare (`health
 |---|---|
 | `active` | El túnel aparecía en la última enumeración completa |
 | `deleted` | Una enumeración completa no lo incluía, también si estaba vacía. La fila y su historial se conservan, y el túnel vuelve a `active` si reaparece |
-| `unavailable` | No se ha podido leer Cloudflare durante tres ejecuciones consecutivas, por lo que se desconoce el estado del túnel |
+| `unavailable` | Tres interrupciones contabilizadas sin una enumeración completa intermedia dejan desconocido el estado del túnel |
 
-Solo una enumeración completa y correcta añade, actualiza o elimina túneles; una enumeración fallida nunca elimina ninguno. La imposibilidad de leer Cloudflare (`transient`, `rate_limited`, `auth` o `permission`) cuenta como interrupción; después de tres consecutivas, sin una enumeración completa intermedia, los túneles activos pasan a `unavailable`. La siguiente enumeración completa los restaura y reinicia el contador. Si Cloudflare ya no conoce un túnel al leer sus conexiones, se omite sin hacer fallar la cuenta.
+Solo una enumeración completa y correcta añade, actualiza o elimina túneles; una enumeración fallida nunca elimina ninguno. La imposibilidad de leer Cloudflare (`transient`, `rate_limited`, `auth` o `permission`) cuenta como interrupción; después de tres interrupciones contabilizadas sin una enumeración completa intermedia, los túneles activos pasan a `unavailable`. La siguiente enumeración completa los restaura y reinicia el contador. Si Cloudflare ya no conoce un túnel al leer sus conexiones, se omite sin hacer fallar la cuenta. Los demás fallos no incrementan ni reinician el contador de interrupciones.
 
 En `cacti.log`, las líneas de descubrimiento empiezan por `CLOUDFLARE: discovery` y el resumen de ejecución por `CLOUDFLARE: collector`. Los fallos y cambios de ciclo de vida, como una enumeración fallida o túneles marcados `unavailable`, se registran al nivel predeterminado `LOW` de Cacti; el resultado de cada cuenta y el resumen se registran en `MEDIUM`. Como la lectura de conexiones puede fallar en todos los túneles, por cada cuenta solo se registra el primer fallo de cada clase en `LOW`, el resto en `MEDIUM`, seguido de una línea `LOW` por clase con el número de túneles fallidos.
 
@@ -323,7 +323,7 @@ El dispositivo conservado deja de recibir datos. Tras desinstalar o eliminar su 
 - Se rechazan las claves de API globales; solo se aceptan tokens de ámbito limitado.
 - Los tokens se guardan en un fichero que usted prepara o cifrados con AES-256-GCM mediante una clave de fichero que nunca entra en la base de datos. Nunca se muestran en páginas, se escriben en registros ni se incluyen en mensajes de error.
 - Los errores de base de datos solo incluyen SQLSTATE y el código del controlador, nunca los valores de la sentencia.
-- Cada cambio es un POST protegido por el token CSRF de Cacti. Los cambios de configuración requieren Cloudflare: Configure; un usuario Operator puede reconocer una observación para su propia cuenta. Crear un dispositivo o activar Create Graphs también exige Sites/Devices/Data de Cacti. Un complemento desactivado rechaza sus páginas.
+- Cada cambio es un POST protegido por el token CSRF de Cacti. Los cambios administrativos de cuentas y configuración requieren Cloudflare: Configure; los reconocimientos personales de triaje requieren Cloudflare: Operator. Crear un dispositivo Cacti o activar Create Graphs también exige Sites/Devices/Data de Cacti. Un complemento desactivado rechaza sus páginas.
 
 Los detalles y limitaciones están en [docs/security.md](docs/security.md). Comunique vulnerabilidades de forma privada como se indica en [SECURITY.md](../../../SECURITY.md).
 

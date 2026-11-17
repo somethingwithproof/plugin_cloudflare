@@ -1,4 +1,4 @@
-<!-- Source: README.md; SHA256: 522df740c611a73b1b6fef8340d61403b268fee588d1029b2e842e7f099bbb64 -->
+<!-- Source: README.md; SHA256: 6173976c488e04ddd3ba65cf477eacc3df3b716cfe9a12bbf5723c2ca0e5d877 -->
 
 <!-- translations:start -->
 [English](../../../README.md) | [简体中文](README.md) | [हिन्दी](../hi-IN/README.md) | [Español (España)](../es-ES/README.md) | [Español (Latinoamérica)](../es-419/README.md) | [العربية](../ar-SA/README.md)
@@ -242,9 +242,9 @@ Verify 设置账户状态：
 |---|---|
 | `active` | 隧道出现在最近一次完整列表中 |
 | `deleted` | 一次完整列表未包含该隧道，也包括空列表。行和历史保留，隧道重新出现时恢复 `active` |
-| `unavailable` | 连续三次运行无法读取 Cloudflare，隧道状态未知 |
+| `unavailable` | 期间没有完整列表的三次计入中断使隧道状态未知 |
 
-仅完整且成功的列表才能添加、更新或删除隧道；列表读取失败绝不删除隧道。完全无法读取 Cloudflare（`transient`、`rate_limited`、`auth` 或 `permission`）计为故障；在尚未取得完整列表的情况下连续三次发生，账户的活动隧道变为 `unavailable`。下一次完整列表恢复它们并重置计数。读取连接时若 Cloudflare 已不再认识某个隧道，则跳过该隧道，不使账户失败。
+仅完整且成功的列表才能添加、更新或删除隧道；列表读取失败绝不删除隧道。完全无法读取 Cloudflare（`transient`、`rate_limited`、`auth` 或 `permission`）计为故障；在两次完整列表之间累计三次，账户的活动隧道变为 `unavailable`。下一次完整列表恢复它们并重置计数。读取连接时若 Cloudflare 已不再认识某个隧道，则跳过该隧道，不使账户失败。其他失败既不增加也不重置中断计数。
 
 在 `cacti.log` 中，发现日志以 `CLOUDFLARE: discovery` 开头，运行摘要以 `CLOUDFLARE: collector` 开头。失败和生命周期变更（如列表读取失败或隧道标记为 `unavailable`）采用 Cacti 默认的 `LOW` 级别；各账户结果和运行摘要采用 `MEDIUM`。连接读取可能在所有隧道失败，因此每个账户中每种错误类别的首次失败以 `LOW` 记录，其余以 `MEDIUM` 记录，随后每类附一条 `LOW` 日志列出失败隧道数。
 
@@ -323,7 +323,7 @@ Settings > Cloudflare 包含：
 - 拒绝全局 API 密钥，仅接受限定作用域的 API 令牌。
 - 令牌存储于您准备的文件中，或通过从不进入数据库的密钥文件以 AES-256-GCM 加密。令牌绝不显示在页面、写入日志或包含在错误消息中。
 - 数据库错误仅携带 SQLSTATE 和驱动错误代码，绝不包含语句值。
-- 每项变更均使用受 Cacti CSRF 令牌保护的 POST。配置更改需要 Cloudflare: Configure；Operator 用户可以为自己的账户确认 observation。创建设备或开启 Create Graphs 还需 Cacti 的 Sites/Devices/Data 权限。已禁用的插件拒绝其页面请求。
+- 每项变更均使用受 Cacti CSRF 令牌保护的 POST。账户管理和配置变更需要 Cloudflare: Configure；个人排查确认需要 Cloudflare: Operator。创建 Cacti 设备或开启 Create Graphs 还需 Cacti 的 Sites/Devices/Data 权限。已禁用的插件拒绝其页面请求。
 
 详情和已知限制见 [docs/security.md](docs/security.md)。请按照 [SECURITY.md](../../../SECURITY.md) 私下报告漏洞。
 

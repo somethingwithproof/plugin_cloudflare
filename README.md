@@ -341,15 +341,16 @@ A tunnel has a lifecycle, kept apart from the status Cloudflare reports
 |---|---|
 | `active` | The tunnel was in the last complete listing |
 | `deleted` | A complete listing did not include it, which includes an empty listing. The row and its history stay, and the tunnel becomes `active` again if it reappears |
-| `unavailable` | Cloudflare could not be read for three runs in a row, so the tunnel's state is unknown |
+| `unavailable` | Three counted outages without a complete listing between them leave the tunnel's state unknown |
 
 Only a complete, successful listing adds, updates or deletes tunnels, and a
 failed listing never deletes one. A failure to read Cloudflare at all
 (`transient`, `rate_limited`, `auth` or `permission`) counts toward an outage;
-after three in a row, before any complete listing, the account's active
-tunnels become `unavailable`. The next complete listing restores them and
-resets the count. A tunnel that Cloudflare no longer knows when its
-connections are read is skipped without failing the account.
+after three counted outages without a complete listing between them, the
+account's active tunnels become `unavailable`. The next complete listing
+restores them and resets the count. A tunnel that Cloudflare no longer knows
+when its connections are read is skipped without failing the account. Other
+failures neither increment nor reset the outage counter.
 
 In `cacti.log`, discovery lines start with `CLOUDFLARE: discovery` and the run
 summary with `CLOUDFLARE: collector`. Failures and lifecycle changes, such as
@@ -505,11 +506,11 @@ the old device in Cacti once its history is no longer needed.
   in a page, written to a log, or included in an error message.
 - Database errors carry only the SQLSTATE and the driver error code, never
   the statement's values.
-- Every change is a POST protected by Cacti's CSRF token. Configuration
-  changes require Cloudflare: Configure; an operator can acknowledge an
-  observation for their own account. Creating a Cacti device or turning on
-  Create Graphs also needs Cacti's Sites/Devices/Data permission.
-  A disabled plugin refuses its pages.
+- Every change is a POST protected by Cacti's CSRF token. Administrative
+  account and configuration changes require Cloudflare: Configure; personal
+  triage acknowledgments require Cloudflare: Operator. Creating a Cacti device
+  or turning on Create Graphs also needs Cacti's Sites/Devices/Data
+  permission. A disabled plugin refuses its pages.
 
 Details and known limitations are in [docs/security.md](docs/security.md).
 Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md).

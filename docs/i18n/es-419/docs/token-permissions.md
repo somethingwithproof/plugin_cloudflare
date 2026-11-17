@@ -1,4 +1,4 @@
-<!-- Source: docs/token-permissions.md; SHA256: aa9669eaa0d9b1ed769fbdab242559bfd534ef36fa37a9a55ad7bc46ad0bdfb9 -->
+<!-- Source: docs/token-permissions.md; SHA256: 419e51268ec44ef5eb3576233cf0172d4ead2c3a75e4530fc533ad2228cc73ea -->
 
 <a id="api-token-permissions"></a>
 # Permisos del token de API
@@ -29,7 +29,7 @@ El recolector realiza dos solicitudes, ambas `GET`, y ambas requieren el permiso
 - `/accounts/{account_id}/cfd_tunnel`, para enumerar los túneles de la cuenta
 - `/accounts/{account_id}/cfd_tunnel/{tunnel_id}/connections`, para leer los conectores de un túnel
 
-El descubrimiento no necesita más permisos que el de lectura de túneles que Verify ya comprueba. Si Cloudflare rechaza la enumeración durante una ejecución, esta falla con `auth` o `permission`. Solo los errores `transient`, `rate_limited`, `auth` y `permission` anteriores a una enumeración completa cuentan como interrupciones. Tres interrupciones consecutivas marcan como `unavailable` los túneles activos de la cuenta; una enumeración completa reinicia el contador.
+El descubrimiento no necesita más permisos que el de lectura de túneles que Verify ya comprueba. Si Cloudflare rechaza la enumeración durante una ejecución, esta falla con `auth` o `permission`. Solo los fallos que impiden leer Cloudflare por completo (`transient`, `rate_limited`, `auth` o `permission`) incrementan el contador de interrupciones. Los demás fallos no lo incrementan ni lo reinician. Tres interrupciones contabilizadas sin una enumeración completa intermedia marcan los túneles activos de la cuenta como `unavailable`. Una enumeración completa reinicia el contador y restablece los túneles, aunque falle la lectura posterior de conexiones en esa misma ejecución.
 
 La verificación del token (`/tokens/verify`) no necesita permisos. Funcionan tanto los tokens de cuenta como los de usuario. Un token de usuario recibe HTTP 401 del endpoint de verificación de cuenta y el complemento vuelve a intentarlo contra el endpoint de usuario.
 

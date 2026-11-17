@@ -1,4 +1,4 @@
-<!-- Source: docs/security.md; SHA256: 5d99697b7e6536549c5b576910e0e32c81099ef3eb0ed2973904d70742bcc377 -->
+<!-- Source: docs/security.md; SHA256: 686c0b06d983411f2dfeb405c08f6eea0b8a6f983bb25760d3de0dcf05f96d83 -->
 
 <a id="security"></a>
 # 安全性
@@ -19,7 +19,7 @@
 - `CURLOPT_PROTOCOLS` 仅允许 HTTPS。
 - 关闭 `CURLOPT_FOLLOWLOCATION`，将 `CURLOPT_MAXREDIRS` 设为 0。
 - 开启 `CURLOPT_SSL_VERIFYPEER`，将 `CURLOPT_SSL_VERIFYHOST` 设为 2。
-- 连接超时为 5 秒，总超时由“Interactive Request Timeout”设置决定，默认为 10 秒，允许范围为 5 至 60 秒。此设置适用于 Web 请求；采集器使用“Collector Request Timeout”（默认为 20 秒）。
+- 连接超时为 5 秒；Web 界面请求的总超时由“Interactive Request Timeout”决定（默认 10 秒），后台采集请求则由“Collector Request Timeout”决定（默认 20 秒）。两项设置的允许范围均为 5 至 60 秒。
 - 将 `CURLOPT_NOPROXY` 设为 `*`，忽略代理环境变量。
 - 响应上限为 5 MiB；超过此大小的响应体会中止传输。
 
@@ -151,6 +151,6 @@ Cacti 会保留已停用插件的权限定义，并继续启用其 `config_array
 - 文件权限问题在 Verify 时出现，而不是保存时。
 - `TokenFile` 仅拒绝路径最后一个组成部分为符号链接的情况；除非设置了 Token File Directory，否则不会检查父目录。
 - 当插件因真正的致命错误而终止，例如内存耗尽、超过 `max_execution_time` 或编译错误时，Cacti 会将其停用。任何 `catch` 都无法拦截这些错误，插件也无法阻止；管理员必须重新启用。页面会捕获 `Throwable` 并记录类名，因此缺表等普通异常会显示固定消息，不会进入 Cacti 的关闭处理器。
-- 连续三次中断类失败会将账户的活动隧道标记为 `unavailable`，即使原因是持续较长的速率限制。下一次完整列表读取会恢复这些隧道。
+- 期间没有完整列表的三次计入中断类失败会将账户的活动隧道标记为 `unavailable`，即使原因是持续较长的速率限制。其他失败既不增加也不重置中断计数。下一次完整列表读取会重置计数并恢复这些隧道。
 - 当升级改变随插件提供的模板 XML 时，插件会覆盖管理员对已导入模板的修改；设备必须留在主轮询器上。请参阅 README 的已知限制。
 - Verify 在 Web 请求内执行。一次 Verify 最多可能发出四个请求：账户验证、用户验证、隧道探测和区域探测。每个请求均受上述超时限制，且最多重试一次。

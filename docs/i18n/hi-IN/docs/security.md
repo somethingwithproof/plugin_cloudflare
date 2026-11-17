@@ -1,4 +1,4 @@
-<!-- Source: docs/security.md; SHA256: 5d99697b7e6536549c5b576910e0e32c81099ef3eb0ed2973904d70742bcc377 -->
+<!-- Source: docs/security.md; SHA256: 686c0b06d983411f2dfeb405c08f6eea0b8a6f983bb25760d3de0dcf05f96d83 -->
 
 <a id="security"></a>
 # सुरक्षा
@@ -19,7 +19,7 @@
 - `CURLOPT_PROTOCOLS` केवल HTTPS
 - `CURLOPT_FOLLOWLOCATION` बंद और `CURLOPT_MAXREDIRS` 0
 - `CURLOPT_SSL_VERIFYPEER` चालू और `CURLOPT_SSL_VERIFYHOST` 2
-- कनेक्शन टाइमआउट 5 सेकंड और कुल टाइमआउट “Interactive Request Timeout” सेटिंग से (डिफ़ॉल्ट 10, स्वीकृत सीमा 5 से 60 सेकंड)। यह सेटिंग वेब अनुरोधों पर लागू है; संग्राहक “Collector Request Timeout” (डिफ़ॉल्ट 20 सेकंड) का उपयोग करता है।
+- कनेक्शन टाइमआउट 5 सेकंड है; कुल टाइमआउट वेब इंटरफ़ेस अनुरोधों के लिए “Interactive Request Timeout” (डिफ़ॉल्ट 10 सेकंड) और पृष्ठभूमि संग्रह के लिए “Collector Request Timeout” (डिफ़ॉल्ट 20 सेकंड) से आता है। दोनों सेटिंग 5 से 60 सेकंड स्वीकार करती हैं
 - `CURLOPT_NOPROXY` का मान `*`, जिससे proxy environment variables अनदेखे होते हैं
 - response सीमा 5 MiB; बड़ा body transfer रोक देता है
 
@@ -151,6 +151,6 @@ Cacti अक्षम प्लगइन के अनुमति क्षे�
 - फ़ाइल अनुमति समस्याएँ Verify पर आती हैं, save पर नहीं।
 - `TokenFile` केवल अंतिम path component का symbolic link अस्वीकार करता है; Token File Directory सेट न हो तो parent directories नहीं जाँचता।
 - Cacti वास्तविक fatal error, जैसे मेमोरी समाप्त, `max_execution_time` पार होना या compile error, पर प्लगइन अक्षम करता है। कोई `catch` इन्हें नहीं पकड़ सकता और प्लगइन रोक नहीं सकता; प्रशासक को फिर सक्षम करना पड़ता है। पृष्ठ `Throwable` पकड़ते हैं और class name लॉग करते हैं; इसलिए गुम तालिका जैसी सामान्य exception निश्चित संदेश दिखाती है और Cacti shutdown handler तक नहीं पहुँचती।
-- लगातार तीन outage-class विफलताएँ खाते के सक्रिय टनलों को `unavailable` करती हैं, चाहे कारण लंबी rate limit हो। अगली पूर्ण सूची उन्हें फिर सक्रिय करती है।
+- बीच में पूर्ण सूची मिले बिना गिनी गई तीन outage-class विफलताएँ खाते के सक्रिय टनलों को `unavailable` करती हैं, चाहे कारण लंबी rate limit हो। अन्य विफलताएँ बाधा काउंटर को न बढ़ाती हैं, न रीसेट करती हैं। अगली पूर्ण सूची उसे रीसेट करती है और टनल बहाल करती है।
 - अपग्रेड में वितरित template XML बदलने पर आयातित templates में प्रशासक के बदलाव overwrite होते हैं, और डिवाइस मुख्य पोलर पर रहना चाहिए। README की ज्ञात सीमाएँ देखें।
 - Verify वेब request के भीतर चलता है। एक Verify अधिकतम चार requests कर सकता है (account verify, user verify, tunnel probe, zone probe), हर एक ऊपर के timeouts तक सीमित और अधिकतम एक बार retried होता है।

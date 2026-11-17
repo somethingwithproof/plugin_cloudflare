@@ -38,13 +38,13 @@ if (!$allowed) {
 }
 $actions = array();
 $action  = (string) get_nfilter_request_var('action');
-$now     = time();
 $session = $_SESSION['cloudflare_triage'] ?? array();
 $session = is_array($session) ? $session : array();
 
 try {
 	// Re-read on POST too: stale forms never retain revoked device access.
 	$rows = cloudflare_operator_rows();
+	$now  = time();
 
 	if ($action !== '' && $action !== 'default') {
 		$method = $_SERVER['REQUEST_METHOD'] ?? '';

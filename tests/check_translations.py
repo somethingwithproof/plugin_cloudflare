@@ -21,7 +21,7 @@ TOKENS = re.compile(r"%(?:\d+\$)?[-+ 0#]*\d*(?:\.\d+)?[sdfuxXcoeEgGi]|%%|<[^>]*>
 
 def messages(path):
     result = []
-    for block in path.read_text().split("\n\n"):
+    for block in path.read_text(encoding="utf-8").split("\n\n"):
         fields = {}
         current = None
         for line in block.splitlines():
@@ -46,44 +46,55 @@ def source_text(text):
     return NAVIGATION.sub("", text)
 
 
-def code_blocks(text):
+def fenced_sections(text: str) -> tuple[list[tuple[str, str]], str]:
     blocks = []
+    prose = []
     fence = None
     content = []
     language = ""
     for line in text.splitlines():
-        match = re.match(r"^\s*(`{3,}|~{3,})(.*)$", line)
+        match = re.match(r"^[ \t]*(`{3,}|~{3,})(.*)$", line)
         if fence is None and match:
-            fence, language = match[1][0], match[2].strip()
+            fence, language = match[1], match[2].strip()
             content = []
-        elif fence is not None and match and match[1][0] == fence:
-            if language != "mermaid":
-                blocks.append("\n".join(content))
+            prose.append("")
+        elif (fence is not None and match
+              and match[1][0] == fence[0]
+              and len(match[1]) >= len(fence)
+              and not match[2].strip()):
+            blocks.append((language, "\n".join(content)))
             fence = None
         elif fence is not None:
             content.append(line)
+        else:
+            prose.append(line)
     if fence is not None:
         raise ValueError("unclosed code fence")
-    return blocks
+    return blocks, "\n".join(prose)
+
+
+def code_blocks(text):
+    blocks, _ = fenced_sections(text)
+    return [content for language, content in blocks if language != "mermaid"]
 
 
 def links(text):
     # Fenced examples can contain literal Markdown and URLs that are not links.
-    text = re.sub(r"(?ms)^\s*(```|~~~).*?^\s*\1\s*$", "", text)
+    _, text = fenced_sections(text)
     result = re.findall(r"\]\(<?([^\s)>]+)>?(?:\s+[\"'][^\n]*?[\"'])?\)", text)
     result.extend(re.findall(r"(?:href|src|srcset)=[\"']([^\"']+)[\"']", text))
     return result
 
 
 def heading_levels(text):
-    text = re.sub(r"(?ms)^\s*(```|~~~).*?^\s*\1\s*$", "", text)
+    _, text = fenced_sections(text)
     return [len(level) for level in re.findall(r"^(#{1,6})\s+", text, re.M)]
 
 
 def validate(root):
     failures = []
     manifest_path = root / "docs/i18n/manifest.json"
-    manifest = json.loads(manifest_path.read_text())
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     sources = manifest["sources"]
     if manifest["locales"] != list(LOCALES):
         failures.append("manifest locales must include both Spanish variants")
@@ -115,8 +126,8 @@ def validate(root):
             if not original.is_file() or not translated.is_file():
                 failures.append("missing source or translation: " + label)
                 continue
-            english = source_text(original.read_text())
-            text = translated.read_text()
+            english = source_text(original.read_text(encoding="utf-8"))
+            text = translated.read_text(encoding="utf-8")
             header = HEADER.search(text)
             digest = hashlib.sha256(english.encode()).hexdigest()
             if header is None or header[1] != source or header[2] != digest:

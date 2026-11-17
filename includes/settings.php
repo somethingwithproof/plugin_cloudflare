@@ -38,6 +38,15 @@ function cloudflare_config_arrays() : void {
  * @return array<string, array<string, string>>
  */
 function cloudflare_draw_navigation_text($nav) {
+	global $current_user, $settings;
+
+	// Navigation runs after login restoration and before settings tabs render.
+	// Existing definitions also prevent repeating the settings upgrade here.
+	if (function_exists('get_current_page') && get_current_page() === 'settings.php'
+		&& !isset($settings['cloudflare']) && (PHP_SAPI === 'cli' || ($current_user['enabled'] ?? '') === 'on')) {
+		cloudflare_config_settings();
+	}
+
 	if (!cloudflare_plugin_enabled()) {
 		return $nav;
 	}

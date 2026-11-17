@@ -131,6 +131,62 @@ final class SetupContractTest extends TestCase {
 		$this->assertCount(1, cloudflare_glue_calls('db_fetch_cell_prepared'));
 	}
 
+	public function testNavigationRestoresMissingSettingsForAnEnabledAdministratorWithoutRepeatingUpgrades(): void {
+		$cgi = dirname(PHP_BINARY) . '/php-cgi';
+		if (!is_executable($cgi)) {
+			$this->markTestSkipped('PHP CGI is needed to exercise the web-only settings permission filter.');
+		}
+		$this->keyDir = sys_get_temp_dir() . '/cf-settings-' . bin2hex(random_bytes(6));
+		mkdir($this->keyDir, 0700);
+		$root = var_export((string) realpath(self::ROOT), true);
+		$script = <<<'PHP'
+<?php
+function api_plugin_user_realm_auth(string $filename = ''): bool {
+	return !empty($_SESSION['sess_user_id']) && $GLOBALS['admin'] && $filename === 'cloudflare_accounts.php';
+}
+require_once PLUGIN_ROOT . '/tests/Support/CactiGlueStubs.php';
+require_once PLUGIN_ROOT . '/setup.php';
+require_once PLUGIN_ROOT . '/includes/settings.php';
+$results = [];
+foreach ([['settings.php', true, 'on', true], ['settings.php', false, 'on', true], ['cloudflare.php', true, 'on', true], ['settings.php', true, '', true], ['settings.php', true, null, true], ['settings.php', true, 'on', false]] as [$page, $admin, $enabled, $plugin]) {
+	cloudflare_glue_reset();
+	$GLOBALS['cloudflare_glue']['page'] = $page;
+	$GLOBALS['cloudflare_glue']['enabled'] = $plugin;
+	$tabs = $settings = [];
+	$_SESSION = [];
+	cloudflare_config_settings();
+	$before = isset($tabs['cloudflare']);
+	$_SESSION = ['sess_user_id' => 2];
+	$current_user = $enabled === null ? [] : ['id' => 2, 'enabled' => $enabled];
+	$nav = cloudflare_draw_navigation_text(['preserved' => ['title' => 'Existing']]);
+	cloudflare_draw_navigation_text($nav);
+	$results[] = [$before, isset($tabs['cloudflare']), isset($settings['cloudflare']['cloudflare_key_file']), $nav['preserved']['title'], count(cloudflare_glue_calls('db_fetch_cell_prepared'))];
+}
+print json_encode($results);
+PHP;
+		$fixture = $this->keyDir . '/settings.php';
+		file_put_contents($fixture, str_replace('PLUGIN_ROOT', $root, $script));
+		$process = proc_open([$cgi, '-q', $fixture], [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, null, ['REDIRECT_STATUS' => '200', 'SCRIPT_FILENAME' => $fixture, 'REQUEST_METHOD' => 'GET']);
+		$this->assertIsResource($process);
+		$output = (string) stream_get_contents($pipes[1]);
+		$error = (string) stream_get_contents($pipes[2]);
+		fclose($pipes[1]);
+		fclose($pipes[2]);
+		$status = proc_close($process);
+		$body = explode("\r\n\r\n", $output, 2);
+
+		$this->assertSame('', $error);
+		$this->assertSame(0, $status);
+		$this->assertSame([
+			[false, true, true, 'Existing', 1],
+			[false, false, false, 'Existing', 0],
+			[false, false, false, 'Existing', 0],
+			[false, false, false, 'Existing', 0],
+			[false, false, false, 'Existing', 0],
+			[false, true, true, 'Existing', 0],
+		], json_decode($body[count($body) - 1], true));
+	}
+
 	public function testAccountsPageRefusesWhenPluginDisabled(): void {
 		$source = (string) file_get_contents(self::ROOT . '/cloudflare_accounts.php');
 

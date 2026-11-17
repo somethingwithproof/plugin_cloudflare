@@ -86,6 +86,12 @@ final class AccountsPageDispatchTest extends IntegrationTestCase {
 	}
 
 	private function page(): string {
+		// The stand-in auth.php must supply the identity and native Cacti realms.
+		$_SESSION = array('sess_user_id' => 2);
+		$GLOBALS['current_user'] = array('id' => 2, 'enabled' => 'on');
+		$GLOBALS['cloudflare_glue']['page'] = 'cloudflare_accounts.php';
+		$GLOBALS['user_auth_realm_filenames'] = array('cloudflare.php' => 101, 'cloudflare_operator.php' => 102, 'cloudflare_accounts.php' => 103);
+		$GLOBALS['cloudflare_test_realms'] = array(103);
 		ob_start();
 
 		try {
@@ -111,7 +117,10 @@ final class AccountsPageDispatchTest extends IntegrationTestCase {
 
 		$this->assertSame(realpath($this->cacti), getcwd());
 		$this->assertSame(array(array('cloudflare')), array_slice(cloudflare_glue_calls('api_plugin_is_enabled'), 0, 1));
-		$this->assertCount(1, cloudflare_glue_calls('db_fetch_cell_prepared'), 'upgrade ran');
+		$versionQueries = array_filter(cloudflare_glue_calls('db_fetch_cell_prepared'), static function (array $call): bool {
+			return isset($call[0]) && is_string($call[0]) && strpos($call[0], 'SELECT version FROM plugin_config') !== false;
+		});
+		$this->assertCount(1, $versionQueries, 'upgrade ran once');
 		$this->assertSame(array('Cloudflare Accounts', ''), self::boxTitles());
 		$this->assertCount(1, cloudflare_glue_calls('top_header'));
 		$this->assertCount(1, cloudflare_glue_calls('bottom_footer'));

@@ -14,6 +14,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: cloudflare_operator.php
+msgid "Monitoring view"
+msgstr "Überwachungsansicht"
+
+#: cloudflare_operator.php
+msgid "Observations could not be read. Ask an administrator to check the plugin log."
+msgstr "Die Beobachtungen konnten nicht gelesen werden. Bitten Sie einen Administrator, das Plugin-Protokoll zu prüfen."
+
 #: includes/accounts.php
 msgid "Connection verified"
 msgstr "Verbindung überprüft"
@@ -353,9 +361,9 @@ msgstr "Cloudflare-Konto [bearbeiten: %s]"
 msgid "Cloudflare Account [new]"
 msgstr "Cloudflare-Konto [neu]"
 
-#: includes/accounts_page.php includes/viewer.php
+#: includes/accounts_page.php includes/viewer.php src/OperatorPage.php
 msgid "Never"
-msgstr "Niemals"
+msgstr "Nie"
 
 #: includes/accounts_page.php includes/viewer.php
 msgid "Status"
@@ -454,23 +462,31 @@ msgstr "ID"
 msgid "No Cloudflare Accounts Found"
 msgstr "Keine Cloudflare-Konten gefunden"
 
+#: includes/operator.php
+msgid "Inspect tunnels and connector counts. Escalate token changes, account configuration and graph creation to an administrator."
+msgstr "Prüfen Sie Tunnel und die Anzahl der Konnektoren. Überlassen Sie Token-Änderungen, Kontokonfiguration und Diagrammerstellung einem Administrator."
+
 #: includes/settings.php
 msgid "Configuration"
 msgstr "Konfiguration"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Cloudflare Operations"
+msgstr "Cloudflare-Betrieb"
+
+#: includes/settings.php
+msgid "Management"
+msgstr "Verwaltung"
 
 #: includes/settings.php includes/viewer.php
 msgid "Cloudflare Tunnels"
 msgstr "Cloudflare-Tunnel"
 
 #: includes/settings.php
-msgid "Management"
-msgstr "Verwaltung"
-
-#: includes/settings.php
 msgid "(edit)"
 msgstr "(bearbeiten)"
 
-#: includes/settings.php
+#: includes/settings.php src/OperatorPage.php
 msgid "Actions"
 msgstr "Aktionen"
 
@@ -684,3 +700,43 @@ msgstr "Dieser Tunnel ist %s. Diese Connectors wurden zuletzt gesehen, als der T
 #: includes/viewer.php
 msgid "No connectors are running for this tunnel."
 msgstr "Für diesen Tunnel läuft kein Connector."
+
+#: setup.php
+msgid "Cloudflare: Operator"
+msgstr "Cloudflare: Operator"
+
+#: src/OperatorPage.php
+msgid "Review the recorded observations below. Acknowledgments are personal to this session, expire when observations change, and never suppress alerts or change health."
+msgstr "Prüfen Sie die unten aufgezeichneten Beobachtungen. Bestätigungen gelten nur für Ihre Sitzung, verfallen bei Änderungen der Beobachtungen und unterdrücken weder Alarme noch ändern sie den Zustandsstatus."
+
+#: src/OperatorPage.php
+msgid "Investigation"
+msgstr "Untersuchung"
+
+#: src/OperatorPage.php
+msgid "Object"
+msgstr "Objekt"
+
+#: src/OperatorPage.php
+msgid "Observed (UTC)"
+msgstr "Beobachtet (UTC)"
+
+#: src/OperatorPage.php
+msgid "State"
+msgstr "Zustand"
+
+#: src/OperatorPage.php
+msgid "Unknown or stale"
+msgstr "Unbekannt oder veraltet"
+
+#: src/OperatorPage.php
+msgid "Acknowledged; health unchanged."
+msgstr "Bestätigt; Zustandsstatus unverändert."
+
+#: src/OperatorPage.php
+msgid "Acknowledge"
+msgstr "Bestätigen"
+
+#: src/OperatorPage.php
+msgid "No observations are available for devices you may access."
+msgstr "Für Geräte, auf die Sie zugreifen dürfen, liegen keine Beobachtungen vor."

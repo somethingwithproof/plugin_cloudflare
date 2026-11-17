@@ -27,8 +27,7 @@ use Somethingwithproof\Cloudflare\Storage\Migrator;
 /*
  * api_plugin_valid_entrypoint() (lib/plugins.php:1124) rejects hook and
  * realm registration unless the direct caller's name matches
- * /(install|upgrade|setup)/i, so registration stays inline in install()
- * and plugin_cloudflare_upgrade().
+ * /(install|upgrade|setup)/i, so registration stays in install(), upgrade(), and named setup helpers.
  */
 function plugin_cloudflare_install() : void {
 	api_plugin_register_hook('cloudflare', 'config_arrays', 'cloudflare_config_arrays', 'includes/settings.php');
@@ -41,6 +40,7 @@ function plugin_cloudflare_install() : void {
 	);
 	api_plugin_register_hook('cloudflare', 'poller_bottom', 'cloudflare_poller_bottom', 'includes/polling.php');
 
+	cloudflare_setup_operator();
 	api_plugin_register_realm('cloudflare', 'cloudflare.php', 'Cloudflare: View', false);
 	api_plugin_register_realm('cloudflare', 'cloudflare_accounts.php', 'Cloudflare: Configure', true);
 
@@ -114,6 +114,8 @@ function plugin_cloudflare_upgrade(int $lock_timeout = 10) : bool {
 
 	$info    = plugin_cloudflare_version();
 	$current = isset($info['version']) ? (string) $info['version'] : '';
+	$changed = $current !== '' && $current !== (string) $installed;
+	cloudflare_setup_operator($changed);
 
 	try {
 		$migrator = new Migrator(cloudflare_db(), Migrator::defaultMigrations(), $lock_timeout);
@@ -174,4 +176,87 @@ function cloudflare_log_schema_failure(string $stage, DatabaseException $e) : vo
 	}
 
 	cacti_log('CLOUDFLARE: schema ' . $stage . ' failed: ' . $e->getMessage(), false, 'CLOUDFLARE');
+}
+
+/** Resolve role inheritance against Cacti's current user and group grants. */
+function cloudflare_auth_alternate_realms() : void {
+	global $user_auth_realm_filenames;
+
+	static $deferred = array();
+
+	foreach ($deferred as $file => $realm) {
+		$user_auth_realm_filenames[$file] = $realm;
+	}
+	$deferred = array();
+
+	if (!api_plugin_is_enabled('cloudflare')) {
+		return;
+	}
+
+	if (empty($_SESSION['sess_user_id'])) {
+		// Core restores cookie and Basic authentication after this hook. Only
+		// these entrypoints defer the realm check to their post-auth guard.
+		$page = get_current_page();
+
+		if (in_array($page, array('cloudflare.php', 'cloudflare_operator.php'), true) && isset($user_auth_realm_filenames[$page])) {
+			$deferred[$page]                  = $user_auth_realm_filenames[$page];
+			$user_auth_realm_filenames[$page] = -1;
+		}
+
+		return;
+	}
+	$operator = 'cloudflare_operator.php';
+	$admin    = 'cloudflare_accounts.php';
+	$files    = array('cloudflare.php');
+	$realm    = $user_auth_realm_filenames[$admin] ?? 0;
+
+	if ($realm > 0 && is_realm_allowed($realm)) {
+		$files[] = $operator;
+	} else {
+		$realm = $user_auth_realm_filenames[$operator] ?? 0;
+
+		if ($realm <= 0 || !is_realm_allowed($realm)) {
+			return;
+		}
+	}
+
+	foreach ($files as $file) {
+		$user_auth_realm_filenames[$file] = $realm;
+	}
+}
+
+/** Register the operator realm and hook only when installing, upgrading or repairing missing rows. */
+function cloudflare_setup_operator(bool $force = true) : void {
+	$registerRealm = $force || (int) db_fetch_cell_prepared(
+		'SELECT COUNT(*) FROM plugin_realms WHERE plugin = ? AND file = ?',
+		array('cloudflare', 'cloudflare_operator.php')
+	) === 0;
+	$registerHook = $force || (int) db_fetch_cell_prepared(
+		'SELECT COUNT(*) FROM plugin_hooks WHERE name = ? AND hook = ?',
+		array('cloudflare', 'auth_alternate_realms')
+	) === 0;
+
+	if ($registerRealm) {
+		api_plugin_register_realm('cloudflare', 'cloudflare_operator.php', __('Cloudflare: Operator', 'cloudflare'), false);
+	}
+
+	if ($registerHook) {
+		api_plugin_register_hook('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', cloudflare_plugin_enabled());
+	}
+}
+
+/** Recheck the authenticated user before a plugin page reads data or acts. */
+function cloudflare_page_allowed() : bool {
+	global $current_user;
+
+	cloudflare_auth_alternate_realms();
+	$userId    = $current_user['id'] ?? null;
+	$sessionId = $_SESSION['sess_user_id'] ?? null;
+
+	return (is_int($userId) || (is_string($userId) && ctype_digit($userId)))
+		&& (is_int($sessionId) || (is_string($sessionId) && ctype_digit($sessionId)))
+		&& (int) $userId > 0 && (int) $userId === (int) $sessionId
+		&& api_plugin_is_enabled('cloudflare')
+		&& ($current_user['enabled'] ?? '') === 'on'
+		&& api_plugin_user_realm_auth(get_current_page());
 }

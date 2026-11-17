@@ -1,3 +1,7 @@
+<!-- translations:start -->
+[English](README.md) | [简体中文](docs/i18n/zh-CN/README.md) | [हिन्दी](docs/i18n/hi-IN/README.md) | [Español (España)](docs/i18n/es-ES/README.md) | [Español (Latinoamérica)](docs/i18n/es-419/README.md) | [العربية](docs/i18n/ar-SA/README.md)
+<!-- translations:end -->
+
 <p align="center">
   <img src="docs/images/logo.png" width="300" height="200" alt="Plugin logo: a green cactus in front of an orange cloud outline with a line chart, above the text Cacti Monitor for Cloudflare">
 </p>
@@ -29,7 +33,7 @@ zone analytics yet.
 | Available now | Planned |
 |---|---|
 | Install, upgrade, disable and uninstall through Cacti's plugin manager | GraphQL analytics and Thold alerts (Milestone 4) |
-| Cloudflare: View and Cloudflare: Configure permissions | Fault injection, TLA+ models and full documentation (Milestone 5) |
+| Cloudflare: View, Operator and Configure permissions | Fault injection, TLA+ models and full documentation (Milestone 5) |
 | Add, edit, delete, enable and disable Cloudflare accounts | |
 | Store a token in a file or encrypted in the Cacti database | |
 | Verify a token and check its tunnel and zone read permissions | |
@@ -39,6 +43,28 @@ zone analytics yet.
 | One Cacti device per account, created by an administrator, with the tunnels as the indexes of a data query | |
 | Per tunnel Connectors, Health and Collection graphs, drawn from one RRD file per tunnel | |
 | Values the plugin cannot vouch for are stored as unknown (`U`), never as 0 | |
+
+## Access roles
+
+| Realm | Access |
+| --- | --- |
+| Cloudflare: View | Existing monitoring pages. |
+| Cloudflare: Operator | Monitoring plus the Operations page and personal triage acknowledgments. |
+| Cloudflare: Configure | Operator access plus the existing configuration and administrative actions. |
+
+After copying upgrade files, open the Plugins page as an administrator to register
+the new realm. Assign the Operator realm explicitly under **Configuration > Users** or user groups.
+Upgrades retain the existing View and Admin realm IDs and grants. Admin access
+inherits Operator access, and Operator access inherits View access on each request;
+this does not add stored grants to users or groups. Plugin settings also require
+Cloudflare: Configure access in addition to Cacti's Settings permission.
+
+Cloudflare account visibility matches the existing View realm; it is account-wide.
+Credentials, configuration, mapping, deletion and other administrative changes
+remain in the administrative pages. Acknowledgments last only in the current
+user's session, for at most one hour and only while the same observation remains
+fresh. New or changed observations invalidate them. They never mark a failed
+measurement healthy or suppress alerts.
 
 ## Why this plugin
 
@@ -315,15 +341,16 @@ A tunnel has a lifecycle, kept apart from the status Cloudflare reports
 |---|---|
 | `active` | The tunnel was in the last complete listing |
 | `deleted` | A complete listing did not include it, which includes an empty listing. The row and its history stay, and the tunnel becomes `active` again if it reappears |
-| `unavailable` | Cloudflare could not be read for three runs in a row, so the tunnel's state is unknown |
+| `unavailable` | Three counted outages without a complete listing between them leave the tunnel's state unknown |
 
 Only a complete, successful listing adds, updates or deletes tunnels, and a
 failed listing never deletes one. A failure to read Cloudflare at all
 (`transient`, `rate_limited`, `auth` or `permission`) counts toward an outage;
-after three in a row, before any complete listing, the account's active
-tunnels become `unavailable`. The next complete listing restores them and
-resets the count. A tunnel that Cloudflare no longer knows when its
-connections are read is skipped without failing the account.
+after three counted outages without a complete listing between them, the
+account's active tunnels become `unavailable`. The next complete listing
+restores them and resets the count. A tunnel that Cloudflare no longer knows
+when its connections are read is skipped without failing the account. Other
+failures neither increment nor reset the outage counter.
 
 In `cacti.log`, discovery lines start with `CLOUDFLARE: discovery` and the run
 summary with `CLOUDFLARE: collector`. Failures and lifecycle changes, such as
@@ -430,8 +457,8 @@ no effect in this release.
 ## Languages
 
 The plugin ships translations into Spanish (Spain, `es-ES`), French
-(`fr-FR`), German (`de-DE`), Simplified Chinese (`zh-CN`) and Japanese
-(`ja-JP`). Cacti shows them once language support is on (Configuration >
+(`fr-FR`), German (`de-DE`), Simplified Chinese (`zh-CN`), Hindi (`hi-IN`),
+Arabic (`ar-SA`) and Japanese (`ja-JP`). Cacti shows them once language support is on (Configuration >
 Settings > General > Language Support) and a user picks the language. A Latin
 American Spanish catalog (`es-419`) ships as well, but Cacti 1.2 has no Latin
 American Spanish locale to select, so it takes effect only when Cacti adds
@@ -479,10 +506,11 @@ the old device in Cacti once its history is no longer needed.
   in a page, written to a log, or included in an error message.
 - Database errors carry only the SQLSTATE and the driver error code, never
   the statement's values.
-- Every change is a POST protected by Cacti's CSRF token, and is checked
-  against the Cloudflare: Configure permission. Creating a Cacti device or
-  turning on Create Graphs also needs Cacti's Sites/Devices/Data permission.
-  A disabled plugin refuses its pages.
+- Every change is a POST protected by Cacti's CSRF token. Administrative
+  account and configuration changes require Cloudflare: Configure; personal
+  triage acknowledgments require Cloudflare: Operator. Creating a Cacti device
+  or turning on Create Graphs also needs Cacti's Sites/Devices/Data
+  permission. A disabled plugin refuses its pages.
 
 Details and known limitations are in [docs/security.md](docs/security.md).
 Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md).

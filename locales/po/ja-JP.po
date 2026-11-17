@@ -14,6 +14,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: cloudflare_operator.php
+msgid "Monitoring view"
+msgstr "監視ビュー"
+
+#: cloudflare_operator.php
+msgid "Observations could not be read. Ask an administrator to check the plugin log."
+msgstr "観測結果を読み取れませんでした。管理者にプラグインのログを確認するよう依頼してください。"
+
 #: includes/accounts.php
 msgid "Connection verified"
 msgstr "接続を確認しました"
@@ -348,9 +356,9 @@ msgstr "Cloudflare アカウント [編集: %s]"
 msgid "Cloudflare Account [new]"
 msgstr "Cloudflare アカウント [新規]"
 
-#: includes/accounts_page.php includes/viewer.php
+#: includes/accounts_page.php includes/viewer.php src/OperatorPage.php
 msgid "Never"
-msgstr "なし"
+msgstr "未実施"
 
 #: includes/accounts_page.php includes/viewer.php
 msgid "Status"
@@ -449,23 +457,31 @@ msgstr "ID"
 msgid "No Cloudflare Accounts Found"
 msgstr "Cloudflare アカウントが見つかりません"
 
+#: includes/operator.php
+msgid "Inspect tunnels and connector counts. Escalate token changes, account configuration and graph creation to an administrator."
+msgstr "トンネルとコネクター数を確認してください。トークンの変更、アカウントの設定、グラフの作成は管理者に依頼してください。"
+
 #: includes/settings.php
 msgid "Configuration"
 msgstr "構成"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Cloudflare Operations"
+msgstr "Cloudflare 運用"
+
+#: includes/settings.php
+msgid "Management"
+msgstr "管理"
 
 #: includes/settings.php includes/viewer.php
 msgid "Cloudflare Tunnels"
 msgstr "Cloudflare トンネル"
 
 #: includes/settings.php
-msgid "Management"
-msgstr "管理"
-
-#: includes/settings.php
 msgid "(edit)"
 msgstr "(編集)"
 
-#: includes/settings.php
+#: includes/settings.php src/OperatorPage.php
 msgid "Actions"
 msgstr "操作"
 
@@ -679,3 +695,43 @@ msgstr "このトンネルは %s です。これらのコネクターは、ト�
 #: includes/viewer.php
 msgid "No connectors are running for this tunnel."
 msgstr "このトンネルで実行中のコネクターはありません。"
+
+#: setup.php
+msgid "Cloudflare: Operator"
+msgstr "Cloudflare: オペレーター"
+
+#: src/OperatorPage.php
+msgid "Review the recorded observations below. Acknowledgments are personal to this session, expire when observations change, and never suppress alerts or change health."
+msgstr "以下に記録された観測結果を確認してください。確認済みの記録はこのセッションの自分だけに適用され、観測結果が変わると失効します。アラートの抑制や健全性の変更は行いません。"
+
+#: src/OperatorPage.php
+msgid "Investigation"
+msgstr "調査"
+
+#: src/OperatorPage.php
+msgid "Object"
+msgstr "対象"
+
+#: src/OperatorPage.php
+msgid "Observed (UTC)"
+msgstr "観測日時 (UTC)"
+
+#: src/OperatorPage.php
+msgid "State"
+msgstr "状態"
+
+#: src/OperatorPage.php
+msgid "Unknown or stale"
+msgstr "不明または古い情報"
+
+#: src/OperatorPage.php
+msgid "Acknowledged; health unchanged."
+msgstr "確認済み。健全性に変更はありません。"
+
+#: src/OperatorPage.php
+msgid "Acknowledge"
+msgstr "確認済みにする"
+
+#: src/OperatorPage.php
+msgid "No observations are available for devices you may access."
+msgstr "アクセス権のあるデバイスの観測結果はありません。"

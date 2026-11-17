@@ -84,6 +84,8 @@ if [ "${1:-}" = "--check" ]; then
 		fi
 	done
 
+	python3 tests/check_translations.py || rc=1
+
 	[ $rc -eq 0 ] && echo "catalogs are complete and compiled"
 	exit $rc
 fi

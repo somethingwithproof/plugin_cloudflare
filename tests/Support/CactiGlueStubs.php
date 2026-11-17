@@ -1350,3 +1350,23 @@ if (!function_exists('api_data_source_remove')) {
 		unset($GLOBALS['cloudflare_glue']['data_local'][(int) $local_data_id]);
 	}
 }
+
+if (!function_exists('api_plugin_user_realm_auth')) {
+	function api_plugin_user_realm_auth(string $filename = ''): bool {
+		return is_realm_allowed($GLOBALS['user_auth_realm_filenames'][basename($filename)] ?? 0);
+	}
+}
+if (!function_exists('is_realm_allowed')) {
+	/**
+	 * @param int $realm
+	 * @param int|false $check_user
+	 */
+	function is_realm_allowed($realm, $check_user = false): bool {
+		return in_array($realm, $GLOBALS['cloudflare_test_realms'] ?? [], true);
+	}
+}
+if (!function_exists('csrf_check')) {
+	function csrf_check(bool $fatal = true): bool {
+		return ($GLOBALS['cloudflare_test_csrf'] ?? false) === true;
+	}
+}

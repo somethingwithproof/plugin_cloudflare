@@ -28,9 +28,9 @@ function cloudflare_config_arrays() : void {
 
 	$menu[__('Configuration')]['plugins/cloudflare/cloudflare_accounts.php'] = __('Cloudflare Accounts', 'cloudflare');
 
-	/* draw_menu() shows an entry only to users holding its file's realm, so
-	 * this one follows Cloudflare: View, not the admin-only Configure. */
-	$menu[__('Management')]['plugins/cloudflare/cloudflare.php'] = __('Cloudflare Tunnels', 'cloudflare');
+	// draw_menu() filters each entry using its page's realm.
+	$menu[__('Management')]['plugins/cloudflare/cloudflare_operator.php'] = __('Cloudflare Operations', 'cloudflare');
+	$menu[__('Management')]['plugins/cloudflare/cloudflare.php']          = __('Cloudflare Tunnels', 'cloudflare');
 }
 
 /**
@@ -38,6 +38,15 @@ function cloudflare_config_arrays() : void {
  * @return array<string, array<string, string>>
  */
 function cloudflare_draw_navigation_text($nav) {
+	global $current_user, $settings;
+
+	// Navigation runs after login restoration and before settings tabs render.
+	// Existing definitions also prevent repeating the settings upgrade here.
+	if (function_exists('get_current_page') && get_current_page() === 'settings.php'
+		&& !isset($settings['cloudflare']) && (PHP_SAPI === 'cli' || ($current_user['enabled'] ?? '') === 'on')) {
+		cloudflare_config_settings();
+	}
+
 	if (!cloudflare_plugin_enabled()) {
 		return $nav;
 	}
@@ -62,6 +71,8 @@ function cloudflare_draw_navigation_text($nav) {
 		'url'     => 'cloudflare_accounts.php',
 		'level'   => '2'
 	);
+
+	$nav['cloudflare_operator.php:'] = array('title' => __('Cloudflare Operations', 'cloudflare'), 'mapping' => 'index.php:', 'url' => 'cloudflare_operator.php', 'level' => '1');
 
 	$nav['cloudflare.php:'] = array(
 		'title'   => __('Cloudflare', 'cloudflare'),
@@ -90,6 +101,10 @@ function cloudflare_draw_navigation_text($nav) {
 
 function cloudflare_config_settings() : void {
 	global $tabs, $settings, $logfile_verbosity;
+
+	if (PHP_SAPI !== 'cli' && !api_plugin_user_realm_auth('cloudflare_accounts.php')) {
+		return;
+	}
 
 	/* The tab stays while disabled: Cacti keeps this hook enabled so the key
 	 * path can be set before the plugin is turned on. The schema waits for

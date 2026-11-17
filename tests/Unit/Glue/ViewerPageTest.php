@@ -383,7 +383,7 @@ final class ViewerPageTest extends TestCase {
 		}
 
 		$source = (string) file_get_contents(self::ROOT . '/cloudflare.php');
-		$guarded = preg_match('#\nif \(!cloudflare_plugin_enabled\(\)\) \{(.*?)\n\}#s', $source, $guard, PREG_OFFSET_CAPTURE);
+		$guarded = preg_match('#\nif \(!cloudflare_page_allowed\(\)\) \{(.*?)\n\}#s', $source, $guard, PREG_OFFSET_CAPTURE);
 		$this->assertSame(1, $guarded);
 		$this->assertStringContainsString('permission_denied.php', $guard[1][0]);
 		$this->assertStringContainsString('exit;', $guard[1][0]);
@@ -441,6 +441,11 @@ final class ViewerPageTest extends TestCase {
 			$this->cacti . '/include/auth.php',
 			'<?php require_once ' . var_export($stubs, true) . ";\n" .
 			"cloudflare_glue_reset();\n" .
+			'$_SESSION = array(\'sess_user_id\' => 2);' . "\n" .
+			'$GLOBALS[\'current_user\'] = array(\'id\' => 2, \'enabled\' => \'on\');' . "\n" .
+			'$GLOBALS[\'cloudflare_glue\'][\'page\'] = \'cloudflare.php\';' . "\n" .
+			'$GLOBALS[\'user_auth_realm_filenames\'] = array(\'cloudflare.php\' => 101, \'cloudflare_operator.php\' => 102, \'cloudflare_accounts.php\' => 103);' . "\n" .
+			'$GLOBALS[\'cloudflare_test_realms\'] = array(101);' . "\n" .
 			'$GLOBALS[\'cloudflare_glue\'][\'enabled\'] = ' . var_export($enabled, true) . ";\n" .
 			'$GLOBALS[\'config\'] = array(\'url_path\' => \'/cacti/\');' . "\n" .
 			'$_REQUEST = ' . var_export($request, true) . ";\n" .

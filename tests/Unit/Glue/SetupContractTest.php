@@ -99,12 +99,13 @@ final class SetupContractTest extends TestCase {
 
 		$this->assertSame(array(
 			'Configuration' => array('plugins/cloudflare/cloudflare_accounts.php' => 'Cloudflare Accounts'),
-			'Management'    => array('plugins/cloudflare/cloudflare.php' => 'Cloudflare Tunnels'),
+			'Management'    => array('plugins/cloudflare/cloudflare_operator.php' => 'Cloudflare Operations', 'plugins/cloudflare/cloudflare.php' => 'Cloudflare Tunnels'),
 		), $GLOBALS['menu']);
 		$this->assertSame(array(
 			'cloudflare_accounts.php:',
 			'cloudflare_accounts.php:edit',
 			'cloudflare_accounts.php:actions',
+			'cloudflare_operator.php:',
 			'cloudflare.php:',
 			'cloudflare.php:overview',
 			'cloudflare.php:tunnels',
@@ -133,7 +134,7 @@ final class SetupContractTest extends TestCase {
 	public function testAccountsPageRefusesWhenPluginDisabled(): void {
 		$source = (string) file_get_contents(self::ROOT . '/cloudflare_accounts.php');
 
-		$this->assertSame(1, preg_match('#\nif \(!cloudflare_plugin_enabled\(\)\) \{(.*?)\n\}#s', $source, $guard, PREG_OFFSET_CAPTURE));
+		$this->assertSame(1, preg_match('#\nif \(!cloudflare_page_allowed\(\)\) \{(.*?)\n\}#s', $source, $guard, PREG_OFFSET_CAPTURE));
 		$this->assertStringContainsString('raise_ajax_permission_denied();', $guard[1][0]);
 		$this->assertStringContainsString('permission_denied.php', $guard[1][0]);
 		$this->assertStringContainsString('exit;', $guard[1][0]);
@@ -189,9 +190,11 @@ final class SetupContractTest extends TestCase {
 			array('cloudflare', 'config_settings', 'cloudflare_config_settings', 'includes/settings.php', false),
 			array('cloudflare', 'draw_navigation_text', 'cloudflare_draw_navigation_text', 'includes/settings.php', false),
 			array('cloudflare', 'poller_bottom', 'cloudflare_poller_bottom', 'includes/polling.php', false),
+			array('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', true),
 		), cloudflare_glue_calls('api_plugin_register_hook'));
 
 		$this->assertSame(array(
+			array('cloudflare', 'cloudflare_operator.php', 'Cloudflare: Operator', false),
 			array('cloudflare', 'cloudflare.php', 'Cloudflare: View', false),
 			array('cloudflare', 'cloudflare_accounts.php', 'Cloudflare: Configure', true),
 		), cloudflare_glue_calls('api_plugin_register_realm'));

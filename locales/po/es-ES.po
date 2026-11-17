@@ -14,6 +14,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: cloudflare_operator.php
+msgid "Monitoring view"
+msgstr "Vista de supervisión"
+
+#: cloudflare_operator.php
+msgid "Observations could not be read. Ask an administrator to check the plugin log."
+msgstr "No se pudieron leer las observaciones. Pida a un administrador que revise el registro del complemento."
+
 #: includes/accounts.php
 msgid "Connection verified"
 msgstr "Conexión verificada"
@@ -353,7 +361,7 @@ msgstr "Cuenta de Cloudflare [editar: %s]"
 msgid "Cloudflare Account [new]"
 msgstr "Cuenta de Cloudflare [nueva]"
 
-#: includes/accounts_page.php includes/viewer.php
+#: includes/accounts_page.php includes/viewer.php src/OperatorPage.php
 msgid "Never"
 msgstr "Nunca"
 
@@ -454,23 +462,31 @@ msgstr "ID"
 msgid "No Cloudflare Accounts Found"
 msgstr "No se encontraron cuentas de Cloudflare"
 
+#: includes/operator.php
+msgid "Inspect tunnels and connector counts. Escalate token changes, account configuration and graph creation to an administrator."
+msgstr "Revise los túneles y el número de conectores. Solicite a un administrador los cambios de tokens, la configuración de cuentas y la creación de gráficos."
+
 #: includes/settings.php
 msgid "Configuration"
 msgstr "Configuración"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Cloudflare Operations"
+msgstr "Operaciones de Cloudflare"
+
+#: includes/settings.php
+msgid "Management"
+msgstr "Administración"
 
 #: includes/settings.php includes/viewer.php
 msgid "Cloudflare Tunnels"
 msgstr "Túneles de Cloudflare"
 
 #: includes/settings.php
-msgid "Management"
-msgstr "Administración"
-
-#: includes/settings.php
 msgid "(edit)"
 msgstr "(editar)"
 
-#: includes/settings.php
+#: includes/settings.php src/OperatorPage.php
 msgid "Actions"
 msgstr "Acciones"
 
@@ -684,3 +700,43 @@ msgstr "Este túnel está %s. Estos conectores se vieron por última vez mientra
 #: includes/viewer.php
 msgid "No connectors are running for this tunnel."
 msgstr "No hay conectores en ejecución para este túnel."
+
+#: setup.php
+msgid "Cloudflare: Operator"
+msgstr "Cloudflare: Operador"
+
+#: src/OperatorPage.php
+msgid "Review the recorded observations below. Acknowledgments are personal to this session, expire when observations change, and never suppress alerts or change health."
+msgstr "Revise las observaciones registradas a continuación. Los acuses de recibo son personales y exclusivos de esta sesión, caducan cuando cambian las observaciones y no suprimen alertas ni modifican el estado de salud."
+
+#: src/OperatorPage.php
+msgid "Investigation"
+msgstr "Investigación"
+
+#: src/OperatorPage.php
+msgid "Object"
+msgstr "Objeto"
+
+#: src/OperatorPage.php
+msgid "Observed (UTC)"
+msgstr "Observado (UTC)"
+
+#: src/OperatorPage.php
+msgid "State"
+msgstr "Estado"
+
+#: src/OperatorPage.php
+msgid "Unknown or stale"
+msgstr "Desconocido o desactualizado"
+
+#: src/OperatorPage.php
+msgid "Acknowledged; health unchanged."
+msgstr "Acuse de recibo registrado; estado de salud sin cambios."
+
+#: src/OperatorPage.php
+msgid "Acknowledge"
+msgstr "Acusar recibo"
+
+#: src/OperatorPage.php
+msgid "No observations are available for devices you may access."
+msgstr "No hay observaciones disponibles para los dispositivos a los que tiene acceso."

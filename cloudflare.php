@@ -20,15 +20,15 @@
 chdir('../../');
 include('./include/auth.php');
 include_once(__DIR__ . '/setup.php');
-include_once(__DIR__ . '/includes/viewer.php');
 
-/* include/auth.php passes a disabled plugin's page because realms load
- * regardless of status; answer the way permission_denied.php does. */
-if (!cloudflare_plugin_enabled()) {
+// Recheck the restored user's realm and plugin status before loading page data.
+if (!cloudflare_page_allowed()) {
 	raise_ajax_permission_denied();
 	header('Location: ../../permission_denied.php');
 	exit;
 }
+
+include_once(__DIR__ . '/includes/viewer.php');
 
 set_default_action('overview');
 

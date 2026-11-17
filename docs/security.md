@@ -83,8 +83,8 @@ path whose parent directory does not resolve inside that directory, a path
 with `.` or `..` segments, or any path when the directory itself does not
 resolve. The parent is resolved with `realpath()`, so a symbolic link to a
 directory cannot lead out. The setting is on Cacti's Settings page, which
-needs the Settings/Utilities realm rather than Cloudflare: Configure, so it
-narrows only what a Configure user who lacks that realm can reach. A user
+needs both the Settings/Utilities realm and Cloudflare: Configure, so it
+narrows what a Configure user who lacks the Settings/Utilities realm can reach. A user
 who can write inside the directory or replace one of its parent directories
 can still change what is read.
 
@@ -165,7 +165,16 @@ shutdown handler disables a plugin whose page dies with one.
 |---|---|---|
 | Cloudflare: Configure | `cloudflare_accounts.php` | Granted to admin at install |
 | Cloudflare: View | `cloudflare.php` | Not granted at install |
+| Cloudflare: Operator | `cloudflare_operator.php` | Explicit grant required |
 | Sites/Devices/Data (Cacti's realm for `host.php`) | Create Cacti Device, and Create Graphs on | Cacti's own grant |
+
+Configure inherits Operator and View access, and Operator inherits View access,
+using current user and group grants on each request. Stored grants are not
+changed. Operations has the same account-wide visibility as View; it does not
+add per-device filtering. Acknowledgments require POST, a valid CSRF token,
+and a fresh observation reloaded by the server with the matching fingerprint.
+They are personal to the current session, last at most one hour, expire when
+the observation changes, and never change health or suppress alerts.
 
 `include/auth.php` enforces the realm by page name. `AccountService` checks
 again before every change, every Verify and every credential lookup, through
@@ -291,7 +300,7 @@ Tunnel discovery runs in a separate PHP process, `poller_cloudflare.php`.
 Cacti keeps a disabled plugin's realms loaded and its `config_arrays` hook
 active. The plugin therefore checks `api_plugin_is_enabled()` itself. While it
 is disabled, the menu entries and breadcrumbs are hidden, and
-`cloudflare_accounts.php` and `cloudflare.php` answer as Cacti's
+`cloudflare_accounts.php`, `cloudflare_operator.php` and `cloudflare.php` answer as Cacti's
 permission-denied page. The collector checks `plugin_config.status` itself
 and exits without work. The
 Settings > Cloudflare tab stays visible so the key path can be set before

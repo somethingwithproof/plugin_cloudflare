@@ -29,10 +29,12 @@ use PHPUnit\Framework\TestCase;
  */
 final class CatalogTest extends TestCase {
 	private const LOCALES = array(
+		'ar-SA'  => 'nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);',
 		'de-DE'  => 'nplurals=2; plural=(n != 1);',
 		'es-419' => 'nplurals=2; plural=(n != 1);',
 		'es-ES'  => 'nplurals=2; plural=(n != 1);',
 		'fr-FR'  => 'nplurals=2; plural=(n > 1);',
+		'hi-IN'  => 'nplurals=2; plural=(n != 1);',
 		'ja-JP'  => 'nplurals=1; plural=0;',
 		'zh-CN'  => 'nplurals=1; plural=0;',
 	);
@@ -143,7 +145,8 @@ final class CatalogTest extends TestCase {
 		$this->assertGreaterThan(100, count($pot['entries']));
 		$this->assertSame(array_keys($pot['entries']), array_keys($po['entries']));
 
-		$forms = strpos(self::LOCALES[$locale], 'nplurals=2') !== false ? 2 : 1;
+		preg_match('/nplurals=(\d+);/', self::LOCALES[$locale], $matches);
+		$forms = (int) $matches[1];
 
 		foreach ($po['entries'] as $msgid => $entry) {
 			$this->assertSame($pot['entries'][$msgid]['plural'], $entry['plural'], $msgid);

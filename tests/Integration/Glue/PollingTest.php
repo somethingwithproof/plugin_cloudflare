@@ -368,7 +368,10 @@ final class PollingTest extends IntegrationTestCase {
 		/* Cacti inserts a new non-settings hook disabled (lib/plugins.php:1046),
 		 * so an enabled plugin must ask for it enabled. */
 		$this->assertSame(
-			array(array('cloudflare', 'poller_bottom', 'cloudflare_poller_bottom', 'includes/polling.php', true)),
+			array(
+				array('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', true),
+				array('cloudflare', 'poller_bottom', 'cloudflare_poller_bottom', 'includes/polling.php', true),
+			),
 			cloudflare_glue_calls('api_plugin_register_hook')
 		);
 
@@ -377,13 +380,19 @@ final class PollingTest extends IntegrationTestCase {
 		$GLOBALS['cloudflare_glue']['enabled'] = false;
 		$this->assertTrue(plugin_cloudflare_upgrade());
 		$this->assertSame(
-			array(array('cloudflare', 'poller_bottom', 'cloudflare_poller_bottom', 'includes/polling.php', false)),
+			array(
+				array('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', false),
+				array('cloudflare', 'poller_bottom', 'cloudflare_poller_bottom', 'includes/polling.php', false),
+			),
 			cloudflare_glue_calls('api_plugin_register_hook')
 		);
 
 		cloudflare_glue_reset();
 		$GLOBALS['cloudflare_glue']['cell'] = '0.3.0';
 		$this->assertTrue(plugin_cloudflare_upgrade());
-		$this->assertSame(array(), cloudflare_glue_calls('api_plugin_register_hook'));
+		$this->assertSame(
+			array(array('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', true)),
+			cloudflare_glue_calls('api_plugin_register_hook')
+		);
 	}
 }

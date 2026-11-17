@@ -1,3 +1,7 @@
+<!-- translations:start -->
+[English](README.md) | [简体中文](docs/i18n/zh-CN/README.md) | [हिन्दी](docs/i18n/hi-IN/README.md) | [Español (España)](docs/i18n/es-ES/README.md) | [Español (Latinoamérica)](docs/i18n/es-419/README.md) | [العربية](docs/i18n/ar-SA/README.md)
+<!-- translations:end -->
+
 <p align="center">
   <img src="docs/images/logo.png" width="300" height="200" alt="Plugin logo: a green cactus in front of an orange cloud outline with a line chart, above the text Cacti Monitor for Cloudflare">
 </p>
@@ -29,7 +33,7 @@ zone analytics yet.
 | Available now | Planned |
 |---|---|
 | Install, upgrade, disable and uninstall through Cacti's plugin manager | GraphQL analytics and Thold alerts (Milestone 4) |
-| Cloudflare: View and Cloudflare: Configure permissions | Fault injection, TLA+ models and full documentation (Milestone 5) |
+| Cloudflare: View, Operator and Configure permissions | Fault injection, TLA+ models and full documentation (Milestone 5) |
 | Add, edit, delete, enable and disable Cloudflare accounts | |
 | Store a token in a file or encrypted in the Cacti database | |
 | Verify a token and check its tunnel and zone read permissions | |
@@ -39,6 +43,28 @@ zone analytics yet.
 | One Cacti device per account, created by an administrator, with the tunnels as the indexes of a data query | |
 | Per tunnel Connectors, Health and Collection graphs, drawn from one RRD file per tunnel | |
 | Values the plugin cannot vouch for are stored as unknown (`U`), never as 0 | |
+
+## Access roles
+
+| Realm | Access |
+| --- | --- |
+| Cloudflare: View | Existing monitoring pages. |
+| Cloudflare: Operator | Monitoring plus the Operations page and personal triage acknowledgments. |
+| Cloudflare: Configure | Operator access plus the existing configuration and administrative actions. |
+
+After copying upgrade files, open the Plugins page as an administrator to register
+the new realm. Assign the Operator realm explicitly under **Configuration > Users** or user groups.
+Upgrades retain the existing View and Admin realm IDs and grants. Admin access
+inherits Operator access, and Operator access inherits View access on each request;
+this does not add stored grants to users or groups. Plugin settings also require
+Cloudflare: Configure access in addition to Cacti's Settings permission.
+
+Cloudflare account visibility matches the existing View realm; it is account-wide.
+Credentials, configuration, mapping, deletion and other administrative changes
+remain in the administrative pages. Acknowledgments last only in the current
+user's session, for at most one hour and only while the same observation remains
+fresh. New or changed observations invalidate them. They never mark a failed
+measurement healthy or suppress alerts.
 
 ## Why this plugin
 
@@ -430,8 +456,8 @@ no effect in this release.
 ## Languages
 
 The plugin ships translations into Spanish (Spain, `es-ES`), French
-(`fr-FR`), German (`de-DE`), Simplified Chinese (`zh-CN`) and Japanese
-(`ja-JP`). Cacti shows them once language support is on (Configuration >
+(`fr-FR`), German (`de-DE`), Simplified Chinese (`zh-CN`), Hindi (`hi-IN`),
+Arabic (`ar-SA`) and Japanese (`ja-JP`). Cacti shows them once language support is on (Configuration >
 Settings > General > Language Support) and a user picks the language. A Latin
 American Spanish catalog (`es-419`) ships as well, but Cacti 1.2 has no Latin
 American Spanish locale to select, so it takes effect only when Cacti adds

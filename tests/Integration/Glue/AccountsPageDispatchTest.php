@@ -86,6 +86,12 @@ final class AccountsPageDispatchTest extends IntegrationTestCase {
 	}
 
 	private function page(): string {
+		// The stand-in auth.php must supply the identity and native Cacti realms.
+		$_SESSION = array('sess_user_id' => 2);
+		$GLOBALS['current_user'] = array('id' => 2, 'enabled' => 'on');
+		$GLOBALS['cloudflare_glue']['page'] = 'cloudflare_accounts.php';
+		$GLOBALS['user_auth_realm_filenames'] = array('cloudflare.php' => 101, 'cloudflare_operator.php' => 102, 'cloudflare_accounts.php' => 103);
+		$GLOBALS['cloudflare_test_realms'] = array(103);
 		ob_start();
 
 		try {

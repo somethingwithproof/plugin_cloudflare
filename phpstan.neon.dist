@@ -8,6 +8,7 @@ parameters:
 		- setup.php
 		- includes
 		- cloudflare.php
+		- cloudflare_operator.php
 		- cloudflare_accounts.php
 		- poller_cloudflare.php
 		- ss_cloudflare.php

@@ -189,7 +189,10 @@ final class SetupDatabaseTest extends IntegrationTestCase {
 		$this->assertTrue($this->tableExists('plugin_cloudflare_tunnels'));
 		$this->assertTrue($this->tableExists('plugin_cloudflare_connectors'));
 		$this->assertSame(
-			array(array('cloudflare', 'poller_bottom', 'cloudflare_poller_bottom', 'includes/polling.php', true)),
+			array(
+				array('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', true),
+				array('cloudflare', 'poller_bottom', 'cloudflare_poller_bottom', 'includes/polling.php', true),
+			),
 			cloudflare_glue_calls('api_plugin_register_hook')
 		);
 		$this->assertSame(array(
@@ -258,7 +261,11 @@ final class SetupDatabaseTest extends IntegrationTestCase {
 			cloudflare_glue_calls('import_xml_data')
 		);
 		$this->assertSame(6, $this->mappingCount());
-		$this->assertSame(array(), cloudflare_glue_calls('api_plugin_register_hook'), '0.2.0 already has the hook');
+		$this->assertSame(
+			array(array('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', true)),
+			cloudflare_glue_calls('api_plugin_register_hook'),
+			'0.2.0 keeps its poller hook and gains role inheritance'
+		);
 		$this->assertSame(array(
 			array('UPDATE plugin_config SET version = ? WHERE directory = ?', array('0.3.0', 'cloudflare')),
 		), cloudflare_glue_calls('db_execute_prepared'));

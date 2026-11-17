@@ -30,7 +30,7 @@ and the install smoke uses the `php:8.0-apache` image.
 
 ### Hooks and APIs used
 
-The plugin changes no Cacti core files. It registers four hooks and two
+The plugin changes no Cacti core files. It registers five hooks and three
 realms in `plugin_cloudflare_install()`:
 
 | Interface | Use | Reference (1.2.31) |
@@ -39,8 +39,9 @@ realms in `plugin_cloudflare_install()`:
 | `config_settings` hook | Adds the Settings > Cloudflare tab and runs pending migrations | `include/global_settings.php` |
 | `draw_navigation_text` hook | Breadcrumbs for `cloudflare_accounts.php` | `lib/functions.php` |
 | `poller_bottom` hook | Starts the background collector after each polling cycle, on the main poller only | `poller.php:943`, `poller.php:956` |
+| `auth_alternate_realms` hook | Resolves Configure > Operator > View inheritance from current user and group grants without changing stored grants | `include/auth.php` |
 | `exec_background()` | Launches `poller_cloudflare.php` detached from `poller.php`. The plugin passes the arguments as a string, because arrays are accepted only from 1.2.31 | `lib/poller.php:132` |
-| `api_plugin_register_realm()` | "Cloudflare: View" (`cloudflare.php`) and "Cloudflare: Configure" (`cloudflare_accounts.php`) | `lib/plugins.php` |
+| `api_plugin_register_realm()` | "Cloudflare: View" (`cloudflare.php`), "Cloudflare: Operator" (`cloudflare_operator.php`) and "Cloudflare: Configure" (`cloudflare_accounts.php`) | `lib/plugins.php` |
 | `api_plugin_valid_entrypoint()` | Requires registration calls to come from a function whose name contains install, upgrade or setup, so registration stays inside `plugin_cloudflare_install()` | `lib/plugins.php:1124` |
 | `api_plugin_uninstall()` | Cacti removes hooks, realms and `plugin_config` after the plugin's uninstall function returns | `lib/plugins.php:801` |
 | `api_plugin_disable_hooks()`, `api_plugin_load_realms()` | Cacti keeps realms loaded and the `config_arrays` hook active while a plugin is disabled, so each plugin entry point checks `api_plugin_is_enabled()` | `lib/plugins.php:1103`, `lib/plugins.php:1268` |

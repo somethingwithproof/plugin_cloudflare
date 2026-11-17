@@ -17,6 +17,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
+#: cloudflare_operator.php
+msgid "Monitoring view"
+msgstr ""
+
+#: cloudflare_operator.php
+msgid "Observations could not be read. Ask an administrator to check the plugin log."
+msgstr ""
+
 #: includes/accounts.php
 msgid "Connection verified"
 msgstr ""
@@ -356,7 +364,7 @@ msgstr ""
 msgid "Cloudflare Account [new]"
 msgstr ""
 
-#: includes/accounts_page.php includes/viewer.php
+#: includes/accounts_page.php includes/viewer.php src/OperatorPage.php
 msgid "Never"
 msgstr ""
 
@@ -457,8 +465,20 @@ msgstr ""
 msgid "No Cloudflare Accounts Found"
 msgstr ""
 
+#: includes/operator.php
+msgid "Inspect tunnels and connector counts. Escalate token changes, account configuration and graph creation to an administrator."
+msgstr ""
+
 #: includes/settings.php
 msgid "Configuration"
+msgstr ""
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Cloudflare Operations"
+msgstr ""
+
+#: includes/settings.php
+msgid "Management"
 msgstr ""
 
 #: includes/settings.php includes/viewer.php
@@ -466,14 +486,10 @@ msgid "Cloudflare Tunnels"
 msgstr ""
 
 #: includes/settings.php
-msgid "Management"
-msgstr ""
-
-#: includes/settings.php
 msgid "(edit)"
 msgstr ""
 
-#: includes/settings.php
+#: includes/settings.php src/OperatorPage.php
 msgid "Actions"
 msgstr ""
 
@@ -686,4 +702,44 @@ msgstr ""
 
 #: includes/viewer.php
 msgid "No connectors are running for this tunnel."
+msgstr ""
+
+#: setup.php
+msgid "Cloudflare: Operator"
+msgstr ""
+
+#: src/OperatorPage.php
+msgid "Review the recorded observations below. Acknowledgments are personal to this session, expire when observations change, and never suppress alerts or change health."
+msgstr ""
+
+#: src/OperatorPage.php
+msgid "Investigation"
+msgstr ""
+
+#: src/OperatorPage.php
+msgid "Object"
+msgstr ""
+
+#: src/OperatorPage.php
+msgid "Observed (UTC)"
+msgstr ""
+
+#: src/OperatorPage.php
+msgid "State"
+msgstr ""
+
+#: src/OperatorPage.php
+msgid "Unknown or stale"
+msgstr ""
+
+#: src/OperatorPage.php
+msgid "Acknowledged; health unchanged."
+msgstr ""
+
+#: src/OperatorPage.php
+msgid "Acknowledge"
+msgstr ""
+
+#: src/OperatorPage.php
+msgid "No observations are available for devices you may access."
 msgstr ""

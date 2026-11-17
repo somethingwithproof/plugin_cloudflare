@@ -3,6 +3,7 @@
 --- Unreleased ---
 
 * fix: Exclude the SPDX header assertion string from REUSE metadata parsing
+* feature: Add the Operator realm and Operations page with current observations and personal acknowledgments. Existing administrators inherit Operator access; operators inherit monitoring access without configuration rights.
 
 --- 0.3.0 (2026-11-15) ---
 

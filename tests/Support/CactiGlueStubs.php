@@ -59,6 +59,10 @@ function cloudflare_glue_reset(): void {
 		'hosts'            => array(),
 		'next_host'        => 1,
 		'invalid'          => false,
+		'device_access' => true,
+		'graph_access' => true,
+		'remove_graph' => null,
+		'remove_data' => null,
 		'template_queries' => array(),
 		'host_queries'     => array(),
 		'remove_fails'     => false,
@@ -1335,6 +1339,11 @@ if (!function_exists('api_graph_remove')) {
 	function api_graph_remove($local_graph_id): void {
 		cloudflare_glue_record(__FUNCTION__, array($local_graph_id));
 
+		$remove = cloudflare_glue_state('remove_graph');
+		if ($remove instanceof Closure) {
+			$remove((int) $local_graph_id);
+		}
+
 		unset($GLOBALS['cloudflare_glue']['graph_local'][(int) $local_graph_id]);
 	}
 }
@@ -1346,6 +1355,11 @@ if (!function_exists('api_data_source_remove')) {
 	 */
 	function api_data_source_remove($local_data_id): void {
 		cloudflare_glue_record(__FUNCTION__, array($local_data_id));
+
+		$remove = cloudflare_glue_state('remove_data');
+		if ($remove instanceof Closure) {
+			$remove((int) $local_data_id);
+		}
 
 		unset($GLOBALS['cloudflare_glue']['data_local'][(int) $local_data_id]);
 	}
@@ -1368,5 +1382,23 @@ if (!function_exists('is_realm_allowed')) {
 if (!function_exists('csrf_check')) {
 	function csrf_check(bool $fatal = true): bool {
 		return ($GLOBALS['cloudflare_test_csrf'] ?? false) === true;
+	}
+}
+
+if (!function_exists('is_device_allowed')) {
+	/** @param mixed $device_id
+	 * @param mixed $user_id
+	 */
+	function is_device_allowed($device_id, $user_id = 0): bool {
+		return cloudflare_glue_state('device_access') !== false;
+	}
+}
+
+if (!function_exists('is_graph_allowed')) {
+	/** @param mixed $local_graph_id
+	 * @param mixed $user_id
+	 */
+	function is_graph_allowed($local_graph_id, $user_id = 0): bool {
+		return cloudflare_glue_state('graph_access') !== false;
 	}
 }

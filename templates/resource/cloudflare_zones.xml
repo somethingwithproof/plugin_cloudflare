@@ -1,0 +1,52 @@
+<interface>
+	<name>Get Cloudflare Zones</name>
+	<script_path>|path_cacti|/plugins/cloudflare/ss_cloudflare_zones.php</script_path>
+	<script_function>ss_cloudflare_zones</script_function>
+	<script_server>php</script_server>
+	<arg_prepend>|host_id|</arg_prepend>
+	<arg_index>index</arg_index>
+	<arg_query>query</arg_query>
+	<arg_get>get</arg_get>
+	<arg_num_indexes>num_indexes</arg_num_indexes>
+	<output_delimiter>!</output_delimiter>
+	<index_order>zoneId</index_order>
+	<index_order_type>alphabetic</index_order_type>
+	<index_title_format>|chosen_order_field|</index_title_format>
+	<fields>
+		<zoneId>
+			<name>Zone ID</name>
+			<direction>input</direction>
+			<query_name>zoneId</query_name>
+		</zoneId>
+		<zoneName>
+			<name>Zone Name</name>
+			<direction>input</direction>
+			<query_name>zoneName</query_name>
+		</zoneName>
+		<requests>
+			<name>Requests per second</name>
+			<direction>output</direction>
+			<query_name>requests</query_name>
+		</requests>
+		<bytes>
+			<name>Bytes per second</name>
+			<direction>output</direction>
+			<query_name>bytes</query_name>
+		</bytes>
+		<errorPct>
+			<name>HTTP 5xx percent</name>
+			<direction>output</direction>
+			<query_name>errorPct</query_name>
+		</errorPct>
+		<sampleInterval>
+			<name>Sampling interval</name>
+			<direction>output</direction>
+			<query_name>sampleInterval</query_name>
+		</sampleInterval>
+		<age>
+			<name>Collection age</name>
+			<direction>output</direction>
+			<query_name>age</query_name>
+		</age>
+	</fields>
+</interface>

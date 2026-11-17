@@ -4,6 +4,9 @@
 
 * fix: Exclude the SPDX header assertion string from REUSE metadata parsing
 * feature: Add the Operator realm and Operations page with current observations and personal acknowledgments. Existing administrators inherit Operator access; operators inherit monitoring access without configuration rights.
+* feature: Explicit retirement of deleted tunnels, preserving shared data sources and using Cacti APIs for removal
+* feature: Capability-aware cached zone analytics, gauge graph templates, a Zone Analytics tab and optional Thold templates
+* feature: Export filtered tunnel inventories and connector details as CSV, with spreadsheet formula protection
 
 --- 0.3.0 (2026-11-15) ---
 

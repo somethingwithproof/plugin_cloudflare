@@ -344,11 +344,11 @@ msgid_plural "Click 'Continue' to create a Cacti device for each of the followin
 msgstr[0] "निम्न Cloudflare खाते के लिए Cacti डिवाइस बनाने हेतु 'जारी रखें' क्लिक करें। जिस खाते का डिवाइस पहले से है, उसे यथावत रखा जाता है।"
 msgstr[1] "निम्न प्रत्येक Cloudflare खाते के लिए Cacti डिवाइस बनाने हेतु 'जारी रखें' क्लिक करें। जिस खाते का डिवाइस पहले से है, उसे यथावत रखा जाता है।"
 
-#: includes/accounts_page.php
+#: includes/accounts_page.php includes/tunnel_retirement.php
 msgid "Cancel"
 msgstr "रद्द करें"
 
-#: includes/accounts_page.php
+#: includes/accounts_page.php includes/tunnel_retirement.php
 msgid "Continue"
 msgstr "जारी रखें"
 
@@ -542,9 +542,25 @@ msgstr "लॉग स्तर"
 msgid "The amount of detail the plugin writes to the Cacti log."
 msgstr "प्लगइन Cacti लॉग में कितना विवरण लिखता है।"
 
+#: includes/tunnel_retirement.php
+msgid "The tunnel could not be retired. Check permissions and retry after collection finishes."
+msgstr "टनल को निगरानी से नहीं हटाया जा सका। अनुमतियाँ जाँचें और संग्रह पूरा होने के बाद फिर प्रयास करें।"
+
+#: includes/tunnel_retirement.php includes/viewer.php
+msgid "Retire tunnel"
+msgstr "टनल को निगरानी से हटाएँ"
+
+#: includes/tunnel_retirement.php
+msgid "Retiring removes the graphs and unshared data sources created for this deleted tunnel. Cacti controls RRD cleanup. The inventory record is kept."
+msgstr "इस हटाए गए टनल के लिए बने ग्राफ़ और साझा न किए गए डेटा स्रोत हटाए जाएँगे। RRD सफ़ाई Cacti नियंत्रित करता है। इन्वेंट्री रिकॉर्ड रखा जाता है।"
+
 #: includes/viewer.php
 msgid "The Cloudflare tunnels could not be read. See the Cacti log for details."
 msgstr "Cloudflare टनल पढ़े नहीं जा सके। विवरण के लिए Cacti लॉग देखें।"
+
+#: includes/viewer.php
+msgid "Zone Analytics"
+msgstr "ज़ोन विश्लेषिकी"
 
 #: includes/viewer.php
 msgid "Disabled"
@@ -700,6 +716,26 @@ msgstr "यह टनल %s है। ये कनेक्टर पिछल�
 #: includes/viewer.php
 msgid "No connectors are running for this tunnel."
 msgstr "इस टनल के लिए कोई कनेक्टर नहीं चल रहा।"
+
+#: includes/viewer.php
+msgid "Export"
+msgstr "निर्यात"
+
+#: includes/viewer.php
+msgid "Bytes/s"
+msgstr "बाइट/सेकंड"
+
+#: includes/viewer.php
+msgid "HTTP 5xx (%)"
+msgstr "HTTP 5xx (%)"
+
+#: includes/viewer.php
+msgid "Requests/s"
+msgstr "अनुरोध/सेकंड"
+
+#: includes/viewer.php
+msgid "Zone"
+msgstr "ज़ोन"
 
 #: setup.php
 msgid "Cloudflare: Operator"

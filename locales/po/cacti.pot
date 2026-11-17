@@ -6,7 +6,7 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: cloudflare 0.3.0\n"
+"Project-Id-Version: cloudflare 0.4.0-dev\n"
 "Report-Msgid-Bugs-To: https://github.com/somethingwithproof/plugin_cloudflare/issues\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Thomas Vincent <thomasvincent@gmail.com>\n"
@@ -347,11 +347,11 @@ msgid_plural "Click 'Continue' to create a Cacti device for each of the followin
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/accounts_page.php
+#: includes/accounts_page.php includes/tunnel_retirement.php
 msgid "Cancel"
 msgstr ""
 
-#: includes/accounts_page.php
+#: includes/accounts_page.php includes/tunnel_retirement.php
 msgid "Continue"
 msgstr ""
 
@@ -545,8 +545,24 @@ msgstr ""
 msgid "The amount of detail the plugin writes to the Cacti log."
 msgstr ""
 
+#: includes/tunnel_retirement.php
+msgid "The tunnel could not be retired. Check permissions and retry after collection finishes."
+msgstr ""
+
+#: includes/tunnel_retirement.php includes/viewer.php
+msgid "Retire tunnel"
+msgstr ""
+
+#: includes/tunnel_retirement.php
+msgid "Retiring removes the graphs and unshared data sources created for this deleted tunnel. Cacti controls RRD cleanup. The inventory record is kept."
+msgstr ""
+
 #: includes/viewer.php
 msgid "The Cloudflare tunnels could not be read. See the Cacti log for details."
+msgstr ""
+
+#: includes/viewer.php
+msgid "Zone Analytics"
 msgstr ""
 
 #: includes/viewer.php
@@ -702,6 +718,26 @@ msgstr ""
 
 #: includes/viewer.php
 msgid "No connectors are running for this tunnel."
+msgstr ""
+
+#: includes/viewer.php
+msgid "Export"
+msgstr ""
+
+#: includes/viewer.php
+msgid "Bytes/s"
+msgstr ""
+
+#: includes/viewer.php
+msgid "HTTP 5xx (%)"
+msgstr ""
+
+#: includes/viewer.php
+msgid "Requests/s"
+msgstr ""
+
+#: includes/viewer.php
+msgid "Zone"
 msgstr ""
 
 #: setup.php

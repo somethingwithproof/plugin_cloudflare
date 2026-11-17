@@ -1,4 +1,4 @@
-<!-- Source: README.md; SHA256: 6173976c488e04ddd3ba65cf477eacc3df3b716cfe9a12bbf5723c2ca0e5d877 -->
+<!-- Source: README.md; SHA256: f8de0e02c5904e15bfa4c71edcaab219e5e5d4f6d9dbe589f4ed16351df6bf4d -->
 
 <!-- translations:start -->
 [English](../../../README.md) | [简体中文](../zh-CN/README.md) | [हिन्दी](../hi-IN/README.md) | [Español (España)](README.md) | [Español (Latinoamérica)](../es-419/README.md) | [العربية](../ar-SA/README.md)
@@ -24,7 +24,9 @@
 
 Un complemento de Cacti 1.2 en desarrollo para supervisar Cloudflare Tunnels y la analítica de zonas. Lee la API de Cloudflare con tokens de API de ámbito limitado, nunca modifica Cloudflare y guarda sus datos en tablas propias. En Cacti copia un XML de consulta de datos a `resource/script_server/` y crea dispositivos, gráficos y plantillas mediante las API de Cacti, sin modificar ficheros del núcleo.
 
-**Estado: hito 3, publicado como 0.3.0.** El complemento configura cuentas de Cloudflare, prueba sus tokens, descubre sus túneles y conectores, y representa la salud, los conectores, las conexiones y las versiones de conectores de cada túnel. Todavía no recopila analítica de zonas.
+**Estado: 0.4.0-dev, sin publicar.** La última versión estable es 0.3.0. La versión de desarrollo añade exportación CSV del inventario, retirada explícita de túneles eliminados, analítica de zonas en caché y plantillas opcionales de Thold. Queda pendiente la validación con proveedores y despliegues reales.
+
+La tabla siguiente describe la versión estable 0.3.0. Las novedades de desarrollo se describen más adelante, en Flujos de operación y analítica de zonas.
 
 | Disponible ahora | Previsto |
 |---|---|
@@ -328,6 +330,14 @@ El dispositivo conservado deja de recibir datos. Tras desinstalar o eliminar su 
 Los detalles y limitaciones están en [docs/security.md](docs/security.md). Comunique vulnerabilidades de forma privada como se indica en [SECURITY.md](../../../SECURITY.md).
 
 <a id="roadmap"></a>
+## Flujos de operación y analítica de zonas
+
+La versión de desarrollo permite retirar explícitamente túneles eliminados, recopilar analítica según las capacidades de cada zona y utilizar plantillas de Cacti y Thold. Estas novedades aún no se han publicado ni validado con cuentas reales. Consulte la configuración, el significado de las métricas y los límites de validación en la [guía en inglés](../../analytics-and-alerting.md).
+
+### Exportación del inventario
+
+Las páginas de túneles y conectores ofrecen Exportar a los usuarios de Cloudflare: View. El CSV de túneles incluye todas las páginas coincidentes y conserva los filtros de cuenta, ciclo de vida, estado y búsqueda, además de la ordenación. El CSV de conectores incluye versión, arquitectura, centros de datos y direcciones de origen del túnel seleccionado. Solo se leen registros en caché. Los recuentos desconocidos quedan vacíos y las celdas similares a fórmulas llevan un apóstrofo inicial para una importación segura.
+
 ## Hoja de ruta
 
 Cada hito se publica como una versión 0.x con su número: el hito 3 es 0.3.0 y el 4 será 0.4.0. Los hitos 1 y 2 no se publicaron por separado y forman parte de 0.3.0. La versión 1.0.0 se reserva para la publicación que complete todos los hitos siguientes.

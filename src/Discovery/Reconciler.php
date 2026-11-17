@@ -85,6 +85,7 @@ final class Reconciler {
 					ON DUPLICATE KEY UPDATE
 						lifecycle_changed_at = IF(lifecycle = 'active', lifecycle_changed_at, VALUES(lifecycle_changed_at)),
 						lifecycle = 'active',
+						retired_at = NULL,
 						name = VALUES(name),
 						cf_status = VALUES(cf_status),
 						tun_type = VALUES(tun_type),

@@ -80,14 +80,14 @@ final class MigratorTest extends IntegrationTestCase {
 
 	public function testFreshInstallCreatesAllTables(): void {
 		$this->assertSame(0, $this->migrator()->currentVersion());
-		$this->assertSame(array(1, 2, 3), $this->migrator()->pending());
-		$this->assertSame(array(1, 2, 3), $this->migrator()->migrate());
+		$this->assertSame(array(1, 2, 3, 4, 5), $this->migrator()->pending());
+		$this->assertSame(array(1, 2, 3, 4, 5), $this->migrator()->migrate());
 
 		foreach (array('migrations', 'accounts', 'jobs', 'tunnels', 'connectors') as $suffix) {
 			$this->assertTrue($this->tableExists('plugin_cloudflare_' . $suffix), $suffix);
 		}
 
-		$this->assertSame(3, $this->migrator()->currentVersion());
+		$this->assertSame(5, $this->migrator()->currentVersion());
 		$this->assertSame(array(), $this->migrator()->pending());
 	}
 
@@ -95,7 +95,7 @@ final class MigratorTest extends IntegrationTestCase {
 		$this->migrator()->migrate();
 
 		$this->assertSame(array(), $this->migrator()->migrate());
-		$this->assertSame(3, $this->migrator()->currentVersion());
+		$this->assertSame(5, $this->migrator()->currentVersion());
 	}
 
 	public function testInterruptedMigrationResumes(): void {
@@ -107,8 +107,8 @@ final class MigratorTest extends IntegrationTestCase {
 		$this->db->execute($statements[1]);
 		$this->assertSame(0, $this->migrator()->currentVersion());
 
-		$this->assertSame(array(1, 2, 3), $this->migrator()->migrate());
-		$this->assertSame(3, $this->migrator()->currentVersion());
+		$this->assertSame(array(1, 2, 3, 4, 5), $this->migrator()->migrate());
+		$this->assertSame(5, $this->migrator()->currentVersion());
 
 		$accountId = $this->insertAccount();
 		$this->insertJob('discovery', $accountId);
@@ -131,7 +131,7 @@ final class MigratorTest extends IntegrationTestCase {
 
 		$other->releaseLock('plugin_cloudflare_migrate');
 
-		$this->assertSame(array(1, 2, 3), $this->migrator(1)->migrate());
+		$this->assertSame(array(1, 2, 3, 4, 5), $this->migrator(1)->migrate());
 	}
 
 	public function testReleaseFailureKeepsTheMigrationError(): void {
@@ -245,8 +245,8 @@ final class MigratorTest extends IntegrationTestCase {
 		$this->migrator()->migrate();
 		$this->db->execute('DELETE FROM plugin_cloudflare_migrations');
 
-		$this->assertSame(array(1, 2, 3), $this->migrator()->migrate());
-		$this->assertSame(3, $this->migrator()->currentVersion());
+		$this->assertSame(array(1, 2, 3, 4, 5), $this->migrator()->migrate());
+		$this->assertSame(5, $this->migrator()->currentVersion());
 
 		$count = (int) $this->db->fetchCell(
 			"SELECT COUNT(*) FROM information_schema.table_constraints WHERE table_schema = DATABASE() AND table_name = 'plugin_cloudflare_jobs' AND constraint_type = 'FOREIGN KEY'"

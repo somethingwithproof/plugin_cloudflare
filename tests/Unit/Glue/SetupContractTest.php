@@ -365,7 +365,9 @@ final class SetupContractTest extends TestCase {
 		$this->assertStringContainsString('GNU General Public License', $header);
 		$this->assertStringContainsString('https://github.com/somethingwithproof/plugin_cloudflare', $header);
 		$this->assertStringEndsWith("*/\n", $header);
+		// REUSE-IgnoreStart
 		$this->assertStringContainsString('SPDX-License-Identifier: GPL-2.0-or-later', $header);
+		// REUSE-IgnoreEnd
 
 		$root  = (string) realpath(self::ROOT);
 		$files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, RecursiveDirectoryIterator::SKIP_DOTS));

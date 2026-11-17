@@ -114,6 +114,8 @@ function plugin_cloudflare_upgrade(int $lock_timeout = 10) : bool {
 
 	$info    = plugin_cloudflare_version();
 	$current = isset($info['version']) ? (string) $info['version'] : '';
+	$changed = $current !== '' && $current !== (string) $installed;
+	cloudflare_setup_operator($changed);
 
 	try {
 		$migrator = new Migrator(cloudflare_db(), Migrator::defaultMigrations(), $lock_timeout);
@@ -142,8 +144,6 @@ function plugin_cloudflare_upgrade(int $lock_timeout = 10) : bool {
 	}
 
 	if ($current !== '' && $current !== (string) $installed) {
-		cloudflare_setup_operator();
-
 		/* A failed template install is logged and does not hold back the
 		 * version: retrying a failing import on every page load would cost
 		 * more than it could fix. */
@@ -225,10 +225,24 @@ function cloudflare_auth_alternate_realms() : void {
 	}
 }
 
-/** Called only from install and upgrade; preserve the existing realm IDs. */
-function cloudflare_setup_operator() : void {
-	api_plugin_register_realm('cloudflare', 'cloudflare_operator.php', __('Cloudflare: Operator', 'cloudflare'), false);
-	api_plugin_register_hook('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', cloudflare_plugin_enabled());
+/** Register the operator realm and hook only when installing, upgrading or repairing missing rows. */
+function cloudflare_setup_operator(bool $force = true) : void {
+	$realmExists = $force || (int) db_fetch_cell_prepared(
+		'SELECT COUNT(*) FROM plugin_realms WHERE plugin = ? AND file = ?',
+		array('cloudflare', 'cloudflare_operator.php')
+	) > 0;
+	$hookExists = $force || (int) db_fetch_cell_prepared(
+		'SELECT COUNT(*) FROM plugin_hooks WHERE name = ? AND hook = ?',
+		array('cloudflare', 'auth_alternate_realms')
+	) > 0;
+
+	if (!$realmExists) {
+		api_plugin_register_realm('cloudflare', 'cloudflare_operator.php', __('Cloudflare: Operator', 'cloudflare'), false);
+	}
+
+	if (!$hookExists) {
+		api_plugin_register_hook('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', cloudflare_plugin_enabled());
+	}
 }
 
 /** Recheck the authenticated user before a plugin page reads data or acts. */

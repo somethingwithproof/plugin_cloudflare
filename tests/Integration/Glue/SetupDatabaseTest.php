@@ -170,7 +170,9 @@ final class SetupDatabaseTest extends IntegrationTestCase {
 	}
 
 	public function testUpgradeRunsPendingMigrationsAtTheSameVersion(): void {
-		$GLOBALS['cloudflare_glue']['cell'] = '0.3.0';
+		$GLOBALS['cloudflare_glue']['cell'] = static function (string $sql): string {
+			return strpos($sql, 'plugin_config') !== false ? '0.3.0' : '1';
+		};
 
 		$this->assertTrue(plugin_cloudflare_upgrade());
 
@@ -179,6 +181,21 @@ final class SetupDatabaseTest extends IntegrationTestCase {
 		$this->assertSame(array(), cloudflare_glue_calls('import_xml_data'), 'templates follow the version, not the schema');
 		$this->assertSame(array(), cloudflare_glue_calls('api_plugin_register_realm'), 'realm registration must not replicate config on every page');
 		$this->assertSame(array(), cloudflare_glue_calls('api_plugin_register_hook'), 'hook registration must not replicate config on every page');
+	}
+
+	public function testUpgradeRepairsMissingOperatorRegistrationAtTheSameVersion(): void {
+		$GLOBALS['cloudflare_glue']['cell'] = static function (string $sql): string {
+			return strpos($sql, 'plugin_config') !== false ? '0.3.0' : '0';
+		};
+
+		$this->assertTrue(plugin_cloudflare_upgrade());
+
+		$this->assertSame(array(
+			array('cloudflare', 'cloudflare_operator.php', 'Cloudflare: Operator', false),
+		), cloudflare_glue_calls('api_plugin_register_realm'));
+		$this->assertSame(array(
+			array('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', true),
+		), cloudflare_glue_calls('api_plugin_register_hook'));
 	}
 
 	public function testUpgradeFrom010RunsM002AndRegistersHook(): void {
@@ -192,8 +209,8 @@ final class SetupDatabaseTest extends IntegrationTestCase {
 		$this->assertTrue($this->tableExists('plugin_cloudflare_connectors'));
 		$this->assertSame(
 			array(
-				array('cloudflare', 'poller_bottom', 'cloudflare_poller_bottom', 'includes/polling.php', true),
 				array('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', true),
+				array('cloudflare', 'poller_bottom', 'cloudflare_poller_bottom', 'includes/polling.php', true),
 			),
 			cloudflare_glue_calls('api_plugin_register_hook')
 		);

@@ -369,9 +369,8 @@ final class PollingTest extends IntegrationTestCase {
 		 * so an enabled plugin must ask for it enabled. */
 		$this->assertSame(
 			array(
-				array('cloudflare', 'poller_bottom', 'cloudflare_poller_bottom', 'includes/polling.php', true),
-				array('cloudflare', 'poller_bottom', 'cloudflare_poller_bottom', 'includes/polling.php', true),
 				array('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', true),
+				array('cloudflare', 'poller_bottom', 'cloudflare_poller_bottom', 'includes/polling.php', true),
 			),
 			cloudflare_glue_calls('api_plugin_register_hook')
 		);
@@ -382,18 +381,17 @@ final class PollingTest extends IntegrationTestCase {
 		$this->assertTrue(plugin_cloudflare_upgrade());
 		$this->assertSame(
 			array(
-				array('cloudflare', 'poller_bottom', 'cloudflare_poller_bottom', 'includes/polling.php', false),
 				array('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', false),
+				array('cloudflare', 'poller_bottom', 'cloudflare_poller_bottom', 'includes/polling.php', false),
 			),
 			cloudflare_glue_calls('api_plugin_register_hook')
 		);
 
 		cloudflare_glue_reset();
-		$GLOBALS['cloudflare_glue']['cell'] = '0.3.0';
+		$GLOBALS['cloudflare_glue']['cell'] = static function (string $sql): string {
+			return strpos($sql, 'plugin_config') !== false ? '0.3.0' : '1';
+		};
 		$this->assertTrue(plugin_cloudflare_upgrade());
-		$this->assertSame(
-			array(array('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', true)),
-			cloudflare_glue_calls('api_plugin_register_hook')
-		);
+		$this->assertSame(array(), cloudflare_glue_calls('api_plugin_register_hook'), 'an existing realm hook is not re-registered');
 	}
 }

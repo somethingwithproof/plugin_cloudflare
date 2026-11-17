@@ -480,7 +480,7 @@ tables="$(plugin_tables)"
 [[ -n "${tables}" ]] || die 'no plugin_cloudflare_* tables'
 [[ "$(plugin_status)" = '1' ]] || die "status is $(plugin_status)"
 realms="$(sql "SELECT id, file FROM plugin_realms WHERE plugin = 'cloudflare' ORDER BY id")"
-[[ "$(wc -l <<<"${realms}")" -eq 2 ]] || die 'expected two plugin realms' "${realms}"
+[[ "$(wc -l <<<"${realms}")" -eq 3 ]] || die 'expected three plugin realms' "${realms}"
 pass
 
 step='2b install imported the templates and copied the data query XML'

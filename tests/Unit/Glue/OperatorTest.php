@@ -124,4 +124,70 @@ final class OperatorTest extends TestCase {
 		$this->assertStringContainsString('Acknowledged; health unchanged.', $html);
 		$this->assertSame('failed', $row['state']);
 	}
+
+	public function testFreshRowsOfferEscapedFormsForTheCurrentObservation(): void {
+		$row = ['id' => '7"<&', 'name' => '<b>Account</b>', 'state' => 'failed', 'observed' => 900, 'interval' => 60, 'detail' => '<img src=x>'];
+		ob_start();
+		OperatorPage::render([$row], [], 2, 1000, ['inspect"<tag>' => 'Inspect <status>']);
+		$html = (string) ob_get_clean();
+
+		$this->assertSame([['cloudflare_operator.php', '', false], ['cloudflare_operator.php', '', false]], cloudflare_glue_calls('form_start'));
+		$this->assertSame([[false], [false]], cloudflare_glue_calls('form_end'));
+		$this->assertStringNotContainsString('<b>Account</b>', $html);
+		$this->assertStringNotContainsString('<img src=x>', $html);
+		$this->assertStringContainsString('&lt;img src=x&gt;', $html);
+		$this->assertStringContainsString('1970-01-01 00:15:00', $html);
+		$this->assertStringNotContainsString('Unknown or stale', $html);
+
+		$document = new \DOMDocument();
+		$document->loadHTML('<html><body>' . $html . '</body></html>');
+		$xpath = new \DOMXPath($document);
+		$this->assertSame('acknowledge', $xpath->evaluate('string((//input[@name="action"])[1]/@value)'));
+		$this->assertSame('inspect"<tag>', $xpath->evaluate('string((//input[@name="action"])[2]/@value)'));
+		$this->assertSame($row['id'], $xpath->evaluate('string((//input[@name="id"])[1]/@value)'));
+		$this->assertSame(OperatorPage::fingerprint($row), $xpath->evaluate('string((//input[@name="fingerprint"])[1]/@value)'));
+		$this->assertSame('Acknowledge', $xpath->evaluate('string((//button)[1])'));
+		$this->assertSame('Inspect <status>', $xpath->evaluate('string((//button)[2])'));
+		$this->assertSame(0, $xpath->query('//b | //img | //tag | //status')->length);
+	}
+
+	public function testStaleMissingAndFutureObservationsStayVisibleWithoutAcknowledgmentForms(): void {
+		$rows = [];
+		foreach ([0, 1, 1001] as $observed) {
+			$rows[] = ['id' => (string) $observed, 'name' => 'Account', 'state' => 'failed', 'observed' => $observed, 'interval' => 60, 'detail' => 'Check collection'];
+		}
+		ob_start();
+		OperatorPage::render($rows, [], 2, 1000, []);
+		$html = (string) ob_get_clean();
+		$this->assertSame(3, substr_count($html, 'failed / Unknown or stale'));
+		$this->assertStringContainsString('Never', $html);
+		$this->assertSame([], cloudflare_glue_calls('form_start'));
+		$this->assertStringNotContainsString('<button', $html);
+
+		ob_start();
+		OperatorPage::render([], [], 2, 1000, []);
+		$empty = (string) ob_get_clean();
+		$this->assertStringContainsString('No observations are available for devices you may access.', $empty);
+		$this->assertStringNotContainsString('<button', $empty);
+	}
+
+	public function testAcknowledgmentDropsInvalidEntriesAndExpiresAfterOneHour(): void {
+		$row = ['id' => '7', 'name' => 'Account', 'state' => 'failed', 'observed' => 4900, 'interval' => 7200, 'detail' => 'timeout'];
+		$session = ['user' => 2, 'entries' => [
+			'expired' => ['at' => 1000],
+			'future' => ['at' => 6000],
+			'malformed' => 'invalid',
+			'missing' => [],
+			'wrong_type' => ['at' => '4900'],
+			'kept' => ['at' => 4900, 'fingerprint' => 'unchanged'],
+		]];
+		$this->assertTrue(OperatorPage::acknowledge($session, $row, OperatorPage::fingerprint($row), 2, 5000));
+		$this->assertSame(['kept', 7], array_keys($session['entries']));
+		$this->assertTrue(OperatorPage::acknowledged($session, $row, 2, 8600));
+		$this->assertFalse(OperatorPage::acknowledged($session, $row, 2, 8601));
+		$this->assertFalse(OperatorPage::acknowledged(['user' => 2, 'entries' => 'invalid'], $row, 2, 5000));
+		$this->assertTrue(OperatorPage::acknowledge($session, $row, OperatorPage::fingerprint($row), 3, 5000));
+		$this->assertSame([7], array_keys($session['entries']));
+		$this->assertSame(3, $session['user']);
+	}
 }

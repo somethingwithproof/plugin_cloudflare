@@ -35,8 +35,10 @@ permission:
 
 Discovery needs no permission beyond the tunnel read permission that Verify
 already checks. If Cloudflare refuses the tunnel listing during a run, the
-run fails as `auth` or `permission`; three failed runs in a row mark the
-account's active tunnels `unavailable` until a listing succeeds again.
+run fails as `auth` or `permission`. Only `transient`, `rate_limited`, `auth`
+and `permission` failures before a complete listing count toward the outage
+streak. Three such outages in a row mark the account's active tunnels
+`unavailable`; a complete listing resets the streak.
 
 Token verification (`/tokens/verify`) needs no permission. Both account-owned
 and user-owned tokens work. A user-owned token gets HTTP 401 from the account

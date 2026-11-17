@@ -70,10 +70,10 @@ The checks run in that order and the first one that fails gives the reason:
    `connections_error_class`, or `transient` if none is stored.
 6. The stored value itself. A null `connector_count` or `connection_count`
    gives `never_collected`, even when `connections_refreshed_at` is set. A
-   Cloudflare status outside the health table gives `malformed` for health
-   only; the other metrics are unaffected. `versions` counts connector rows,
-   which discovery stores together with `connector_count`, so a null
-   `connector_count` also makes `versions` unknown with `never_collected`.
+  Cloudflare status outside the health table gives `malformed` for health
+  only; the other metrics are unaffected. `versions` counts distinct
+  cloudflared versions, so a null `connector_count` also makes `versions`
+  unknown with `never_collected`.
 
 A failing job comes first because it explains the rest. Discovery marks
 tunnels `unavailable` after repeated outages, so the job's error class is the

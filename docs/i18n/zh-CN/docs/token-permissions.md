@@ -1,4 +1,4 @@
-<!-- Source: docs/token-permissions.md; SHA256: a6b754c0fe728f30e24edbf5da2236c10a28452cddb4ae8eb64c7791436cb574 -->
+<!-- Source: docs/token-permissions.md; SHA256: aa9669eaa0d9b1ed769fbdab242559bfd534ef36fa37a9a55ad7bc46ad0bdfb9 -->
 
 <a id="api-token-permissions"></a>
 # API 令牌权限
@@ -29,7 +29,7 @@ Cloudflare API 参考将区域权限称为 `Zone Zone Read`，权限页面称为
 - `/accounts/{account_id}/cfd_tunnel`：列出账户的隧道
 - `/accounts/{account_id}/cfd_tunnel/{tunnel_id}/connections`：读取一个隧道的连接器
 
-发现过程只需要 Verify 已检查的隧道读取权限。如果 Cloudflare 在一次运行中拒绝列出隧道，该运行将以 `auth` 或 `permission` 失败；连续三次失败会将账户的活动隧道标记为 `unavailable`，直到再次成功列出隧道。
+发现过程只需要 Verify 已检查的隧道读取权限。如果 Cloudflare 在一次运行中拒绝列出隧道，该运行将以 `auth` 或 `permission` 失败。只有完整列表成功前的 `transient`、`rate_limited`、`auth` 和 `permission` 故障才计入中断次数。连续三次此类中断会将账户的活动隧道标记为 `unavailable`；完整列表成功后会重置计数。
 
 令牌验证（`/tokens/verify`）无需权限。账户所有和用户所有的令牌均可使用。用户令牌访问账户验证端点时会收到 HTTP 401，随后插件会改用用户端点重试。
 

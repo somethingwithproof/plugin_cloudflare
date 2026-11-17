@@ -19,7 +19,7 @@
 - `CURLOPT_PROTOCOLS` 仅允许 HTTPS。
 - 关闭 `CURLOPT_FOLLOWLOCATION`，将 `CURLOPT_MAXREDIRS` 设为 0。
 - 开启 `CURLOPT_SSL_VERIFYPEER`，将 `CURLOPT_SSL_VERIFYHOST` 设为 2。
-- 连接超时为 5 秒，总超时由“Interactive Request Timeout”设置决定，默认为 10 秒，允许范围为 5 至 60 秒。
+- 连接超时为 5 秒，总超时由“Interactive Request Timeout”设置决定，默认为 10 秒，允许范围为 5 至 60 秒。此设置适用于 Web 请求；采集器使用“Collector Request Timeout”（默认为 20 秒）。
 - 将 `CURLOPT_NOPROXY` 设为 `*`，忽略代理环境变量。
 - 响应上限为 5 MiB；超过此大小的响应体会中止传输。
 

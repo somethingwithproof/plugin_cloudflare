@@ -505,9 +505,10 @@ the old device in Cacti once its history is no longer needed.
   in a page, written to a log, or included in an error message.
 - Database errors carry only the SQLSTATE and the driver error code, never
   the statement's values.
-- Every change is a POST protected by Cacti's CSRF token, and is checked
-  against the Cloudflare: Configure permission. Creating a Cacti device or
-  turning on Create Graphs also needs Cacti's Sites/Devices/Data permission.
+- Every change is a POST protected by Cacti's CSRF token. Configuration
+  changes require Cloudflare: Configure; an operator can acknowledge an
+  observation for their own account. Creating a Cacti device or turning on
+  Create Graphs also needs Cacti's Sites/Devices/Data permission.
   A disabled plugin refuses its pages.
 
 Details and known limitations are in [docs/security.md](docs/security.md).

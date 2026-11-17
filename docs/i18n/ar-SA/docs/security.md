@@ -19,7 +19,7 @@
 - `CURLOPT_PROTOCOLS` ليسمح بـ HTTPS فقط.
 - تعطيل `CURLOPT_FOLLOWLOCATION` وضبط `CURLOPT_MAXREDIRS` على 0.
 - تفعيل `CURLOPT_SSL_VERIFYPEER` وضبط `CURLOPT_SSL_VERIFYHOST` على 2.
-- مهلة اتصال مدتها 5 ثوانٍ ومهلة إجمالية من إعداد «Interactive Request Timeout»، بقيمة افتراضية 10 ثوانٍ ونطاق مقبول من 5 إلى 60 ثانية.
+- مهلة اتصال مدتها 5 ثوانٍ ومهلة إجمالية من إعداد «Interactive Request Timeout»، بقيمة افتراضية 10 ثوانٍ ونطاق مقبول من 5 إلى 60 ثانية. ينطبق هذا الإعداد على طلبات الواجهة؛ أما المجمّع فيستخدم «Collector Request Timeout» (الافتراضي 20 ثانية).
 - `CURLOPT_NOPROXY` بالقيمة `*` لتجاهل متغيرات البيئة الخاصة بالوكيل.
 - حد أقصى للاستجابة قدره 5 MiB؛ ويوقف جسم الاستجابة الأكبر النقل.
 

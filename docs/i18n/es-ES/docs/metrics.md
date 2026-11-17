@@ -1,4 +1,4 @@
-<!-- Source: docs/metrics.md; SHA256: 62af26b17013d9977cbe2898d8822142f0a8e0768d6b35af3193c4e8935dd773 -->
+<!-- Source: docs/metrics.md; SHA256: 67934fe28c90461f532eede51d8ec95ad0fdc81345ddd0a6c0d72d063b7b789a -->
 
 <a id="metrics"></a>
 # Métricas
@@ -57,7 +57,7 @@ Las comprobaciones se ejecutan en ese orden y la primera que falla determina el 
 3. `observed_at` es nulo: `never_collected`.
 4. Antigüedad inferior a -60: `clock_skew`. Antigüedad superior a la ventana: `stale`.
 5. Solo para métricas de conexión: un intento posterior a la actualización produce el `connections_error_class` del túnel, o `transient` si no hay ninguno almacenado.
-6. El propio valor almacenado. Un `connector_count` o `connection_count` nulo produce `never_collected`, aunque `connections_refreshed_at` esté definido. Un estado de Cloudflare ajeno a la tabla de salud produce `malformed` solo para la salud; las demás métricas no se ven afectadas. `versions` cuenta las filas de conectores que el descubrimiento almacena junto con `connector_count`, por lo que un `connector_count` nulo también hace que `versions` sea desconocido, con `never_collected`.
+6. El propio valor almacenado. Un `connector_count` o `connection_count` nulo produce `never_collected`, aunque `connections_refreshed_at` esté definido. Un estado de Cloudflare ajeno a la tabla de salud produce `malformed` solo para la salud; las demás métricas no se ven afectadas. `versions` cuenta las versiones distintas de cloudflared entre los conectores actuales del túnel, por lo que un `connector_count` nulo también hace que `versions` sea desconocido, con `never_collected`.
 
 El fallo de la tarea se comprueba primero porque explica lo demás. El descubrimiento marca los túneles como `unavailable` tras interrupciones repetidas, por lo que la clase de error de la tarea resulta más útil.
 

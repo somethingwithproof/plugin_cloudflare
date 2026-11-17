@@ -1,4 +1,4 @@
-<!-- Source: docs/metrics.md; SHA256: 62af26b17013d9977cbe2898d8822142f0a8e0768d6b35af3193c4e8935dd773 -->
+<!-- Source: docs/metrics.md; SHA256: 67934fe28c90461f532eede51d8ec95ad0fdc81345ddd0a6c0d72d063b7b789a -->
 
 <a id="metrics"></a>
 # 指标
@@ -57,7 +57,7 @@ age    = now - observed_at
 3. `observed_at` 为空：`never_collected`。
 4. 时龄小于 -60：`clock_skew`。时龄超过窗口：`stale`。
 5. 仅连接指标：尝试时间晚于刷新时间时，采用隧道的 `connections_error_class`；未存储该值时采用 `transient`。
-6. 存储值本身。`connector_count` 或 `connection_count` 为空时，即使已设置 `connections_refreshed_at`，原因仍为 `never_collected`。Cloudflare 状态不在健康状态表中时，仅健康指标的原因为 `malformed`，其他指标不受影响。`versions` 统计连接器行数，发现过程将这些行与 `connector_count` 一同存储，因此 `connector_count` 为空也会使 `versions` 未知，原因为 `never_collected`。
+6. 存储值本身。`connector_count` 或 `connection_count` 为空时，即使已设置 `connections_refreshed_at`，原因仍为 `never_collected`。Cloudflare 状态不在健康状态表中时，仅健康指标的原因为 `malformed`，其他指标不受影响。`versions` 统计当前隧道连接器中的不同 cloudflared 版本，因此 `connector_count` 为空也会使 `versions` 未知，原因为 `never_collected`。
 
 首先检查作业失败，因为它可以解释其余情况。发现过程在重复故障后将隧道标记为 `unavailable`，因此作业的错误类别是更有用的原因。
 

@@ -1,4 +1,4 @@
-<!-- Source: README.md; SHA256: e356cfbb5c7c5080397cfc1a3208867472e44af522618660323465c7dce5e613 -->
+<!-- Source: README.md; SHA256: 522df740c611a73b1b6fef8340d61403b268fee588d1029b2e842e7f099bbb64 -->
 
 <!-- translations:start -->
 [English](../../../README.md) | [简体中文](../zh-CN/README.md) | [हिन्दी](../hi-IN/README.md) | [Español (España)](../es-ES/README.md) | [Español (Latinoamérica)](../es-419/README.md) | [العربية](README.md)
@@ -323,7 +323,7 @@ sudo chmod 0440 /etc/cacti/cloudflare-account.token
 - تُرفض مفاتيح API العامة، ولا تُقبل إلا رموز API محددة النطاق.
 - تُخزن الرموز في ملف تُعده أنت أو مشفرة بـ AES-256-GCM بمفتاح ملف لا يدخل قاعدة البيانات أبدًا. لا تُعرض الرموز في صفحة ولا تُكتب في سجل ولا تُدرج في رسالة خطأ.
 - لا تحمل أخطاء قاعدة البيانات إلا SQLSTATE ورمز خطأ برنامج التشغيل، ولا تحمل قيم العبارة مطلقًا.
-- كل تغيير طلب POST محمي برمز CSRF في Cacti وتُفحص له صلاحية Cloudflare: Configure. إنشاء جهاز Cacti أو تمكين Create Graphs يتطلب أيضًا Sites/Devices/Data. يرفض الملحق المعطل صفحاته.
+- كل تغيير طلب POST محمي برمز CSRF في Cacti. تتطلب تغييرات الإعداد Cloudflare: Configure؛ ويمكن لمستخدم Operator الإقرار بملاحظة لحسابه هو. يتطلب إنشاء جهاز Cacti أو تمكين Create Graphs أيضًا Sites/Devices/Data. يرفض الملحق المعطل صفحاته.
 
 التفاصيل والقيود المعروفة في [docs/security.md](docs/security.md). أبلغ عن الثغرات على نحو خاص وفق [SECURITY.md](../../../SECURITY.md).
 

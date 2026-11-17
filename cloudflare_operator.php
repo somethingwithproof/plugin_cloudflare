@@ -96,9 +96,6 @@ try {
 	OperatorPage::render($rows, $session, $user, $now, $actions);
 	bottom_footer();
 } catch (Throwable $error) {
-	cacti_log('Operator page failed (' . get_class($error) . ')', false, 'CLOUDFLARE');
 	http_response_code(503);
-	top_header();
-	print '<p class="textError">' . html_escape(__('Observations could not be read. Ask an administrator to check the plugin log.', 'cloudflare')) . '</p>';
-	bottom_footer();
+	cloudflare_page_failed('operator', $error, __('Observations could not be read. Ask an administrator to check the plugin log.', 'cloudflare'));
 }

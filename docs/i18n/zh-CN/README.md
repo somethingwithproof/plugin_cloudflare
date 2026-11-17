@@ -1,4 +1,4 @@
-<!-- Source: README.md; SHA256: e356cfbb5c7c5080397cfc1a3208867472e44af522618660323465c7dce5e613 -->
+<!-- Source: README.md; SHA256: 522df740c611a73b1b6fef8340d61403b268fee588d1029b2e842e7f099bbb64 -->
 
 <!-- translations:start -->
 [English](../../../README.md) | [简体中文](README.md) | [हिन्दी](../hi-IN/README.md) | [Español (España)](../es-ES/README.md) | [Español (Latinoamérica)](../es-419/README.md) | [العربية](../ar-SA/README.md)
@@ -323,7 +323,7 @@ Settings > Cloudflare 包含：
 - 拒绝全局 API 密钥，仅接受限定作用域的 API 令牌。
 - 令牌存储于您准备的文件中，或通过从不进入数据库的密钥文件以 AES-256-GCM 加密。令牌绝不显示在页面、写入日志或包含在错误消息中。
 - 数据库错误仅携带 SQLSTATE 和驱动错误代码，绝不包含语句值。
-- 每项变更均使用受 Cacti CSRF 令牌保护的 POST，并检查 Cloudflare: Configure 权限。创建设备或开启 Create Graphs 还需 Cacti 的 Sites/Devices/Data 权限。已禁用的插件拒绝其页面请求。
+- 每项变更均使用受 Cacti CSRF 令牌保护的 POST。配置更改需要 Cloudflare: Configure；Operator 用户可以为自己的账户确认 observation。创建设备或开启 Create Graphs 还需 Cacti 的 Sites/Devices/Data 权限。已禁用的插件拒绝其页面请求。
 
 详情和已知限制见 [docs/security.md](docs/security.md)。请按照 [SECURITY.md](../../../SECURITY.md) 私下报告漏洞。
 

@@ -1,4 +1,4 @@
-<!-- Source: README.md; SHA256: e356cfbb5c7c5080397cfc1a3208867472e44af522618660323465c7dce5e613 -->
+<!-- Source: README.md; SHA256: 522df740c611a73b1b6fef8340d61403b268fee588d1029b2e842e7f099bbb64 -->
 
 <!-- translations:start -->
 [English](../../../README.md) | [简体中文](../zh-CN/README.md) | [हिन्दी](../hi-IN/README.md) | [Español (España)](README.md) | [Español (Latinoamérica)](../es-419/README.md) | [العربية](../ar-SA/README.md)
@@ -323,7 +323,7 @@ El dispositivo conservado deja de recibir datos. Tras desinstalar o eliminar su 
 - Se rechazan las claves de API globales; solo se aceptan tokens de ámbito limitado.
 - Los tokens se guardan en un fichero que usted prepara o cifrados con AES-256-GCM mediante una clave de fichero que nunca entra en la base de datos. Nunca se muestran en páginas, se escriben en registros ni se incluyen en mensajes de error.
 - Los errores de base de datos solo incluyen SQLSTATE y el código del controlador, nunca los valores de la sentencia.
-- Cada cambio es un POST protegido por el token CSRF de Cacti y comprobado contra Cloudflare: Configure. Crear un dispositivo o activar Create Graphs también exige Sites/Devices/Data de Cacti. Un complemento desactivado rechaza sus páginas.
+- Cada cambio es un POST protegido por el token CSRF de Cacti. Los cambios de configuración requieren Cloudflare: Configure; un usuario Operator puede reconocer una observación para su propia cuenta. Crear un dispositivo o activar Create Graphs también exige Sites/Devices/Data de Cacti. Un complemento desactivado rechaza sus páginas.
 
 Los detalles y limitaciones están en [docs/security.md](docs/security.md). Comunique vulnerabilidades de forma privada como se indica en [SECURITY.md](../../../SECURITY.md).
 

@@ -1,4 +1,4 @@
-<!-- Source: docs/token-permissions.md; SHA256: a6b754c0fe728f30e24edbf5da2236c10a28452cddb4ae8eb64c7791436cb574 -->
+<!-- Source: docs/token-permissions.md; SHA256: aa9669eaa0d9b1ed769fbdab242559bfd534ef36fa37a9a55ad7bc46ad0bdfb9 -->
 
 <a id="api-token-permissions"></a>
 # Permisos del token de API
@@ -29,7 +29,7 @@ El recolector realiza dos solicitudes, ambas `GET`, y ambas requieren el permiso
 - `/accounts/{account_id}/cfd_tunnel`, para enumerar los túneles de la cuenta
 - `/accounts/{account_id}/cfd_tunnel/{tunnel_id}/connections`, para leer los conectores de un túnel
 
-El descubrimiento no necesita más permisos que el de lectura de túneles que Verify ya comprueba. Si Cloudflare rechaza la enumeración durante una ejecución, esta falla con `auth` o `permission`; tres ejecuciones fallidas consecutivas marcan los túneles activos de la cuenta como `unavailable` hasta que una enumeración vuelva a completarse correctamente.
+El descubrimiento no necesita más permisos que el de lectura de túneles que Verify ya comprueba. Si Cloudflare rechaza la enumeración durante una ejecución, esta falla con `auth` o `permission`. Solo los errores `transient`, `rate_limited`, `auth` y `permission` anteriores a una enumeración completa cuentan como interrupciones. Tres interrupciones consecutivas marcan como `unavailable` los túneles activos de la cuenta; una enumeración completa reinicia el contador.
 
 La verificación del token (`/tokens/verify`) no necesita permisos. Funcionan tanto los tokens de cuenta como los de usuario. Un token de usuario recibe HTTP 401 del endpoint de verificación de cuenta y el complemento vuelve a intentarlo contra el endpoint de usuario.
 

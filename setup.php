@@ -112,8 +112,6 @@ function plugin_cloudflare_upgrade(int $lock_timeout = 10) : bool {
 		return false;
 	}
 
-	cloudflare_setup_operator();
-
 	$info    = plugin_cloudflare_version();
 	$current = isset($info['version']) ? (string) $info['version'] : '';
 
@@ -144,6 +142,8 @@ function plugin_cloudflare_upgrade(int $lock_timeout = 10) : bool {
 	}
 
 	if ($current !== '' && $current !== (string) $installed) {
+		cloudflare_setup_operator();
+
 		/* A failed template install is logged and does not hold back the
 		 * version: retrying a failing import on every page load would cost
 		 * more than it could fix. */

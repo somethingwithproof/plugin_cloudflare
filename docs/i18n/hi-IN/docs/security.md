@@ -19,7 +19,7 @@
 - `CURLOPT_PROTOCOLS` केवल HTTPS
 - `CURLOPT_FOLLOWLOCATION` बंद और `CURLOPT_MAXREDIRS` 0
 - `CURLOPT_SSL_VERIFYPEER` चालू और `CURLOPT_SSL_VERIFYHOST` 2
-- कनेक्शन टाइमआउट 5 सेकंड और कुल टाइमआउट “Interactive Request Timeout” सेटिंग से (डिफ़ॉल्ट 10, स्वीकृत सीमा 5 से 60 सेकंड)
+- कनेक्शन टाइमआउट 5 सेकंड और कुल टाइमआउट “Interactive Request Timeout” सेटिंग से (डिफ़ॉल्ट 10, स्वीकृत सीमा 5 से 60 सेकंड)। यह सेटिंग वेब अनुरोधों पर लागू है; संग्राहक “Collector Request Timeout” (डिफ़ॉल्ट 20 सेकंड) का उपयोग करता है।
 - `CURLOPT_NOPROXY` का मान `*`, जिससे proxy environment variables अनदेखे होते हैं
 - response सीमा 5 MiB; बड़ा body transfer रोक देता है
 

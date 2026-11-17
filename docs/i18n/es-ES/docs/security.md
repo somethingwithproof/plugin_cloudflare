@@ -19,7 +19,7 @@ Cada solicitud establece:
 - `CURLOPT_PROTOCOLS` exclusivamente en HTTPS.
 - `CURLOPT_FOLLOWLOCATION` desactivado y `CURLOPT_MAXREDIRS` en 0.
 - `CURLOPT_SSL_VERIFYPEER` activado y `CURLOPT_SSL_VERIFYHOST` en 2.
-- Un tiempo máximo de conexión de 5 segundos y un tiempo máximo total definido por «Interactive Request Timeout» (10 segundos de forma predeterminada; intervalo admitido de 5 a 60 segundos).
+- Un tiempo máximo de conexión de 5 segundos y un tiempo máximo total definido por «Interactive Request Timeout» (10 segundos de forma predeterminada; intervalo admitido de 5 a 60 segundos). Esta opción se aplica a solicitudes de la interfaz; el recolector usa «Collector Request Timeout» (20 segundos de forma predeterminada).
 - `CURLOPT_NOPROXY` en `*`, para ignorar las variables de entorno del proxy.
 - Un límite de respuesta de 5 MiB; un cuerpo mayor interrumpe la transferencia.
 

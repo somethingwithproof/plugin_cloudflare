@@ -73,7 +73,7 @@ i18n-check:
 # phpunit.xml.dist names the measured files. pcov instruments only src/ by
 # default, which left the glue at zero, so it is pointed at the whole tree.
 coverage:
-	php -d memory_limit=-1 -d pcov.directory=. -d 'pcov.exclude=~/(vendor|tests)/~' $(PHPUNIT) --coverage-clover build/coverage/clover.xml
+	php -d memory_limit=-1 -d opcache.jit=0 -d pcov.directory=. -d 'pcov.exclude=~/(vendor|tests)/~' $(PHPUNIT) --coverage-clover build/coverage/clover.xml
 
 package:
 	bash tests/build/package.sh

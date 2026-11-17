@@ -177,6 +177,8 @@ final class SetupDatabaseTest extends IntegrationTestCase {
 		$this->assertTrue($this->tableExists('plugin_cloudflare_accounts'));
 		$this->assertSame(array(), cloudflare_glue_calls('db_execute_prepared'));
 		$this->assertSame(array(), cloudflare_glue_calls('import_xml_data'), 'templates follow the version, not the schema');
+		$this->assertSame(array(), cloudflare_glue_calls('api_plugin_register_realm'), 'realm registration must not replicate config on every page');
+		$this->assertSame(array(), cloudflare_glue_calls('api_plugin_register_hook'), 'hook registration must not replicate config on every page');
 	}
 
 	public function testUpgradeFrom010RunsM002AndRegistersHook(): void {

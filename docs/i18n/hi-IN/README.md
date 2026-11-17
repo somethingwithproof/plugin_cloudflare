@@ -1,4 +1,4 @@
-<!-- Source: README.md; SHA256: e356cfbb5c7c5080397cfc1a3208867472e44af522618660323465c7dce5e613 -->
+<!-- Source: README.md; SHA256: 522df740c611a73b1b6fef8340d61403b268fee588d1029b2e842e7f099bbb64 -->
 
 <!-- translations:start -->
 [English](../../../README.md) | [简体中文](../zh-CN/README.md) | [हिन्दी](README.md) | [Español (España)](../es-ES/README.md) | [Español (Latinoamérica)](../es-419/README.md) | [العربية](../ar-SA/README.md)
@@ -323,7 +323,7 @@ Settings > Cloudflare में हैं:
 - Global API Keys अस्वीकार हैं; केवल सीमित दायरे के API टोकन स्वीकार होते हैं।
 - टोकन आपकी तैयार फ़ाइल में या AES-256-GCM से एन्क्रिप्ट होकर रहते हैं; कुंजी फ़ाइल डेटाबेस में कभी नहीं जाती। टोकन पृष्ठ, लॉग या त्रुटि संदेश में कभी नहीं आते।
 - डेटाबेस त्रुटियों में केवल SQLSTATE और driver error code होते हैं, statement के मान कभी नहीं।
-- हर बदलाव Cacti CSRF टोकन से सुरक्षित POST है और Cloudflare: Configure के विरुद्ध जाँचा जाता है। Cacti डिवाइस बनाना या Create Graphs चालू करना Sites/Devices/Data भी माँगता है। अक्षम प्लगइन अपने पृष्ठ अस्वीकार करता है।
+- हर बदलाव Cacti CSRF टोकन से सुरक्षित POST है। कॉन्फ़िगरेशन बदलाव के लिए Cloudflare: Configure चाहिए; Operator उपयोगकर्ता अपने खाते की observation स्वीकार कर सकता है। Cacti डिवाइस बनाना या Create Graphs चालू करना Sites/Devices/Data भी माँगता है। अक्षम प्लगइन अपने पृष्ठ अस्वीकार करता है।
 
 विवरण और ज्ञात सीमाएँ [docs/security.md](docs/security.md) में हैं। कमजोरियाँ [SECURITY.md](../../../SECURITY.md) के अनुसार निजी तौर पर बताएँ।
 

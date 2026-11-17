@@ -1,4 +1,4 @@
-<!-- Source: docs/metrics.md; SHA256: 62af26b17013d9977cbe2898d8822142f0a8e0768d6b35af3193c4e8935dd773 -->
+<!-- Source: docs/metrics.md; SHA256: 67934fe28c90461f532eede51d8ec95ad0fdc81345ddd0a6c0d72d063b7b789a -->
 
 <a id="metrics"></a>
 # المقاييس
@@ -57,7 +57,7 @@ age    = now - observed_at
 3. إذا كان `observed_at` فارغًا: `never_collected`.
 4. عمر أقل من -60: `clock_skew`. عمر يتجاوز النافذة: `stale`.
 5. لمقاييس الاتصال فقط: المحاولة الأحدث من التحديث تعطي `connections_error_class` للنفق، أو `transient` إن لم تكن فئة مخزنة.
-6. القيمة المخزنة نفسها. يعطي `connector_count` أو `connection_count` الفارغ السبب `never_collected` حتى لو كان `connections_refreshed_at` محددًا. تعطي حالة Cloudflare غير المدرجة في جدول السلامة `malformed` للسلامة وحدها، دون التأثير في المقاييس الأخرى. يحصي `versions` صفوف الموصلات التي يخزنها الاكتشاف مع `connector_count`، لذا يجعل `connector_count` الفارغ قيمة `versions` مجهولة أيضًا بالسبب `never_collected`.
+6. القيمة المخزنة نفسها. يعطي `connector_count` أو `connection_count` الفارغ السبب `never_collected` حتى لو كان `connections_refreshed_at` محددًا. تعطي حالة Cloudflare غير المدرجة في جدول السلامة `malformed` للسلامة وحدها، دون التأثير في المقاييس الأخرى. يحصي `versions` إصدارات cloudflared المختلفة بين موصلات النفق الحالية، لذا يجعل `connector_count` الفارغ قيمة `versions` مجهولة أيضًا بالسبب `never_collected`.
 
 يأتي فشل المهمة أولًا لأنه يفسر البقية. يوسم الاكتشاف الأنفاق بالحالة `unavailable` بعد انقطاعات متكررة، ولذلك تكون فئة خطأ المهمة السبب الأكثر فائدة.
 

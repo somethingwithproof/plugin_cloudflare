@@ -1,4 +1,4 @@
-<!-- Source: docs/token-permissions.md; SHA256: a6b754c0fe728f30e24edbf5da2236c10a28452cddb4ae8eb64c7791436cb574 -->
+<!-- Source: docs/token-permissions.md; SHA256: aa9669eaa0d9b1ed769fbdab242559bfd534ef36fa37a9a55ad7bc46ad0bdfb9 -->
 
 <a id="api-token-permissions"></a>
 # أذونات رمز API
@@ -29,7 +29,7 @@
 - `/accounts/{account_id}/cfd_tunnel`، لسرد أنفاق الحساب
 - `/accounts/{account_id}/cfd_tunnel/{tunnel_id}/connections`، لقراءة موصلات نفق واحد
 
-لا يحتاج الاكتشاف إلى إذن يتجاوز إذن قراءة الأنفاق الذي يفحصه Verify بالفعل. إذا رفضت Cloudflare سرد الأنفاق أثناء تشغيل ما، يفشل التشغيل بالفئة `auth` أو `permission`؛ وتؤدي ثلاثة تشغيلات فاشلة متتالية إلى وسم أنفاق الحساب النشطة بالحالة `unavailable` إلى أن ينجح السرد مجددًا.
+لا يحتاج الاكتشاف إلى إذن يتجاوز إذن قراءة الأنفاق الذي يفحصه Verify بالفعل. إذا رفضت Cloudflare سرد الأنفاق أثناء تشغيل ما، يفشل التشغيل بالفئة `auth` أو `permission`. تُحتسب فقط إخفاقات `transient` و`rate_limited` و`auth` و`permission` قبل اكتمال السرد ضمن سلسلة الانقطاع. تؤدي ثلاثة انقطاعات متتالية إلى وسم أنفاق الحساب النشطة بالحالة `unavailable`؛ ويعيد السرد الكامل ضبط العدد.
 
 لا يحتاج التحقق من الرمز (`/tokens/verify`) إلى إذن. تعمل الرموز المملوكة للحساب والمملوكة للمستخدم. يتلقى رمز المستخدم HTTP 401 من نقطة التحقق الخاصة بالحساب، ثم يعيد الملحق المحاولة عبر نقطة المستخدم.
 

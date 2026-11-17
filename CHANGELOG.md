@@ -1,5 +1,9 @@
 ## ChangeLog
 
+--- Unreleased ---
+
+* fix: Exclude the SPDX header assertion string from REUSE metadata parsing
+
 --- 0.3.0 (2026-11-15) ---
 
 Milestone 3: tunnel metrics and graphs. Zone analytics and alerting are not

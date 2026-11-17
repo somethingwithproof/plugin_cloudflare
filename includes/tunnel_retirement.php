@@ -121,12 +121,11 @@ function cloudflare_retire_tunnel(int $id, ?Database $db = null) : bool {
 	}
 }
 
-function cloudflare_accounts_retire() : void {
+function cloudflare_accounts_retire() : ?string {
 	if (!cloudflare_device_permitted()) {
 		raise_ajax_permission_denied();
-		header('Location: ../../permission_denied.php');
 
-		return;
+		return '../../permission_denied.php';
 	}
 
 	get_filter_request_var('tunnel_id');
@@ -134,9 +133,7 @@ function cloudflare_accounts_retire() : void {
 	$tunnel = cloudflare_db()->fetchRow('SELECT name, lifecycle FROM plugin_cloudflare_tunnels WHERE id = ?', array($id));
 
 	if ($tunnel === null || $tunnel['lifecycle'] !== 'deleted') {
-		header('Location: cloudflare.php?action=tunnels');
-
-		return;
+		return 'cloudflare.php?action=tunnels';
 	}
 
 	if (cloudflare_request_is_post() && get_filter_request_var('confirmed')) {
@@ -144,9 +141,7 @@ function cloudflare_accounts_retire() : void {
 			raise_message('cloudflare_retire_failed', __esc('The tunnel could not be retired. Check permissions and retry after collection finishes.', 'cloudflare'), MESSAGE_LEVEL_ERROR);
 		}
 
-		header('Location: cloudflare.php?action=tunnels');
-
-		return;
+		return 'cloudflare.php?action=tunnels';
 	}
 
 	top_header();
@@ -158,4 +153,6 @@ function cloudflare_accounts_retire() : void {
 	html_end_box();
 	form_end(false);
 	bottom_footer();
+
+	return null;
 }

@@ -42,7 +42,12 @@ try {
 
 	switch (get_request_var('action')) {
 		case 'retire':
-			cloudflare_accounts_retire();
+			$retire_url = cloudflare_accounts_retire();
+
+			if ($retire_url !== null) {
+				header('Location: ' . $retire_url);
+				exit;
+			}
 
 			break;
 		case 'save':

@@ -228,7 +228,7 @@ final class ViewerPageHandlersTest extends IntegrationTestCase {
 		$this->assertCount(2, $rows);
 		$this->assertStringContainsString('>old</a>', $rows[0][0]);
 		$this->assertSame('Prod', $rows[0][1]);
-		$this->assertSame('deleted', $rows[0][3]);
+		$this->assertStringContainsString('deleted', $rows[0][3]);
 		$this->assertStringContainsString('>web</a>', $rows[1][0]);
 	}
 

@@ -339,11 +339,11 @@ msgid "Click 'Continue' to create a Cacti device for the following Cloudflare Ac
 msgid_plural "Click 'Continue' to create a Cacti device for each of the following Cloudflare Accounts. An account that already has one is left as it is."
 msgstr[0] "点击“继续”,为以下 Cloudflare 账户创建 Cacti 设备。已有设备的账户保持不变。"
 
-#: includes/accounts_page.php
+#: includes/accounts_page.php includes/tunnel_retirement.php
 msgid "Cancel"
 msgstr "取消"
 
-#: includes/accounts_page.php
+#: includes/accounts_page.php includes/tunnel_retirement.php
 msgid "Continue"
 msgstr "继续"
 
@@ -537,9 +537,25 @@ msgstr "日志级别"
 msgid "The amount of detail the plugin writes to the Cacti log."
 msgstr "插件写入 Cacti 日志的详细程度。"
 
+#: includes/tunnel_retirement.php
+msgid "The tunnel could not be retired. Check permissions and retry after collection finishes."
+msgstr "无法停用此隧道。请检查权限，并在采集结束后重试。"
+
+#: includes/tunnel_retirement.php includes/viewer.php
+msgid "Retire tunnel"
+msgstr "停用隧道"
+
+#: includes/tunnel_retirement.php
+msgid "Retiring removes the graphs and unshared data sources created for this deleted tunnel. Cacti controls RRD cleanup. The inventory record is kept."
+msgstr "停用将移除此已删除隧道的图形及未共享的数据源。RRD 清理由 Cacti 控制。清单记录将保留。"
+
 #: includes/viewer.php
 msgid "The Cloudflare tunnels could not be read. See the Cacti log for details."
 msgstr "无法读取 Cloudflare 隧道。详情请查看 Cacti 日志。"
+
+#: includes/viewer.php
+msgid "Zone Analytics"
+msgstr "区域分析"
 
 #: includes/viewer.php
 msgid "Disabled"
@@ -695,6 +711,26 @@ msgstr "此隧道处于 %s 状态。这些连接器是在隧道处于活跃状�
 #: includes/viewer.php
 msgid "No connectors are running for this tunnel."
 msgstr "此隧道没有正在运行的连接器。"
+
+#: includes/viewer.php
+msgid "Export"
+msgstr "导出"
+
+#: includes/viewer.php
+msgid "Bytes/s"
+msgstr "字节/秒"
+
+#: includes/viewer.php
+msgid "HTTP 5xx (%)"
+msgstr "HTTP 5xx (%)"
+
+#: includes/viewer.php
+msgid "Requests/s"
+msgstr "请求/秒"
+
+#: includes/viewer.php
+msgid "Zone"
+msgstr "区域"
 
 #: src/OperatorPage.php
 msgid "Review the recorded observations below. Acknowledgments are personal to this session, expire when observations change, and never suppress alerts or change health."

@@ -339,11 +339,11 @@ msgid "Click 'Continue' to create a Cacti device for the following Cloudflare Ac
 msgid_plural "Click 'Continue' to create a Cacti device for each of the following Cloudflare Accounts. An account that already has one is left as it is."
 msgstr[0] "[続ける]をクリックすると、次の Cloudflare アカウントに Cacti デバイスを作成します。既にデバイスがあるアカウントは変更されません。"
 
-#: includes/accounts_page.php
+#: includes/accounts_page.php includes/tunnel_retirement.php
 msgid "Cancel"
 msgstr "取り消し"
 
-#: includes/accounts_page.php
+#: includes/accounts_page.php includes/tunnel_retirement.php
 msgid "Continue"
 msgstr "続ける"
 
@@ -537,9 +537,25 @@ msgstr "ログレベル"
 msgid "The amount of detail the plugin writes to the Cacti log."
 msgstr "プラグインが Cacti のログに書き込む詳細度です。"
 
+#: includes/tunnel_retirement.php
+msgid "The tunnel could not be retired. Check permissions and retry after collection finishes."
+msgstr "トンネルを廃止できませんでした。権限を確認し、収集終了後に再試行してください。"
+
+#: includes/tunnel_retirement.php includes/viewer.php
+msgid "Retire tunnel"
+msgstr "トンネルを廃止"
+
+#: includes/tunnel_retirement.php
+msgid "Retiring removes the graphs and unshared data sources created for this deleted tunnel. Cacti controls RRD cleanup. The inventory record is kept."
+msgstr "廃止すると、この削除済みトンネル用に作成されたグラフと共有されていないデータソースが削除されます。RRD の削除は Cacti が管理します。インベントリの記録は保持されます。"
+
 #: includes/viewer.php
 msgid "The Cloudflare tunnels could not be read. See the Cacti log for details."
 msgstr "Cloudflare トンネルを読み取れませんでした。詳細は Cacti のログを確認してください。"
+
+#: includes/viewer.php
+msgid "Zone Analytics"
+msgstr "ゾーン分析"
 
 #: includes/viewer.php
 msgid "Disabled"
@@ -695,6 +711,26 @@ msgstr "このトンネルは %s です。これらのコネクターは、ト�
 #: includes/viewer.php
 msgid "No connectors are running for this tunnel."
 msgstr "このトンネルで実行中のコネクターはありません。"
+
+#: includes/viewer.php
+msgid "Export"
+msgstr "エクスポート"
+
+#: includes/viewer.php
+msgid "Bytes/s"
+msgstr "バイト/秒"
+
+#: includes/viewer.php
+msgid "HTTP 5xx (%)"
+msgstr "HTTP 5xx (%)"
+
+#: includes/viewer.php
+msgid "Requests/s"
+msgstr "リクエスト/秒"
+
+#: includes/viewer.php
+msgid "Zone"
+msgstr "ゾーン"
 
 #: src/OperatorPage.php
 msgid "Review the recorded observations below. Acknowledgments are personal to this session, expire when observations change, and never suppress alerts or change health."

@@ -34,6 +34,9 @@ require_once dirname(__DIR__, 2) . '/includes/autoload.php';
 
 use Somethingwithproof\Cloudflare\Metrics\Catalog;
 use Somethingwithproof\Cloudflare\Metrics\Metric;
+use Somethingwithproof\Cloudflare\Metrics\ZoneCatalog;
+
+define('CF_TPL_ZONE_MODE', ($argv[2] ?? '') === 'zones');
 
 /* include/global_arrays.php:1342 and :134-146 (1.2.19 to 1.2.31). */
 const CF_TPL_VERSION = '0103';
@@ -78,18 +81,18 @@ const CF_TPL_CF_AVERAGE    = '1';
 const CF_TPL_CF_MAX        = '3';
 const CF_TPL_CF_LAST       = '4';
 
-const CF_TPL_LABELS = array(
+define('CF_TPL_LABELS', CF_TPL_ZONE_MODE ? array('requests' => 'Requests per second', 'bytes' => 'Bytes per second', 'errorPct' => 'HTTP 5xx percent', 'sampleInterval' => 'Sampling interval', 'age' => 'Collection age') : array(
 	'health'          => 'Health',
 	'connectors'      => 'Connectors',
 	'connections'     => 'Connections',
 	'versions'        => 'Connector Versions',
 	'collectAge'      => 'Collection Age',
 	'collectFailures' => 'Collection Failures',
-);
+));
 
 /* Graph key => title suffix, vertical label, and DS names with line colours.
  * Colours are stock entries of the colors table in both versions. */
-const CF_TPL_GRAPHS = array(
+define('CF_TPL_GRAPHS', CF_TPL_ZONE_MODE ? array('traffic' => array('suffix' => 'Traffic', 'label' => 'per second', 'ds' => array('requests' => '00CF00', 'bytes' => '002A97')), 'errors' => array('suffix' => 'HTTP 5xx', 'label' => 'percent', 'ds' => array('error_pct' => 'FF0000')), 'collection' => array('suffix' => 'Collection', 'label' => 'age and sampling', 'ds' => array('sample_interval' => '00CF00', 'age' => 'FF0000'))) : array(
 	'connectors' => array(
 		'suffix' => 'Connectors',
 		'label'  => 'count',
@@ -105,7 +108,7 @@ const CF_TPL_GRAPHS = array(
 		'label'  => 'seconds, failures',
 		'ds'     => array('collect_age' => '4668E4', 'collect_fail' => 'F51D30'),
 	),
-);
+));
 
 /**
  * The XML element name or reference for one object, as get_hash_version()
@@ -116,7 +119,7 @@ function cf_tpl_ref(string $type, string $md5): string {
 }
 
 function cf_tpl_hash(string $key): string {
-	return md5('plugin_cloudflare/' . $key);
+	return md5((CF_TPL_ZONE_MODE ? 'plugin_cloudflare_zones/' : 'plugin_cloudflare/') . $key);
 }
 
 function cf_tpl_own(string $type, string $key): string {
@@ -156,7 +159,7 @@ function cf_tpl_metrics(): array {
 		$graphed = array_merge($graphed, array_keys($graph['ds']));
 	}
 
-	foreach (Catalog::all() as $metric) {
+	foreach ((CF_TPL_ZONE_MODE ? ZoneCatalog::all() : Catalog::all()) as $metric) {
 		if ($metric->type() !== Metric::GAUGE || !isset(CF_TPL_LABELS[$metric->queryField()])) {
 			throw new RuntimeException('no template mapping for ' . $metric->name());
 		}
@@ -516,5 +519,15 @@ if (PHP_SAPI !== 'cli' || !isset($argv[1]) || $argv[1] === '') {
 
 $metrics = cf_tpl_metrics();
 
-cf_tpl_write(rtrim($argv[1], '/') . '/cloudflare_templates.xml', cf_tpl_templates_xml($metrics));
-cf_tpl_write(rtrim($argv[1], '/') . '/resource/cloudflare_tunnels.xml', cf_tpl_resource_xml($metrics));
+
+$templates = cf_tpl_templates_xml($metrics);
+$resource = cf_tpl_resource_xml($metrics);
+
+if (CF_TPL_ZONE_MODE) {
+	$replace = array('Cloudflare Tunnels' => 'Cloudflare Zones', 'Cloudflare Tunnel' => 'Cloudflare Zone', 'Cloudflare Account' => 'Cloudflare Zone Account', 'Tunnel ID' => 'Zone ID', 'Tunnel Name' => 'Zone Name', 'tunnelId' => 'zoneId', 'tunnelName' => 'zoneName', 'cloudflare_tunnels' => 'cloudflare_zones', 'ss_cloudflare.php' => 'ss_cloudflare_zones.php', '<script_function>ss_cloudflare</script_function>' => '<script_function>ss_cloudflare_zones</script_function>');
+	$templates = strtr($templates, $replace);
+	$resource = strtr($resource, $replace);
+}
+
+cf_tpl_write(rtrim($argv[1], '/') . (CF_TPL_ZONE_MODE ? '/cloudflare_zones_templates.xml' : '/cloudflare_templates.xml'), $templates);
+cf_tpl_write(rtrim($argv[1], '/') . (CF_TPL_ZONE_MODE ? '/resource/cloudflare_zones.xml' : '/resource/cloudflare_tunnels.xml'), $resource);

@@ -76,6 +76,26 @@ final class TemplatesTest extends TestCase {
 		}
 	}
 
+	public function testZoneTemplatesAreReproducibleAndKeepDistinctHashes(): void {
+		$out = sys_get_temp_dir() . '/cf-zone-templates-' . bin2hex(random_bytes(6));
+
+		try {
+			$command = escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg(self::ROOT . '/tests/build/generate_templates.php') . ' ' . escapeshellarg($out) . ' zones 2>&1';
+			exec($command, $output, $status);
+			$this->assertSame(0, $status, implode("\n", $output));
+			$this->assertFileEquals(self::ROOT . '/templates/cloudflare_zones_templates.xml', $out . '/cloudflare_zones_templates.xml');
+			$this->assertFileEquals(self::ROOT . '/templates/resource/cloudflare_zones.xml', $out . '/resource/cloudflare_zones.xml');
+			$xml = (string) file_get_contents($out . '/cloudflare_zones_templates.xml');
+			$this->assertStringContainsString(md5('plugin_cloudflare_zones/data_template'), $xml);
+			$this->assertStringNotContainsString(md5('plugin_cloudflare/data_template'), $xml);
+		} finally {
+			@unlink($out . '/resource/cloudflare_zones.xml');
+			@unlink($out . '/cloudflare_zones_templates.xml');
+			@rmdir($out . '/resource');
+			@rmdir($out);
+		}
+	}
+
 	public function testBothXmlFilesParse(): void {
 		$this->assertSame('cacti', $this->templates()->getName());
 		$this->assertSame('interface', $this->resource()->getName());

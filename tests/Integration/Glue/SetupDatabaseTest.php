@@ -165,13 +165,13 @@ final class SetupDatabaseTest extends IntegrationTestCase {
 
 		$this->assertTrue($this->tableExists('plugin_cloudflare_accounts'));
 		$this->assertSame(array(
-			array('UPDATE plugin_config SET version = ? WHERE directory = ?', array('0.3.0', 'cloudflare')),
+			array('UPDATE plugin_config SET version = ? WHERE directory = ?', array('0.4.0-dev', 'cloudflare')),
 		), cloudflare_glue_calls('db_execute_prepared'));
 	}
 
 	public function testUpgradeRunsPendingMigrationsAtTheSameVersion(): void {
 		$GLOBALS['cloudflare_glue']['cell'] = static function (string $sql): string {
-			return strpos($sql, 'plugin_config') !== false ? '0.3.0' : '1';
+			return strpos($sql, 'plugin_config') !== false ? '0.4.0-dev' : '1';
 		};
 
 		$this->assertTrue(plugin_cloudflare_upgrade());
@@ -215,7 +215,7 @@ final class SetupDatabaseTest extends IntegrationTestCase {
 			cloudflare_glue_calls('api_plugin_register_hook')
 		);
 		$this->assertSame(array(
-			array('UPDATE plugin_config SET version = ? WHERE directory = ?', array('0.3.0', 'cloudflare')),
+			array('UPDATE plugin_config SET version = ? WHERE directory = ?', array('0.4.0-dev', 'cloudflare')),
 		), cloudflare_glue_calls('db_execute_prepared'));
 	}
 
@@ -271,7 +271,7 @@ final class SetupDatabaseTest extends IntegrationTestCase {
 		$this->assertTrue($this->tableExists('plugin_cloudflare_resources'));
 		$this->assertTrue($this->tableExists('plugin_cloudflare_metric_mappings'));
 		$this->assertSame(
-			'3',
+			'5',
 			(string) $this->pdo->query('SELECT MAX(version) FROM plugin_cloudflare_migrations')->fetchColumn()
 		);
 		$this->assertFileEquals(self::ROOT . '/templates/resource/cloudflare_tunnels.xml', $resource);
@@ -286,7 +286,7 @@ final class SetupDatabaseTest extends IntegrationTestCase {
 			'0.2.0 keeps its poller hook and gains role inheritance'
 		);
 		$this->assertSame(array(
-			array('UPDATE plugin_config SET version = ? WHERE directory = ?', array('0.3.0', 'cloudflare')),
+			array('UPDATE plugin_config SET version = ? WHERE directory = ?', array('0.4.0-dev', 'cloudflare')),
 		), cloudflare_glue_calls('db_execute_prepared'));
 		$this->assertSame(array(), $this->loggedLines());
 	}
@@ -306,7 +306,7 @@ final class SetupDatabaseTest extends IntegrationTestCase {
 		$this->assertArrayNotHasKey('cloudflare_templates_sha256', $GLOBALS['cloudflare_glue']['settings']);
 		$this->assertSame(array('CLOUDFLARE: template import failed (data_query)'), $this->loggedLines());
 		$this->assertSame(array(
-			array('UPDATE plugin_config SET version = ? WHERE directory = ?', array('0.3.0', 'cloudflare')),
+			array('UPDATE plugin_config SET version = ? WHERE directory = ?', array('0.4.0-dev', 'cloudflare')),
 		), cloudflare_glue_calls('db_execute_prepared'));
 	}
 

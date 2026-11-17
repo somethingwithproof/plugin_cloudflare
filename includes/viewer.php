@@ -24,6 +24,7 @@ use Somethingwithproof\Cloudflare\Account\Account;
 use Somethingwithproof\Cloudflare\Account\AccountRepository;
 use Somethingwithproof\Cloudflare\Discovery\TunnelRepository;
 use Somethingwithproof\Cloudflare\Jobs\JobRepository;
+use Somethingwithproof\Cloudflare\Storage\Database;
 use Somethingwithproof\Cloudflare\Storage\DatabaseException;
 use Somethingwithproof\Cloudflare\Support\SystemClock;
 
@@ -72,6 +73,7 @@ function cloudflare_viewer_tabs(string $current) : void {
 		'overview'   => __('Overview', 'cloudflare'),
 		'tunnels'    => __('Tunnels', 'cloudflare'),
 		'connectors' => __('Connectors', 'cloudflare'),
+		'analytics'  => __('Zone Analytics', 'cloudflare'),
 	);
 
 	print "<div class='tabs'><nav><ul>\n";
@@ -489,6 +491,14 @@ function cloudflare_viewer_tunnels() : void {
 	}
 
 	cloudflare_viewer_tunnel_filter($accounts, $query);
+	cloudflare_viewer_export_link('tunnels', array(
+		'account_id'     => $query['account_id'],
+		'lifecycle'      => $query['filters']['lifecycle'] ?? '',
+		'cf_status'      => $query['filters']['cf_status'] ?? '',
+		'filter'         => $query['filters']['search'] ?? '',
+		'sort_column'    => $query['sort'],
+		'sort_direction' => $query['direction'],
+	));
 
 	$all_accounts = $query['account_id'] === 0;
 	$columns      = cloudflare_viewer_tunnel_columns($all_accounts);
@@ -563,7 +573,13 @@ function cloudflare_viewer_tunnel_table(array $tunnels, array $accounts, bool $a
 		}
 
 		form_selectable_cell(html_escape((string) $tunnel['cf_status']), $id);
-		form_selectable_cell(html_escape((string) $tunnel['lifecycle']), $id);
+		$lifecycle = html_escape((string) $tunnel['lifecycle']);
+
+		if ($tunnel['lifecycle'] === 'deleted' && empty($tunnel['retired_at']) && api_user_realm_auth('cloudflare_accounts.php') === true && api_user_realm_auth('host.php') === true) {
+			$lifecycle .= " <a href='cloudflare_accounts.php?action=retire&amp;tunnel_id=" . $id . "'>" . __esc('Retire tunnel', 'cloudflare') . '</a>';
+		}
+
+		form_selectable_cell($lifecycle, $id);
 		form_selectable_cell(html_escape((string) $tunnel['tun_type']), $id);
 		// The Reconciler keeps the last counts on a tunnel that stops being active, so they are not current.
 		$current = (string) $tunnel['lifecycle'] === 'active';
@@ -604,6 +620,8 @@ function cloudflare_viewer_connectors() : void {
 
 		return;
 	}
+
+	cloudflare_viewer_export_link('connectors', array('tunnel_id' => $tunnel_id));
 
 	html_start_box(__esc('Connectors for %s', (string) $tunnel['name'], 'cloudflare'), '100%', '', '3', 'center', '');
 
@@ -674,4 +692,122 @@ function cloudflare_viewer_script() : void {
 		"'" .
 		$nonce .
 		"></script>\n";
+}
+
+/** @param array<string, int|string> $filters */
+function cloudflare_viewer_export_link(string $view, array $filters) : void {
+	$url = 'cloudflare.php?' . http_build_query(array('action' => $view, 'export' => 1) + $filters, '', '&', PHP_QUERY_RFC3986);
+
+	print "<p><a class='ui-button ui-corner-all ui-widget' href='" . html_escape($url) . "'>" . __esc('Export') . "</a></p>\n";
+}
+
+/** @param resource $stream
+ * @param array<int, mixed> $values
+ */
+function cloudflare_viewer_csv_row($stream, array $values) : void {
+	$cells = array_map(function ($value) : string {
+		$cell = $value === null ? '' : (string) $value;
+
+		// Spreadsheet importers can ignore leading controls before a formula.
+		return preg_match('/^(?:[\x00-\x20]*[=+@-]|[\t\r\n])/', $cell) === 1 ? "'" . $cell : $cell;
+	}, $values);
+
+	if (fputcsv($stream, $cells, ',', '"', '') === false) {
+		throw new RuntimeException('CSV write failed');
+	}
+}
+
+/**
+ * Build the download before sending headers so a failed read never looks
+ * like a successful, truncated inventory. tmpfile bounds memory use and is
+ * removed automatically on every path. Reads use the page's validated filters.
+ */
+/** @return resource */
+function cloudflare_viewer_export_file(string $view, ?Database $db = null) {
+	$stream = tmpfile();
+
+	if ($stream === false) {
+		throw new RuntimeException('CSV temporary file unavailable');
+	}
+
+	try {
+		$db         = $db ?? cloudflare_db();
+		$repository = new TunnelRepository($db);
+		$accounts   = array();
+
+		foreach ((new AccountRepository($db))->all() as $account) {
+			$accounts[$account->id()] = $account->name();
+		}
+
+		if ($view === 'connectors') {
+			get_filter_request_var('tunnel_id');
+			$tunnel = $repository->find((int) get_request_var('tunnel_id'));
+			cloudflare_viewer_csv_row($stream, array('account', 'tunnel_id', 'tunnel', 'lifecycle', 'connector_id', 'version', 'architecture', 'data_centers', 'origin_ips', 'connections', 'last_seen_at'));
+
+			foreach ($tunnel === null ? array() : $repository->connectors((int) $tunnel['id']) as $connector) {
+				cloudflare_viewer_csv_row($stream, array($accounts[(int) $tunnel['account_id']] ?? '', $tunnel['cf_tunnel_id'], $tunnel['name'], $tunnel['lifecycle'], $connector['cf_connector_id'], $connector['version'], $connector['arch'], $connector['colos'], $connector['origin_ips'], $connector['connection_count'], $connector['last_seen_at']));
+			}
+		} else {
+			$query = cloudflare_viewer_tunnel_request();
+			cloudflare_viewer_csv_row($stream, array('account', 'tunnel_id', 'name', 'lifecycle', 'status', 'connectors', 'connections', 'last_connection_read'));
+			$offset = 0;
+
+			do {
+				$tunnels = $repository->forAccount($query['account_id'], $query['filters'], 500, $offset, $query['sort'], $query['direction']);
+
+				foreach ($tunnels as $tunnel) {
+					$active = $tunnel['lifecycle'] === 'active';
+					cloudflare_viewer_csv_row($stream, array($accounts[(int) $tunnel['account_id']] ?? '', $tunnel['cf_tunnel_id'], $tunnel['name'], $tunnel['lifecycle'], $tunnel['cf_status'], $active ? $tunnel['connector_count'] : null, $active ? $tunnel['connection_count'] : null, $tunnel['connections_refreshed_at']));
+				}
+
+				$offset += 500;
+			} while (count($tunnels) === 500);
+		}
+
+		rewind($stream);
+
+		return $stream;
+	} catch (Throwable $e) {
+		fclose($stream);
+
+		throw $e;
+	}
+}
+
+function cloudflare_viewer_export(string $view) : void {
+	$stream = cloudflare_viewer_export_file($view);
+
+	try {
+		header('Content-Type: text/csv; charset=UTF-8');
+		header('Content-Disposition: attachment; filename="cloudflare-' . $view . '.csv"');
+		header('Cache-Control: no-store');
+		header('X-Content-Type-Options: nosniff');
+		fpassthru($stream);
+	} finally {
+		fclose($stream);
+	}
+}
+
+function cloudflare_viewer_analytics() : void {
+	$rows   = cloudflare_db()->fetchAll("SELECT z.*, a.name AS account_name, r.host_id FROM plugin_cloudflare_zones z JOIN plugin_cloudflare_accounts a ON a.id = z.account_id LEFT JOIN plugin_cloudflare_resources r ON r.account_id = a.id AND r.kind = 'device' WHERE z.listed = 1 ORDER BY a.name, z.name LIMIT 200");
+	$reader = new \Somethingwithproof\Cloudflare\Metrics\ZoneReader(cloudflare_db(), new SystemClock());
+	html_start_box(__esc('Zone Analytics', 'cloudflare'), '100%', '', '3', 'center', '');
+	html_header(array(__('Account', 'cloudflare'), __('Zone', 'cloudflare'), __('Status', 'cloudflare'), __('Requests/s', 'cloudflare'), __('Bytes/s', 'cloudflare'), __('HTTP 5xx (%)', 'cloudflare'), __('Last Seen', 'cloudflare')));
+
+	foreach ($rows as $row) {
+		$id = (int) $row['account_id'];
+		form_alternate_row();
+		form_selectable_cell(html_escape((string) $row['account_name']), $id);
+		form_selectable_cell(html_escape((string) $row['name']), $id);
+		form_selectable_cell(html_escape((string) $row['status']), $id);
+
+		foreach (array('requests', 'bytes', 'errorPct') as $field) {
+			form_selectable_cell(html_escape($reader->value((int) $row['host_id'], (string) $row['zone_id'], $field)), $id);
+		}
+
+		form_selectable_cell(html_escape(cloudflare_viewer_time($row['sampled_at'] === null ? null : (int) $row['sampled_at'])), $id);
+		form_end_row();
+	}
+
+	html_end_box();
 }

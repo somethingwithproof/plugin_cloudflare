@@ -211,7 +211,7 @@ PHP;
 		$code = 'include ' . var_export($root . '/cloudflare_operator.php', true) . '; print json_encode([http_response_code(), cloudflare_glue_calls("cacti_log")]);';
 
 		try {
-			$process = proc_open([PHP_BINARY, '-d', 'opcache.jit=0', '-r', $code], [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, $cacti . '/plugins/cloudflare');
+			$process = proc_open([PHP_BINARY, '-d', 'opcache.jit=0', '-d', 'opcache.jit_buffer_size=0', '-r', $code], [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, $cacti . '/plugins/cloudflare');
 			$this->assertIsResource($process);
 			$output = (string) stream_get_contents($pipes[1]);
 			$error = (string) stream_get_contents($pipes[2]);

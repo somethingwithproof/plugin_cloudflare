@@ -166,7 +166,7 @@ print json_encode($results);
 PHP;
 		$fixture = $this->keyDir . '/settings.php';
 		file_put_contents($fixture, str_replace('PLUGIN_ROOT', $root, $script));
-		$process = proc_open([$cgi, '-d', 'opcache.jit=0', '-q', $fixture], [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, null, ['REDIRECT_STATUS' => '200', 'SCRIPT_FILENAME' => $fixture, 'REQUEST_METHOD' => 'GET']);
+		$process = proc_open([$cgi, '-d', 'opcache.jit=0', '-d', 'opcache.jit_buffer_size=0', '-q', $fixture], [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, null, ['REDIRECT_STATUS' => '200', 'SCRIPT_FILENAME' => $fixture, 'REQUEST_METHOD' => 'GET']);
 		$this->assertIsResource($process);
 		$output = (string) stream_get_contents($pipes[1]);
 		$error = (string) stream_get_contents($pipes[2]);

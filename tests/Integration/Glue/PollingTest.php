@@ -369,8 +369,9 @@ final class PollingTest extends IntegrationTestCase {
 		 * so an enabled plugin must ask for it enabled. */
 		$this->assertSame(
 			array(
-				array('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', true),
 				array('cloudflare', 'poller_bottom', 'cloudflare_poller_bottom', 'includes/polling.php', true),
+				array('cloudflare', 'poller_bottom', 'cloudflare_poller_bottom', 'includes/polling.php', true),
+				array('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', true),
 			),
 			cloudflare_glue_calls('api_plugin_register_hook')
 		);
@@ -381,8 +382,8 @@ final class PollingTest extends IntegrationTestCase {
 		$this->assertTrue(plugin_cloudflare_upgrade());
 		$this->assertSame(
 			array(
-				array('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', false),
 				array('cloudflare', 'poller_bottom', 'cloudflare_poller_bottom', 'includes/polling.php', false),
+				array('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', false),
 			),
 			cloudflare_glue_calls('api_plugin_register_hook')
 		);

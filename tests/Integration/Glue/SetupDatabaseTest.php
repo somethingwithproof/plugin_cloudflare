@@ -192,8 +192,8 @@ final class SetupDatabaseTest extends IntegrationTestCase {
 		$this->assertTrue($this->tableExists('plugin_cloudflare_connectors'));
 		$this->assertSame(
 			array(
-				array('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', true),
 				array('cloudflare', 'poller_bottom', 'cloudflare_poller_bottom', 'includes/polling.php', true),
+				array('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', true),
 			),
 			cloudflare_glue_calls('api_plugin_register_hook')
 		);

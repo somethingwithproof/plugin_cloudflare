@@ -77,6 +77,13 @@ final class TemplatesTest extends TestCase {
 	}
 
 	public function testZoneTemplatesAreReproducibleAndKeepDistinctHashes(): void {
+		$metrics = \Somethingwithproof\Cloudflare\Metrics\ZoneCatalog::all();
+		$this->assertCount(5, $metrics);
+
+		foreach ($metrics as $metric) {
+			$this->assertSame(Metric::GAUGE, $metric->type());
+		}
+
 		$out = sys_get_temp_dir() . '/cf-zone-templates-' . bin2hex(random_bytes(6));
 
 		try {

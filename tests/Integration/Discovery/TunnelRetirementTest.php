@@ -88,9 +88,16 @@ final class TunnelRetirementTest extends IntegrationTestCase {
 		$this->db->execute('INSERT INTO data_template_rrd VALUES (30, 20)');
 		$this->db->execute('INSERT INTO graph_templates_item VALUES (10, 30), (99, 30)');
 		$this->db->execute("INSERT INTO plugin_cloudflare_resources (account_id, kind, tunnel_id, template_hash, host_id, local_graph_id, local_data_id, created_at) VALUES (1, 'graph', ?, ?, 1, 10, 20, 1)", array($id, str_repeat('a', 32)));
+
+		$this->db->execute('INSERT INTO graph_templates VALUES (2, ?)', array(str_repeat('c', 32)));
+		$this->db->execute('INSERT INTO graph_local VALUES (11, 1, ?, 2)', array($uuid));
+		$this->db->execute('INSERT INTO data_local VALUES (21, 1, ?)', array($uuid));
+		$this->db->execute('INSERT INTO data_template_rrd VALUES (31, 21)');
+		$this->db->execute('INSERT INTO graph_templates_item VALUES (11, 31)');
+		$this->db->execute("INSERT INTO plugin_cloudflare_resources (account_id, kind, tunnel_id, template_hash, host_id, local_graph_id, local_data_id, created_at) VALUES (1, 'graph', ?, ?, 1, 11, 21, 1)", array($id, str_repeat('c', 32)));
 		$this->assertFalse(cloudflare_retire_tunnel($id, $this->db), 'A graph id reused by another template is never removed');
-		$this->assertSame(1, (int) $this->db->fetchCell('SELECT COUNT(*) FROM graph_local'));
-		$this->db->execute('UPDATE graph_templates SET hash = ?', array(str_repeat('a', 32)));
+		$this->assertSame(2, (int) $this->db->fetchCell('SELECT COUNT(*) FROM graph_local'));
+		$this->db->execute('UPDATE graph_templates SET hash = ? WHERE id = 1', array(str_repeat('a', 32)));
 		$this->assertFalse(cloudflare_retire_tunnel($id, $this->db), 'An API removal that did not succeed leaves retirement retryable');
 		$this->assertNull($this->db->fetchCell('SELECT retired_at FROM plugin_cloudflare_tunnels'));
 		$db = $this->db;

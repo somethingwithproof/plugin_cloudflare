@@ -64,6 +64,18 @@ final class ZoneAnalyticsTest extends TestCase {
 		$this->assertStringNotContainsString('dimensions', $body['query']);
 	}
 
+	/** @return array<string, array<int>> */
+	public function httpFailures(): array {
+		return array('auth' => array(401), 'rate limit' => array(429), 'provider outage' => array(503));
+	}
+
+	/** @dataProvider httpFailures */
+	public function testHttpFailureNeverBecomesAZeroSample(int $status): void {
+		$this->transport->queue(new Response($status, array('retry-after' => '60'), '{}'));
+		$this->expectException(ApiException::class);
+		$this->api->sample(str_repeat('a', 32), 'fixture-token', 1000, 1300, function (): void {});
+	}
+
 	public function testPartialGraphqlResponseIsRejectedEvenWithSuccessfulHttp(): void {
 		$this->transport->queue(new Response(200, array(), '{"data":{"viewer":{"zones":[]}},"errors":[{"message":"secret-token"}]}'));
 		$this->expectException(ApiException::class);

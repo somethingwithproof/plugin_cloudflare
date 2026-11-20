@@ -36,13 +36,14 @@ if (!$allowed) {
 	http_response_code(403);
 	exit;
 }
+// No operator actions beyond acknowledge exist yet; the page and the action check accept extras later.
 $actions = array();
 $action  = (string) get_nfilter_request_var('action');
 $session = $_SESSION['cloudflare_triage'] ?? array();
 $session = is_array($session) ? $session : array();
 
 try {
-	// Re-read on POST too: stale forms never retain revoked device access.
+	// Re-read on POST too: stale forms never act on observations that have since changed. The list is account-wide, like the View realm.
 	$rows = cloudflare_operator_rows();
 	$now  = time();
 

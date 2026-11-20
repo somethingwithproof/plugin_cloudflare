@@ -701,10 +701,6 @@ msgstr "यह टनल %s है। ये कनेक्टर पिछल�
 msgid "No connectors are running for this tunnel."
 msgstr "इस टनल के लिए कोई कनेक्टर नहीं चल रहा।"
 
-#: setup.php
-msgid "Cloudflare: Operator"
-msgstr "Cloudflare: ऑपरेटर"
-
 #: src/OperatorPage.php
 msgid "Review the recorded observations below. Acknowledgments are personal to this session, expire when observations change, and never suppress alerts or change health."
 msgstr "नीचे दर्ज अवलोकन देखें। पावती केवल इस सत्र में आपके लिए है, अवलोकन बदलने पर समाप्त हो जाती है और कभी अलर्ट नहीं दबाती या स्वास्थ्य नहीं बदलती।"
@@ -738,5 +734,5 @@ msgid "Acknowledge"
 msgstr "पावती दें"
 
 #: src/OperatorPage.php
-msgid "No observations are available for devices you may access."
-msgstr "जिन डिवाइसों तक आपकी पहुँच है, उनके लिए कोई अवलोकन उपलब्ध नहीं है।"
+msgid "No observations are available."
+msgstr "कोई अवलोकन उपलब्ध नहीं है।"

@@ -721,10 +721,6 @@ msgstr "حالة هذا النفق هي %s. شوهدت هذه الموصلات �
 msgid "No connectors are running for this tunnel."
 msgstr "لا توجد موصلات تعمل لهذا النفق."
 
-#: setup.php
-msgid "Cloudflare: Operator"
-msgstr "Cloudflare: المشغّل"
-
 #: src/OperatorPage.php
 msgid "Review the recorded observations below. Acknowledgments are personal to this session, expire when observations change, and never suppress alerts or change health."
 msgstr "راجع الملاحظات المسجّلة أدناه. الإقرارات خاصة بك في هذه الجلسة، وتنتهي صلاحيتها عند تغيّر الملاحظات، ولا تكتم التنبيهات أو تغيّر الحالة الصحية مطلقًا."
@@ -758,5 +754,5 @@ msgid "Acknowledge"
 msgstr "إقرار"
 
 #: src/OperatorPage.php
-msgid "No observations are available for devices you may access."
-msgstr "لا تتوفر ملاحظات للأجهزة التي يحق لك الوصول إليها."
+msgid "No observations are available."
+msgstr "لا تتوفر ملاحظات."

@@ -701,10 +701,6 @@ msgstr "Este túnel está %s. Estos conectores se vieron por última vez mientra
 msgid "No connectors are running for this tunnel."
 msgstr "No hay conectores en ejecución para este túnel."
 
-#: setup.php
-msgid "Cloudflare: Operator"
-msgstr "Cloudflare: Operador"
-
 #: src/OperatorPage.php
 msgid "Review the recorded observations below. Acknowledgments are personal to this session, expire when observations change, and never suppress alerts or change health."
 msgstr "Revise las observaciones registradas a continuación. Los acuses de recibo son personales y exclusivos de esta sesión, caducan cuando cambian las observaciones y no suprimen alertas ni modifican el estado de salud."
@@ -738,5 +734,5 @@ msgid "Acknowledge"
 msgstr "Acusar recibo"
 
 #: src/OperatorPage.php
-msgid "No observations are available for devices you may access."
-msgstr "No hay observaciones disponibles para los dispositivos a los que tiene acceso."
+msgid "No observations are available."
+msgstr "No hay observaciones disponibles."

@@ -704,10 +704,6 @@ msgstr ""
 msgid "No connectors are running for this tunnel."
 msgstr ""
 
-#: setup.php
-msgid "Cloudflare: Operator"
-msgstr ""
-
 #: src/OperatorPage.php
 msgid "Review the recorded observations below. Acknowledgments are personal to this session, expire when observations change, and never suppress alerts or change health."
 msgstr ""
@@ -741,5 +737,5 @@ msgid "Acknowledge"
 msgstr ""
 
 #: src/OperatorPage.php
-msgid "No observations are available for devices you may access."
+msgid "No observations are available."
 msgstr ""

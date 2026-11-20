@@ -237,7 +237,7 @@ function cloudflare_setup_operator(bool $force = true) : void {
 	) === 0;
 
 	if ($registerRealm) {
-		api_plugin_register_realm('cloudflare', 'cloudflare_operator.php', __('Cloudflare: Operator', 'cloudflare'), false);
+		api_plugin_register_realm('cloudflare', 'cloudflare_operator.php', 'Cloudflare: Operator', false);
 	}
 
 	if ($registerHook) {

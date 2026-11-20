@@ -21,13 +21,13 @@ use Somethingwithproof\Cloudflare\OperatorPage;
 
 chdir('../../');
 include('./include/auth.php');
-include_once('./plugins/cloudflare/setup.php');
+include_once(__DIR__ . '/setup.php');
 
 if (!cloudflare_page_allowed()) {
 	http_response_code(403);
 	exit;
 }
-require_once('./plugins/cloudflare/includes/operator.php');
+require_once(__DIR__ . '/includes/operator.php');
 
 $user    = (int) ($_SESSION['sess_user_id'] ?? 0);
 $allowed = $user > 0 && api_plugin_user_realm_auth('cloudflare_operator.php');

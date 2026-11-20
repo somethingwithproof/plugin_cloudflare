@@ -194,11 +194,17 @@ final class OperatorTest extends TestCase {
 	public function testOperatorPageContainsARepeatedTemplateFailureAndKeepsServiceUnavailable(): void {
 		$cacti = sys_get_temp_dir() . '/cf-operator-' . bin2hex(random_bytes(6));
 		mkdir($cacti . '/include', 0700, true);
-		mkdir($cacti . '/plugins/cloudflare/includes', 0700, true);
+		mkdir($cacti . '/plugins/cloudflare', 0700, true);
 		$root = dirname(__DIR__, 3);
 		$auth = '<?php require_once ' . var_export($root . '/tests/Support/CactiGlueStubs.php', true) . ";\n" . <<<'PHP'
 cloudflare_glue_reset();
 $GLOBALS['cloudflare_glue']['page'] = 'cloudflare_operator.php';
+// The real setup.php and includes/operator.php load from the repository via __DIR__; only the database is stood in for, with empty tables.
+$pdo = new PDO('sqlite::memory:', null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+$pdo->exec('CREATE TABLE plugin_cloudflare_accounts (id INTEGER, cf_account_id TEXT, name TEXT, token_source TEXT, token_file TEXT, token_ciphertext TEXT, enabled INTEGER, status TEXT, status_message TEXT, permissions TEXT, last_checked_at INTEGER, last_verified_at INTEGER, collect_tunnels INTEGER, collect_analytics INTEGER, create_graphs INTEGER, discovery_interval INTEGER, created_at INTEGER, updated_at INTEGER)');
+$pdo->exec('CREATE TABLE plugin_cloudflare_jobs (account_id INTEGER, job_type TEXT, last_status TEXT, last_finished_at INTEGER, last_success_at INTEGER, last_error_class TEXT, consecutive_failures INTEGER)');
+$pdo->exec('CREATE TABLE plugin_cloudflare_tunnels (account_id INTEGER, lifecycle TEXT, cf_status TEXT)');
+$GLOBALS['database_sessions']['::'] = $pdo;
 $GLOBALS['cloudflare_glue']['on_top'] = static function (): void { throw new LogicException('private template detail'); };
 $GLOBALS['user_auth_realm_filenames'] = ['cloudflare.php' => 101, 'cloudflare_operator.php' => 102, 'cloudflare_accounts.php' => 103];
 $GLOBALS['cloudflare_test_realms'] = [102];
@@ -206,8 +212,6 @@ $GLOBALS['current_user'] = ['id' => 2, 'enabled' => 'on'];
 $_SESSION = ['sess_user_id' => 2];
 PHP;
 		file_put_contents($cacti . '/include/auth.php', $auth);
-		file_put_contents($cacti . '/plugins/cloudflare/setup.php', '<?php require_once ' . var_export($root . '/setup.php', true) . ';');
-		file_put_contents($cacti . '/plugins/cloudflare/includes/operator.php', '<?php function cloudflare_operator_rows(): array { return []; }');
 		$code = 'include ' . var_export($root . '/cloudflare_operator.php', true) . '; print json_encode([http_response_code(), cloudflare_glue_calls("cacti_log")]);';
 
 		try {
@@ -229,9 +233,6 @@ PHP;
 			$this->assertStringNotContainsString('private template detail', $output);
 		} finally {
 			unlink($cacti . '/include/auth.php');
-			unlink($cacti . '/plugins/cloudflare/setup.php');
-			unlink($cacti . '/plugins/cloudflare/includes/operator.php');
-			rmdir($cacti . '/plugins/cloudflare/includes');
 			rmdir($cacti . '/plugins/cloudflare');
 			rmdir($cacti . '/plugins');
 			rmdir($cacti . '/include');

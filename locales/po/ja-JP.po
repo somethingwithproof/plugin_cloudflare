@@ -696,10 +696,6 @@ msgstr "このトンネルは %s です。これらのコネクターは、ト�
 msgid "No connectors are running for this tunnel."
 msgstr "このトンネルで実行中のコネクターはありません。"
 
-#: setup.php
-msgid "Cloudflare: Operator"
-msgstr "Cloudflare: オペレーター"
-
 #: src/OperatorPage.php
 msgid "Review the recorded observations below. Acknowledgments are personal to this session, expire when observations change, and never suppress alerts or change health."
 msgstr "以下に記録された観測結果を確認してください。確認済みの記録はこのセッションの自分だけに適用され、観測結果が変わると失効します。アラートの抑制や健全性の変更は行いません。"
@@ -733,5 +729,5 @@ msgid "Acknowledge"
 msgstr "確認済みにする"
 
 #: src/OperatorPage.php
-msgid "No observations are available for devices you may access."
-msgstr "アクセス権のあるデバイスの観測結果はありません。"
+msgid "No observations are available."
+msgstr "観測結果はありません。"

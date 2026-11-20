@@ -47,7 +47,7 @@ final class OperatorPage {
 
 	/**
 	 * Session-only acknowledgments expire with the evidence or after one hour.
-	 * Only rows reloaded within the current user's device scope may be supplied.
+	 * Only rows freshly reloaded from the account-wide observation list may be supplied.
 	 * @param array<string, mixed> $session
 	 * @param array{id: string, name: string, state: string, observed: int, interval: int, detail: string} $row
 	 */
@@ -115,7 +115,7 @@ final class OperatorPage {
 			print '</td></tr>';
 		}
 		if ($rows === []) {
-			print '<tr><td colspan="5">' . html_escape(__('No observations are available for devices you may access.', 'cloudflare')) . '</td></tr>';
+			print '<tr><td colspan="5">' . html_escape(__('No observations are available.', 'cloudflare')) . '</td></tr>';
 		}
 		html_end_box();
 		print '</div></div>';

@@ -35,7 +35,7 @@ listing="$(tar -tzf "${archive}")"
 status=0
 
 for path in cloudflare/setup.php cloudflare/INFO cloudflare/LICENSE cloudflare/cloudflare.php cloudflare/cloudflare_accounts.php cloudflare/poller_cloudflare.php \
-    cloudflare/ss_cloudflare.php cloudflare/templates/ cloudflare/src/ cloudflare/includes/ cloudflare/js/ cloudflare/docs/images/; do
+    cloudflare/ss_cloudflare.php cloudflare/cloudflare_operator.php cloudflare/templates/ cloudflare/src/ cloudflare/includes/ cloudflare/js/ cloudflare/docs/images/; do
     if ! grep -qxF -- "${path}" <<<"${listing}"; then
         printf 'FAIL: %s is missing from %s\n' "${path}" "${archive}" >&2
         status=1
@@ -54,7 +54,7 @@ for prefix in cloudflare/tests/ cloudflare/features/ cloudflare/vendor/ cloudfla
 done
 
 # The template, the sources and the compiled catalogs Cacti loads.
-for locale in de-DE es-419 es-ES fr-FR ja-JP zh-CN; do
+for locale in ar-SA de-DE es-419 es-ES fr-FR hi-IN ja-JP zh-CN; do
     for path in "cloudflare/locales/po/${locale}.po" "cloudflare/locales/LC_MESSAGES/${locale}.mo"; do
         if ! grep -qxF -- "${path}" <<<"${listing}"; then
             printf 'FAIL: %s is missing from %s\n' "${path}" "${archive}" >&2

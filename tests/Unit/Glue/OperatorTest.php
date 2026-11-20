@@ -167,7 +167,7 @@ final class OperatorTest extends TestCase {
 		ob_start();
 		OperatorPage::render([], [], 2, 1000, []);
 		$empty = (string) ob_get_clean();
-		$this->assertStringContainsString('No observations are available for devices you may access.', $empty);
+		$this->assertStringContainsString('No observations are available.', $empty);
 		$this->assertStringNotContainsString('<button', $empty);
 	}
 

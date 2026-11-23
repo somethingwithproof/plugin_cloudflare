@@ -111,7 +111,16 @@ final class TunnelRetirementTest extends IntegrationTestCase {
 		$GLOBALS['cloudflare_glue']['remove_data'] = function (int $dataId) use ($db): void {
 			$db->execute('DELETE FROM data_local WHERE id = ?', array($dataId));
 		};
+		$GLOBALS['cloudflare_glue']['remove_data'] = function (int $dataId): void {
+		};
+		$this->assertFalse(cloudflare_retire_tunnel($id, $this->db), 'A data source that stays leaves retirement retryable');
+		$this->assertNull($this->db->fetchCell('SELECT retired_at FROM plugin_cloudflare_tunnels'));
+		$this->assertSame(0, (int) $this->db->fetchCell('SELECT COUNT(*) FROM graph_local WHERE id = 10'), 'The graph removal is kept');
+		$GLOBALS['cloudflare_glue']['remove_data'] = function (int $dataId) use ($db): void {
+			$db->execute('DELETE FROM data_local WHERE id = ?', array($dataId));
+		};
 		$this->assertTrue(cloudflare_retire_tunnel($id, $this->db));
+		$this->assertNotNull($this->db->fetchCell('SELECT retired_at FROM plugin_cloudflare_tunnels'));
 		$this->assertSame(1, (int) $this->db->fetchCell('SELECT COUNT(*) FROM data_local'), 'An unrelated graph still uses this source');
 		$this->assertSame(0, (int) $this->db->fetchCell("SELECT COUNT(*) FROM plugin_cloudflare_resources WHERE kind = 'graph'"));
 

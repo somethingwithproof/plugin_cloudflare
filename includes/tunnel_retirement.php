@@ -106,14 +106,17 @@ function cloudflare_retire_tunnel(int $id, ?Database $db = null) : bool {
 		}
 
 		$db->execute("DELETE FROM plugin_cloudflare_resources WHERE kind = 'graph' AND account_id = ? AND tunnel_id = ?", array($tunnel['account_id'], $id));
+		$db->execute("UPDATE plugin_cloudflare_tunnels SET retired_at = COALESCE(retired_at, ?) WHERE id = ? AND lifecycle = 'deleted'", array(time(), $id));
 		$templates = $device === null ? null : cloudflare_templates_ready();
 
-		// A failed reindex leaves retired_at unset, so the action stays visible and a retry reindexes.
+		// The index must already exclude the tunnel. A failed reindex undoes this retirement's mark so the action stays visible.
 		if ($device !== null && $templates !== null && run_data_query($device['host_id'], $templates['data_query_id'], false, true) === false) {
+			if ($tunnel['retired_at'] === null) {
+				$db->execute('UPDATE plugin_cloudflare_tunnels SET retired_at = NULL WHERE id = ?', array($id));
+			}
+
 			return false;
 		}
-
-		$db->execute("UPDATE plugin_cloudflare_tunnels SET retired_at = COALESCE(retired_at, ?) WHERE id = ? AND lifecycle = 'deleted'", array(time(), $id));
 
 		cacti_log('CLOUDFLARE: tunnel ' . $id . ' retired by user ' . (int) ($_SESSION['sess_user_id'] ?? 0), false, 'CLOUDFLARE');
 

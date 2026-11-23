@@ -732,37 +732,41 @@ function cloudflare_viewer_export_file(string $view, ?Database $db = null) {
 
 	try {
 		$db         = $db ?? cloudflare_db();
-		$repository = new TunnelRepository($db);
-		$accounts   = array();
 
-		foreach ((new AccountRepository($db))->all() as $account) {
-			$accounts[$account->id()] = $account->name();
-		}
+		// One snapshot, so concurrent renames cannot shift rows between batches.
+		$db->snapshot(function () use ($db, $stream, $view) : void {
+			$repository = new TunnelRepository($db);
+			$accounts   = array();
 
-		if ($view === 'connectors') {
-			get_filter_request_var('tunnel_id');
-			$tunnel = $repository->find((int) get_request_var('tunnel_id'));
-			cloudflare_viewer_csv_row($stream, array('account', 'tunnel_id', 'tunnel', 'lifecycle', 'connector_id', 'version', 'architecture', 'data_centers', 'origin_ips', 'connections', 'last_seen_at'));
-
-			foreach ($tunnel === null ? array() : $repository->connectors((int) $tunnel['id']) as $connector) {
-				cloudflare_viewer_csv_row($stream, array($accounts[(int) $tunnel['account_id']] ?? '', $tunnel['cf_tunnel_id'], $tunnel['name'], $tunnel['lifecycle'], $connector['cf_connector_id'], $connector['version'], $connector['arch'], $connector['colos'], $connector['origin_ips'], $connector['connection_count'], $connector['last_seen_at']));
+			foreach ((new AccountRepository($db))->all() as $account) {
+				$accounts[$account->id()] = $account->name();
 			}
-		} else {
-			$query = cloudflare_viewer_tunnel_request();
-			cloudflare_viewer_csv_row($stream, array('account', 'tunnel_id', 'name', 'lifecycle', 'status', 'connectors', 'connections', 'last_connection_read'));
-			$offset = 0;
 
-			do {
-				$tunnels = $repository->forAccount($query['account_id'], $query['filters'], 500, $offset, $query['sort'], $query['direction']);
+			if ($view === 'connectors') {
+				get_filter_request_var('tunnel_id');
+				$tunnel = $repository->find((int) get_request_var('tunnel_id'));
+				cloudflare_viewer_csv_row($stream, array('account', 'tunnel_id', 'tunnel', 'lifecycle', 'connector_id', 'version', 'architecture', 'data_centers', 'origin_ips', 'connections', 'last_seen_at'));
 
-				foreach ($tunnels as $tunnel) {
-					$active = $tunnel['lifecycle'] === 'active';
-					cloudflare_viewer_csv_row($stream, array($accounts[(int) $tunnel['account_id']] ?? '', $tunnel['cf_tunnel_id'], $tunnel['name'], $tunnel['lifecycle'], $tunnel['cf_status'], $active ? $tunnel['connector_count'] : null, $active ? $tunnel['connection_count'] : null, $tunnel['connections_refreshed_at']));
+				foreach ($tunnel === null ? array() : $repository->connectors((int) $tunnel['id']) as $connector) {
+					cloudflare_viewer_csv_row($stream, array($accounts[(int) $tunnel['account_id']] ?? '', $tunnel['cf_tunnel_id'], $tunnel['name'], $tunnel['lifecycle'], $connector['cf_connector_id'], $connector['version'], $connector['arch'], $connector['colos'], $connector['origin_ips'], $connector['connection_count'], $connector['last_seen_at']));
 				}
+			} else {
+				$query = cloudflare_viewer_tunnel_request();
+				cloudflare_viewer_csv_row($stream, array('account', 'tunnel_id', 'name', 'lifecycle', 'status', 'connectors', 'connections', 'last_connection_read'));
+				$offset = 0;
 
-				$offset += 500;
-			} while (count($tunnels) === 500);
-		}
+				do {
+					$tunnels = $repository->forAccount($query['account_id'], $query['filters'], 500, $offset, $query['sort'], $query['direction']);
+
+					foreach ($tunnels as $tunnel) {
+						$active = $tunnel['lifecycle'] === 'active';
+						cloudflare_viewer_csv_row($stream, array($accounts[(int) $tunnel['account_id']] ?? '', $tunnel['cf_tunnel_id'], $tunnel['name'], $tunnel['lifecycle'], $tunnel['cf_status'], $active ? $tunnel['connector_count'] : null, $active ? $tunnel['connection_count'] : null, $tunnel['connections_refreshed_at']));
+					}
+
+					$offset += 500;
+				} while (count($tunnels) === 500);
+			}
+		});
 
 		rewind($stream);
 

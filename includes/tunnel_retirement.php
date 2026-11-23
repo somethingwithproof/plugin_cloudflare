@@ -67,7 +67,7 @@ function cloudflare_retire_tunnel(int $id, ?Database $db = null) : bool {
 
 		// Validate the entire removal set before deleting its first object.
 		foreach ($graphs as $graph) {
-			$actual = $db->fetchRow('SELECT g.host_id, g.snmp_index, t.hash FROM graph_local g JOIN graph_templates t ON t.id = g.graph_template_id WHERE g.id = ?', array($graph['local_graph_id']));
+			$actual = $db->fetchRow('SELECT g.host_id, g.snmp_index, t.hash FROM graph_local g LEFT JOIN graph_templates t ON t.id = g.graph_template_id WHERE g.id = ?', array($graph['local_graph_id']));
 
 			if ($actual !== null && ((int) $actual['host_id'] !== $graph['host_id'] || $actual['snmp_index'] !== $tunnel['cf_tunnel_id'] || $actual['hash'] !== $graph['template_hash'] || !is_graph_allowed($graph['local_graph_id']))) {
 				return false;
@@ -106,12 +106,14 @@ function cloudflare_retire_tunnel(int $id, ?Database $db = null) : bool {
 		}
 
 		$db->execute("DELETE FROM plugin_cloudflare_resources WHERE kind = 'graph' AND account_id = ? AND tunnel_id = ?", array($tunnel['account_id'], $id));
-		$db->execute("UPDATE plugin_cloudflare_tunnels SET retired_at = COALESCE(retired_at, ?) WHERE id = ? AND lifecycle = 'deleted'", array(time(), $id));
 		$templates = $device === null ? null : cloudflare_templates_ready();
 
-		if ($device !== null && $templates !== null) {
-			run_data_query($device['host_id'], $templates['data_query_id'], false, true);
+		// A failed reindex leaves retired_at unset, so the action stays visible and a retry reindexes.
+		if ($device !== null && $templates !== null && run_data_query($device['host_id'], $templates['data_query_id'], false, true) === false) {
+			return false;
 		}
+
+		$db->execute("UPDATE plugin_cloudflare_tunnels SET retired_at = COALESCE(retired_at, ?) WHERE id = ? AND lifecycle = 'deleted'", array(time(), $id));
 
 		cacti_log('CLOUDFLARE: tunnel ' . $id . ' retired by user ' . (int) ($_SESSION['sess_user_id'] ?? 0), false, 'CLOUDFLARE');
 

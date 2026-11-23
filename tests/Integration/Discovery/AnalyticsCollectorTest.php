@@ -80,4 +80,34 @@ final class AnalyticsCollectorTest extends IntegrationTestCase {
 			TestDatabase::reset();
 		}
 	}
+
+	public function testExhaustedBudgetIsAPartialRetryNotAConfigFailure(): void {
+		TestDatabase::skipIfUnavailable($this);
+		TestDatabase::reset();
+		$db = new Database(TestDatabase::pdo());
+		(new Migrator($db, Migrator::defaultMigrations()))->migrate();
+		$dir = sys_get_temp_dir() . '/cf-zone-test-' . bin2hex(random_bytes(6));
+		mkdir($dir, 0700);
+		$file = $dir . '/token';
+		file_put_contents($file, 'cfut_' . str_repeat('a', 40));
+		chmod($file, 0600);
+
+		try {
+			$db->execute("INSERT INTO plugin_cloudflare_accounts (id, cf_account_id, name, token_source, token_file, enabled, collect_analytics, created_at, updated_at) VALUES (1, ?, 'account', 'file', ?, 1, 1, 1, 1)", array(str_repeat('a', 32), $file));
+			$clock = new FrozenClock();
+			$repo = new AccountRepository($db);
+			$transport = new FakeTransport();
+			$collector = new AnalyticsCollector($db, $repo, new CredentialResolver($repo, null), new ZoneAnalytics(new CloudflareClient($transport, new RetryPolicy($clock, new RecordingSleeper(), 0))), $clock, function (): bool { return false; });
+			$collector->run();
+			$job = $db->fetchRow("SELECT last_status, last_error_class, next_run_at FROM plugin_cloudflare_jobs WHERE job_type = 'analytics'");
+			$this->assertNotNull($job);
+			$this->assertSame('partial', $job['last_status']);
+			$this->assertNull($job['last_error_class']);
+			$this->assertSame($clock->now() + 30, (int) $job['next_run_at']);
+		} finally {
+			unlink($file);
+			rmdir($dir);
+			TestDatabase::reset();
+		}
+	}
 }

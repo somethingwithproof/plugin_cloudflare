@@ -27,7 +27,6 @@ use Somethingwithproof\Cloudflare\Api\ZoneAnalytics;
 use Somethingwithproof\Cloudflare\Jobs\JobRepository;
 use Somethingwithproof\Cloudflare\Storage\Database;
 use Somethingwithproof\Cloudflare\Support\Clock;
-use RuntimeException;
 use Throwable;
 
 final class AnalyticsCollector {
@@ -58,7 +57,7 @@ final class AnalyticsCollector {
 		$deadline = $this->clock->now() + max(0, $seconds);
 		$budget = function () use ($deadline, &$requests): void {
 			if ($requests < 1 || $this->clock->now() >= $deadline || !($this->enabled)()) {
-				throw new RuntimeException('analytics budget exhausted or plugin disabled');
+				throw new AnalyticsBudgetExhausted('analytics budget exhausted or plugin disabled');
 			}
 			$requests--;
 		};
@@ -116,6 +115,8 @@ final class AnalyticsCollector {
 				} else {
 					$jobs->succeed($lease, $this->clock->now() + max(300, $account->discoveryInterval()));
 				}
+			} catch (AnalyticsBudgetExhausted $e) {
+				$jobs->partial($lease, $this->clock->now() + 30);
 			} catch (Throwable $e) {
 				$class = $e instanceof ApiException ? $e->getErrorClass() : ErrorClass::CONFIG;
 				$retry = $e instanceof ApiException ? $e->getRetryAfter() : null;

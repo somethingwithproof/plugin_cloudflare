@@ -223,6 +223,19 @@ final class TemplateInstallTest extends TestCase {
 		$this->assertCount(2, cloudflare_glue_calls('import_xml_data'));
 	}
 
+	public function testDeletedZoneObjectsAreRestoredWhileHashMatches(): void {
+		$this->assertNotNull($this->pdo);
+		$this->pdo->exec('INSERT INTO plugin_cloudflare_accounts VALUES (1, 1)');
+		$this->assertTrue(cloudflare_templates_install());
+		$imports = count(cloudflare_glue_calls('import_xml_data'));
+		$this->assertTrue(cloudflare_templates_install());
+		$this->assertCount($imports, cloudflare_glue_calls('import_xml_data'), 'complete objects keep the fast path');
+
+		$this->deletedAt = $imports;
+		$this->assertTrue(cloudflare_templates_install());
+		$this->assertGreaterThan($imports, count(cloudflare_glue_calls('import_xml_data')));
+	}
+
 	public function testChangedTemplateReimports(): void {
 		$this->assertTrue(cloudflare_templates_install());
 

@@ -307,6 +307,29 @@ function cloudflare_template_id(string $table, string $key) : ?int {
 	return (is_numeric($id) && (int) $id > 0) ? (int) $id : null;
 }
 
+/**
+ * Whether every top-level Cacti object in the zone XML still exists. The XML
+ * names them by their final hash, so an admin deleting one is detected even
+ * while the recorded file hash matches.
+ */
+function cloudflare_zone_templates_ready(string $xml) : bool {
+	$tables = array('00' => 'graph_templates', '01' => 'data_template', '02' => 'host_template', '04' => 'snmp_query');
+
+	if (preg_match_all('/^\t<hash_(00|01|02|04)0103([0-9a-f]{32})>/m', $xml, $matches, PREG_SET_ORDER) < 1) {
+		return false;
+	}
+
+	foreach ($matches as $match) {
+		$id = db_fetch_cell_prepared('SELECT id FROM `' . $tables[$match[1]] . '` WHERE hash = ?', array($match[2]));
+
+		if (!is_numeric($id) || (int) $id < 1) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
 function cloudflare_zone_templates_install() : bool {
 	$base = cloudflare_templates_resource_path();
 
@@ -328,7 +351,7 @@ function cloudflare_zone_templates_install() : bool {
 
 	$sha = hash('sha256', $xml);
 
-	if (read_config_option('cloudflare_zones_templates_sha256', true) !== $sha) {
+	if (read_config_option('cloudflare_zones_templates_sha256', true) !== $sha || !cloudflare_zone_templates_ready($xml)) {
 		if (!cloudflare_templates_import($xml)) {
 			return false;
 		}

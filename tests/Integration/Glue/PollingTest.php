@@ -389,7 +389,7 @@ final class PollingTest extends IntegrationTestCase {
 
 		cloudflare_glue_reset();
 		$GLOBALS['cloudflare_glue']['cell'] = static function (string $sql): string {
-			return strpos($sql, 'plugin_config') !== false ? '0.3.0' : '1';
+			return strpos($sql, 'plugin_config') !== false ? '0.4.0-dev' : '1';
 		};
 		$this->assertTrue(plugin_cloudflare_upgrade());
 		$this->assertSame(array(), cloudflare_glue_calls('api_plugin_register_hook'), 'an existing realm hook is not re-registered');

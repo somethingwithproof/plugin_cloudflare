@@ -81,7 +81,7 @@ final class ObservationReader {
 		$index = array();
 
 		foreach ($this->db->fetchAll(
-			'SELECT cf_tunnel_id, name FROM plugin_cloudflare_tunnels WHERE account_id = ? ORDER BY cf_tunnel_id',
+			'SELECT cf_tunnel_id, name FROM plugin_cloudflare_tunnels WHERE account_id = ? AND retired_at IS NULL ORDER BY cf_tunnel_id',
 			array($accountId)
 		) as $row) {
 			$index[(string) $row['cf_tunnel_id']] = (string) $row['name'];

@@ -344,11 +344,11 @@ msgid_plural "Click 'Continue' to create a Cacti device for each of the followin
 msgstr[0] "Cliquez sur 'Continuer' pour créer un équipement Cacti pour le compte Cloudflare suivant. Un compte qui en a déjà un reste inchangé."
 msgstr[1] "Cliquez sur 'Continuer' pour créer un équipement Cacti pour chacun des comptes Cloudflare suivants. Un compte qui en a déjà un reste inchangé."
 
-#: includes/accounts_page.php
+#: includes/accounts_page.php includes/tunnel_retirement.php
 msgid "Cancel"
 msgstr "Annuler"
 
-#: includes/accounts_page.php
+#: includes/accounts_page.php includes/tunnel_retirement.php
 msgid "Continue"
 msgstr "Continuer"
 
@@ -542,9 +542,25 @@ msgstr "Niveau de journalisation"
 msgid "The amount of detail the plugin writes to the Cacti log."
 msgstr "Le niveau de détail que le plugin écrit dans le journal de Cacti."
 
+#: includes/tunnel_retirement.php
+msgid "The tunnel could not be retired. Check permissions and retry after collection finishes."
+msgstr "Le tunnel n’a pas pu être retiré. Vérifiez les autorisations et réessayez après la collecte."
+
+#: includes/tunnel_retirement.php includes/viewer.php
+msgid "Retire tunnel"
+msgstr "Retirer le tunnel"
+
+#: includes/tunnel_retirement.php
+msgid "Retiring removes the graphs and unshared data sources created for this deleted tunnel. Cacti controls RRD cleanup. The inventory record is kept."
+msgstr "Le retrait supprime les graphiques et les sources de données non partagées créés pour ce tunnel supprimé. Cacti contrôle le nettoyage des fichiers RRD. L’inventaire est conservé."
+
 #: includes/viewer.php
 msgid "The Cloudflare tunnels could not be read. See the Cacti log for details."
 msgstr "Les tunnels Cloudflare n'ont pas pu être lus. Consultez le journal de Cacti pour plus de détails."
+
+#: includes/viewer.php
+msgid "Zone Analytics"
+msgstr "Analyse des zones"
 
 #: includes/viewer.php
 msgid "Disabled"
@@ -700,6 +716,26 @@ msgstr "Ce tunnel est %s. Ces connecteurs ont été vus pour la dernière fois a
 #: includes/viewer.php
 msgid "No connectors are running for this tunnel."
 msgstr "Aucun connecteur n'est en cours d'exécution pour ce tunnel."
+
+#: includes/viewer.php
+msgid "Export"
+msgstr "Exporter"
+
+#: includes/viewer.php
+msgid "Bytes/s"
+msgstr "Octets/s"
+
+#: includes/viewer.php
+msgid "HTTP 5xx (%)"
+msgstr "HTTP 5xx (%)"
+
+#: includes/viewer.php
+msgid "Requests/s"
+msgstr "Requêtes/s"
+
+#: includes/viewer.php
+msgid "Zone"
+msgstr "Zone"
 
 #: src/OperatorPage.php
 msgid "Review the recorded observations below. Acknowledgments are personal to this session, expire when observations change, and never suppress alerts or change health."

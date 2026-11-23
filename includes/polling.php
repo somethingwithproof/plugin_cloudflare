@@ -51,7 +51,7 @@ function cloudflare_poller_bottom() : void {
 
 	try {
 		$collecting = (int) cloudflare_db()->fetchCell(
-			'SELECT COUNT(*) FROM plugin_cloudflare_accounts WHERE enabled = 1 AND collect_tunnels = 1'
+			'SELECT COUNT(*) FROM plugin_cloudflare_accounts WHERE enabled = 1 AND (collect_tunnels = 1 OR collect_analytics = 1)'
 		);
 	} catch (DatabaseException $e) {
 		return;
@@ -104,9 +104,15 @@ function cloudflare_collector_main(callable $service_factory) : int {
 		}
 
 		try {
+			$started = time();
+
+			if ((int) $db->fetchCell('SELECT COUNT(*) FROM plugin_cloudflare_accounts WHERE enabled = 1 AND collect_analytics = 1') > 0) {
+				cloudflare_analytics_collector()->run(15, 20);
+			}
+
 			cloudflare_collector_ensure_jobs($db);
 
-			$outcomes = $service_factory()->runDue(CLOUDFLARE_COLLECTOR_BUDGET);
+			$outcomes = $service_factory()->runDue(max(1, CLOUDFLARE_COLLECTOR_BUDGET - (time() - $started)));
 
 			cacti_log(cloudflare_collector_summary($outcomes), false, 'CLOUDFLARE', POLLER_VERBOSITY_MEDIUM);
 

@@ -16,7 +16,7 @@
 
 [info]
 name = cloudflare
-version = 0.3.0
+version = 0.4.0-dev
 longname = Cloudflare
 author = Thomas Vincent
 email =

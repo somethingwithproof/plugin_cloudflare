@@ -85,6 +85,22 @@ final class Database {
 	}
 
 	/**
+	 * Runs read-only work against one REPEATABLE READ snapshot, so every read
+	 * sees the same data whatever the server's default isolation level is.
+	 * Inside an open transaction the level cannot change; the outer one applies.
+	 *
+	 * @param callable $fn
+	 * @return mixed
+	 */
+	public function snapshot(callable $fn) {
+		if ($this->depth === 0) {
+			$this->execute('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ');
+		}
+
+		return $this->transactional($fn);
+	}
+
+	/**
 	 * A nested call joins the outer transaction; only the outermost call
 	 * commits or rolls back.
 	 *

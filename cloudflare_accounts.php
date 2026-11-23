@@ -29,6 +29,7 @@ if (!cloudflare_page_allowed()) {
 }
 
 include_once(__DIR__ . '/includes/accounts_page.php');
+include_once(__DIR__ . '/includes/tunnel_retirement.php');
 
 set_default_action();
 
@@ -40,6 +41,15 @@ try {
 	plugin_cloudflare_upgrade();
 
 	switch (get_request_var('action')) {
+		case 'retire':
+			$retire_url = cloudflare_accounts_retire();
+
+			if ($retire_url !== null) {
+				header('Location: ' . $retire_url);
+				exit;
+			}
+
+			break;
 		case 'save':
 			$redirect = cloudflare_accounts_save();
 

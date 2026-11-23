@@ -20,6 +20,6 @@
 namespace Somethingwithproof\Cloudflare;
 
 final class Version {
-	const PLUGIN = '0.3.0';
+	const PLUGIN = '0.4.0-dev';
 	const METRIC_SCHEMA = 1;
 }

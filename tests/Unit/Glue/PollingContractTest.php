@@ -145,8 +145,8 @@ final class PollingContractTest extends TestCase {
 		$pdo->exec('CREATE TABLE information_schema.tables (table_schema TEXT, table_name TEXT)');
 		$pdo->exec("INSERT INTO information_schema.tables VALUES ('cacti', 'plugin_cloudflare_migrations')");
 		$pdo->exec('CREATE TABLE plugin_cloudflare_migrations (version INTEGER)');
-		$pdo->exec('INSERT INTO plugin_cloudflare_migrations VALUES (1), (2), (3)');
-		$pdo->exec('CREATE TABLE plugin_cloudflare_accounts (id INTEGER, enabled INTEGER, collect_tunnels INTEGER)');
+		$pdo->exec('INSERT INTO plugin_cloudflare_migrations VALUES (1), (2), (3), (4), (5)');
+		$pdo->exec('CREATE TABLE plugin_cloudflare_accounts (id INTEGER, enabled INTEGER, collect_tunnels INTEGER, collect_analytics INTEGER)');
 
 		return $pdo;
 	}

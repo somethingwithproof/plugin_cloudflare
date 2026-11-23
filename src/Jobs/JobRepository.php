@@ -129,10 +129,11 @@ final class JobRepository {
 			INNER JOIN plugin_cloudflare_accounts a ON a.id = j.account_id
 			WHERE j.job_type = ? AND a.enabled = 1
 			AND (j.job_type <> ? OR a.collect_tunnels = 1)
+			AND (j.job_type <> ? OR a.collect_analytics = 1)
 			AND j.next_run_at <= ?
 			AND (j.lease_until IS NULL OR j.lease_until < UNIX_TIMESTAMP())
 			ORDER BY j.next_run_at, j.id LIMIT ' . $limit,
-			array($type, self::TYPE_DISCOVERY, $this->clock->now())
+			array($type, self::TYPE_DISCOVERY, 'analytics', $this->clock->now())
 		);
 	}
 

@@ -47,6 +47,10 @@ function cloudflare_create_device(Account $account, int $lock_timeout = 30) : st
 		return 'denied';
 	}
 
+	if ($account->collectsAnalytics() && !cloudflare_templates_install($lock_timeout)) {
+		return 'templates_missing';
+	}
+
 	$templates = cloudflare_templates_ready();
 
 	// A failed install-time import heals here, on an explicit request.

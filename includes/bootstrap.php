@@ -214,3 +214,13 @@ function cloudflare_plugin_status_enabled(Database $db) : bool {
 		return false;
 	}
 }
+
+function cloudflare_analytics_collector() : \Somethingwithproof\Cloudflare\Discovery\AnalyticsCollector {
+	$db       = cloudflare_db();
+	$clock    = new SystemClock();
+	$accounts = new AccountRepository($db);
+
+	return new \Somethingwithproof\Cloudflare\Discovery\AnalyticsCollector($db, $accounts, new CredentialResolver($accounts, cloudflare_vault(), cloudflare_token_directory()), new \Somethingwithproof\Cloudflare\Api\ZoneAnalytics(cloudflare_client(2, 3, new RetryPolicy($clock, new SystemSleeper(), 0))), $clock, function () use ($db) : bool {
+		return cloudflare_plugin_status_enabled($db);
+	});
+}

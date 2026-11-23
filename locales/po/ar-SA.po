@@ -364,11 +364,11 @@ msgstr[3] "انقر على «متابعة» لإنشاء جهاز Cacti لكل �
 msgstr[4] "انقر على «متابعة» لإنشاء جهاز Cacti لكل حساب من حسابات Cloudflare التالية. يُترك أي حساب لديه جهاز بالفعل دون تغيير."
 msgstr[5] "انقر على «متابعة» لإنشاء جهاز Cacti لكل حساب من حسابات Cloudflare التالية. يُترك أي حساب لديه جهاز بالفعل دون تغيير."
 
-#: includes/accounts_page.php
+#: includes/accounts_page.php includes/tunnel_retirement.php
 msgid "Cancel"
 msgstr "إلغاء"
 
-#: includes/accounts_page.php
+#: includes/accounts_page.php includes/tunnel_retirement.php
 msgid "Continue"
 msgstr "متابعة"
 
@@ -562,9 +562,25 @@ msgstr "مستوى التسجيل"
 msgid "The amount of detail the plugin writes to the Cacti log."
 msgstr "مقدار التفاصيل التي تكتبها الإضافة في سجل Cacti."
 
+#: includes/tunnel_retirement.php
+msgid "The tunnel could not be retired. Check permissions and retry after collection finishes."
+msgstr "تعذر إخراج النفق من المراقبة. تحقق من الأذونات وأعد المحاولة بعد انتهاء الجمع."
+
+#: includes/tunnel_retirement.php includes/viewer.php
+msgid "Retire tunnel"
+msgstr "إخراج النفق من المراقبة"
+
+#: includes/tunnel_retirement.php
+msgid "Retiring removes the graphs and unshared data sources created for this deleted tunnel. Cacti controls RRD cleanup. The inventory record is kept."
+msgstr "تزيل هذه العملية الرسوم ومصادر البيانات غير المشتركة التي أُنشئت لهذا النفق المحذوف. يتحكم Cacti في تنظيف RRD. يُحتفظ بسجل المخزون."
+
 #: includes/viewer.php
 msgid "The Cloudflare tunnels could not be read. See the Cacti log for details."
 msgstr "تعذّرت قراءة أنفاق Cloudflare. راجع سجل Cacti للتفاصيل."
+
+#: includes/viewer.php
+msgid "Zone Analytics"
+msgstr "تحليلات المناطق"
 
 #: includes/viewer.php
 msgid "Disabled"
@@ -720,6 +736,26 @@ msgstr "حالة هذا النفق هي %s. شوهدت هذه الموصلات �
 #: includes/viewer.php
 msgid "No connectors are running for this tunnel."
 msgstr "لا توجد موصلات تعمل لهذا النفق."
+
+#: includes/viewer.php
+msgid "Export"
+msgstr "تصدير"
+
+#: includes/viewer.php
+msgid "Bytes/s"
+msgstr "بايت/ث"
+
+#: includes/viewer.php
+msgid "HTTP 5xx (%)"
+msgstr "HTTP 5xx (%)"
+
+#: includes/viewer.php
+msgid "Requests/s"
+msgstr "طلبات/ث"
+
+#: includes/viewer.php
+msgid "Zone"
+msgstr "المنطقة"
 
 #: src/OperatorPage.php
 msgid "Review the recorded observations below. Acknowledgments are personal to this session, expire when observations change, and never suppress alerts or change health."

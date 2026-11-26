@@ -349,6 +349,8 @@ read-only lamang:
   para sa account, lifecycle, status at pangalan, at mga sortable na column.
 - **Connectors** ay nagpapakita ng mga connector ng tunnel na pinili sa tab na Tunnels.
 
+<a name="tunnel-metrics-and-graphs"></a>
+
 ## Mga sukatan at graph ng tunnel
 
 Binabasa ng Cacti ang estado ng tunnel sa pamamagitan ng isang script server data query,

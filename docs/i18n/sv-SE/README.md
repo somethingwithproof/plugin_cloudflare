@@ -369,6 +369,8 @@ skrivskyddad:
   för konto, livscykel, status och namn samt sorterbara kolumner.
 - **Connectors** visar connectors för den tunnel som valts på fliken Tunnels.
 
+<a name="tunnel-metrics-and-graphs"></a>
+
 ## Tunnelmätvärden och grafer
 
 Cacti läser tunneltillstånd via en script server-datafråga,

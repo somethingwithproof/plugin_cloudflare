@@ -371,6 +371,8 @@ hanya-baca:
   akun, siklus hidup, status, dan nama, serta kolom yang dapat diurutkan.
 - **Connectors** menampilkan konektor dari tunnel yang dipilih pada tab Tunnels.
 
+<a name="tunnel-metrics-and-graphs"></a>
+
 ## Metrik dan grafik tunnel
 
 Cacti membaca kondisi tunnel melalui data query script server,

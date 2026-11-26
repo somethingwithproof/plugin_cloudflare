@@ -368,6 +368,8 @@ kíkà nìkan:
   fún àkántì, ìyípo-ìgbésí-ayé, ipò àti orúkọ, àti àwọn ọ̀wọ̀n tí a lè tò.
 - **Connectors** máa ń fi àwọn olùsopọ̀ ti ọ̀nà-àṣírí tí a yàn lórí táàbù Tunnels hàn.
 
+<a name="tunnel-metrics-and-graphs"></a>
+
 ## Àwọn òṣùwọ̀n àti àwòrán ọ̀nà-àṣírí
 
 Cacti máa ń ka ipò ọ̀nà-àṣírí nípasẹ̀ ìbéèrè dátà script server kan,

@@ -408,6 +408,8 @@ und ist schreibgeschützt:
 - **Connectors** zeigt die Connectors des auf dem Tab „Tunnels“ ausgewählten
   Tunnels an.
 
+<a name="tunnel-metrics-and-graphs"></a>
+
 ## Tunnel-Metriken und -Graphen
 
 Cacti liest den Tunnelzustand über eine Script-Server-Data-Query,

@@ -369,6 +369,8 @@ baca sahaja:
   untuk akaun, kitaran hayat, status dan nama, serta lajur yang boleh diisih.
 - **Connectors** memaparkan penyambung bagi terowong yang dipilih pada tab Tunnels.
 
+<a name="tunnel-metrics-and-graphs"></a>
+
 ## Metrik dan graf terowong
 
 Cacti membaca keadaan terowong melalui pertanyaan data pelayan skrip,

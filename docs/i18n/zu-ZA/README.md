@@ -337,6 +337,8 @@ eyokufunda kuphela:
   namakholomu ahleleke ngokuhlungwa.
 - **Connectors** ibonisa izixhumi ze-tunnel ekhethwe kuthebhu ye-Tunnels.
 
+<a name="tunnel-metrics-and-graphs"></a>
+
 ## Amamethrikhi namagrafu ama-tunnel
 
 I-Cacti ifunda isimo se-tunnel ngombuzo wedatha weseva yeskripthi,

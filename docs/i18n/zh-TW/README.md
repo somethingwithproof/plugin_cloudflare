@@ -290,6 +290,8 @@ Verify 會設定帳號的狀態：
 - **Tunnels（通道）** 列出跨帳號或單一帳號的通道，提供依帳號、生命週期、狀態與名稱篩選的功能，以及可排序的欄位。
 - **Connectors（連接器）** 顯示在 Tunnels 分頁中所選通道的連接器。
 
+<a name="tunnel-metrics-and-graphs"></a>
+
 ## 通道指標與圖表
 
 Cacti 透過腳本伺服器資料查詢 `ss_cloudflare.php` 來讀取通道狀態。

@@ -370,6 +370,8 @@ alleen-lezen:
   voor account, levenscyclus, status en naam, en sorteerbare kolommen.
 - **Connectors** toont de connectors van de tunnel die op het tabblad Tunnels is gekozen.
 
+<a name="tunnel-metrics-and-graphs"></a>
+
 ## Tunnelstatistieken en -grafieken
 
 Cacti leest de tunnelstatus uit via een scriptserver-gegevensquery,

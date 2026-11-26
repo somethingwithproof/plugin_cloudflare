@@ -369,6 +369,8 @@ leesalleen:
   vir rekening, lewensiklus, status en naam, en sorteerbare kolomme.
 - **Connectors** wys die konnekteerders van die tonnel wat op die Tunnels-oortjie gekies is.
 
+<a name="tunnel-metrics-and-graphs"></a>
+
 ## Tonnelmetrieke en -grafieke
 
 Cacti lees tonneltoestand deur 'n skripbediener-datanavraag,

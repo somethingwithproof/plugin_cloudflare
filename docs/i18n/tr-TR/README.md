@@ -295,6 +295,8 @@ Management > Cloudflare Tunnels sayfası Cloudflare: View iznini gerektirir ve s
 - **Tunnels**, hesaplar genelindeki veya tek bir hesaptaki tünelleri hesap, yaşam döngüsü, durum ve ad filtreleriyle ve sıralanabilir sütunlarla listeler.
 - **Connectors**, Tunnels sekmesinde seçilen tünelin bağlayıcılarını gösterir.
 
+<a name="tunnel-metrics-and-graphs"></a>
+
 ## Tünel metrikleri ve grafikleri
 
 Cacti, tünel durumunu bir betik sunucusu veri sorgusu olan `ss_cloudflare.php` aracılığıyla okur. Bu sorgu yalnızca eklentinin tablolarından yanıt verir ve hiçbir zaman Cloudflare'ı çağırmaz; böylece bir Cloudflare kesintisi poller'ı yavaşlatamaz. Her tünel altı değer verir: sağlık (healthy 3, degraded 2, down 1, inactive 0), bağlayıcılar, bağlantılar, bağlayıcı sürümleri, bağlantılarının son okunmasından bu yana geçen saniye sayısı ve keşif işinin ardışık hataları. Sağlık, bağlayıcılar, bağlantılar ve sürümler yalnızca eklenti bunlara kefil olabildiğinde yazdırılır; bu da son keşfin başarılı olduğu, tünelin `active` olduğu ve okumanın güncel olduğu anlamına gelir. Aksi takdirde `U` olurlar ve grafik, kesinti gibi görünecek bir sıfır yerine bir boşluk gösterir. İki toplama değeri bir kesinti sırasında yazdırılmaya devam eder, böylece Collection grafiği kesintiyi gösterir; bunlar yalnızca silinmiş bir tünel veya bağlantıları hiç yenilenmemiş bir tünel için `U` olur. Kurallar [docs/metrics.md](../../metrics.md) belgesindedir.

@@ -368,6 +368,8 @@ Management > Cloudflare Tunnels inahitaji ruhusa ya Cloudflare: View na ni ya ku
   kwa akaunti, mzunguko wa maisha, hali na jina, pamoja na safuwima zinazoweza kupangwa.
 - **Connectors** huonyesha viunganishi vya handaki lililochaguliwa kwenye kichupo cha Tunnels.
 
+<a name="tunnel-metrics-and-graphs"></a>
+
 ## Vipimo na grafu za mahandaki
 
 Cacti husoma hali ya handaki kupitia hoja ya data ya seva ya hati,

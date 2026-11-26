@@ -14,6 +14,7 @@ from urllib.parse import unquote, urlsplit
 
 
 LOCALES = ("zh-CN", "hi-IN", "es-ES", "es-419", "ar-SA")
+ALL_LOCALES = ("zh-CN", "hi-IN", "es-ES", "es-419", "ar-SA", "af-ZA", "am-ET", "ar-EG", "ar-MA", "bn-BD", "de-DE", "fa-IR", "fil-PH", "fr-FR", "fr-MA", "fr-SN", "ha-NG", "he-IL", "id-ID", "ig-NG", "it-IT", "ja-JP", "ko-KR", "mg-MG", "mr-IN", "ms-MY", "nl-NL", "pl-PL", "pt-BR", "ru-RU", "rw-RW", "so-SO", "sv-SE", "sw-KE", "ta-IN", "te-IN", "th-TH", "tr-TR", "uk-UA", "ur-PK", "vi-VN", "xh-ZA", "yo-NG", "zh-TW", "zu-ZA")
 NAVIGATION = re.compile(r"<!-- translations:start -->\n.*?<!-- translations:end -->\n\n?", re.S)
 HEADER = re.compile(r"<!-- Source: ([^;]+); SHA256: ([a-f0-9]{64}) -->")
 TOKENS = re.compile(r"%(?:\d+\$)?[-+ 0#]*\d*(?:\.\d+)?[sdfuxXcoeEgGi]|%%|<[^>]*>")
@@ -91,6 +92,38 @@ def heading_levels(text):
     return [len(level) for level in re.findall(r"^(#{1,6})\s+", text, re.M)]
 
 
+def validate_doc(root, locale, source, failures):
+    original = root / source
+    translated = root / "docs/i18n" / locale / source
+    label = str(translated.relative_to(root))
+    if not original.is_file() or not translated.is_file():
+        failures.append("missing source or translation: " + label)
+        return
+    english = source_text(original.read_text(encoding="utf-8"))
+    text = translated.read_text(encoding="utf-8")
+    header = HEADER.search(text)
+    digest = hashlib.sha256(english.encode()).hexdigest()
+    if header is None or header[1] != source or header[2] != digest:
+        failures.append("source changed; review and refresh translation: " + label)
+    body = re.sub(r'^<a id="[^"]+"></a>\n', "", text, flags=re.M)
+    if source_text(HEADER.sub("", body)).strip() == english.strip():
+        failures.append("translation is an English copy: " + label)
+    if heading_levels(english) != heading_levels(text):
+        failures.append("heading structure differs from source: " + label)
+    try:
+        if code_blocks(english) != code_blocks(text):
+            failures.append("code examples differ from source: " + label)
+    except ValueError as error:
+        failures.append(str(error) + ": " + label)
+    for link in links(text):
+        parts = urlsplit(link)
+        if parts.scheme or parts.netloc or not parts.path or parts.path.startswith("/"):
+            continue
+        target = (translated.parent / unquote(parts.path)).resolve()
+        if not target.is_relative_to(root.resolve()) or not target.exists():
+            failures.append("broken local link: " + label + " -> " + link)
+
+
 def validate(root):
     failures = []
     manifest_path = root / "docs/i18n/manifest.json"
@@ -98,10 +131,13 @@ def validate(root):
     sources = manifest["sources"]
     if manifest["locales"] != list(LOCALES):
         failures.append("manifest locales must include both Spanish variants")
+    if manifest.get("readme_locales") != list(ALL_LOCALES):
+        failures.append("manifest readme_locales must match ALL_LOCALES")
     if "README.md" not in sources or len(sources) != len(set(sources)):
         failures.append("manifest needs README.md and unique source paths")
     template = messages(root / "locales/po/cacti.pot")
-    for locale in LOCALES:
+    doc_count = 0
+    for locale in ALL_LOCALES:
         for path in (root / "locales/po" / (locale + ".po"), root / "locales/LC_MESSAGES" / (locale + ".mo")):
             if not path.is_file():
                 failures.append("missing catalog: " + str(path.relative_to(root)))
@@ -115,44 +151,18 @@ def validate(root):
                 original = entry["msgid"]
                 values = [catalog.gettext(original)]
                 if "msgid_plural" in entry:
-                    values = [catalog.ngettext(original, entry["msgid_plural"], n) for n in (0, 1, 2, 3, 11, 100)]
+                    values = [catalog.ngettext(original, entry["msgid_plural"], n) for n in (0, 1, 2, 3, 4, 11, 20, 100)]
                 for value in values:
                     if sorted(TOKENS.findall(original)) != sorted(TOKENS.findall(value)) or edges(original) != edges(value):
                         failures.append("placeholder, markup or whitespace mismatch: " + locale + ": " + original)
-        for source in sources:
-            original = root / source
-            translated = root / "docs/i18n" / locale / source
-            label = str(translated.relative_to(root))
-            if not original.is_file() or not translated.is_file():
-                failures.append("missing source or translation: " + label)
-                continue
-            english = source_text(original.read_text(encoding="utf-8"))
-            text = translated.read_text(encoding="utf-8")
-            header = HEADER.search(text)
-            digest = hashlib.sha256(english.encode()).hexdigest()
-            if header is None or header[1] != source or header[2] != digest:
-                failures.append("source changed; review and refresh translation: " + label)
-            body = re.sub(r'^<a id="[^"]+"></a>\n', "", text, flags=re.M)
-            if source_text(HEADER.sub("", body)).strip() == english.strip():
-                failures.append("translation is an English copy: " + label)
-            if heading_levels(english) != heading_levels(text):
-                failures.append("heading structure differs from source: " + label)
-            try:
-                if code_blocks(english) != code_blocks(text):
-                    failures.append("code examples differ from source: " + label)
-            except ValueError as error:
-                failures.append(str(error) + ": " + label)
-            for link in links(text):
-                parts = urlsplit(link)
-                if parts.scheme or parts.netloc or not parts.path or parts.path.startswith("/"):
-                    continue
-                target = (translated.parent / unquote(parts.path)).resolve()
-                if not target.is_relative_to(root.resolve()) or not target.exists():
-                    failures.append("broken local link: " + label + " -> " + link)
+        locale_sources = sources if locale in LOCALES else ["README.md"]
+        for source in locale_sources:
+            validate_doc(root, locale, source, failures)
+            doc_count += 1
     if failures:
         print("\n".join(failures), file=sys.stderr)
         return 1
-    print(f"Verified {len(LOCALES)} locale catalogs and {len(sources) * len(LOCALES)} translated guides")
+    print(f"Verified {len(ALL_LOCALES)} locale catalogs and {doc_count} translated guides")
     return 0
 
 

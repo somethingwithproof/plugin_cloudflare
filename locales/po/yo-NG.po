@@ -1,0 +1,769 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-FileCopyrightText: 2026 Thomas Vincent <thomasvincent@gmail.com>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cloudflare 0.4.0-dev\n"
+"Report-Msgid-Bugs-To: https://github.com/somethingwithproof/plugin_cloudflare/issues\n"
+"PO-Revision-Date: 2026-11-26 00:00+0000\n"
+"Last-Translator: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language-Team: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language: yo-NG\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: cloudflare_operator.php
+msgid "Monitoring view"
+msgstr "Ìwòran àbójútó"
+
+#: cloudflare_operator.php
+msgid "Observations could not be read. Ask an administrator to check the plugin log."
+msgstr "A kò le ka àwọn àkíyèsí. Béèrè lọ́wọ́ alákòóso láti ṣàyẹ̀wò àkọsílẹ̀ àfikún náà."
+
+#: includes/accounts.php
+msgid "Connection verified"
+msgstr "A ti ṣàyẹ̀wò ìsopọ̀"
+
+#: includes/accounts.php
+msgid "Token is not active; it may be expired or disabled"
+msgstr "Tókìn kò ṣiṣẹ́; ó lè ti parí àkókò tàbí ó ti di àìṣiṣẹ́"
+
+#: includes/accounts.php
+msgid "Token is invalid or expired"
+msgstr "Tókìn kò tọ́ tàbí ó ti parí àkókò"
+
+#: includes/accounts.php
+msgid "Token lacks the Account Cloudflare Tunnel Read permission"
+msgstr "Tókìn kò ní àṣẹ Account Cloudflare Tunnel Read"
+
+#: includes/accounts.php
+msgid "Cloudflare API is unreachable; try again later"
+msgstr "A kò le dé ọ̀dọ̀ Cloudflare API; gbìyànjú lẹ́ẹ̀kan sí i nígbà mìíràn"
+
+#: includes/accounts.php
+msgid "Cloudflare API rate limit reached; try again later"
+msgstr "Ìwọ̀n ààlà Cloudflare API ti pé; gbìyànjú lẹ́ẹ̀kan sí i nígbà mìíràn"
+
+#: includes/accounts.php
+msgid "Cloudflare API request failed unexpectedly"
+msgstr "Ìbéèrè Cloudflare API kùnà lójijì"
+
+#: includes/accounts.php
+msgid "Token lacks the permissions needed to verify it"
+msgstr "Tókìn kò ní àwọn àṣẹ tí a nílò láti ṣàyẹ̀wò rẹ̀"
+
+#: includes/accounts.php
+msgid "Stored token cannot be decrypted"
+msgstr "A kò le tú àṣírí tókìn tí a fi pamọ́"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing or unusable"
+msgstr "Fáìlì kọ́kọ́rọ́ àpótí ìpamọ́ tókìn sọnù tàbí kò ṣe é lò"
+
+#: includes/accounts.php
+msgid "Token file is missing or insecure"
+msgstr "Fáìlì tókìn sọnù tàbí kò ní ààbò"
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable; configure the key file or use a token file"
+msgstr "Ibi ìpamọ́ tí a ṣe ìfọ̀rọ̀pamọ́ fún kò sí; ṣètò fáìlì kọ́kọ́rọ́ tàbí lo fáìlì tókìn"
+
+#: includes/accounts.php
+msgid "Enter the 32-character hexadecimal Cloudflare account ID"
+msgstr "Tẹ ID àkọ́ọ̀lẹ̀ Cloudflare hexadecimal tí ó ní àmì-ìkọ̀wé 32"
+
+#: includes/accounts.php
+msgid "Enter a name of 1 to 100 characters without control characters"
+msgstr "Tẹ orúkọ tí ó ní àmì-ìkọ̀wé 1 sí 100 láìsí àwọn àmì ìdarí"
+
+#: includes/accounts.php
+msgid "Choose an encrypted token or a token file"
+msgstr "Yan tókìn tí a ṣe ìfọ̀rọ̀pamọ́ fún tàbí fáìlì tókìn kan"
+
+#: includes/accounts.php
+msgid "Enter an API token"
+msgstr "Tẹ tókìn API kan"
+
+#: includes/accounts.php
+msgid "Re-enter the token when changing the account ID"
+msgstr "Tún tẹ tókìn náà nígbà tí o bá ń yí ID àkọ́ọ̀lẹ̀ padà"
+
+#: includes/accounts.php
+msgid "Enter an absolute path of at most 255 characters"
+msgstr "Tẹ ọ̀nà kíkún tí ó pọ̀ jù àmì-ìkọ̀wé 255"
+
+#: includes/accounts.php
+msgid "Must be 0 or 1"
+msgstr "Ó gbọ́dọ̀ jẹ́ 0 tàbí 1"
+
+#: includes/accounts.php
+msgid "Enter a whole number of seconds from 60 to 86400"
+msgstr "Tẹ odidi nọ́ńbà ìṣẹ́jú-àáyá láti 60 sí 86400"
+
+#: includes/accounts.php
+msgid "This Cloudflare account ID is already configured"
+msgstr "A ti ṣètò ID àkọọ́lẹ̀ Cloudflare yìí tẹ́lẹ̀"
+
+#: includes/accounts.php
+msgid "Global API Keys are not accepted; use a scoped API token"
+msgstr "A kò gba àwọn Global API Key; lo tọ́kìnì API tí ó ní ààlà àṣẹ"
+
+#: includes/accounts.php
+msgid "API token format is invalid"
+msgstr "Ìṣètò tọ́kìnì API kò tọ́"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing, unreadable, insecure or malformed"
+msgstr "Fáìlì kọ́kọ́rọ́ ibi ìpamọ́ tọ́kìnì sọnù, kò ṣeé kà, kò ní ààbò tàbí ìṣètò rẹ̀ bàjẹ́"
+
+#: includes/accounts.php
+msgid "Stored API token could not be decrypted"
+msgstr "A kò lè tú àṣírí tọ́kìnì API tí a fi pamọ́"
+
+#: includes/accounts.php
+msgid "Token file is missing, unreadable, not a regular file or too large"
+msgstr "Fáìlì tọ́kìnì sọnù, kò ṣeé kà, kì í ṣe fáìlì déédéé tàbí ó tóbi jù"
+
+#: includes/accounts.php
+msgid "Token file path is not absolute, is a symlink, or the file is world-readable or world-writable"
+msgstr "Ọ̀nà fáìlì tọ́kìnì kì í ṣe ọ̀nà pípé, ó jẹ́ symlink, tàbí fáìlì náà ṣeé kà tàbí ṣeé kọ sí fún gbogbo ènìyàn"
+
+#: includes/accounts.php
+msgid "Token file is not inside the Token File Directory"
+msgstr "Fáìlì tọ́kìnì kò sí nínú Àpò Fáìlì Tọ́kìnì"
+
+#: includes/accounts.php
+msgid "API token could not be encrypted"
+msgstr "A kò lè fi àṣírí pa tọ́kìnì API mọ́"
+
+#: includes/accounts.php
+msgid "Credential error"
+msgstr "Àṣìṣe ìwé-ẹ̀rí ìwọlé"
+
+#: includes/accounts.php includes/settings.php
+msgid "Cloudflare"
+msgstr "Cloudflare"
+
+#: includes/accounts.php
+msgid "Encrypted in the Cacti database"
+msgstr "Tí a fi àṣírí pamọ́ sínú ibi-ìpamọ́ dátà Cacti"
+
+#: includes/accounts.php
+msgid "Token file on this server"
+msgstr "Fáìlì tọ́kìnì lórí sáfà yìí"
+
+#: includes/accounts.php includes/viewer.php
+msgid "Account"
+msgstr "Àkọ́ọ̀lẹ̀"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Name"
+msgstr "Orúkọ"
+
+#: includes/accounts.php
+msgid "A label for this account in Cacti."
+msgstr "Àkọlé fún àkọọ́lẹ̀ yìí nínú Cacti."
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Account ID"
+msgstr "ID Àkọọ́lẹ̀"
+
+#: includes/accounts.php
+msgid "The 32-character Cloudflare account ID, shown in the dashboard URL and on the account overview page."
+msgstr "ID àkọọ́lẹ̀ Cloudflare onílẹ́tà 32, tí a fi hàn nínú URL pátákó ìṣàkóso àti lórí ojú-ìwé àkópọ̀ àkọọ́lẹ̀."
+
+#: includes/accounts.php
+msgid "API Token"
+msgstr "Tọ́kìnì API"
+
+#: includes/accounts.php
+msgid "Token Storage"
+msgstr "Ibi Ìpamọ́ Tọ́kìnì"
+
+#: includes/accounts.php
+msgid "Where the scoped API token is kept. Global API Keys are not accepted."
+msgstr "Ibi tí a ti ń pa tọ́kìnì API tí ó ní ààlà àṣẹ mọ́. A kò gba àwọn Global API Key."
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable because the key file in Settings is missing or unusable; only token files can be used."
+msgstr "Ibi ìpamọ́ aláṣírí kò sí nítorí fáìlì kọ́kọ́rọ́ nínú Ètò sọnù tàbí kò ṣeé lò; àwọn fáìlì tọ́kìnì nìkan ni a lè lò."
+
+#: includes/accounts.php
+msgid "Leave blank to keep the current token"
+msgstr "Fi sílẹ̀ ní òfo láti pa tọ́kìnì lọ́wọ́lọ́wọ́ mọ́"
+
+#: includes/accounts.php
+msgid "A scoped API token with Account Cloudflare Tunnel Read permission."
+msgstr "Tọ́kìnì API tí ó ní ààlà àṣẹ pẹ̀lú àṣẹ Account Cloudflare Tunnel Read."
+
+#: includes/accounts.php
+msgid "Token File"
+msgstr "Fáìlì Tọ́kìnì"
+
+#: includes/accounts.php
+msgid "Absolute path to a file that contains only the token. It must be readable by the web server and poller users and must not be world-readable."
+msgstr "Ọ̀nà pípé sí fáìlì tí ó ní tọ́kìnì nìkan nínú. Ó gbọ́dọ̀ ṣeé kà fún sáfà wẹ́ẹ̀bù àti àwọn olùlò poller, kò sì gbọ́dọ̀ ṣeé kà fún gbogbo ènìyàn."
+
+#: includes/accounts.php
+msgid "Collection"
+msgstr "Ìkójọpọ̀"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Enabled"
+msgstr "Ṣíṣiṣẹ́"
+
+#: includes/accounts.php
+msgid "Disabled accounts are not polled."
+msgstr "A kì í ṣe ìwádìí (poll) fún àwọn àkọọ́lẹ̀ tí a ti pa."
+
+#: includes/accounts.php
+msgid "Collect Tunnels"
+msgstr "Kó àwọn Tunnel jọ"
+
+#: includes/accounts.php
+msgid "Discover Cloudflare Tunnels and their connectors."
+msgstr "Ṣàwárí àwọn Cloudflare Tunnel àti àwọn asopọ̀ wọn."
+
+#: includes/accounts.php
+msgid "Collect Analytics"
+msgstr "Kó Ìtúpalẹ̀ jọ"
+
+#: includes/accounts.php
+msgid "Collect zone traffic analytics. This needs the Account Analytics Read and Analytics Read (Zone) permissions."
+msgstr "Kó ìtúpalẹ̀ ìrìn-àjò agbègbè (zone) jọ. Èyí nílò àwọn àṣẹ Account Analytics Read àti Analytics Read (Zone)."
+
+#: includes/accounts.php
+msgid "Create Graphs"
+msgstr "Ṣẹ̀dá Àwọn Gíráàfù"
+
+#: includes/accounts.php
+msgid "Create graphs for each tunnel on the account's Cacti device. Turning this on needs the permission to edit Cacti devices."
+msgstr "Ṣẹ̀dá àwọn gíráàfù fún tunnel kọ̀ọ̀kan lórí ẹ̀rọ Cacti àkọọ́lẹ̀ náà. Títàn èyí nílò àṣẹ láti ṣàtúnṣe àwọn ẹ̀rọ Cacti."
+
+#: includes/accounts.php
+msgid "Discovery Interval"
+msgstr "Àlàfo Àkókò Ìwárí"
+
+#: includes/accounts.php
+msgid "Seconds between inventory refreshes, from 60 to 86400."
+msgstr "Ìṣẹ́jú-àáyá láàárín ìsọdọ̀tun àkójọ ohun-ìní, láti 60 sí 86400."
+
+#: includes/accounts.php
+msgid "The token and its confirmation do not match"
+msgstr "Tọ́kìnì àti ìjẹ́rìísí rẹ̀ kò bá ara wọn mu"
+
+#: includes/accounts_page.php
+msgid "Delete"
+msgstr "Pa rẹ́"
+
+#: includes/accounts_page.php
+msgid "Verify"
+msgstr "Ṣàyẹ̀wò"
+
+#: includes/accounts_page.php
+msgid "Enable"
+msgstr "Mú ṣiṣẹ́"
+
+#: includes/accounts_page.php
+msgid "Disable"
+msgstr "Pa ṣíṣẹ́"
+
+#: includes/accounts_page.php
+msgid "Create Cacti Device"
+msgstr "Dá Ẹ̀rọ Cacti"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to change Cloudflare accounts."
+msgstr "O kò ní àṣẹ láti yí àwọn àkọọ́lẹ̀ Cloudflare padà."
+
+#: includes/accounts_page.php
+msgid "The Cloudflare account no longer exists."
+msgstr "Àkọọ́lẹ̀ Cloudflare náà kò sí mọ́."
+
+#: includes/accounts_page.php
+msgid "The Cloudflare accounts could not be read. See the Cacti log for details."
+msgstr "A kò lè ka àwọn àkọọ́lẹ̀ Cloudflare. Wo àkọọ́lẹ̀ ìṣẹ̀lẹ̀ Cacti fún àlàyé kíkún."
+
+#: includes/accounts_page.php
+msgid "Create Graphs was left off: turning it on needs the permission to edit Cacti devices."
+msgstr "A fi Ṣẹ̀dá Àwọn Gíráàfù sílẹ̀ ní pípa: títàn án nílò àṣẹ láti ṣàtúnṣe àwọn ẹ̀rọ Cacti."
+
+#: includes/accounts_page.php
+msgid "Cacti device created"
+msgstr "A ti ṣẹ̀dá ẹ̀rọ Cacti"
+
+#: includes/accounts_page.php
+msgid "A Cacti device already exists for this account"
+msgstr "Ẹ̀rọ Cacti kan ti wà tẹ́lẹ̀ fún àkọọ́lẹ̀ yìí"
+
+#: includes/accounts_page.php
+msgid "The Cloudflare templates are not installed; see the Cacti log"
+msgstr "A kò tíì fi àwọn àdàkọ Cloudflare sórí ẹ̀rọ; wo àkọọ́lẹ̀ ìṣẹ̀lẹ̀ Cacti"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices"
+msgstr "O kò ní àṣẹ láti ṣẹ̀dá àwọn ẹ̀rọ Cacti"
+
+#: includes/accounts_page.php
+msgid "The Cacti device could not be created; see the Cacti log"
+msgstr "A kò lè ṣẹ̀dá ẹ̀rọ Cacti; wo àkọọ́lẹ̀ ìṣẹ̀lẹ̀ Cacti"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices."
+msgstr "O kò ní àṣẹ láti ṣẹ̀dá àwọn ẹ̀rọ Cacti."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Delete the following Cloudflare Account. Its discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgid_plural "Click 'Continue' to Delete the following Cloudflare Accounts. Their discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgstr[0] "Tẹ 'Tẹ̀síwájú' láti Pa Àkọọ́lẹ̀ Cloudflare tí ó tẹ̀lé e rẹ́. A ó yọ àkójọ ohun-ìní tí a ṣàwárí àti ipò iṣẹ́ wọn kúrò; a ó pa àwọn ẹ̀rọ Cacti àti gíráàfù mọ́."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Verify the following Cloudflare Account against the Cloudflare API."
+msgid_plural "Click 'Continue' to Verify the following Cloudflare Accounts against the Cloudflare API."
+msgstr[0] "Tẹ 'Tẹ̀síwájú' láti Ṣàyẹ̀wò Àkọọ́lẹ̀ Cloudflare tí ó tẹ̀lé e lòdì sí Cloudflare API."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Enable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Enable the following Cloudflare Accounts."
+msgstr[0] "Tẹ 'Tẹ̀síwájú' láti Mú Àkọọ́lẹ̀ Cloudflare tí ó tẹ̀lé e ṣiṣẹ́."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Disable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Disable the following Cloudflare Accounts."
+msgstr[0] "Tẹ 'Tẹ̀síwájú' láti Pa Àkọọ́lẹ̀ Cloudflare tí ó tẹ̀lé e."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to create a Cacti device for the following Cloudflare Account. An account that already has one is left as it is."
+msgid_plural "Click 'Continue' to create a Cacti device for each of the following Cloudflare Accounts. An account that already has one is left as it is."
+msgstr[0] "Tẹ 'Tẹ̀síwájú' láti ṣẹ̀dá ẹ̀rọ Cacti fún Àkọọ́lẹ̀ Cloudflare tí ó tẹ̀lé e. Àkọọ́lẹ̀ tí ó ti ní ọ̀kan tẹ́lẹ̀ yóò wà bí ó ṣe wà."
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Cancel"
+msgstr "Fagilé"
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Continue"
+msgstr "Tẹ̀síwájú"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Cloudflare Account [edit: %s]"
+msgstr "Àkọọ́lẹ̀ Cloudflare [àtúnṣe: %s]"
+
+#: includes/accounts_page.php
+msgid "Cloudflare Account [new]"
+msgstr "Àkọọ́lẹ̀ Cloudflare [tuntun]"
+
+#: includes/accounts_page.php includes/viewer.php src/OperatorPage.php
+msgid "Never"
+msgstr "Láéláé"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Status"
+msgstr "Ipò"
+
+#: includes/accounts_page.php
+msgid "Message"
+msgstr "Ìfiranṣẹ́"
+
+#: includes/accounts_page.php
+msgid "No"
+msgstr "Rárá"
+
+#: includes/accounts_page.php
+msgid "Token Stored"
+msgstr "Tọ́kìnì Ti Wà Ní Ìpamọ́"
+
+#: includes/accounts_page.php
+msgid "Yes"
+msgstr "Bẹ́ẹ̀ ni"
+
+#: includes/accounts_page.php
+msgid "Last Checked"
+msgstr "Ìyẹ̀wò Tí Ó Kẹ́yìn"
+
+#: includes/accounts_page.php
+msgid "Last Verified"
+msgstr "Ìjẹ́rìísí Tí Ó Kẹ́yìn"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Permission: %s"
+msgstr "Àṣẹ: %s"
+
+#: includes/accounts_page.php
+msgid "Granted"
+msgstr "Ti Fúnni"
+
+#: includes/accounts_page.php
+msgid "Missing"
+msgstr "Sọnù"
+
+#: includes/accounts_page.php
+msgid "Connection Status"
+msgstr "Ipò Àsopọ̀"
+
+#: includes/accounts_page.php includes/settings.php includes/viewer.php
+msgid "Cloudflare Accounts"
+msgstr "Àwọn Àkọọ́lẹ̀ Cloudflare"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Search"
+msgstr "Ṣàwárí"
+
+#: includes/accounts_page.php
+msgid "Accounts"
+msgstr "Àwọn Àkọọ́lẹ̀"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Default"
+msgstr "Àìyípadà"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Go"
+msgstr "Lọ"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Set/Refresh Filters"
+msgstr "Ṣètò/Sọ Àwọn Àlẹ̀mọ́ Dọ̀tun"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear"
+msgstr "Nu kúrò"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear Filters"
+msgstr "Nu Àwọn Àlẹ̀mọ́ Kúrò"
+
+#: includes/accounts_page.php
+msgid "The name of this account in Cacti."
+msgstr "Orúkọ àkọọ́lẹ̀ yìí nínú Cacti."
+
+#: includes/accounts_page.php
+msgid "Whether an API token is configured. The edit page shows where it is kept."
+msgstr "Bóyá a ti ṣètò tọ́kìnì API. Ojú-ìwé àtúnṣe fi ibi tí a gbé e pamọ́ sí hàn."
+
+#: includes/accounts_page.php
+msgid "The result of the last Verify."
+msgstr "Èsì Ìjẹ́rìísí (Verify) tí ó kẹ́yìn."
+
+#: includes/accounts_page.php
+msgid "ID"
+msgstr "ID"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "No Cloudflare Accounts Found"
+msgstr "Kò Sí Àkọọ́lẹ̀ Cloudflare Tí A Rí"
+
+#: includes/operator.php
+msgid "Inspect tunnels and connector counts. Escalate token changes, account configuration and graph creation to an administrator."
+msgstr "Ṣàyẹ̀wò àwọn tunnel àti iye àwọn asopọ̀. Gbé àwọn àyípadà tọ́kìnì, ìṣètò àkọọ́lẹ̀ àti ìṣẹ̀dá gíráàfù síwájú fún alákòóso."
+
+#: includes/settings.php
+msgid "Configuration"
+msgstr "Ìṣètò"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Cloudflare Operations"
+msgstr "Àwọn Iṣẹ́ Cloudflare"
+
+#: includes/settings.php
+msgid "Management"
+msgstr "Ìṣàkóso"
+
+#: includes/settings.php includes/viewer.php
+msgid "Cloudflare Tunnels"
+msgstr "Àwọn Cloudflare Tunnel"
+
+#: includes/settings.php
+msgid "(edit)"
+msgstr "(ṣàtúnṣe)"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Actions"
+msgstr "Àwọn Ìgbésẹ̀"
+
+#: includes/settings.php includes/viewer.php
+msgid "Overview"
+msgstr "Àkópọ̀"
+
+#: includes/settings.php includes/viewer.php
+msgid "Tunnels"
+msgstr "Àwọn Tunnel"
+
+#: includes/settings.php includes/viewer.php
+msgid "Connectors"
+msgstr "Àwọn Asopọ̀"
+
+#: includes/settings.php
+msgid "Token Vault Key File"
+msgstr "Fáìlì Kọ́kọ́rọ́ Ibi Ìpamọ́ Tọ́kìnì"
+
+#: includes/settings.php
+msgid "Absolute path to the 32-byte key used to encrypt stored API tokens. It must be readable by the web server and poller users and not world-readable. When the file is missing, only token files can be used."
+msgstr "Ọ̀nà pípé sí kọ́kọ́rọ́ 32-byte tí a ń lò láti fi àṣírí pa àwọn tọ́kìnì API tí a fi pamọ́ mọ́. Ó gbọ́dọ̀ ṣeé kà fún sáfà wẹ́ẹ̀bù àti àwọn olùlò poller, kò sì gbọ́dọ̀ ṣeé kà fún gbogbo ènìyàn. Nígbà tí fáìlì náà bá sọnù, àwọn fáìlì tọ́kìnì nìkan ni a lè lò."
+
+#: includes/settings.php
+msgid "Token File Directory"
+msgstr "Àpò Fáìlì Tọ́kìnì"
+
+#: includes/settings.php
+msgid "Absolute path of the directory that every account token file must be in. When empty, a token file may be anywhere the web server and poller users can read."
+msgstr "Ọ̀nà pípé ti àpò tí gbogbo fáìlì tọ́kìnì àkọọ́lẹ̀ gbọ́dọ̀ wà nínú rẹ̀. Nígbà tí ó bá ṣófo, fáìlì tọ́kìnì lè wà ní ibikíbi tí sáfà wẹ́ẹ̀bù àti àwọn olùlò poller lè kà."
+
+#: includes/settings.php
+msgid "Interactive Request Timeout"
+msgstr "Àkókò Ìparí Ìbéèrè Alábàáṣepọ̀"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made from the web interface, such as Verify."
+msgstr "Àpapọ̀ àkókò ní ìṣẹ́jú-àáyá tí a gbà láàyè fún ìbéèrè Cloudflare API tí a ṣe láti ojú-ìwé wẹ́ẹ̀bù, bíi Ìjẹ́rìísí (Verify)."
+
+#: includes/settings.php
+msgid "Collector Request Timeout"
+msgstr "Àkókò Ìparí Ìbéèrè Olùkójọpọ̀"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made by the background collector."
+msgstr "Àpapọ̀ àkókò ní ìṣẹ́jú-àáyá tí a gbà láàyè fún ìbéèrè Cloudflare API tí olùkójọpọ̀ ẹ̀yìn ṣe."
+
+#: includes/settings.php
+msgid "Log Level"
+msgstr "Ìpele Àkọọ́lẹ̀ Ìṣẹ̀lẹ̀"
+
+#: includes/settings.php
+msgid "The amount of detail the plugin writes to the Cacti log."
+msgstr "Ìwọ̀n àlàyé tí plugin náà ń kọ sínú àkọọ́lẹ̀ ìṣẹ̀lẹ̀ Cacti."
+
+#: includes/tunnel_retirement.php
+msgid "The tunnel could not be retired. Check permissions and retry after collection finishes."
+msgstr "A kò lè fẹ̀yìntì tunnel náà. Ṣàyẹ̀wò àwọn àṣẹ kí o sì tún gbìyànjú lẹ́yìn tí ìkójọpọ̀ bá parí."
+
+#: includes/tunnel_retirement.php includes/viewer.php
+msgid "Retire tunnel"
+msgstr "Fẹ̀yìntì tunnel"
+
+#: includes/tunnel_retirement.php
+msgid "Retiring removes the graphs and unshared data sources created for this deleted tunnel. Cacti controls RRD cleanup. The inventory record is kept."
+msgstr "Fífẹ̀yìntì máa ń yọ àwọn gíráàfù àti àwọn orísun dátà tí kò ṣàjọpín tí a ṣẹ̀dá fún tunnel tí a pa rẹ́ yìí kúrò. Cacti ni ó ń ṣàkóso ìwẹ̀nùmọ́ RRD. A ó pa àkọsílẹ̀ ohun-ìní mọ́."
+
+#: includes/viewer.php
+msgid "The Cloudflare tunnels could not be read. See the Cacti log for details."
+msgstr "A kò lè ka àwọn Cloudflare tunnel. Wo àkọọ́lẹ̀ ìṣẹ̀lẹ̀ Cacti fún àlàyé kíkún."
+
+#: includes/viewer.php
+msgid "Zone Analytics"
+msgstr "Ìtúpalẹ̀ Agbègbè (Zone)"
+
+#: includes/viewer.php
+msgid "Disabled"
+msgstr "Àìṣiṣẹ́"
+
+#: includes/viewer.php
+msgid "Not collected"
+msgstr "A kò tíì kó o jọ"
+
+#: includes/viewer.php
+msgid "Collection failing"
+msgstr "Ìkójọpọ̀ ń kùnà"
+
+#: includes/viewer.php
+msgid "Not yet collected"
+msgstr "A kò tíì kó o jọ síbẹ̀"
+
+#: includes/viewer.php
+msgid "Down"
+msgstr "Kò ṣeé dé bá"
+
+#: includes/viewer.php
+msgid "Degraded"
+msgstr "Ìṣẹ́ dínkù"
+
+#: includes/viewer.php
+msgid "Healthy"
+msgstr "Wà ní ìlera"
+
+#: includes/viewer.php
+msgid "Inactive"
+msgstr "Kò ṣiṣẹ́"
+
+#: includes/viewer.php
+msgid "No active tunnels"
+msgstr "Kò sí àwọn tunnel tí ó ń ṣiṣẹ́"
+
+#: includes/viewer.php
+msgid "The worst status among active tunnels, or Collection failing while discovery fails."
+msgstr "Ipò tí ó burú jùlọ láàárín àwọn tunnel tí ó ń ṣiṣẹ́, tàbí Ìkójọpọ̀ ń kùnà nígbà tí ìṣàwárí bá kùnà."
+
+#: includes/viewer.php
+msgid "Active"
+msgstr "Ń ṣiṣẹ́"
+
+#: includes/viewer.php
+msgid "Unavailable"
+msgstr "Kò sí ní àrọ́wọ́tó"
+
+#: includes/viewer.php
+msgid "Deleted"
+msgstr "Ti Pa Rẹ́"
+
+#: includes/viewer.php
+msgid "Last Successful Discovery"
+msgstr "Ìṣàwárí Tí Ó Yọrí Sí Rere Kẹ́yìn"
+
+#: includes/viewer.php
+msgid "Consecutive Failures"
+msgstr "Àwọn Ìkùnà Títẹ̀léra"
+
+#: includes/viewer.php
+#, php-format
+msgid "Last error: %s"
+msgstr "Àṣìṣe kẹ́yìn: %s"
+
+#: includes/viewer.php
+msgid "Tunnel"
+msgstr "Tunnel"
+
+#: includes/viewer.php
+msgid "Cloudflare Status"
+msgstr "Ipò Cloudflare"
+
+#: includes/viewer.php
+msgid "The status Cloudflare reported at the last discovery."
+msgstr "Ipò tí Cloudflare ròyìn ní ìṣàwárí tí ó kẹ́yìn."
+
+#: includes/viewer.php
+msgid "Lifecycle"
+msgstr "Ìpele Ìgbésí-ayé"
+
+#: includes/viewer.php
+msgid "Whether the last discoveries still found this tunnel."
+msgstr "Bóyá àwọn ìṣàwárí tí ó kẹ́yìn ṣì rí tunnel yìí."
+
+#: includes/viewer.php
+msgid "Type"
+msgstr "Irú"
+
+#: includes/viewer.php
+msgid "Connections"
+msgstr "Àwọn Àsopọ̀"
+
+#: includes/viewer.php
+msgid "Last Seen"
+msgstr "Ìgbà Tí A Rí I Kẹ́yìn"
+
+#: includes/viewer.php
+msgid "Any"
+msgstr "Èyíkéyìí"
+
+#: includes/viewer.php
+msgid "All"
+msgstr "Gbogbo rẹ̀"
+
+#: includes/viewer.php
+msgid "No Cloudflare Tunnels Found"
+msgstr "Kò Sí Àwọn Cloudflare Tunnel Tí A Rí"
+
+#: includes/viewer.php
+msgid "Choose a tunnel on the Tunnels tab."
+msgstr "Yan tunnel kan lórí taabu Àwọn Tunnel."
+
+#: includes/viewer.php
+msgid "The tunnel no longer exists."
+msgstr "Tunnel náà kò sí mọ́."
+
+#: includes/viewer.php
+#, php-format
+msgid "Connectors for %s"
+msgstr "Àwọn Asopọ̀ fún %s"
+
+#: includes/viewer.php
+msgid "Connector ID"
+msgstr "ID Asopọ̀"
+
+#: includes/viewer.php
+msgid "Version"
+msgstr "Ẹ̀yà"
+
+#: includes/viewer.php
+msgid "Architecture"
+msgstr "Ètò Ẹ̀rọ"
+
+#: includes/viewer.php
+msgid "Running Since"
+msgstr "Ń Ṣiṣẹ́ Láti"
+
+#: includes/viewer.php
+msgid "Data Centers"
+msgstr "Àwọn Ibùdó Dátà"
+
+#: includes/viewer.php
+msgid "Origin IPs"
+msgstr "Àwọn IP Orísun"
+
+#: includes/viewer.php
+#, php-format
+msgid "This tunnel is %s. These connectors were last seen while the tunnel was active."
+msgstr "Tunnel yìí jẹ́ %s. A rí àwọn asopọ̀ wọ̀nyí kẹ́yìn nígbà tí tunnel náà ń ṣiṣẹ́."
+
+#: includes/viewer.php
+msgid "No connectors are running for this tunnel."
+msgstr "Kò sí àwọn asopọ̀ tí ó ń ṣiṣẹ́ fún tunnel yìí."
+
+#: includes/viewer.php
+msgid "Export"
+msgstr "Kó jáde"
+
+#: includes/viewer.php
+msgid "Bytes/s"
+msgstr "Bytes/s"
+
+#: includes/viewer.php
+msgid "HTTP 5xx (%)"
+msgstr "HTTP 5xx (%)"
+
+#: includes/viewer.php
+msgid "Requests/s"
+msgstr "Àwọn Ìbéèrè/s"
+
+#: includes/viewer.php
+msgid "Zone"
+msgstr "Agbègbè (Zone)"
+
+#: src/OperatorPage.php
+msgid "Review the recorded observations below. Acknowledgments are personal to this session, expire when observations change, and never suppress alerts or change health."
+msgstr "Ṣàyẹ̀wò àwọn àkíyèsí tí a kọ sílẹ̀ ní ìsàlẹ̀ yìí. Àwọn ìjẹ́rìísí wà fún ìgbà ìpàdé yìí nìkan, wọ́n ń dópin nígbà tí àwọn àkíyèsí bá yí padà, wọn kì í sì í dín àwọn ìtanijí kù tàbí yí ìlera padà."
+
+#: src/OperatorPage.php
+msgid "Investigation"
+msgstr "Ìwádìí"
+
+#: src/OperatorPage.php
+msgid "Object"
+msgstr "Ohun"
+
+#: src/OperatorPage.php
+msgid "Observed (UTC)"
+msgstr "Àkíyèsí (UTC)"
+
+#: src/OperatorPage.php
+msgid "State"
+msgstr "Ipò"
+
+#: src/OperatorPage.php
+msgid "Unknown or stale"
+msgstr "Àìmọ̀ tàbí ó ti pẹ́"
+
+#: src/OperatorPage.php
+msgid "Acknowledged; health unchanged."
+msgstr "A ti jẹ́rìí sí i; ìlera kò yí padà."
+
+#: src/OperatorPage.php
+msgid "Acknowledge"
+msgstr "Jẹ́rìí sí i"
+
+#: src/OperatorPage.php
+msgid "No observations are available."
+msgstr "Kò sí àwọn àkíyèsí tí ó wà."

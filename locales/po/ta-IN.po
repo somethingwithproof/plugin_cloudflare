@@ -1,0 +1,774 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-FileCopyrightText: 2026 Thomas Vincent <thomasvincent@gmail.com>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cloudflare 0.4.0-dev\n"
+"Report-Msgid-Bugs-To: https://github.com/somethingwithproof/plugin_cloudflare/issues\n"
+"PO-Revision-Date: 2026-11-26 00:00+0000\n"
+"Last-Translator: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language-Team: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language: ta-IN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: cloudflare_operator.php
+msgid "Monitoring view"
+msgstr "கண்காணிப்புப் பார்வை"
+
+#: cloudflare_operator.php
+msgid "Observations could not be read. Ask an administrator to check the plugin log."
+msgstr "அவதானிப்புகளைப் படிக்க முடியவில்லை. செருகுநிரல் பதிவைச் சரிபார்க்க நிர்வாகியிடம் கேளுங்கள்."
+
+#: includes/accounts.php
+msgid "Connection verified"
+msgstr "இணைப்பு சரிபார்க்கப்பட்டது"
+
+#: includes/accounts.php
+msgid "Token is not active; it may be expired or disabled"
+msgstr "டோக்கன் செயலில் இல்லை; அது காலாவதியானதாகவோ அல்லது முடக்கப்பட்டதாகவோ இருக்கலாம்"
+
+#: includes/accounts.php
+msgid "Token is invalid or expired"
+msgstr "டோக்கன் செல்லுபடியாகாதது அல்லது காலாவதியானது"
+
+#: includes/accounts.php
+msgid "Token lacks the Account Cloudflare Tunnel Read permission"
+msgstr "டோக்கனுக்கு Account Cloudflare Tunnel Read அனுமதி இல்லை"
+
+#: includes/accounts.php
+msgid "Cloudflare API is unreachable; try again later"
+msgstr "Cloudflare API ஐ அணுக முடியவில்லை; பின்னர் மீண்டும் முயற்சிக்கவும்"
+
+#: includes/accounts.php
+msgid "Cloudflare API rate limit reached; try again later"
+msgstr "Cloudflare API விகித வரம்பை எட்டிவிட்டது; பின்னர் மீண்டும் முயற்சிக்கவும்"
+
+#: includes/accounts.php
+msgid "Cloudflare API request failed unexpectedly"
+msgstr "Cloudflare API கோரிக்கை எதிர்பாராதவிதமாகத் தோல்வியடைந்தது"
+
+#: includes/accounts.php
+msgid "Token lacks the permissions needed to verify it"
+msgstr "டோக்கனைச் சரிபார்க்கத் தேவையான அனுமதிகள் இல்லை"
+
+#: includes/accounts.php
+msgid "Stored token cannot be decrypted"
+msgstr "சேமிக்கப்பட்ட டோக்கனை மறைகுறியாக்கம் நீக்க முடியவில்லை"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing or unusable"
+msgstr "டோக்கன் பெட்டக விசைக் கோப்பு காணவில்லை அல்லது பயன்படுத்த முடியாத நிலையில் உள்ளது"
+
+#: includes/accounts.php
+msgid "Token file is missing or insecure"
+msgstr "டோக்கன் கோப்பு காணவில்லை அல்லது பாதுகாப்பற்றது"
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable; configure the key file or use a token file"
+msgstr "குறியாக்கப்பட்ட சேமிப்பகம் கிடைக்கவில்லை; விசைக் கோப்பை உள்ளமைக்கவும் அல்லது டோக்கன் கோப்பைப் பயன்படுத்தவும்"
+
+#: includes/accounts.php
+msgid "Enter the 32-character hexadecimal Cloudflare account ID"
+msgstr "32-எழுத்துப் பதினாறும Cloudflare கணக்கு ID ஐ உள்ளிடவும்"
+
+#: includes/accounts.php
+msgid "Enter a name of 1 to 100 characters without control characters"
+msgstr "கட்டுப்பாட்டு எழுத்துகள் இல்லாமல் 1 முதல் 100 எழுத்துகள் கொண்ட பெயரை உள்ளிடவும்"
+
+#: includes/accounts.php
+msgid "Choose an encrypted token or a token file"
+msgstr "குறியாக்கப்பட்ட டோக்கன் அல்லது டோக்கன் கோப்பைத் தேர்ந்தெடுக்கவும்"
+
+#: includes/accounts.php
+msgid "Enter an API token"
+msgstr "ஒரு API டோக்கனை உள்ளிடவும்"
+
+#: includes/accounts.php
+msgid "Re-enter the token when changing the account ID"
+msgstr "கணக்கு ID ஐ மாற்றும்போது டோக்கனை மீண்டும் உள்ளிடவும்"
+
+#: includes/accounts.php
+msgid "Enter an absolute path of at most 255 characters"
+msgstr "அதிகபட்சம் 255 எழுத்துகள் கொண்ட முழுமையான பாதையை உள்ளிடவும்"
+
+#: includes/accounts.php
+msgid "Must be 0 or 1"
+msgstr "0 அல்லது 1 ஆக இருக்க வேண்டும்"
+
+#: includes/accounts.php
+msgid "Enter a whole number of seconds from 60 to 86400"
+msgstr "60 முதல் 86400 வரையிலான முழு எண்ணில் வினாடிகளை உள்ளிடவும்"
+
+#: includes/accounts.php
+msgid "This Cloudflare account ID is already configured"
+msgstr "இந்த Cloudflare கணக்கு ID ஏற்கனவே கட்டமைக்கப்பட்டுள்ளது"
+
+#: includes/accounts.php
+msgid "Global API Keys are not accepted; use a scoped API token"
+msgstr "Global API Keys ஏற்கப்படாது; வரம்பிடப்பட்ட API டோக்கனைப் பயன்படுத்தவும்"
+
+#: includes/accounts.php
+msgid "API token format is invalid"
+msgstr "API டோக்கன் வடிவம் தவறானது"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing, unreadable, insecure or malformed"
+msgstr "டோக்கன் பெட்டக விசைக் கோப்பு இல்லை, படிக்க முடியாதது, பாதுகாப்பற்றது அல்லது தவறாக வடிவமைக்கப்பட்டுள்ளது"
+
+#: includes/accounts.php
+msgid "Stored API token could not be decrypted"
+msgstr "சேமிக்கப்பட்ட API டோக்கனை மறைகுறியாக்கம் செய்ய முடியவில்லை"
+
+#: includes/accounts.php
+msgid "Token file is missing, unreadable, not a regular file or too large"
+msgstr "டோக்கன் கோப்பு இல்லை, படிக்க முடியாதது, வழக்கமான கோப்பு அல்ல அல்லது மிகப் பெரியது"
+
+#: includes/accounts.php
+msgid "Token file path is not absolute, is a symlink, or the file is world-readable or world-writable"
+msgstr "டோக்கன் கோப்புப் பாதை முழுமையான பாதை அல்ல, symlink ஆகும், அல்லது கோப்பு அனைவரும் படிக்கக்கூடியதாகவோ அனைவரும் எழுதக்கூடியதாகவோ உள்ளது"
+
+#: includes/accounts.php
+msgid "Token file is not inside the Token File Directory"
+msgstr "டோக்கன் கோப்பு, டோக்கன் கோப்பு அடைவுக்குள் இல்லை"
+
+#: includes/accounts.php
+msgid "API token could not be encrypted"
+msgstr "API டோக்கனை குறியாக்கம் செய்ய முடியவில்லை"
+
+#: includes/accounts.php
+msgid "Credential error"
+msgstr "அங்கீகாரச் சான்றுப் பிழை"
+
+#: includes/accounts.php includes/settings.php
+msgid "Cloudflare"
+msgstr "Cloudflare"
+
+#: includes/accounts.php
+msgid "Encrypted in the Cacti database"
+msgstr "Cacti தரவுத்தளத்தில் குறியாக்கம் செய்யப்பட்டது"
+
+#: includes/accounts.php
+msgid "Token file on this server"
+msgstr "இந்தச் சேவையகத்தில் உள்ள டோக்கன் கோப்பு"
+
+#: includes/accounts.php includes/viewer.php
+msgid "Account"
+msgstr "கணக்கு"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Name"
+msgstr "பெயர்"
+
+#: includes/accounts.php
+msgid "A label for this account in Cacti."
+msgstr "Cacti-யில் இந்தக் கணக்கிற்கான அடையாளப் பெயர்."
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Account ID"
+msgstr "கணக்கு ID"
+
+#: includes/accounts.php
+msgid "The 32-character Cloudflare account ID, shown in the dashboard URL and on the account overview page."
+msgstr "டாஷ்போர்டு URL மற்றும் கணக்கு மேலோட்டப் பக்கத்தில் காட்டப்படும் 32 எழுத்துகள் கொண்ட Cloudflare கணக்கு ID."
+
+#: includes/accounts.php
+msgid "API Token"
+msgstr "API டோக்கன்"
+
+#: includes/accounts.php
+msgid "Token Storage"
+msgstr "டோக்கன் சேமிப்பகம்"
+
+#: includes/accounts.php
+msgid "Where the scoped API token is kept. Global API Keys are not accepted."
+msgstr "வரம்பிடப்பட்ட API டோக்கன் வைக்கப்படும் இடம். Global API Keys ஏற்கப்படாது."
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable because the key file in Settings is missing or unusable; only token files can be used."
+msgstr "அமைப்புகளில் உள்ள விசைக் கோப்பு இல்லாததால் அல்லது பயன்படுத்த முடியாததால் குறியாக்கம் செய்யப்பட்ட சேமிப்பகம் கிடைக்கவில்லை; டோக்கன் கோப்புகளை மட்டுமே பயன்படுத்த முடியும்."
+
+#: includes/accounts.php
+msgid "Leave blank to keep the current token"
+msgstr "தற்போதைய டோக்கனை வைத்திருக்க காலியாக விடவும்"
+
+#: includes/accounts.php
+msgid "A scoped API token with Account Cloudflare Tunnel Read permission."
+msgstr "Account Cloudflare Tunnel Read அனுமதியுடன் கூடிய வரம்பிடப்பட்ட API டோக்கன்."
+
+#: includes/accounts.php
+msgid "Token File"
+msgstr "டோக்கன் கோப்பு"
+
+#: includes/accounts.php
+msgid "Absolute path to a file that contains only the token. It must be readable by the web server and poller users and must not be world-readable."
+msgstr "டோக்கனை மட்டுமே கொண்ட கோப்பிற்கான முழுமையான பாதை. இது வலைச் சேவையகம் மற்றும் poller பயனர்களால் படிக்கக்கூடியதாக இருக்க வேண்டும், மேலும் அனைவரும் படிக்கக்கூடியதாக இருக்கக் கூடாது."
+
+#: includes/accounts.php
+msgid "Collection"
+msgstr "சேகரிப்பு"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Enabled"
+msgstr "இயக்கப்பட்டது"
+
+#: includes/accounts.php
+msgid "Disabled accounts are not polled."
+msgstr "முடக்கப்பட்ட கணக்குகளில் தரவு சேகரிக்கப்படாது."
+
+#: includes/accounts.php
+msgid "Collect Tunnels"
+msgstr "Tunnel-களைச் சேகரி"
+
+#: includes/accounts.php
+msgid "Discover Cloudflare Tunnels and their connectors."
+msgstr "Cloudflare Tunnel-களையும் அவற்றின் இணைப்பிகளையும் கண்டறியவும்."
+
+#: includes/accounts.php
+msgid "Collect Analytics"
+msgstr "பகுப்பாய்வுகளைச் சேகரி"
+
+#: includes/accounts.php
+msgid "Collect zone traffic analytics. This needs the Account Analytics Read and Analytics Read (Zone) permissions."
+msgstr "மண்டலப் போக்குவரத்துப் பகுப்பாய்வுகளைச் சேகரி. இதற்கு Account Analytics Read மற்றும் Analytics Read (Zone) அனுமதிகள் தேவை."
+
+#: includes/accounts.php
+msgid "Create Graphs"
+msgstr "வரைபடங்களை உருவாக்கு"
+
+#: includes/accounts.php
+msgid "Create graphs for each tunnel on the account's Cacti device. Turning this on needs the permission to edit Cacti devices."
+msgstr "கணக்கின் Cacti சாதனத்தில் உள்ள ஒவ்வொரு Tunnel-க்கும் வரைபடங்களை உருவாக்கவும். இதை இயக்க Cacti சாதனங்களைத் திருத்தும் அனுமதி தேவை."
+
+#: includes/accounts.php
+msgid "Discovery Interval"
+msgstr "கண்டறிதல் இடைவெளி"
+
+#: includes/accounts.php
+msgid "Seconds between inventory refreshes, from 60 to 86400."
+msgstr "வளப் பட்டியல் புதுப்பிப்புகளுக்கு இடையிலான வினாடிகள், 60 முதல் 86400 வரை."
+
+#: includes/accounts.php
+msgid "The token and its confirmation do not match"
+msgstr "டோக்கனும் அதன் உறுதிப்படுத்தலும் பொருந்தவில்லை"
+
+#: includes/accounts_page.php
+msgid "Delete"
+msgstr "நீக்கு"
+
+#: includes/accounts_page.php
+msgid "Verify"
+msgstr "சரிபார்"
+
+#: includes/accounts_page.php
+msgid "Enable"
+msgstr "இயக்கு"
+
+#: includes/accounts_page.php
+msgid "Disable"
+msgstr "முடக்கு"
+
+#: includes/accounts_page.php
+msgid "Create Cacti Device"
+msgstr "Cacti சாதனத்தை உருவாக்கு"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to change Cloudflare accounts."
+msgstr "Cloudflare கணக்குகளை மாற்ற உங்களுக்கு அனுமதி இல்லை."
+
+#: includes/accounts_page.php
+msgid "The Cloudflare account no longer exists."
+msgstr "Cloudflare கணக்கு இனி இல்லை."
+
+#: includes/accounts_page.php
+msgid "The Cloudflare accounts could not be read. See the Cacti log for details."
+msgstr "Cloudflare கணக்குகளைப் படிக்க முடியவில்லை. விவரங்களுக்கு Cacti பதிவைப் பார்க்கவும்."
+
+#: includes/accounts_page.php
+msgid "Create Graphs was left off: turning it on needs the permission to edit Cacti devices."
+msgstr "வரைபடங்களை உருவாக்கு என்பது முடக்கப்பட்டுள்ளது: இதை இயக்க Cacti சாதனங்களைத் திருத்தும் அனுமதி தேவை."
+
+#: includes/accounts_page.php
+msgid "Cacti device created"
+msgstr "Cacti சாதனம் உருவாக்கப்பட்டது"
+
+#: includes/accounts_page.php
+msgid "A Cacti device already exists for this account"
+msgstr "இந்தக் கணக்கிற்கு ஏற்கனவே ஒரு Cacti சாதனம் உள்ளது"
+
+#: includes/accounts_page.php
+msgid "The Cloudflare templates are not installed; see the Cacti log"
+msgstr "Cloudflare வார்ப்புருக்கள் நிறுவப்படவில்லை; Cacti பதிவைப் பார்க்கவும்"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices"
+msgstr "Cacti சாதனங்களை உருவாக்க உங்களுக்கு அனுமதி இல்லை"
+
+#: includes/accounts_page.php
+msgid "The Cacti device could not be created; see the Cacti log"
+msgstr "Cacti சாதனத்தை உருவாக்க முடியவில்லை; Cacti பதிவைப் பார்க்கவும்"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices."
+msgstr "Cacti சாதனங்களை உருவாக்க உங்களுக்கு அனுமதி இல்லை."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Delete the following Cloudflare Account. Its discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgid_plural "Click 'Continue' to Delete the following Cloudflare Accounts. Their discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgstr[0] "பின்வரும் Cloudflare கணக்கை நீக்க 'தொடரவும்' என்பதைக் கிளிக் செய்யவும். கண்டறியப்பட்ட அதன் வளப் பட்டியல் மற்றும் பணி நிலை அகற்றப்படும்; Cacti சாதனங்களும் வரைபடங்களும் வைக்கப்படும்."
+msgstr[1] "பின்வரும் Cloudflare கணக்குகளை நீக்க 'தொடரவும்' என்பதைக் கிளிக் செய்யவும். கண்டறியப்பட்ட அவற்றின் வளப் பட்டியல் மற்றும் பணி நிலை அகற்றப்படும்; Cacti சாதனங்களும் வரைபடங்களும் வைக்கப்படும்."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Verify the following Cloudflare Account against the Cloudflare API."
+msgid_plural "Click 'Continue' to Verify the following Cloudflare Accounts against the Cloudflare API."
+msgstr[0] "Cloudflare API உடன் பின்வரும் Cloudflare கணக்கைச் சரிபார்க்க 'தொடரவும்' என்பதைக் கிளிக் செய்யவும்."
+msgstr[1] "Cloudflare API உடன் பின்வரும் Cloudflare கணக்குகளைச் சரிபார்க்க 'தொடரவும்' என்பதைக் கிளிக் செய்யவும்."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Enable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Enable the following Cloudflare Accounts."
+msgstr[0] "பின்வரும் Cloudflare கணக்கை இயக்க 'தொடரவும்' என்பதைக் கிளிக் செய்யவும்."
+msgstr[1] "பின்வரும் Cloudflare கணக்குகளை இயக்க 'தொடரவும்' என்பதைக் கிளிக் செய்யவும்."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Disable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Disable the following Cloudflare Accounts."
+msgstr[0] "பின்வரும் Cloudflare கணக்கை முடக்க 'தொடரவும்' என்பதைக் கிளிக் செய்யவும்."
+msgstr[1] "பின்வரும் Cloudflare கணக்குகளை முடக்க 'தொடரவும்' என்பதைக் கிளிக் செய்யவும்."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to create a Cacti device for the following Cloudflare Account. An account that already has one is left as it is."
+msgid_plural "Click 'Continue' to create a Cacti device for each of the following Cloudflare Accounts. An account that already has one is left as it is."
+msgstr[0] "பின்வரும் Cloudflare கணக்கிற்கு ஒரு Cacti சாதனத்தை உருவாக்க 'தொடரவும்' என்பதைக் கிளிக் செய்யவும். ஏற்கனவே ஒன்றைக் கொண்ட கணக்கு அப்படியே விடப்படும்."
+msgstr[1] "பின்வரும் ஒவ்வொரு Cloudflare கணக்கிற்கும் ஒரு Cacti சாதனத்தை உருவாக்க 'தொடரவும்' என்பதைக் கிளிக் செய்யவும். ஏற்கனவே ஒன்றைக் கொண்ட கணக்கு அப்படியே விடப்படும்."
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Cancel"
+msgstr "ரத்து செய்"
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Continue"
+msgstr "தொடரவும்"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Cloudflare Account [edit: %s]"
+msgstr "Cloudflare கணக்கு [திருத்து: %s]"
+
+#: includes/accounts_page.php
+msgid "Cloudflare Account [new]"
+msgstr "Cloudflare கணக்கு [புதியது]"
+
+#: includes/accounts_page.php includes/viewer.php src/OperatorPage.php
+msgid "Never"
+msgstr "ஒருபோதும் இல்லை"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Status"
+msgstr "நிலை"
+
+#: includes/accounts_page.php
+msgid "Message"
+msgstr "செய்தி"
+
+#: includes/accounts_page.php
+msgid "No"
+msgstr "இல்லை"
+
+#: includes/accounts_page.php
+msgid "Token Stored"
+msgstr "டோக்கன் சேமிக்கப்பட்டது"
+
+#: includes/accounts_page.php
+msgid "Yes"
+msgstr "ஆம்"
+
+#: includes/accounts_page.php
+msgid "Last Checked"
+msgstr "கடைசியாகச் சோதிக்கப்பட்டது"
+
+#: includes/accounts_page.php
+msgid "Last Verified"
+msgstr "கடைசியாகச் சரிபார்க்கப்பட்டது"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Permission: %s"
+msgstr "அனுமதி: %s"
+
+#: includes/accounts_page.php
+msgid "Granted"
+msgstr "வழங்கப்பட்டது"
+
+#: includes/accounts_page.php
+msgid "Missing"
+msgstr "காணவில்லை"
+
+#: includes/accounts_page.php
+msgid "Connection Status"
+msgstr "இணைப்பு நிலை"
+
+#: includes/accounts_page.php includes/settings.php includes/viewer.php
+msgid "Cloudflare Accounts"
+msgstr "Cloudflare கணக்குகள்"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Search"
+msgstr "தேடு"
+
+#: includes/accounts_page.php
+msgid "Accounts"
+msgstr "கணக்குகள்"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Default"
+msgstr "இயல்புநிலை"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Go"
+msgstr "செல்"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Set/Refresh Filters"
+msgstr "வடிகட்டிகளை அமை/புதுப்பி"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear"
+msgstr "அழி"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear Filters"
+msgstr "வடிகட்டிகளை அழி"
+
+#: includes/accounts_page.php
+msgid "The name of this account in Cacti."
+msgstr "Cacti-யில் இந்தக் கணக்கின் பெயர்."
+
+#: includes/accounts_page.php
+msgid "Whether an API token is configured. The edit page shows where it is kept."
+msgstr "API டோக்கன் கட்டமைக்கப்பட்டுள்ளதா என்பது. அது எங்கே வைக்கப்பட்டுள்ளது என்பதைத் திருத்தப் பக்கம் காட்டுகிறது."
+
+#: includes/accounts_page.php
+msgid "The result of the last Verify."
+msgstr "கடைசி சரிபார்ப்பின் முடிவு."
+
+#: includes/accounts_page.php
+msgid "ID"
+msgstr "ID"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "No Cloudflare Accounts Found"
+msgstr "Cloudflare கணக்குகள் எதுவும் கிடைக்கவில்லை"
+
+#: includes/operator.php
+msgid "Inspect tunnels and connector counts. Escalate token changes, account configuration and graph creation to an administrator."
+msgstr "Tunnel-கள் மற்றும் இணைப்பி எண்ணிக்கைகளை ஆய்வு செய்யவும். டோக்கன் மாற்றங்கள், கணக்கு கட்டமைப்பு மற்றும் வரைபட உருவாக்கத்தை நிர்வாகியிடம் தெரிவிக்கவும்."
+
+#: includes/settings.php
+msgid "Configuration"
+msgstr "கட்டமைப்பு"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Cloudflare Operations"
+msgstr "Cloudflare செயல்பாடுகள்"
+
+#: includes/settings.php
+msgid "Management"
+msgstr "மேலாண்மை"
+
+#: includes/settings.php includes/viewer.php
+msgid "Cloudflare Tunnels"
+msgstr "Cloudflare Tunnel-கள்"
+
+#: includes/settings.php
+msgid "(edit)"
+msgstr "(திருத்து)"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Actions"
+msgstr "செயல்கள்"
+
+#: includes/settings.php includes/viewer.php
+msgid "Overview"
+msgstr "மேலோட்டம்"
+
+#: includes/settings.php includes/viewer.php
+msgid "Tunnels"
+msgstr "Tunnel-கள்"
+
+#: includes/settings.php includes/viewer.php
+msgid "Connectors"
+msgstr "இணைப்பிகள்"
+
+#: includes/settings.php
+msgid "Token Vault Key File"
+msgstr "டோக்கன் பெட்டக விசைக் கோப்பு"
+
+#: includes/settings.php
+msgid "Absolute path to the 32-byte key used to encrypt stored API tokens. It must be readable by the web server and poller users and not world-readable. When the file is missing, only token files can be used."
+msgstr "சேமிக்கப்பட்ட API டோக்கன்களை குறியாக்கம் செய்யப் பயன்படுத்தப்படும் 32-பைட் விசைக்கான முழுமையான பாதை. இது வலைச் சேவையகம் மற்றும் poller பயனர்களால் படிக்கக்கூடியதாகவும், அனைவரும் படிக்க முடியாததாகவும் இருக்க வேண்டும். கோப்பு இல்லாதபோது, டோக்கன் கோப்புகளை மட்டுமே பயன்படுத்த முடியும்."
+
+#: includes/settings.php
+msgid "Token File Directory"
+msgstr "டோக்கன் கோப்பு அடைவு"
+
+#: includes/settings.php
+msgid "Absolute path of the directory that every account token file must be in. When empty, a token file may be anywhere the web server and poller users can read."
+msgstr "ஒவ்வொரு கணக்கு டோக்கன் கோப்பும் இருக்க வேண்டிய அடைவின் முழுமையான பாதை. காலியாக இருந்தால், வலைச் சேவையகம் மற்றும் poller பயனர்கள் படிக்கக்கூடிய எந்த இடத்திலும் டோக்கன் கோப்பு இருக்கலாம்."
+
+#: includes/settings.php
+msgid "Interactive Request Timeout"
+msgstr "ஊடாடும் கோரிக்கை காலாவதி நேரம்"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made from the web interface, such as Verify."
+msgstr "சரிபார் போன்ற வலை இடைமுகத்திலிருந்து செய்யப்படும் Cloudflare API கோரிக்கைக்கு அனுமதிக்கப்பட்ட மொத்த நேரம் (வினாடிகளில்)."
+
+#: includes/settings.php
+msgid "Collector Request Timeout"
+msgstr "சேகரிப்பான் கோரிக்கை காலாவதி நேரம்"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made by the background collector."
+msgstr "பின்னணி சேகரிப்பானால் செய்யப்படும் Cloudflare API கோரிக்கைக்கு அனுமதிக்கப்பட்ட மொத்த நேரம் (வினாடிகளில்)."
+
+#: includes/settings.php
+msgid "Log Level"
+msgstr "பதிவு நிலை"
+
+#: includes/settings.php
+msgid "The amount of detail the plugin writes to the Cacti log."
+msgstr "செருகுநிரல் Cacti பதிவில் எழுதும் விவரத்தின் அளவு."
+
+#: includes/tunnel_retirement.php
+msgid "The tunnel could not be retired. Check permissions and retry after collection finishes."
+msgstr "Tunnel-ஐ பயன்பாட்டிலிருந்து விலக்க முடியவில்லை. அனுமதிகளைச் சரிபார்த்து, சேகரிப்பு முடிந்த பிறகு மீண்டும் முயற்சிக்கவும்."
+
+#: includes/tunnel_retirement.php includes/viewer.php
+msgid "Retire tunnel"
+msgstr "Tunnel-ஐ பயன்பாட்டிலிருந்து விலக்கு"
+
+#: includes/tunnel_retirement.php
+msgid "Retiring removes the graphs and unshared data sources created for this deleted tunnel. Cacti controls RRD cleanup. The inventory record is kept."
+msgstr "பயன்பாட்டிலிருந்து விலக்குவது, நீக்கப்பட்ட இந்த Tunnel-க்காக உருவாக்கப்பட்ட வரைபடங்களையும் பகிரப்படாத தரவு மூலங்களையும் அகற்றும். RRD சுத்திகரிப்பை Cacti கட்டுப்படுத்துகிறது. வளப் பட்டியல் பதிவு வைக்கப்படும்."
+
+#: includes/viewer.php
+msgid "The Cloudflare tunnels could not be read. See the Cacti log for details."
+msgstr "Cloudflare Tunnel-களைப் படிக்க முடியவில்லை. விவரங்களுக்கு Cacti பதிவைப் பார்க்கவும்."
+
+#: includes/viewer.php
+msgid "Zone Analytics"
+msgstr "மண்டலப் பகுப்பாய்வு"
+
+#: includes/viewer.php
+msgid "Disabled"
+msgstr "முடக்கப்பட்டது"
+
+#: includes/viewer.php
+msgid "Not collected"
+msgstr "சேகரிக்கப்படவில்லை"
+
+#: includes/viewer.php
+msgid "Collection failing"
+msgstr "சேகரிப்பு தோல்வியடைகிறது"
+
+#: includes/viewer.php
+msgid "Not yet collected"
+msgstr "இன்னும் சேகரிக்கப்படவில்லை"
+
+#: includes/viewer.php
+msgid "Down"
+msgstr "செயலிழந்தது"
+
+#: includes/viewer.php
+msgid "Degraded"
+msgstr "செயல்திறன் குறைந்தது"
+
+#: includes/viewer.php
+msgid "Healthy"
+msgstr "ஆரோக்கியமானது"
+
+#: includes/viewer.php
+msgid "Inactive"
+msgstr "செயலற்றது"
+
+#: includes/viewer.php
+msgid "No active tunnels"
+msgstr "செயலில் உள்ள Tunnel-கள் இல்லை"
+
+#: includes/viewer.php
+msgid "The worst status among active tunnels, or Collection failing while discovery fails."
+msgstr "செயலில் உள்ள Tunnel-களில் மிக மோசமான நிலை, அல்லது கண்டறிதல் தோல்வியடையும்போது சேகரிப்பு தோல்வியடைகிறது."
+
+#: includes/viewer.php
+msgid "Active"
+msgstr "செயலில் உள்ளது"
+
+#: includes/viewer.php
+msgid "Unavailable"
+msgstr "கிடைக்கவில்லை"
+
+#: includes/viewer.php
+msgid "Deleted"
+msgstr "நீக்கப்பட்டது"
+
+#: includes/viewer.php
+msgid "Last Successful Discovery"
+msgstr "கடைசி வெற்றிகரமான கண்டறிதல்"
+
+#: includes/viewer.php
+msgid "Consecutive Failures"
+msgstr "தொடர்ச்சியான தோல்விகள்"
+
+#: includes/viewer.php
+#, php-format
+msgid "Last error: %s"
+msgstr "கடைசிப் பிழை: %s"
+
+#: includes/viewer.php
+msgid "Tunnel"
+msgstr "Tunnel"
+
+#: includes/viewer.php
+msgid "Cloudflare Status"
+msgstr "Cloudflare நிலை"
+
+#: includes/viewer.php
+msgid "The status Cloudflare reported at the last discovery."
+msgstr "கடைசிக் கண்டறிதலில் Cloudflare தெரிவித்த நிலை."
+
+#: includes/viewer.php
+msgid "Lifecycle"
+msgstr "வாழ்க்கைச் சுழற்சி"
+
+#: includes/viewer.php
+msgid "Whether the last discoveries still found this tunnel."
+msgstr "கடைசிக் கண்டறிதல்கள் இன்னும் இந்த Tunnel-ஐக் கண்டறிந்தனவா என்பது."
+
+#: includes/viewer.php
+msgid "Type"
+msgstr "வகை"
+
+#: includes/viewer.php
+msgid "Connections"
+msgstr "இணைப்புகள்"
+
+#: includes/viewer.php
+msgid "Last Seen"
+msgstr "கடைசியாகப் பார்க்கப்பட்டது"
+
+#: includes/viewer.php
+msgid "Any"
+msgstr "ஏதேனும்"
+
+#: includes/viewer.php
+msgid "All"
+msgstr "அனைத்தும்"
+
+#: includes/viewer.php
+msgid "No Cloudflare Tunnels Found"
+msgstr "Cloudflare Tunnel-கள் எதுவும் கிடைக்கவில்லை"
+
+#: includes/viewer.php
+msgid "Choose a tunnel on the Tunnels tab."
+msgstr "Tunnel-கள் தாவலில் ஒரு Tunnel-ஐத் தேர்ந்தெடுக்கவும்."
+
+#: includes/viewer.php
+msgid "The tunnel no longer exists."
+msgstr "Tunnel இனி இல்லை."
+
+#: includes/viewer.php
+#, php-format
+msgid "Connectors for %s"
+msgstr "%s-க்கான இணைப்பிகள்"
+
+#: includes/viewer.php
+msgid "Connector ID"
+msgstr "இணைப்பி ID"
+
+#: includes/viewer.php
+msgid "Version"
+msgstr "பதிப்பு"
+
+#: includes/viewer.php
+msgid "Architecture"
+msgstr "கட்டமைப்பியல்"
+
+#: includes/viewer.php
+msgid "Running Since"
+msgstr "இயக்கத் தொடங்கிய நேரம்"
+
+#: includes/viewer.php
+msgid "Data Centers"
+msgstr "தரவு மையங்கள்"
+
+#: includes/viewer.php
+msgid "Origin IPs"
+msgstr "மூல IP-க்கள்"
+
+#: includes/viewer.php
+#, php-format
+msgid "This tunnel is %s. These connectors were last seen while the tunnel was active."
+msgstr "இந்த Tunnel %s நிலையில் உள்ளது. Tunnel செயலில் இருந்தபோது இந்த இணைப்பிகள் கடைசியாகப் பார்க்கப்பட்டன."
+
+#: includes/viewer.php
+msgid "No connectors are running for this tunnel."
+msgstr "இந்த Tunnel-க்கு இணைப்பிகள் எதுவும் இயங்கவில்லை."
+
+#: includes/viewer.php
+msgid "Export"
+msgstr "ஏற்றுமதி"
+
+#: includes/viewer.php
+msgid "Bytes/s"
+msgstr "பைட்டுகள்/வி"
+
+#: includes/viewer.php
+msgid "HTTP 5xx (%)"
+msgstr "HTTP 5xx (%)"
+
+#: includes/viewer.php
+msgid "Requests/s"
+msgstr "கோரிக்கைகள்/வி"
+
+#: includes/viewer.php
+msgid "Zone"
+msgstr "மண்டலம்"
+
+#: src/OperatorPage.php
+msgid "Review the recorded observations below. Acknowledgments are personal to this session, expire when observations change, and never suppress alerts or change health."
+msgstr "கீழே பதிவுசெய்யப்பட்ட அவதானிப்புகளை மதிப்பாய்வு செய்யவும். ஒப்புதல்கள் இந்த அமர்வுக்குத் தனிப்பட்டவை, அவதானிப்புகள் மாறும்போது காலாவதியாகும், மேலும் எச்சரிக்கைகளைத் தடுக்கவோ நலநிலையை மாற்றவோ செய்யாது."
+
+#: src/OperatorPage.php
+msgid "Investigation"
+msgstr "ஆய்வு"
+
+#: src/OperatorPage.php
+msgid "Object"
+msgstr "பொருள்"
+
+#: src/OperatorPage.php
+msgid "Observed (UTC)"
+msgstr "அவதானிக்கப்பட்டது (UTC)"
+
+#: src/OperatorPage.php
+msgid "State"
+msgstr "நிலை"
+
+#: src/OperatorPage.php
+msgid "Unknown or stale"
+msgstr "தெரியாதது அல்லது பழமையானது"
+
+#: src/OperatorPage.php
+msgid "Acknowledged; health unchanged."
+msgstr "ஒப்புக்கொள்ளப்பட்டது; நலநிலை மாறவில்லை."
+
+#: src/OperatorPage.php
+msgid "Acknowledge"
+msgstr "ஒப்புக்கொள்"
+
+#: src/OperatorPage.php
+msgid "No observations are available."
+msgstr "கண்காணிப்புத் தரவுகள் எதுவும் கிடைக்கவில்லை."

@@ -1,0 +1,769 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-FileCopyrightText: 2026 Thomas Vincent <thomasvincent@gmail.com>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cloudflare 0.4.0-dev\n"
+"Report-Msgid-Bugs-To: https://github.com/somethingwithproof/plugin_cloudflare/issues\n"
+"PO-Revision-Date: 2026-11-26 00:00+0000\n"
+"Last-Translator: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language-Team: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language: ig-NG\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: cloudflare_operator.php
+msgid "Monitoring view"
+msgstr "Nlere nleba anya"
+
+#: cloudflare_operator.php
+msgid "Observations could not be read. Ask an administrator to check the plugin log."
+msgstr "Enweghị ike ịgụ nchọpụta ndị ahụ. Gwa onye nchịkwa ka ọ lelee ndekọ mgbakwunye ahụ."
+
+#: includes/accounts.php
+msgid "Connection verified"
+msgstr "Enyochala njikọ"
+
+#: includes/accounts.php
+msgid "Token is not active; it may be expired or disabled"
+msgstr "Token anaghị arụ ọrụ; o nwere ike kubie ma ọ bụ agbanyụọ ya"
+
+#: includes/accounts.php
+msgid "Token is invalid or expired"
+msgstr "Token adịghị mma ma ọ bụ kubiela"
+
+#: includes/accounts.php
+msgid "Token lacks the Account Cloudflare Tunnel Read permission"
+msgstr "Token enweghị ikike Account Cloudflare Tunnel Read"
+
+#: includes/accounts.php
+msgid "Cloudflare API is unreachable; try again later"
+msgstr "Enweghị ike iru API Cloudflare; nwaa ọzọ ma emechaa"
+
+#: includes/accounts.php
+msgid "Cloudflare API rate limit reached; try again later"
+msgstr "Eruola oke arịrịọ API Cloudflare; nwaa ọzọ ma emechaa"
+
+#: includes/accounts.php
+msgid "Cloudflare API request failed unexpectedly"
+msgstr "Arịrịọ API Cloudflare dara na mberede"
+
+#: includes/accounts.php
+msgid "Token lacks the permissions needed to verify it"
+msgstr "Token enweghị ikike achọrọ iji nyochaa ya"
+
+#: includes/accounts.php
+msgid "Stored token cannot be decrypted"
+msgstr "Enweghị ike ikpughe token echekwara"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing or unusable"
+msgstr "Faịlụ igodo ebe nchekwa nzuzo token efuola ma ọ bụ enweghị ike iji ya"
+
+#: includes/accounts.php
+msgid "Token file is missing or insecure"
+msgstr "Faịlụ token efuola ma ọ bụ enweghị nchekwa"
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable; configure the key file or use a token file"
+msgstr "Nchekwa ezochiri ezo adịghị; hazie faịlụ igodo ma ọ bụ jiri faịlụ token"
+
+#: includes/accounts.php
+msgid "Enter the 32-character hexadecimal Cloudflare account ID"
+msgstr "Tinye ID akaụntụ Cloudflare hexadecimal nke nwere mkpụrụedemede 32"
+
+#: includes/accounts.php
+msgid "Enter a name of 1 to 100 characters without control characters"
+msgstr "Tinye aha nwere mkpụrụedemede 1 ruo 100 na-enweghị mkpụrụedemede njikwa"
+
+#: includes/accounts.php
+msgid "Choose an encrypted token or a token file"
+msgstr "Họrọ token ezochiri ezo ma ọ bụ faịlụ token"
+
+#: includes/accounts.php
+msgid "Enter an API token"
+msgstr "Tinye token API"
+
+#: includes/accounts.php
+msgid "Re-enter the token when changing the account ID"
+msgstr "Tinyeghachi token ahụ mgbe ị na-agbanwe ID akaụntụ"
+
+#: includes/accounts.php
+msgid "Enter an absolute path of at most 255 characters"
+msgstr "Tinye ụzọ zuru oke nke na-akarịghị mkpụrụedemede 255"
+
+#: includes/accounts.php
+msgid "Must be 0 or 1"
+msgstr "Ọ ga-abụrịrị 0 ma ọ bụ 1"
+
+#: includes/accounts.php
+msgid "Enter a whole number of seconds from 60 to 86400"
+msgstr "Tinye ọnụọgụgụ zuru ezu nke sekọnd site na 60 ruo 86400"
+
+#: includes/accounts.php
+msgid "This Cloudflare account ID is already configured"
+msgstr "Ahazilarị ID akaụntụ Cloudflare a"
+
+#: includes/accounts.php
+msgid "Global API Keys are not accepted; use a scoped API token"
+msgstr "Anaghị anabata Global API Keys; jiri token API nwere oke ikike"
+
+#: includes/accounts.php
+msgid "API token format is invalid"
+msgstr "Ụdị token API adabaghị"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing, unreadable, insecure or malformed"
+msgstr "Faịlụ igodo ebe nchekwa token adịghị, enweghị ike ịgụ ya, enweghị nchekwa ma ọ bụ emebiri nhazi ya"
+
+#: includes/accounts.php
+msgid "Stored API token could not be decrypted"
+msgstr "Enweghị ike ịtọghe mkpọchi token API e chekwara echekwa"
+
+#: includes/accounts.php
+msgid "Token file is missing, unreadable, not a regular file or too large"
+msgstr "Faịlụ token adịghị, enweghị ike ịgụ ya, abụghị faịlụ nkịtị ma ọ bụ buru ibu karịa"
+
+#: includes/accounts.php
+msgid "Token file path is not absolute, is a symlink, or the file is world-readable or world-writable"
+msgstr "Ụzọ faịlụ token abụghị nke zuru oke, ọ bụ symlink, ma ọ bụ onye ọ bụla nwere ike ịgụ ma ọ bụ dee n'ime faịlụ ahụ"
+
+#: includes/accounts.php
+msgid "Token file is not inside the Token File Directory"
+msgstr "Faịlụ token anọghị n'ime Nduzi Faịlụ Token"
+
+#: includes/accounts.php
+msgid "API token could not be encrypted"
+msgstr "Enweghị ike izo token API n'ụzọ nzuzo"
+
+#: includes/accounts.php
+msgid "Credential error"
+msgstr "Njehie nzere"
+
+#: includes/accounts.php includes/settings.php
+msgid "Cloudflare"
+msgstr "Cloudflare"
+
+#: includes/accounts.php
+msgid "Encrypted in the Cacti database"
+msgstr "E zoro ya n'ụzọ nzuzo n'ime ebe nchekwa data Cacti"
+
+#: includes/accounts.php
+msgid "Token file on this server"
+msgstr "Faịlụ token dị na sava a"
+
+#: includes/accounts.php includes/viewer.php
+msgid "Account"
+msgstr "Akaụntụ"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Name"
+msgstr "Aha"
+
+#: includes/accounts.php
+msgid "A label for this account in Cacti."
+msgstr "Aha njirimara maka akaụntụ a na Cacti."
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Account ID"
+msgstr "ID Akaụntụ"
+
+#: includes/accounts.php
+msgid "The 32-character Cloudflare account ID, shown in the dashboard URL and on the account overview page."
+msgstr "ID akaụntụ Cloudflare nwere mkpụrụedemede 32, nke e gosipụtara na URL dashboard na n'ihu akwụkwọ nchịkọta akaụntụ."
+
+#: includes/accounts.php
+msgid "API Token"
+msgstr "Token API"
+
+#: includes/accounts.php
+msgid "Token Storage"
+msgstr "Ebe Nchekwa Token"
+
+#: includes/accounts.php
+msgid "Where the scoped API token is kept. Global API Keys are not accepted."
+msgstr "Ebe a na-edobe token API nwere oke ikike. Anaghị anabata Global API Keys."
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable because the key file in Settings is missing or unusable; only token files can be used."
+msgstr "Ebe nchekwa e zoro ezo adịghị n'ihi na faịlụ igodo dị na Ntọala adịghị ma ọ bụ enweghị ike iji ya; naanị faịlụ token ka a pụrụ iji."
+
+#: includes/accounts.php
+msgid "Leave blank to keep the current token"
+msgstr "Hapụ ya ka ọ tọgbọrọ chakoo iji debe token dị ugbu a"
+
+#: includes/accounts.php
+msgid "A scoped API token with Account Cloudflare Tunnel Read permission."
+msgstr "Token API nwere oke ikike nke nwere ikike Account Cloudflare Tunnel Read."
+
+#: includes/accounts.php
+msgid "Token File"
+msgstr "Faịlụ Token"
+
+#: includes/accounts.php
+msgid "Absolute path to a file that contains only the token. It must be readable by the web server and poller users and must not be world-readable."
+msgstr "Ụzọ zuru oke gaa na faịlụ nwere naanị token ahụ. Ndị ọrụ sava weebụ na poller ga-enwerịrị ike ịgụ ya, ma ọ gaghị abụ ihe onye ọ bụla nwere ike ịgụ."
+
+#: includes/accounts.php
+msgid "Collection"
+msgstr "Nchịkọta"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Enabled"
+msgstr "Agbanyere"
+
+#: includes/accounts.php
+msgid "Disabled accounts are not polled."
+msgstr "Anaghị agbakọ data maka akaụntụ ndị a gbanyụrụ."
+
+#: includes/accounts.php
+msgid "Collect Tunnels"
+msgstr "Chịkọta Ọwa"
+
+#: includes/accounts.php
+msgid "Discover Cloudflare Tunnels and their connectors."
+msgstr "Chọpụta Cloudflare Tunnels na ihe njikọ ha."
+
+#: includes/accounts.php
+msgid "Collect Analytics"
+msgstr "Chịkọta Nyocha"
+
+#: includes/accounts.php
+msgid "Collect zone traffic analytics. This needs the Account Analytics Read and Analytics Read (Zone) permissions."
+msgstr "Chịkọta nyocha okporo ụzọ mpaghara. Nke a chọrọ ikike Account Analytics Read na Analytics Read (Zone)."
+
+#: includes/accounts.php
+msgid "Create Graphs"
+msgstr "Mepụta Eserese"
+
+#: includes/accounts.php
+msgid "Create graphs for each tunnel on the account's Cacti device. Turning this on needs the permission to edit Cacti devices."
+msgstr "Mepụta eserese maka ọwa nke ọ bụla dị na ngwaọrụ Cacti nke akaụntụ ahụ. Ịgbanye nke a chọrọ ikike idezi ngwaọrụ Cacti."
+
+#: includes/accounts.php
+msgid "Discovery Interval"
+msgstr "Oge Etiti Nchọpụta"
+
+#: includes/accounts.php
+msgid "Seconds between inventory refreshes, from 60 to 86400."
+msgstr "Sekọnd n'etiti mmegharị ndekọ ihe dịnụ, site na 60 ruo 86400."
+
+#: includes/accounts.php
+msgid "The token and its confirmation do not match"
+msgstr "Token ahụ na nkwenye ya adabaghị"
+
+#: includes/accounts_page.php
+msgid "Delete"
+msgstr "Hichapụ"
+
+#: includes/accounts_page.php
+msgid "Verify"
+msgstr "Nyochaa"
+
+#: includes/accounts_page.php
+msgid "Enable"
+msgstr "Gbanye"
+
+#: includes/accounts_page.php
+msgid "Disable"
+msgstr "Gbanyụọ"
+
+#: includes/accounts_page.php
+msgid "Create Cacti Device"
+msgstr "Mepụta Ngwaọrụ Cacti"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to change Cloudflare accounts."
+msgstr "Enweghị ikike ịgbanwe akaụntụ Cloudflare."
+
+#: includes/accounts_page.php
+msgid "The Cloudflare account no longer exists."
+msgstr "Akaụntụ Cloudflare ahụ adịkwaghị."
+
+#: includes/accounts_page.php
+msgid "The Cloudflare accounts could not be read. See the Cacti log for details."
+msgstr "Enweghị ike ịgụ akaụntụ Cloudflare. Lee ndekọ Cacti maka nkọwa."
+
+#: includes/accounts_page.php
+msgid "Create Graphs was left off: turning it on needs the permission to edit Cacti devices."
+msgstr "E hapụrụ Mepụta Eserese ka ọ gbanyụọ: ịgbanye ya chọrọ ikike idezi ngwaọrụ Cacti."
+
+#: includes/accounts_page.php
+msgid "Cacti device created"
+msgstr "Emepụtara ngwaọrụ Cacti"
+
+#: includes/accounts_page.php
+msgid "A Cacti device already exists for this account"
+msgstr "Ngwaọrụ Cacti adịlarị maka akaụntụ a"
+
+#: includes/accounts_page.php
+msgid "The Cloudflare templates are not installed; see the Cacti log"
+msgstr "Etinyeghị ndebiri Cloudflare; lee ndekọ Cacti"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices"
+msgstr "Enweghị ikike ịmepụta ngwaọrụ Cacti"
+
+#: includes/accounts_page.php
+msgid "The Cacti device could not be created; see the Cacti log"
+msgstr "Enweghị ike ịmepụta ngwaọrụ Cacti; lee ndekọ Cacti"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices."
+msgstr "Enweghị ikike ịmepụta ngwaọrụ Cacti."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Delete the following Cloudflare Account. Its discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgid_plural "Click 'Continue' to Delete the following Cloudflare Accounts. Their discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgstr[0] "Pịa 'Gaa n'ihu' iji Hichapụ Akaụntụ Cloudflare ndị a. A ga-ewepụ ndekọ ihe a chọpụtara na ọnọdụ ọrụ ha; a ga-edobe ngwaọrụ na eserese Cacti."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Verify the following Cloudflare Account against the Cloudflare API."
+msgid_plural "Click 'Continue' to Verify the following Cloudflare Accounts against the Cloudflare API."
+msgstr[0] "Pịa 'Gaa n'ihu' iji Kwado Akaụntụ Cloudflare ndị a megide Cloudflare API."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Enable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Enable the following Cloudflare Accounts."
+msgstr[0] "Pịa 'Gaa n'ihu' iji Gbanye Akaụntụ Cloudflare ndị a."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Disable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Disable the following Cloudflare Accounts."
+msgstr[0] "Pịa 'Gaa n'ihu' iji Gbanyụọ Akaụntụ Cloudflare ndị a."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to create a Cacti device for the following Cloudflare Account. An account that already has one is left as it is."
+msgid_plural "Click 'Continue' to create a Cacti device for each of the following Cloudflare Accounts. An account that already has one is left as it is."
+msgstr[0] "Pịa 'Gaa n'ihu' iji mepụta ngwaọrụ Cacti maka Akaụntụ Cloudflare nke ọ bụla n'ime ndị a. A na-ahapụ akaụntụ nweelarị otu otú ọ dị."
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Cancel"
+msgstr "Kagbuo"
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Continue"
+msgstr "Gaa n'ihu"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Cloudflare Account [edit: %s]"
+msgstr "Akaụntụ Cloudflare [dezie: %s]"
+
+#: includes/accounts_page.php
+msgid "Cloudflare Account [new]"
+msgstr "Akaụntụ Cloudflare [ọhụrụ]"
+
+#: includes/accounts_page.php includes/viewer.php src/OperatorPage.php
+msgid "Never"
+msgstr "Ọ dịtụbeghị"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Status"
+msgstr "Ọnọdụ"
+
+#: includes/accounts_page.php
+msgid "Message"
+msgstr "Ozi"
+
+#: includes/accounts_page.php
+msgid "No"
+msgstr "Mba"
+
+#: includes/accounts_page.php
+msgid "Token Stored"
+msgstr "Echekwara Token"
+
+#: includes/accounts_page.php
+msgid "Yes"
+msgstr "Ee"
+
+#: includes/accounts_page.php
+msgid "Last Checked"
+msgstr "Mgbe Ikpeazụ E Lere"
+
+#: includes/accounts_page.php
+msgid "Last Verified"
+msgstr "Mgbe Ikpeazụ E Kwadoro"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Permission: %s"
+msgstr "Ikike: %s"
+
+#: includes/accounts_page.php
+msgid "Granted"
+msgstr "E nyere"
+
+#: includes/accounts_page.php
+msgid "Missing"
+msgstr "Adịghị"
+
+#: includes/accounts_page.php
+msgid "Connection Status"
+msgstr "Ọnọdụ Njikọ"
+
+#: includes/accounts_page.php includes/settings.php includes/viewer.php
+msgid "Cloudflare Accounts"
+msgstr "Akaụntụ Cloudflare"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Search"
+msgstr "Chọọ"
+
+#: includes/accounts_page.php
+msgid "Accounts"
+msgstr "Akaụntụ"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Default"
+msgstr "Nke ndabara"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Go"
+msgstr "Gaa"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Set/Refresh Filters"
+msgstr "Tọọ/Megharịa Nzacha"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear"
+msgstr "Wepụ"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear Filters"
+msgstr "Wepụ Nzacha"
+
+#: includes/accounts_page.php
+msgid "The name of this account in Cacti."
+msgstr "Aha akaụntụ a na Cacti."
+
+#: includes/accounts_page.php
+msgid "Whether an API token is configured. The edit page shows where it is kept."
+msgstr "Ma e meela nhazi token API. Ihu akwụkwọ ndezi na-egosi ebe e debere ya."
+
+#: includes/accounts_page.php
+msgid "The result of the last Verify."
+msgstr "Nsonaazụ nke Kwado ikpeazụ."
+
+#: includes/accounts_page.php
+msgid "ID"
+msgstr "ID"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "No Cloudflare Accounts Found"
+msgstr "Ahụghị Akaụntụ Cloudflare Ọ Bụla"
+
+#: includes/operator.php
+msgid "Inspect tunnels and connector counts. Escalate token changes, account configuration and graph creation to an administrator."
+msgstr "Nyochaa ọwa na ọnụọgụgụ ihe njikọ. Zigara onye nchịkwa mgbanwe token, nhazi akaụntụ na imepụta eserese."
+
+#: includes/settings.php
+msgid "Configuration"
+msgstr "Nhazi"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Cloudflare Operations"
+msgstr "Ọrụ Cloudflare"
+
+#: includes/settings.php
+msgid "Management"
+msgstr "Njikwa"
+
+#: includes/settings.php includes/viewer.php
+msgid "Cloudflare Tunnels"
+msgstr "Ọwa Cloudflare"
+
+#: includes/settings.php
+msgid "(edit)"
+msgstr "(dezie)"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Actions"
+msgstr "Omume"
+
+#: includes/settings.php includes/viewer.php
+msgid "Overview"
+msgstr "Nchịkọta"
+
+#: includes/settings.php includes/viewer.php
+msgid "Tunnels"
+msgstr "Ọwa"
+
+#: includes/settings.php includes/viewer.php
+msgid "Connectors"
+msgstr "Ihe njikọ"
+
+#: includes/settings.php
+msgid "Token Vault Key File"
+msgstr "Faịlụ Igodo Ebe Nchekwa Token"
+
+#: includes/settings.php
+msgid "Absolute path to the 32-byte key used to encrypt stored API tokens. It must be readable by the web server and poller users and not world-readable. When the file is missing, only token files can be used."
+msgstr "Ụzọ zuru oke gaa na igodo 32-byte e ji ezo token API e chekwara echekwa n'ụzọ nzuzo. Ndị ọrụ sava weebụ na poller ga-enwerịrị ike ịgụ ya, ma ọ gaghị abụ ihe onye ọ bụla nwere ike ịgụ. Mgbe faịlụ ahụ na-adịghị, naanị faịlụ token ka a pụrụ iji."
+
+#: includes/settings.php
+msgid "Token File Directory"
+msgstr "Nduzi Faịlụ Token"
+
+#: includes/settings.php
+msgid "Absolute path of the directory that every account token file must be in. When empty, a token file may be anywhere the web server and poller users can read."
+msgstr "Ụzọ zuru oke nke nduzi nke faịlụ token akaụntụ ọ bụla ga-anọ n'ime ya. Mgbe ọ tọgbọrọ chakoo, faịlụ token nwere ike ịnọ ebe ọ bụla ndị ọrụ sava weebụ na poller pụrụ ịgụ."
+
+#: includes/settings.php
+msgid "Interactive Request Timeout"
+msgstr "Oge Nkwụsị Arịrịọ Mmekọrịta"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made from the web interface, such as Verify."
+msgstr "Ngụkọta oge na sekọnd e nyere maka arịrịọ Cloudflare API e si n'ihu weebụ mee, dị ka Kwado."
+
+#: includes/settings.php
+msgid "Collector Request Timeout"
+msgstr "Oge Nkwụsị Arịrịọ Onye Nchịkọta"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made by the background collector."
+msgstr "Ngụkọta oge na sekọnd e nyere maka arịrịọ Cloudflare API nke onye nchịkọta n'azụ mere."
+
+#: includes/settings.php
+msgid "Log Level"
+msgstr "Ọkwa Ndekọ"
+
+#: includes/settings.php
+msgid "The amount of detail the plugin writes to the Cacti log."
+msgstr "Ọnụọgụ nkọwa nke plugin ahụ na-ede n'ime ndekọ Cacti."
+
+#: includes/tunnel_retirement.php
+msgid "The tunnel could not be retired. Check permissions and retry after collection finishes."
+msgstr "Enweghị ike iwepụ ọwa ahụ n'ọrụ. Lelee ikike ma nwaa ọzọ mgbe nchịkọta gwụchara."
+
+#: includes/tunnel_retirement.php includes/viewer.php
+msgid "Retire tunnel"
+msgstr "Wepụ ọwa n'ọrụ"
+
+#: includes/tunnel_retirement.php
+msgid "Retiring removes the graphs and unshared data sources created for this deleted tunnel. Cacti controls RRD cleanup. The inventory record is kept."
+msgstr "Iwepụ n'ọrụ na-ehichapụ eserese na isi mmalite data a na-ekekọrịtaghị e mepụtara maka ọwa a ehichapụrụ. Cacti na-achịkwa nhicha RRD. A na-edobe ndekọ ihe dịnụ."
+
+#: includes/viewer.php
+msgid "The Cloudflare tunnels could not be read. See the Cacti log for details."
+msgstr "Enweghị ike ịgụ ọwa Cloudflare. Lee ndekọ Cacti maka nkọwa."
+
+#: includes/viewer.php
+msgid "Zone Analytics"
+msgstr "Nyocha Mpaghara"
+
+#: includes/viewer.php
+msgid "Disabled"
+msgstr "Agbanyụrụ"
+
+#: includes/viewer.php
+msgid "Not collected"
+msgstr "Achịkọtaghị"
+
+#: includes/viewer.php
+msgid "Collection failing"
+msgstr "Nchịkọta na-ada"
+
+#: includes/viewer.php
+msgid "Not yet collected"
+msgstr "Achịkọtabebeghị"
+
+#: includes/viewer.php
+msgid "Down"
+msgstr "Anaghị enweta ya"
+
+#: includes/viewer.php
+msgid "Degraded"
+msgstr "Belatara arụmọrụ"
+
+#: includes/viewer.php
+msgid "Healthy"
+msgstr "Dị mma"
+
+#: includes/viewer.php
+msgid "Inactive"
+msgstr "Anaghị arụ ọrụ"
+
+#: includes/viewer.php
+msgid "No active tunnels"
+msgstr "Enweghị ọwa na-arụ ọrụ"
+
+#: includes/viewer.php
+msgid "The worst status among active tunnels, or Collection failing while discovery fails."
+msgstr "Ọnọdụ kachasị njọ n'etiti ọwa na-arụ ọrụ, ma ọ bụ Nchịkọta na-ada mgbe nchọpụta na-ada."
+
+#: includes/viewer.php
+msgid "Active"
+msgstr "Na-arụ ọrụ"
+
+#: includes/viewer.php
+msgid "Unavailable"
+msgstr "Adịghị"
+
+#: includes/viewer.php
+msgid "Deleted"
+msgstr "Ehichapụrụ"
+
+#: includes/viewer.php
+msgid "Last Successful Discovery"
+msgstr "Nchọpụta Gara Nke Ọma Ikpeazụ"
+
+#: includes/viewer.php
+msgid "Consecutive Failures"
+msgstr "Ọdịda Na-esote Onwe Ha"
+
+#: includes/viewer.php
+#, php-format
+msgid "Last error: %s"
+msgstr "Njehie ikpeazụ: %s"
+
+#: includes/viewer.php
+msgid "Tunnel"
+msgstr "Ọwa"
+
+#: includes/viewer.php
+msgid "Cloudflare Status"
+msgstr "Ọnọdụ Cloudflare"
+
+#: includes/viewer.php
+msgid "The status Cloudflare reported at the last discovery."
+msgstr "Ọnọdụ nke Cloudflare kọrọ na nchọpụta ikpeazụ."
+
+#: includes/viewer.php
+msgid "Lifecycle"
+msgstr "Usoro ndụ"
+
+#: includes/viewer.php
+msgid "Whether the last discoveries still found this tunnel."
+msgstr "Ma nchọpụta ndị ikpeazụ ka hụrụ ọwa a."
+
+#: includes/viewer.php
+msgid "Type"
+msgstr "Ụdị"
+
+#: includes/viewer.php
+msgid "Connections"
+msgstr "Njikọ"
+
+#: includes/viewer.php
+msgid "Last Seen"
+msgstr "Mgbe Ikpeazụ A Hụrụ Ya"
+
+#: includes/viewer.php
+msgid "Any"
+msgstr "Ọ bụla"
+
+#: includes/viewer.php
+msgid "All"
+msgstr "Niile"
+
+#: includes/viewer.php
+msgid "No Cloudflare Tunnels Found"
+msgstr "Ahụghị Ọwa Cloudflare Ọ Bụla"
+
+#: includes/viewer.php
+msgid "Choose a tunnel on the Tunnels tab."
+msgstr "Họrọ ọwa na taabụ Ọwa."
+
+#: includes/viewer.php
+msgid "The tunnel no longer exists."
+msgstr "Ọwa ahụ adịkwaghị."
+
+#: includes/viewer.php
+#, php-format
+msgid "Connectors for %s"
+msgstr "Ihe njikọ maka %s"
+
+#: includes/viewer.php
+msgid "Connector ID"
+msgstr "ID Ihe Njikọ"
+
+#: includes/viewer.php
+msgid "Version"
+msgstr "Ụdị Mbipụta"
+
+#: includes/viewer.php
+msgid "Architecture"
+msgstr "Ụkpụrụ nhazi"
+
+#: includes/viewer.php
+msgid "Running Since"
+msgstr "Na-agba Kemgbe"
+
+#: includes/viewer.php
+msgid "Data Centers"
+msgstr "Ebe Nchekwa Data"
+
+#: includes/viewer.php
+msgid "Origin IPs"
+msgstr "IP Isi Mmalite"
+
+#: includes/viewer.php
+#, php-format
+msgid "This tunnel is %s. These connectors were last seen while the tunnel was active."
+msgstr "Ọwa a bụ %s. A hụrụ ihe njikọ ndị a ikpeazụ mgbe ọwa ahụ na-arụ ọrụ."
+
+#: includes/viewer.php
+msgid "No connectors are running for this tunnel."
+msgstr "Enweghị ihe njikọ na-agba maka ọwa a."
+
+#: includes/viewer.php
+msgid "Export"
+msgstr "Bupụ"
+
+#: includes/viewer.php
+msgid "Bytes/s"
+msgstr "Bytes/s"
+
+#: includes/viewer.php
+msgid "HTTP 5xx (%)"
+msgstr "HTTP 5xx (%)"
+
+#: includes/viewer.php
+msgid "Requests/s"
+msgstr "Arịrịọ/s"
+
+#: includes/viewer.php
+msgid "Zone"
+msgstr "Mpaghara"
+
+#: src/OperatorPage.php
+msgid "Review the recorded observations below. Acknowledgments are personal to this session, expire when observations change, and never suppress alerts or change health."
+msgstr "Nyochaa nchọpụta edere n'okpuru ebe a. Nkweta bụ maka oge nnọkọ a naanị, ha na-agwụ mgbe nchọpụta gbanwere, ma ha anaghị egbochi ọkwa ịdọ aka ná ntị ma ọ bụ gbanwee ahụike."
+
+#: src/OperatorPage.php
+msgid "Investigation"
+msgstr "Nnyocha"
+
+#: src/OperatorPage.php
+msgid "Object"
+msgstr "Ihe"
+
+#: src/OperatorPage.php
+msgid "Observed (UTC)"
+msgstr "Achọpụtara (UTC)"
+
+#: src/OperatorPage.php
+msgid "State"
+msgstr "Ọnọdụ"
+
+#: src/OperatorPage.php
+msgid "Unknown or stale"
+msgstr "Amaghị ma ọ bụ ochie"
+
+#: src/OperatorPage.php
+msgid "Acknowledged; health unchanged."
+msgstr "Ekwetala; ahụike agbanweghị."
+
+#: src/OperatorPage.php
+msgid "Acknowledge"
+msgstr "Kweta"
+
+#: src/OperatorPage.php
+msgid "No observations are available."
+msgstr "Enweghị nleba anya dịnụ."

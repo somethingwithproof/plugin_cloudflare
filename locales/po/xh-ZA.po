@@ -1,0 +1,774 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-FileCopyrightText: 2026 Thomas Vincent <thomasvincent@gmail.com>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cloudflare 0.4.0-dev\n"
+"Report-Msgid-Bugs-To: https://github.com/somethingwithproof/plugin_cloudflare/issues\n"
+"PO-Revision-Date: 2026-11-26 00:00+0000\n"
+"Last-Translator: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language-Team: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language: xh-ZA\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: cloudflare_operator.php
+msgid "Monitoring view"
+msgstr "Imboniselo yokubeka iliso"
+
+#: cloudflare_operator.php
+msgid "Observations could not be read. Ask an administrator to check the plugin log."
+msgstr "Iingqwalaselo azikwazanga ukufundwa. Cela umlawuli ajonge ilogi ye-plugin."
+
+#: includes/accounts.php
+msgid "Connection verified"
+msgstr "Uqhagamshelwano luqinisekisiwe"
+
+#: includes/accounts.php
+msgid "Token is not active; it may be expired or disabled"
+msgstr "Ithokheni ayisebenzi; isenokuba iphelelwe lixesha okanye ikhubaziwe"
+
+#: includes/accounts.php
+msgid "Token is invalid or expired"
+msgstr "Ithokheni ayisebenzi okanye iphelelwe lixesha"
+
+#: includes/accounts.php
+msgid "Token lacks the Account Cloudflare Tunnel Read permission"
+msgstr "Ithokheni iswele imvume ye-Account Cloudflare Tunnel Read"
+
+#: includes/accounts.php
+msgid "Cloudflare API is unreachable; try again later"
+msgstr "I-Cloudflare API ayifikeleleki; zama kwakhona kamva"
+
+#: includes/accounts.php
+msgid "Cloudflare API rate limit reached; try again later"
+msgstr "Umda wesantya se-Cloudflare API ufinyelelwe; zama kwakhona kamva"
+
+#: includes/accounts.php
+msgid "Cloudflare API request failed unexpectedly"
+msgstr "Isicelo se-Cloudflare API asiphumelelanga ngokungalindelekanga"
+
+#: includes/accounts.php
+msgid "Token lacks the permissions needed to verify it"
+msgstr "Ithokheni iswele iimvume ezifunekayo ukuze iqinisekiswe"
+
+#: includes/accounts.php
+msgid "Stored token cannot be decrypted"
+msgstr "Ithokheni egciniweyo ayinakukhutshwa kufihlo"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing or unusable"
+msgstr "Ifayile yesitshixo sevolt yethokheni ayikho okanye ayisebenziseki"
+
+#: includes/accounts.php
+msgid "Token file is missing or insecure"
+msgstr "Ifayile yethokheni ayikho okanye ayikhuselekanga"
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable; configure the key file or use a token file"
+msgstr "Ugcino olufihliweyo alufumaneki; qwalasela ifayile yesitshixo okanye usebenzise ifayile yethokheni"
+
+#: includes/accounts.php
+msgid "Enter the 32-character hexadecimal Cloudflare account ID"
+msgstr "Faka i-ID yeakhawunti ye-Cloudflare enoonobumba abayi-32 be-hexadecimal"
+
+#: includes/accounts.php
+msgid "Enter a name of 1 to 100 characters without control characters"
+msgstr "Faka igama loonobumba abayi-1 ukuya kwabayi-100 ngaphandle koonobumba bolawulo"
+
+#: includes/accounts.php
+msgid "Choose an encrypted token or a token file"
+msgstr "Khetha ithokheni efihliweyo okanye ifayile yethokheni"
+
+#: includes/accounts.php
+msgid "Enter an API token"
+msgstr "Faka ithokheni ye-API"
+
+#: includes/accounts.php
+msgid "Re-enter the token when changing the account ID"
+msgstr "Faka ithokheni kwakhona xa utshintsha i-ID yeakhawunti"
+
+#: includes/accounts.php
+msgid "Enter an absolute path of at most 255 characters"
+msgstr "Faka umendo opheleleyo wobuninzi boonobumba abayi-255"
+
+#: includes/accounts.php
+msgid "Must be 0 or 1"
+msgstr "Kufuneka ibe ngu-0 okanye u-1"
+
+#: includes/accounts.php
+msgid "Enter a whole number of seconds from 60 to 86400"
+msgstr "Ngenisa inani elipheleleyo lemizuzwana ukusuka ku-60 ukuya ku-86400"
+
+#: includes/accounts.php
+msgid "This Cloudflare account ID is already configured"
+msgstr "Le ID ye-akhawunti ye-Cloudflare sele iqwalaselwe"
+
+#: includes/accounts.php
+msgid "Global API Keys are not accepted; use a scoped API token"
+msgstr "I-Global API Keys azamkelwa; sebenzisa i-API token enesikophu"
+
+#: includes/accounts.php
+msgid "API token format is invalid"
+msgstr "Ifomathi ye-API token ayisebenzi"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing, unreadable, insecure or malformed"
+msgstr "Ifayile yesitshixo se-token vault ayikho, ayifundeki, ayikhuselekanga okanye ayifomathwanga kakuhle"
+
+#: includes/accounts.php
+msgid "Stored API token could not be decrypted"
+msgstr "I-API token egciniweyo ayikwazanga kukhutshwa kufihlo"
+
+#: includes/accounts.php
+msgid "Token file is missing, unreadable, not a regular file or too large"
+msgstr "Ifayile ye-token ayikho, ayifundeki, asiyofayile eqhelekileyo okanye inkulu kakhulu"
+
+#: includes/accounts.php
+msgid "Token file path is not absolute, is a symlink, or the file is world-readable or world-writable"
+msgstr "Indlela yefayile ye-token ayiphelelanga, yi-symlink, okanye ifayile ifundeka okanye ibhaleka nguwonke-wonke"
+
+#: includes/accounts.php
+msgid "Token file is not inside the Token File Directory"
+msgstr "Ifayile ye-token ayikho ngaphakathi kwi-Token File Directory"
+
+#: includes/accounts.php
+msgid "API token could not be encrypted"
+msgstr "I-API token ayikwazanga kufihlwa"
+
+#: includes/accounts.php
+msgid "Credential error"
+msgstr "Impazamo yeziqinisekiso"
+
+#: includes/accounts.php includes/settings.php
+msgid "Cloudflare"
+msgstr "Cloudflare"
+
+#: includes/accounts.php
+msgid "Encrypted in the Cacti database"
+msgstr "Ifihliwe kwidathabheyisi ye-Cacti"
+
+#: includes/accounts.php
+msgid "Token file on this server"
+msgstr "Ifayile ye-token kule seva"
+
+#: includes/accounts.php includes/viewer.php
+msgid "Account"
+msgstr "Iakhawunti"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Name"
+msgstr "Igama"
+
+#: includes/accounts.php
+msgid "A label for this account in Cacti."
+msgstr "Ileyibhile yale akhawunti kwi-Cacti."
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Account ID"
+msgstr "I-ID ye-Akhawunti"
+
+#: includes/accounts.php
+msgid "The 32-character Cloudflare account ID, shown in the dashboard URL and on the account overview page."
+msgstr "I-ID ye-akhawunti ye-Cloudflare enamagama angama-32, eboniswe kwi-URL yedeshibhodi nakwiphepha lesishwankathelo se-akhawunti."
+
+#: includes/accounts.php
+msgid "API Token"
+msgstr "I-API Token"
+
+#: includes/accounts.php
+msgid "Token Storage"
+msgstr "Ugcino lwe-Token"
+
+#: includes/accounts.php
+msgid "Where the scoped API token is kept. Global API Keys are not accepted."
+msgstr "Apho i-API token enesikophu igcinwa khona. I-Global API Keys azamkelwa."
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable because the key file in Settings is missing or unusable; only token files can be used."
+msgstr "Ugcino olufihliweyo alufumaneki kuba ifayile yesitshixo ekwiisetingi ayikho okanye ayisebenziseki; kuphela iifayile ze-token ezinokusetyenziswa."
+
+#: includes/accounts.php
+msgid "Leave blank to keep the current token"
+msgstr "Shiya kungenanto ukuze ugcine i-token yangoku"
+
+#: includes/accounts.php
+msgid "A scoped API token with Account Cloudflare Tunnel Read permission."
+msgstr "I-API token enesikophu enemvume ye-Account Cloudflare Tunnel Read."
+
+#: includes/accounts.php
+msgid "Token File"
+msgstr "Ifayile ye-Token"
+
+#: includes/accounts.php
+msgid "Absolute path to a file that contains only the token. It must be readable by the web server and poller users and must not be world-readable."
+msgstr "Indlela epheleleyo eya kwifayile equlethe i-token kuphela. Kufuneka ifundeke ngabasebenzisi beseva yewebhu kunye ne-poller kwaye ingafundeki nguwonke-wonke."
+
+#: includes/accounts.php
+msgid "Collection"
+msgstr "Ukuqokelela"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Enabled"
+msgstr "Ivuliwe"
+
+#: includes/accounts.php
+msgid "Disabled accounts are not polled."
+msgstr "Ii-akhawunti ezikhubaziweyo aziqokelelwa ngu-poller."
+
+#: includes/accounts.php
+msgid "Collect Tunnels"
+msgstr "Qokelela ii-Tunnels"
+
+#: includes/accounts.php
+msgid "Discover Cloudflare Tunnels and their connectors."
+msgstr "Fumanisa ii-Cloudflare Tunnels kunye nezixhumi zazo."
+
+#: includes/accounts.php
+msgid "Collect Analytics"
+msgstr "Qokelela i-Analytics"
+
+#: includes/accounts.php
+msgid "Collect zone traffic analytics. This needs the Account Analytics Read and Analytics Read (Zone) permissions."
+msgstr "Qokelela uhlalutyo lwendlela yezowuni. Oku kufuna iimvume ze-Account Analytics Read kunye ne-Analytics Read (Zone)."
+
+#: includes/accounts.php
+msgid "Create Graphs"
+msgstr "Yenza iiGrafu"
+
+#: includes/accounts.php
+msgid "Create graphs for each tunnel on the account's Cacti device. Turning this on needs the permission to edit Cacti devices."
+msgstr "Yenza iigrafu ze-tunnel nganye kwisixhobo se-Cacti se-akhawunti. Ukuvula oku kufuna imvume yokuhlela izixhobo ze-Cacti."
+
+#: includes/accounts.php
+msgid "Discovery Interval"
+msgstr "Ithuba lokuFumanisa"
+
+#: includes/accounts.php
+msgid "Seconds between inventory refreshes, from 60 to 86400."
+msgstr "Imizuzwana phakathi kokuhlaziywa kwe-inventory, ukusuka ku-60 ukuya ku-86400."
+
+#: includes/accounts.php
+msgid "The token and its confirmation do not match"
+msgstr "I-token nesiqinisekiso sayo azihambelani"
+
+#: includes/accounts_page.php
+msgid "Delete"
+msgstr "Cima"
+
+#: includes/accounts_page.php
+msgid "Verify"
+msgstr "Qinisekisa"
+
+#: includes/accounts_page.php
+msgid "Enable"
+msgstr "Yenza isebenze"
+
+#: includes/accounts_page.php
+msgid "Disable"
+msgstr "Khubaza"
+
+#: includes/accounts_page.php
+msgid "Create Cacti Device"
+msgstr "Yenza iSixhobo seCacti"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to change Cloudflare accounts."
+msgstr "Awunayo imvume yokutshintsha ii-akhawunti ze-Cloudflare."
+
+#: includes/accounts_page.php
+msgid "The Cloudflare account no longer exists."
+msgstr "Iakhawunti ye-Cloudflare ayisekho."
+
+#: includes/accounts_page.php
+msgid "The Cloudflare accounts could not be read. See the Cacti log for details."
+msgstr "Ii-akhawunti ze-Cloudflare azikwazanga kufundwa. Jonga ilogi ye-Cacti ukuze ufumane iinkcukacha."
+
+#: includes/accounts_page.php
+msgid "Create Graphs was left off: turning it on needs the permission to edit Cacti devices."
+msgstr "Ukudala iiGrafu kushiywe kuvaliwe: ukuyivula kufuna imvume yokuhlela izixhobo ze-Cacti."
+
+#: includes/accounts_page.php
+msgid "Cacti device created"
+msgstr "Isixhobo se-Cacti senziwe"
+
+#: includes/accounts_page.php
+msgid "A Cacti device already exists for this account"
+msgstr "Isixhobo se-Cacti sele sikhona kule akhawunti"
+
+#: includes/accounts_page.php
+msgid "The Cloudflare templates are not installed; see the Cacti log"
+msgstr "Iithempleyithi ze-Cloudflare azifakwanga; jonga ilogi ye-Cacti"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices"
+msgstr "Awunayo imvume yokwenza izixhobo ze-Cacti"
+
+#: includes/accounts_page.php
+msgid "The Cacti device could not be created; see the Cacti log"
+msgstr "Isixhobo se-Cacti asikwazanga kwenziwa; jonga ilogi ye-Cacti"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices."
+msgstr "Awunayo imvume yokwenza izixhobo ze-Cacti."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Delete the following Cloudflare Account. Its discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgid_plural "Click 'Continue' to Delete the following Cloudflare Accounts. Their discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgstr[0] "Cofa u-'Qhubeka' ukuze uCime le Akhawunti ye-Cloudflare ilandelayo. Uluhlu lwayo olufunyenweyo kunye nemeko yomsebenzi ziyasuswa; izixhobo ze-Cacti neegrafu ziyagcinwa."
+msgstr[1] "Cofa u-'Qhubeka' ukuze uCime ezi Akhawunti ze-Cloudflare zilandelayo. Uluhlu lwazo olufunyenweyo kunye nemeko yomsebenzi ziyasuswa; izixhobo ze-Cacti neegrafu ziyagcinwa."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Verify the following Cloudflare Account against the Cloudflare API."
+msgid_plural "Click 'Continue' to Verify the following Cloudflare Accounts against the Cloudflare API."
+msgstr[0] "Cofa u-'Qhubeka' ukuze uQinisekise le Akhawunti ye-Cloudflare ilandelayo kwi-Cloudflare API."
+msgstr[1] "Cofa u-'Qhubeka' ukuze uQinisekise ezi Akhawunti ze-Cloudflare zilandelayo kwi-Cloudflare API."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Enable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Enable the following Cloudflare Accounts."
+msgstr[0] "Cofa u-'Qhubeka' ukuze uYenze isebenze le Akhawunti ye-Cloudflare ilandelayo."
+msgstr[1] "Cofa u-'Qhubeka' ukuze uZenze zisebenze ezi Akhawunti ze-Cloudflare zilandelayo."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Disable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Disable the following Cloudflare Accounts."
+msgstr[0] "Cofa u-'Qhubeka' ukuze uKhubaze le Akhawunti ye-Cloudflare ilandelayo."
+msgstr[1] "Cofa u-'Qhubeka' ukuze uZikhubaze ezi Akhawunti ze-Cloudflare zilandelayo."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to create a Cacti device for the following Cloudflare Account. An account that already has one is left as it is."
+msgid_plural "Click 'Continue' to create a Cacti device for each of the following Cloudflare Accounts. An account that already has one is left as it is."
+msgstr[0] "Cofa u-'Qhubeka' ukuze wenze isixhobo se-Cacti sale Akhawunti ye-Cloudflare ilandelayo. Iakhawunti esele inaso ishiywa injalo."
+msgstr[1] "Cofa u-'Qhubeka' ukuze wenze isixhobo se-Cacti se-Akhawunti ye-Cloudflare nganye kwezi zilandelayo. Iakhawunti esele inaso ishiywa injalo."
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Cancel"
+msgstr "Rhoxisa"
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Continue"
+msgstr "Qhubeka"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Cloudflare Account [edit: %s]"
+msgstr "Iakhawunti ye-Cloudflare [hlela: %s]"
+
+#: includes/accounts_page.php
+msgid "Cloudflare Account [new]"
+msgstr "Iakhawunti ye-Cloudflare [entsha]"
+
+#: includes/accounts_page.php includes/viewer.php src/OperatorPage.php
+msgid "Never"
+msgstr "Akuzange"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Status"
+msgstr "Imeko"
+
+#: includes/accounts_page.php
+msgid "Message"
+msgstr "Umyalezo"
+
+#: includes/accounts_page.php
+msgid "No"
+msgstr "Hayi"
+
+#: includes/accounts_page.php
+msgid "Token Stored"
+msgstr "I-Token Igciniwe"
+
+#: includes/accounts_page.php
+msgid "Yes"
+msgstr "Ewe"
+
+#: includes/accounts_page.php
+msgid "Last Checked"
+msgstr "Kujongwe Okokugqibela"
+
+#: includes/accounts_page.php
+msgid "Last Verified"
+msgstr "Kuqinisekiswe Okokugqibela"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Permission: %s"
+msgstr "Imvume: %s"
+
+#: includes/accounts_page.php
+msgid "Granted"
+msgstr "Inikiwe"
+
+#: includes/accounts_page.php
+msgid "Missing"
+msgstr "Ayikho"
+
+#: includes/accounts_page.php
+msgid "Connection Status"
+msgstr "Imeko Yoqhagamshelwano"
+
+#: includes/accounts_page.php includes/settings.php includes/viewer.php
+msgid "Cloudflare Accounts"
+msgstr "Ii-Akhawunti ze-Cloudflare"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Search"
+msgstr "Khangela"
+
+#: includes/accounts_page.php
+msgid "Accounts"
+msgstr "Ii-Akhawunti"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Default"
+msgstr "Okungagqibekanga"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Go"
+msgstr "Hamba"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Set/Refresh Filters"
+msgstr "Cwangcisa/Hlaziya Izihluzi"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear"
+msgstr "Coca"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear Filters"
+msgstr "Coca Izihluzi"
+
+#: includes/accounts_page.php
+msgid "The name of this account in Cacti."
+msgstr "Igama lale akhawunti kwi-Cacti."
+
+#: includes/accounts_page.php
+msgid "Whether an API token is configured. The edit page shows where it is kept."
+msgstr "Nokuba i-API token iqwalaselwe na. Iphepha lokuhlela libonisa apho igcinwa khona."
+
+#: includes/accounts_page.php
+msgid "The result of the last Verify."
+msgstr "Isiphumo soQinisekiso lokugqibela."
+
+#: includes/accounts_page.php
+msgid "ID"
+msgstr "ID"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "No Cloudflare Accounts Found"
+msgstr "Akukho zii-Akhawunti ze-Cloudflare Zifunyenweyo"
+
+#: includes/operator.php
+msgid "Inspect tunnels and connector counts. Escalate token changes, account configuration and graph creation to an administrator."
+msgstr "Hlola ii-tunnels kunye nenani lezixhumi. Dlulisela utshintsho lwe-token, uqwalaselo lwe-akhawunti nokudalwa kweegrafu kumlawuli."
+
+#: includes/settings.php
+msgid "Configuration"
+msgstr "Uqwalaselo"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Cloudflare Operations"
+msgstr "Imisebenzi ye-Cloudflare"
+
+#: includes/settings.php
+msgid "Management"
+msgstr "Ulawulo"
+
+#: includes/settings.php includes/viewer.php
+msgid "Cloudflare Tunnels"
+msgstr "Ii-Cloudflare Tunnels"
+
+#: includes/settings.php
+msgid "(edit)"
+msgstr "(hlela)"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Actions"
+msgstr "Iintshukumo"
+
+#: includes/settings.php includes/viewer.php
+msgid "Overview"
+msgstr "Isishwankathelo"
+
+#: includes/settings.php includes/viewer.php
+msgid "Tunnels"
+msgstr "Ii-Tunnels"
+
+#: includes/settings.php includes/viewer.php
+msgid "Connectors"
+msgstr "Izixhumi"
+
+#: includes/settings.php
+msgid "Token Vault Key File"
+msgstr "Ifayile Yesitshixo se-Token Vault"
+
+#: includes/settings.php
+msgid "Absolute path to the 32-byte key used to encrypt stored API tokens. It must be readable by the web server and poller users and not world-readable. When the file is missing, only token files can be used."
+msgstr "Indlela epheleleyo eya kwisitshixo se-32-byte esisetyenziselwa ukufihla ii-API tokens ezigciniweyo. Kufuneka ifundeke ngabasebenzisi beseva yewebhu kunye ne-poller kwaye ingafundeki nguwonke-wonke. Xa ifayile ingekho, kuphela iifayile ze-token ezinokusetyenziswa."
+
+#: includes/settings.php
+msgid "Token File Directory"
+msgstr "Uvimba Wefayile ye-Token"
+
+#: includes/settings.php
+msgid "Absolute path of the directory that every account token file must be in. When empty, a token file may be anywhere the web server and poller users can read."
+msgstr "Indlela epheleleyo yovimba ekufuneka ifayile ye-token ye-akhawunti nganye ibe kuwo. Xa ingenanto, ifayile ye-token inokuba naphi na apho abasebenzisi beseva yewebhu kunye ne-poller banokuyifunda."
+
+#: includes/settings.php
+msgid "Interactive Request Timeout"
+msgstr "Ixesha Lokuphela Kwesicelo Esisebenzisanayo"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made from the web interface, such as Verify."
+msgstr "Ixesha elipheleleyo ngemizuzwana elivumelekileyo kwisicelo se-Cloudflare API esenziwe kwi-interface yewebhu, njengokuQinisekisa."
+
+#: includes/settings.php
+msgid "Collector Request Timeout"
+msgstr "Ixesha Lokuphela Kwesicelo Somqokeleli"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made by the background collector."
+msgstr "Ixesha elipheleleyo ngemizuzwana elivumelekileyo kwisicelo se-Cloudflare API esenziwe ngumqokeleli ongasemva."
+
+#: includes/settings.php
+msgid "Log Level"
+msgstr "Inqanaba leLogi"
+
+#: includes/settings.php
+msgid "The amount of detail the plugin writes to the Cacti log."
+msgstr "Ubungakanani beenkcukacha ebhaliweyo yi-plugin kwilogi ye-Cacti."
+
+#: includes/tunnel_retirement.php
+msgid "The tunnel could not be retired. Check permissions and retry after collection finishes."
+msgstr "I-tunnel ayikwazanga ukurhoxiswa. Jonga iimvume uze uzame kwakhona emva kokuba uqokelelo lugqibile."
+
+#: includes/tunnel_retirement.php includes/viewer.php
+msgid "Retire tunnel"
+msgstr "Rhoxisa i-tunnel"
+
+#: includes/tunnel_retirement.php
+msgid "Retiring removes the graphs and unshared data sources created for this deleted tunnel. Cacti controls RRD cleanup. The inventory record is kept."
+msgstr "Ukurhoxisa kususa iigrafu kunye nemithombo yedatha engabelwananga eyenzelwe le tunnel icinyiweyo. I-Cacti ilawula ukucocwa kwe-RRD. Irekhodi ye-inventory iyagcinwa."
+
+#: includes/viewer.php
+msgid "The Cloudflare tunnels could not be read. See the Cacti log for details."
+msgstr "Ii-Cloudflare tunnels azikwazanga kufundwa. Jonga ilogi ye-Cacti ukuze ufumane iinkcukacha."
+
+#: includes/viewer.php
+msgid "Zone Analytics"
+msgstr "Uhlalutyo Lwezowuni"
+
+#: includes/viewer.php
+msgid "Disabled"
+msgstr "Ikhubaziwe"
+
+#: includes/viewer.php
+msgid "Not collected"
+msgstr "Akuqokelelwanga"
+
+#: includes/viewer.php
+msgid "Collection failing"
+msgstr "Uqokelelo luyasilela"
+
+#: includes/viewer.php
+msgid "Not yet collected"
+msgstr "Akukaqokelelwa"
+
+#: includes/viewer.php
+msgid "Down"
+msgstr "Iphantsi"
+
+#: includes/viewer.php
+msgid "Degraded"
+msgstr "Ihlile umgangatho"
+
+#: includes/viewer.php
+msgid "Healthy"
+msgstr "Isempilweni"
+
+#: includes/viewer.php
+msgid "Inactive"
+msgstr "Ayisebenzi"
+
+#: includes/viewer.php
+msgid "No active tunnels"
+msgstr "Akukho zii-tunnels zisebenzayo"
+
+#: includes/viewer.php
+msgid "The worst status among active tunnels, or Collection failing while discovery fails."
+msgstr "Eyona meko imbi phakathi kwee-tunnels ezisebenzayo, okanye Uqokelelo luyasilela ngelixa ukufumanisa kusilela."
+
+#: includes/viewer.php
+msgid "Active"
+msgstr "Iyasebenza"
+
+#: includes/viewer.php
+msgid "Unavailable"
+msgstr "Ayifumaneki"
+
+#: includes/viewer.php
+msgid "Deleted"
+msgstr "Icinyiwe"
+
+#: includes/viewer.php
+msgid "Last Successful Discovery"
+msgstr "Ukufumanisa Kokugqibela Okuphumeleleyo"
+
+#: includes/viewer.php
+msgid "Consecutive Failures"
+msgstr "Ukusilela Okulandelelanayo"
+
+#: includes/viewer.php
+#, php-format
+msgid "Last error: %s"
+msgstr "Impazamo yokugqibela: %s"
+
+#: includes/viewer.php
+msgid "Tunnel"
+msgstr "I-Tunnel"
+
+#: includes/viewer.php
+msgid "Cloudflare Status"
+msgstr "Imeko ye-Cloudflare"
+
+#: includes/viewer.php
+msgid "The status Cloudflare reported at the last discovery."
+msgstr "Imeko eyaxelwa yi-Cloudflare ekufumaniseni kokugqibela."
+
+#: includes/viewer.php
+msgid "Lifecycle"
+msgstr "Umjikelo wobomi"
+
+#: includes/viewer.php
+msgid "Whether the last discoveries still found this tunnel."
+msgstr "Nokuba ukufumanisa kokugqibela kusayifumene le tunnel na."
+
+#: includes/viewer.php
+msgid "Type"
+msgstr "Uhlobo"
+
+#: includes/viewer.php
+msgid "Connections"
+msgstr "Uqhagamshelwano"
+
+#: includes/viewer.php
+msgid "Last Seen"
+msgstr "Igqityelwe Ukubonwa"
+
+#: includes/viewer.php
+msgid "Any"
+msgstr "Nayiphi na"
+
+#: includes/viewer.php
+msgid "All"
+msgstr "Zonke"
+
+#: includes/viewer.php
+msgid "No Cloudflare Tunnels Found"
+msgstr "Akukho zii-Cloudflare Tunnels Zifunyenweyo"
+
+#: includes/viewer.php
+msgid "Choose a tunnel on the Tunnels tab."
+msgstr "Khetha i-tunnel kwithebhu yee-Tunnels."
+
+#: includes/viewer.php
+msgid "The tunnel no longer exists."
+msgstr "I-tunnel ayisekho."
+
+#: includes/viewer.php
+#, php-format
+msgid "Connectors for %s"
+msgstr "Izixhumi ze-%s"
+
+#: includes/viewer.php
+msgid "Connector ID"
+msgstr "I-ID Yesixhumi"
+
+#: includes/viewer.php
+msgid "Version"
+msgstr "Uguqulelo"
+
+#: includes/viewer.php
+msgid "Architecture"
+msgstr "Uyilo lwenkqubo"
+
+#: includes/viewer.php
+msgid "Running Since"
+msgstr "Isebenza Ukusukela"
+
+#: includes/viewer.php
+msgid "Data Centers"
+msgstr "Amaziko Edatha"
+
+#: includes/viewer.php
+msgid "Origin IPs"
+msgstr "Ii-Origin IPs"
+
+#: includes/viewer.php
+#, php-format
+msgid "This tunnel is %s. These connectors were last seen while the tunnel was active."
+msgstr "Le tunnel ikwimeko ethi %s. Ezi zixhumi zazigqityelwe ukubonwa ngelixa i-tunnel yayisebenza."
+
+#: includes/viewer.php
+msgid "No connectors are running for this tunnel."
+msgstr "Akukho zixhumi zisebenzayo kule tunnel."
+
+#: includes/viewer.php
+msgid "Export"
+msgstr "Thumela ngaphandle"
+
+#: includes/viewer.php
+msgid "Bytes/s"
+msgstr "Bytes/s"
+
+#: includes/viewer.php
+msgid "HTTP 5xx (%)"
+msgstr "HTTP 5xx (%)"
+
+#: includes/viewer.php
+msgid "Requests/s"
+msgstr "Izicelo/s"
+
+#: includes/viewer.php
+msgid "Zone"
+msgstr "Izowuni"
+
+#: src/OperatorPage.php
+msgid "Review the recorded observations below. Acknowledgments are personal to this session, expire when observations change, and never suppress alerts or change health."
+msgstr "Jonga kwakhona iingqwalaselo ezirekhodiweyo ngezantsi. Ukuvuma kokwakho kule seshoni kuphela, kuphelelwa xa iingqwalaselo zitshintsha, kwaye akuzange kucinezela izilumkiso okanye kutshintshe impilo."
+
+#: src/OperatorPage.php
+msgid "Investigation"
+msgstr "Uphando"
+
+#: src/OperatorPage.php
+msgid "Object"
+msgstr "Into"
+
+#: src/OperatorPage.php
+msgid "Observed (UTC)"
+msgstr "Kuqwalaselwe (UTC)"
+
+#: src/OperatorPage.php
+msgid "State"
+msgstr "Imeko"
+
+#: src/OperatorPage.php
+msgid "Unknown or stale"
+msgstr "Akwaziwa okanye kuphelelwe lixesha"
+
+#: src/OperatorPage.php
+msgid "Acknowledged; health unchanged."
+msgstr "Kuvunyiwe; impilo ayitshintshanga."
+
+#: src/OperatorPage.php
+msgid "Acknowledge"
+msgstr "Vuma"
+
+#: src/OperatorPage.php
+msgid "No observations are available."
+msgstr "Akukho ziqaphelo zifumanekayo."

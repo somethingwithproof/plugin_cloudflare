@@ -1,0 +1,774 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-FileCopyrightText: 2026 Thomas Vincent <thomasvincent@gmail.com>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cloudflare 0.4.0-dev\n"
+"Report-Msgid-Bugs-To: https://github.com/somethingwithproof/plugin_cloudflare/issues\n"
+"PO-Revision-Date: 2026-11-26 00:00+0000\n"
+"Last-Translator: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language-Team: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language: am-ET\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: cloudflare_operator.php
+msgid "Monitoring view"
+msgstr "የክትትል እይታ"
+
+#: cloudflare_operator.php
+msgid "Observations could not be read. Ask an administrator to check the plugin log."
+msgstr "ምልከታዎቹን ማንበብ አልተቻለም። አስተዳዳሪ የተሰኪውን መዝገብ እንዲያረጋግጥ ይጠይቁ።"
+
+#: includes/accounts.php
+msgid "Connection verified"
+msgstr "ግንኙነቱ ተረጋግጧል"
+
+#: includes/accounts.php
+msgid "Token is not active; it may be expired or disabled"
+msgstr "ቶከኑ ንቁ አይደለም፤ ጊዜው ያለፈበት ወይም የተሰናከለ ሊሆን ይችላል"
+
+#: includes/accounts.php
+msgid "Token is invalid or expired"
+msgstr "ቶከኑ ልክ ያልሆነ ወይም ጊዜው ያለፈበት ነው"
+
+#: includes/accounts.php
+msgid "Token lacks the Account Cloudflare Tunnel Read permission"
+msgstr "ቶከኑ የAccount Cloudflare Tunnel Read ፈቃድ የለውም"
+
+#: includes/accounts.php
+msgid "Cloudflare API is unreachable; try again later"
+msgstr "የCloudflare API ላይ መድረስ አይቻልም፤ በኋላ እንደገና ይሞክሩ"
+
+#: includes/accounts.php
+msgid "Cloudflare API rate limit reached; try again later"
+msgstr "የCloudflare API የፍጥነት ገደብ ላይ ተደርሷል፤ በኋላ እንደገና ይሞክሩ"
+
+#: includes/accounts.php
+msgid "Cloudflare API request failed unexpectedly"
+msgstr "የCloudflare API ጥያቄ ባልተጠበቀ ሁኔታ አልተሳካም"
+
+#: includes/accounts.php
+msgid "Token lacks the permissions needed to verify it"
+msgstr "ቶከኑ እሱን ለማረጋገጥ የሚያስፈልጉት ፈቃዶች የሉትም"
+
+#: includes/accounts.php
+msgid "Stored token cannot be decrypted"
+msgstr "የተከማቸ ቶከን ምስጢሩ ሊፈታ አልቻለም"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing or unusable"
+msgstr "የቶከን ካዝና ቁልፍ ፋይል ጠፍቷል ወይም ጥቅም ላይ ሊውል አይችልም"
+
+#: includes/accounts.php
+msgid "Token file is missing or insecure"
+msgstr "የቶከን ፋይል ጠፍቷል ወይም ደህንነቱ የተጠበቀ አይደለም"
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable; configure the key file or use a token file"
+msgstr "የተመሰጠረ ማከማቻ አይገኝም፤ የቁልፍ ፋይሉን ያዋቅሩ ወይም የቶከን ፋይል ይጠቀሙ"
+
+#: includes/accounts.php
+msgid "Enter the 32-character hexadecimal Cloudflare account ID"
+msgstr "ባለ 32-ቁምፊ ሄክሳዴሲማል የCloudflare መለያ መታወቂያ ያስገቡ"
+
+#: includes/accounts.php
+msgid "Enter a name of 1 to 100 characters without control characters"
+msgstr "ያለ መቆጣጠሪያ ቁምፊዎች ከ1 እስከ 100 ቁምፊዎች ያለው ስም ያስገቡ"
+
+#: includes/accounts.php
+msgid "Choose an encrypted token or a token file"
+msgstr "የተመሰጠረ ቶከን ወይም የቶከን ፋይል ይምረጡ"
+
+#: includes/accounts.php
+msgid "Enter an API token"
+msgstr "የAPI ቶከን ያስገቡ"
+
+#: includes/accounts.php
+msgid "Re-enter the token when changing the account ID"
+msgstr "የመለያ መታወቂያውን ሲቀይሩ ቶከኑን እንደገና ያስገቡ"
+
+#: includes/accounts.php
+msgid "Enter an absolute path of at most 255 characters"
+msgstr "ቢበዛ 255 ቁምፊዎች ያለው ፍጹም ዱካ ያስገቡ"
+
+#: includes/accounts.php
+msgid "Must be 0 or 1"
+msgstr "0 ወይም 1 መሆን አለበት"
+
+#: includes/accounts.php
+msgid "Enter a whole number of seconds from 60 to 86400"
+msgstr "ከ60 እስከ 86400 ያለ ሙሉ የሰከንዶች ቁጥር ያስገቡ"
+
+#: includes/accounts.php
+msgid "This Cloudflare account ID is already configured"
+msgstr "ይህ የCloudflare መለያ ID አስቀድሞ ተዋቅሯል"
+
+#: includes/accounts.php
+msgid "Global API Keys are not accepted; use a scoped API token"
+msgstr "Global API Keys ተቀባይነት የላቸውም፤ የተገደበ ፈቃድ ያለው API ቶከን ይጠቀሙ"
+
+#: includes/accounts.php
+msgid "API token format is invalid"
+msgstr "የAPI ቶከን ቅርጸት ልክ አይደለም"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing, unreadable, insecure or malformed"
+msgstr "የቶከን ካዝና ቁልፍ ፋይል ጠፍቷል፣ የማይነበብ ነው፣ ደህንነቱ ያልተጠበቀ ነው ወይም የተበላሸ ቅርጸት አለው"
+
+#: includes/accounts.php
+msgid "Stored API token could not be decrypted"
+msgstr "የተቀመጠውን API ቶከን መፍታት አልተቻለም"
+
+#: includes/accounts.php
+msgid "Token file is missing, unreadable, not a regular file or too large"
+msgstr "የቶከን ፋይል ጠፍቷል፣ የማይነበብ ነው፣ መደበኛ ፋይል አይደለም ወይም በጣም ትልቅ ነው"
+
+#: includes/accounts.php
+msgid "Token file path is not absolute, is a symlink, or the file is world-readable or world-writable"
+msgstr "የቶከን ፋይል መንገድ ፍጹም አይደለም፣ symlink ነው፣ ወይም ፋይሉ ለሁሉም የሚነበብ ወይም የሚጻፍበት ነው"
+
+#: includes/accounts.php
+msgid "Token file is not inside the Token File Directory"
+msgstr "የቶከን ፋይሉ በቶከን ፋይል ማውጫ ውስጥ አይደለም"
+
+#: includes/accounts.php
+msgid "API token could not be encrypted"
+msgstr "API ቶከኑን ማመስጠር አልተቻለም"
+
+#: includes/accounts.php
+msgid "Credential error"
+msgstr "የማረጋገጫ ስህተት"
+
+#: includes/accounts.php includes/settings.php
+msgid "Cloudflare"
+msgstr "Cloudflare"
+
+#: includes/accounts.php
+msgid "Encrypted in the Cacti database"
+msgstr "በCacti ዳታቤዝ ውስጥ የተመሰጠረ"
+
+#: includes/accounts.php
+msgid "Token file on this server"
+msgstr "በዚህ አገልጋይ ላይ ያለ የቶከን ፋይል"
+
+#: includes/accounts.php includes/viewer.php
+msgid "Account"
+msgstr "መለያ"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Name"
+msgstr "ስም"
+
+#: includes/accounts.php
+msgid "A label for this account in Cacti."
+msgstr "በCacti ውስጥ ለዚህ መለያ የሚሆን መለያ ስም።"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Account ID"
+msgstr "የመለያ ID"
+
+#: includes/accounts.php
+msgid "The 32-character Cloudflare account ID, shown in the dashboard URL and on the account overview page."
+msgstr "በዳሽቦርዱ URL እና በመለያው አጠቃላይ እይታ ገጽ ላይ የሚታየው ባለ 32-ቁምፊ የCloudflare መለያ ID።"
+
+#: includes/accounts.php
+msgid "API Token"
+msgstr "API ቶከን"
+
+#: includes/accounts.php
+msgid "Token Storage"
+msgstr "የቶከን ማከማቻ"
+
+#: includes/accounts.php
+msgid "Where the scoped API token is kept. Global API Keys are not accepted."
+msgstr "የተገደበ ፈቃድ ያለው API ቶከን የሚቀመጥበት ቦታ። Global API Keys ተቀባይነት የላቸውም።"
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable because the key file in Settings is missing or unusable; only token files can be used."
+msgstr "በቅንብሮች ውስጥ ያለው የቁልፍ ፋይል ስለጠፋ ወይም መጠቀም ስለማይቻል የተመሰጠረ ማከማቻ አይገኝም፤ የቶከን ፋይሎችን ብቻ መጠቀም ይቻላል።"
+
+#: includes/accounts.php
+msgid "Leave blank to keep the current token"
+msgstr "የአሁኑን ቶከን ለማቆየት ባዶ ይተዉት"
+
+#: includes/accounts.php
+msgid "A scoped API token with Account Cloudflare Tunnel Read permission."
+msgstr "የAccount Cloudflare Tunnel Read ፈቃድ ያለው የተገደበ API ቶከን።"
+
+#: includes/accounts.php
+msgid "Token File"
+msgstr "የቶከን ፋይል"
+
+#: includes/accounts.php
+msgid "Absolute path to a file that contains only the token. It must be readable by the web server and poller users and must not be world-readable."
+msgstr "ቶከኑን ብቻ የያዘ ፋይል ፍጹም መንገድ። በድር አገልጋይ እና በመረጃ ሰብሳቢ ተጠቃሚዎች የሚነበብ መሆን አለበት፤ ለሁሉም የሚነበብ መሆን የለበትም።"
+
+#: includes/accounts.php
+msgid "Collection"
+msgstr "ስብስብ"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Enabled"
+msgstr "ነቅቷል"
+
+#: includes/accounts.php
+msgid "Disabled accounts are not polled."
+msgstr "የተሰናከሉ መለያዎች መረጃ አይሰበሰብባቸውም።"
+
+#: includes/accounts.php
+msgid "Collect Tunnels"
+msgstr "ታነሎችን ሰብስብ"
+
+#: includes/accounts.php
+msgid "Discover Cloudflare Tunnels and their connectors."
+msgstr "የCloudflare ታነሎችን እና አገናኞቻቸውን ያግኙ።"
+
+#: includes/accounts.php
+msgid "Collect Analytics"
+msgstr "ትንታኔዎችን ሰብስብ"
+
+#: includes/accounts.php
+msgid "Collect zone traffic analytics. This needs the Account Analytics Read and Analytics Read (Zone) permissions."
+msgstr "የዞን ትራፊክ ትንታኔዎችን ይሰብስቡ። ይህ የAccount Analytics Read እና Analytics Read (Zone) ፈቃዶችን ይፈልጋል።"
+
+#: includes/accounts.php
+msgid "Create Graphs"
+msgstr "ግራፎችን ፍጠር"
+
+#: includes/accounts.php
+msgid "Create graphs for each tunnel on the account's Cacti device. Turning this on needs the permission to edit Cacti devices."
+msgstr "በመለያው Cacti መሣሪያ ላይ ለእያንዳንዱ ታነል ግራፎችን ይፍጠሩ። ይህንን ማብራት የCacti መሣሪያዎችን የማርትዕ ፈቃድ ይፈልጋል።"
+
+#: includes/accounts.php
+msgid "Discovery Interval"
+msgstr "የግኝት ክፍተት"
+
+#: includes/accounts.php
+msgid "Seconds between inventory refreshes, from 60 to 86400."
+msgstr "በንብረት ዝርዝር እድሳቶች መካከል ያሉ ሰከንዶች፣ ከ60 እስከ 86400።"
+
+#: includes/accounts.php
+msgid "The token and its confirmation do not match"
+msgstr "ቶከኑ እና ማረጋገጫው አይዛመዱም"
+
+#: includes/accounts_page.php
+msgid "Delete"
+msgstr "ሰርዝ"
+
+#: includes/accounts_page.php
+msgid "Verify"
+msgstr "አረጋግጥ"
+
+#: includes/accounts_page.php
+msgid "Enable"
+msgstr "አንቃ"
+
+#: includes/accounts_page.php
+msgid "Disable"
+msgstr "አሰናክል"
+
+#: includes/accounts_page.php
+msgid "Create Cacti Device"
+msgstr "የCacti መሣሪያ ፍጠር"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to change Cloudflare accounts."
+msgstr "የCloudflare መለያዎችን ለመቀየር ፈቃድ የለዎትም።"
+
+#: includes/accounts_page.php
+msgid "The Cloudflare account no longer exists."
+msgstr "የCloudflare መለያው ከአሁን በኋላ የለም።"
+
+#: includes/accounts_page.php
+msgid "The Cloudflare accounts could not be read. See the Cacti log for details."
+msgstr "የCloudflare መለያዎችን ማንበብ አልተቻለም። ለዝርዝሮች የCacti መዝገብን ይመልከቱ።"
+
+#: includes/accounts_page.php
+msgid "Create Graphs was left off: turning it on needs the permission to edit Cacti devices."
+msgstr "ግራፎችን ፍጠር እንደጠፋ ተትቷል: ማብራት የCacti መሣሪያዎችን የማርትዕ ፈቃድ ይፈልጋል።"
+
+#: includes/accounts_page.php
+msgid "Cacti device created"
+msgstr "የCacti መሣሪያ ተፈጥሯል"
+
+#: includes/accounts_page.php
+msgid "A Cacti device already exists for this account"
+msgstr "ለዚህ መለያ የCacti መሣሪያ አስቀድሞ አለ"
+
+#: includes/accounts_page.php
+msgid "The Cloudflare templates are not installed; see the Cacti log"
+msgstr "የCloudflare አብነቶች አልተጫኑም፤ የCacti መዝገብን ይመልከቱ"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices"
+msgstr "የCacti መሣሪያዎችን ለመፍጠር ፈቃድ የለዎትም"
+
+#: includes/accounts_page.php
+msgid "The Cacti device could not be created; see the Cacti log"
+msgstr "የCacti መሣሪያውን መፍጠር አልተቻለም፤ የCacti መዝገብን ይመልከቱ"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices."
+msgstr "የCacti መሣሪያዎችን ለመፍጠር ፈቃድ የለዎትም።"
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Delete the following Cloudflare Account. Its discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgid_plural "Click 'Continue' to Delete the following Cloudflare Accounts. Their discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgstr[0] "የሚከተለውን የCloudflare መለያ ለመሰረዝ 'ቀጥል' የሚለውን ጠቅ ያድርጉ። የተገኘው የንብረት ዝርዝር እና የሥራ ሁኔታ ይወገዳሉ፤ የCacti መሣሪያዎች እና ግራፎች ግን ይቀመጣሉ።"
+msgstr[1] "የሚከተሉትን የCloudflare መለያዎች ለመሰረዝ 'ቀጥል' የሚለውን ጠቅ ያድርጉ። የተገኙት የንብረት ዝርዝሮች እና የሥራ ሁኔታዎች ይወገዳሉ፤ የCacti መሣሪያዎች እና ግራፎች ግን ይቀመጣሉ።"
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Verify the following Cloudflare Account against the Cloudflare API."
+msgid_plural "Click 'Continue' to Verify the following Cloudflare Accounts against the Cloudflare API."
+msgstr[0] "የሚከተለውን የCloudflare መለያ ከCloudflare API ጋር ለማረጋገጥ 'ቀጥል' የሚለውን ጠቅ ያድርጉ።"
+msgstr[1] "የሚከተሉትን የCloudflare መለያዎች ከCloudflare API ጋር ለማረጋገጥ 'ቀጥል' የሚለውን ጠቅ ያድርጉ።"
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Enable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Enable the following Cloudflare Accounts."
+msgstr[0] "የሚከተለውን የCloudflare መለያ ለማንቃት 'ቀጥል' የሚለውን ጠቅ ያድርጉ።"
+msgstr[1] "የሚከተሉትን የCloudflare መለያዎች ለማንቃት 'ቀጥል' የሚለውን ጠቅ ያድርጉ።"
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Disable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Disable the following Cloudflare Accounts."
+msgstr[0] "የሚከተለውን የCloudflare መለያ ለማሰናከል 'ቀጥል' የሚለውን ጠቅ ያድርጉ።"
+msgstr[1] "የሚከተሉትን የCloudflare መለያዎች ለማሰናከል 'ቀጥል' የሚለውን ጠቅ ያድርጉ።"
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to create a Cacti device for the following Cloudflare Account. An account that already has one is left as it is."
+msgid_plural "Click 'Continue' to create a Cacti device for each of the following Cloudflare Accounts. An account that already has one is left as it is."
+msgstr[0] "ለሚከተለው የCloudflare መለያ የCacti መሣሪያ ለመፍጠር 'ቀጥል' የሚለውን ጠቅ ያድርጉ። አስቀድሞ ያለው መለያ እንዳለ ይተዋል።"
+msgstr[1] "ለእያንዳንዱ የሚከተሉት የCloudflare መለያዎች የCacti መሣሪያ ለመፍጠር 'ቀጥል' የሚለውን ጠቅ ያድርጉ። አስቀድሞ ያለው መለያ እንዳለ ይተዋል።"
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Cancel"
+msgstr "ተወው"
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Continue"
+msgstr "ቀጥል"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Cloudflare Account [edit: %s]"
+msgstr "የCloudflare መለያ [አርትዕ: %s]"
+
+#: includes/accounts_page.php
+msgid "Cloudflare Account [new]"
+msgstr "የCloudflare መለያ [አዲስ]"
+
+#: includes/accounts_page.php includes/viewer.php src/OperatorPage.php
+msgid "Never"
+msgstr "በፍጹም"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Status"
+msgstr "ሁኔታ"
+
+#: includes/accounts_page.php
+msgid "Message"
+msgstr "መልእክት"
+
+#: includes/accounts_page.php
+msgid "No"
+msgstr "አይ"
+
+#: includes/accounts_page.php
+msgid "Token Stored"
+msgstr "ቶከን ተቀምጧል"
+
+#: includes/accounts_page.php
+msgid "Yes"
+msgstr "አዎ"
+
+#: includes/accounts_page.php
+msgid "Last Checked"
+msgstr "ለመጨረሻ ጊዜ የተፈተሸው"
+
+#: includes/accounts_page.php
+msgid "Last Verified"
+msgstr "ለመጨረሻ ጊዜ የተረጋገጠው"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Permission: %s"
+msgstr "ፈቃድ: %s"
+
+#: includes/accounts_page.php
+msgid "Granted"
+msgstr "ተሰጥቷል"
+
+#: includes/accounts_page.php
+msgid "Missing"
+msgstr "የጠፋ"
+
+#: includes/accounts_page.php
+msgid "Connection Status"
+msgstr "የግንኙነት ሁኔታ"
+
+#: includes/accounts_page.php includes/settings.php includes/viewer.php
+msgid "Cloudflare Accounts"
+msgstr "የCloudflare መለያዎች"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Search"
+msgstr "ፈልግ"
+
+#: includes/accounts_page.php
+msgid "Accounts"
+msgstr "መለያዎች"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Default"
+msgstr "ነባሪ"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Go"
+msgstr "ሂድ"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Set/Refresh Filters"
+msgstr "ማጣሪያዎችን አዘጋጅ/አድስ"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear"
+msgstr "አጽዳ"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear Filters"
+msgstr "ማጣሪያዎችን አጽዳ"
+
+#: includes/accounts_page.php
+msgid "The name of this account in Cacti."
+msgstr "በCacti ውስጥ የዚህ መለያ ስም።"
+
+#: includes/accounts_page.php
+msgid "Whether an API token is configured. The edit page shows where it is kept."
+msgstr "የAPI ቶከን መዋቀሩን ያሳያል። የአርትዕ ገጹ የት እንደሚቀመጥ ያሳያል።"
+
+#: includes/accounts_page.php
+msgid "The result of the last Verify."
+msgstr "የመጨረሻው ማረጋገጫ ውጤት።"
+
+#: includes/accounts_page.php
+msgid "ID"
+msgstr "ID"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "No Cloudflare Accounts Found"
+msgstr "ምንም የCloudflare መለያዎች አልተገኙም"
+
+#: includes/operator.php
+msgid "Inspect tunnels and connector counts. Escalate token changes, account configuration and graph creation to an administrator."
+msgstr "ታነሎችን እና የአገናኝ ቆጠራዎችን ይመርምሩ። የቶከን ለውጦችን፣ የመለያ ውቅረትን እና የግራፍ መፍጠርን ለአስተዳዳሪ ያሳውቁ።"
+
+#: includes/settings.php
+msgid "Configuration"
+msgstr "ውቅረት"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Cloudflare Operations"
+msgstr "የCloudflare ክወናዎች"
+
+#: includes/settings.php
+msgid "Management"
+msgstr "አስተዳደር"
+
+#: includes/settings.php includes/viewer.php
+msgid "Cloudflare Tunnels"
+msgstr "የCloudflare ታነሎች"
+
+#: includes/settings.php
+msgid "(edit)"
+msgstr "(አርትዕ)"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Actions"
+msgstr "እርምጃዎች"
+
+#: includes/settings.php includes/viewer.php
+msgid "Overview"
+msgstr "አጠቃላይ እይታ"
+
+#: includes/settings.php includes/viewer.php
+msgid "Tunnels"
+msgstr "ታነሎች"
+
+#: includes/settings.php includes/viewer.php
+msgid "Connectors"
+msgstr "አገናኞች"
+
+#: includes/settings.php
+msgid "Token Vault Key File"
+msgstr "የቶከን ካዝና ቁልፍ ፋይል"
+
+#: includes/settings.php
+msgid "Absolute path to the 32-byte key used to encrypt stored API tokens. It must be readable by the web server and poller users and not world-readable. When the file is missing, only token files can be used."
+msgstr "የተቀመጡ API ቶከኖችን ለማመስጠር የሚያገለግለው ባለ 32-ባይት ቁልፍ ፍጹም መንገድ። በድር አገልጋይ እና በመረጃ ሰብሳቢ ተጠቃሚዎች የሚነበብ እና ለሁሉም የማይነበብ መሆን አለበት። ፋይሉ ሲጠፋ የቶከን ፋይሎችን ብቻ መጠቀም ይቻላል።"
+
+#: includes/settings.php
+msgid "Token File Directory"
+msgstr "የቶከን ፋይል ማውጫ"
+
+#: includes/settings.php
+msgid "Absolute path of the directory that every account token file must be in. When empty, a token file may be anywhere the web server and poller users can read."
+msgstr "እያንዳንዱ የመለያ ቶከን ፋይል መገኘት ያለበት ማውጫ ፍጹም መንገድ። ባዶ ሲሆን፣ የቶከን ፋይል የድር አገልጋዩ እና የመረጃ ሰብሳቢ ተጠቃሚዎች ሊያነቡት በሚችሉበት በማንኛውም ቦታ ሊሆን ይችላል።"
+
+#: includes/settings.php
+msgid "Interactive Request Timeout"
+msgstr "በይነተገናኝ ጥያቄ የጊዜ ገደብ"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made from the web interface, such as Verify."
+msgstr "ከድር በይነገጽ ለሚደረግ የCloudflare API ጥያቄ (ለምሳሌ ማረጋገጥ) የተፈቀደው ጠቅላላ ጊዜ በሰከንዶች።"
+
+#: includes/settings.php
+msgid "Collector Request Timeout"
+msgstr "የሰብሳቢ ጥያቄ የጊዜ ገደብ"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made by the background collector."
+msgstr "ከበስተጀርባ በሚሰራው ሰብሳቢ ለሚደረግ የCloudflare API ጥያቄ የተፈቀደው ጠቅላላ ጊዜ በሰከንዶች።"
+
+#: includes/settings.php
+msgid "Log Level"
+msgstr "የመዝገብ ደረጃ"
+
+#: includes/settings.php
+msgid "The amount of detail the plugin writes to the Cacti log."
+msgstr "ተሰኪው ወደ Cacti መዝገብ የሚጽፈው የዝርዝር መጠን።"
+
+#: includes/tunnel_retirement.php
+msgid "The tunnel could not be retired. Check permissions and retry after collection finishes."
+msgstr "ታነሉን ከአገልግሎት ማውጣት አልተቻለም። ፈቃዶችን ያረጋግጡ እና መሰብሰብ ካለቀ በኋላ እንደገና ይሞክሩ።"
+
+#: includes/tunnel_retirement.php includes/viewer.php
+msgid "Retire tunnel"
+msgstr "ታነሉን አሰናብት"
+
+#: includes/tunnel_retirement.php
+msgid "Retiring removes the graphs and unshared data sources created for this deleted tunnel. Cacti controls RRD cleanup. The inventory record is kept."
+msgstr "ማሰናበት ለዚህ የተሰረዘ ታነል የተፈጠሩትን ግራፎች እና ያልተጋሩ የመረጃ ምንጮችን ያስወግዳል። Cacti የRRD ጽዳትን ይቆጣጠራል። የንብረት ዝርዝር መዝገቡ ይቀመጣል።"
+
+#: includes/viewer.php
+msgid "The Cloudflare tunnels could not be read. See the Cacti log for details."
+msgstr "የCloudflare ታነሎችን ማንበብ አልተቻለም። ለዝርዝሮች የCacti መዝገብን ይመልከቱ።"
+
+#: includes/viewer.php
+msgid "Zone Analytics"
+msgstr "የዞን ትንታኔዎች"
+
+#: includes/viewer.php
+msgid "Disabled"
+msgstr "ተሰናክሏል"
+
+#: includes/viewer.php
+msgid "Not collected"
+msgstr "አልተሰበሰበም"
+
+#: includes/viewer.php
+msgid "Collection failing"
+msgstr "መሰብሰብ አልተሳካም"
+
+#: includes/viewer.php
+msgid "Not yet collected"
+msgstr "ገና አልተሰበሰበም"
+
+#: includes/viewer.php
+msgid "Down"
+msgstr "የማይደረስ"
+
+#: includes/viewer.php
+msgid "Degraded"
+msgstr "አፈጻጸሙ የቀነሰ"
+
+#: includes/viewer.php
+msgid "Healthy"
+msgstr "ጤናማ"
+
+#: includes/viewer.php
+msgid "Inactive"
+msgstr "ንቁ ያልሆነ"
+
+#: includes/viewer.php
+msgid "No active tunnels"
+msgstr "ምንም ንቁ ታነሎች የሉም"
+
+#: includes/viewer.php
+msgid "The worst status among active tunnels, or Collection failing while discovery fails."
+msgstr "ንቁ በሆኑ ታነሎች መካከል ያለው የከፋ ሁኔታ፣ ወይም ግኝት ሲከሽፍ መሰብሰብ አልተሳካም።"
+
+#: includes/viewer.php
+msgid "Active"
+msgstr "ንቁ"
+
+#: includes/viewer.php
+msgid "Unavailable"
+msgstr "የማይገኝ"
+
+#: includes/viewer.php
+msgid "Deleted"
+msgstr "ተሰርዟል"
+
+#: includes/viewer.php
+msgid "Last Successful Discovery"
+msgstr "የመጨረሻው የተሳካ ግኝት"
+
+#: includes/viewer.php
+msgid "Consecutive Failures"
+msgstr "ተከታታይ ውድቀቶች"
+
+#: includes/viewer.php
+#, php-format
+msgid "Last error: %s"
+msgstr "የመጨረሻ ስህተት: %s"
+
+#: includes/viewer.php
+msgid "Tunnel"
+msgstr "ታነል"
+
+#: includes/viewer.php
+msgid "Cloudflare Status"
+msgstr "የCloudflare ሁኔታ"
+
+#: includes/viewer.php
+msgid "The status Cloudflare reported at the last discovery."
+msgstr "Cloudflare በመጨረሻው ግኝት ላይ ሪፖርት ያደረገው ሁኔታ።"
+
+#: includes/viewer.php
+msgid "Lifecycle"
+msgstr "የሕይወት ዑደት"
+
+#: includes/viewer.php
+msgid "Whether the last discoveries still found this tunnel."
+msgstr "የመጨረሻዎቹ ግኝቶች አሁንም ይህንን ታነል አግኝተውት እንደሆነ።"
+
+#: includes/viewer.php
+msgid "Type"
+msgstr "ዓይነት"
+
+#: includes/viewer.php
+msgid "Connections"
+msgstr "ግንኙነቶች"
+
+#: includes/viewer.php
+msgid "Last Seen"
+msgstr "ለመጨረሻ ጊዜ የታየው"
+
+#: includes/viewer.php
+msgid "Any"
+msgstr "ማንኛውም"
+
+#: includes/viewer.php
+msgid "All"
+msgstr "ሁሉም"
+
+#: includes/viewer.php
+msgid "No Cloudflare Tunnels Found"
+msgstr "ምንም የCloudflare ታነሎች አልተገኙም"
+
+#: includes/viewer.php
+msgid "Choose a tunnel on the Tunnels tab."
+msgstr "በታነሎች ትር ላይ አንድ ታነል ይምረጡ።"
+
+#: includes/viewer.php
+msgid "The tunnel no longer exists."
+msgstr "ታነሉ ከአሁን በኋላ የለም።"
+
+#: includes/viewer.php
+#, php-format
+msgid "Connectors for %s"
+msgstr "የ%s አገናኞች"
+
+#: includes/viewer.php
+msgid "Connector ID"
+msgstr "የአገናኝ ID"
+
+#: includes/viewer.php
+msgid "Version"
+msgstr "ስሪት"
+
+#: includes/viewer.php
+msgid "Architecture"
+msgstr "አርክቴክቸር"
+
+#: includes/viewer.php
+msgid "Running Since"
+msgstr "እየሰራ ያለው ከ"
+
+#: includes/viewer.php
+msgid "Data Centers"
+msgstr "የመረጃ ማዕከላት"
+
+#: includes/viewer.php
+msgid "Origin IPs"
+msgstr "የመነሻ IP አድራሻዎች"
+
+#: includes/viewer.php
+#, php-format
+msgid "This tunnel is %s. These connectors were last seen while the tunnel was active."
+msgstr "ይህ ታነል %s ነው። እነዚህ አገናኞች ለመጨረሻ ጊዜ የታዩት ታነሉ ንቁ በነበረበት ጊዜ ነው።"
+
+#: includes/viewer.php
+msgid "No connectors are running for this tunnel."
+msgstr "ለዚህ ታነል ምንም አገናኞች እየሰሩ አይደሉም።"
+
+#: includes/viewer.php
+msgid "Export"
+msgstr "ላክ"
+
+#: includes/viewer.php
+msgid "Bytes/s"
+msgstr "ባይቶች/ሰ"
+
+#: includes/viewer.php
+msgid "HTTP 5xx (%)"
+msgstr "HTTP 5xx (%)"
+
+#: includes/viewer.php
+msgid "Requests/s"
+msgstr "ጥያቄዎች/ሰ"
+
+#: includes/viewer.php
+msgid "Zone"
+msgstr "ዞን"
+
+#: src/OperatorPage.php
+msgid "Review the recorded observations below. Acknowledgments are personal to this session, expire when observations change, and never suppress alerts or change health."
+msgstr "ከዚህ በታች የተመዘገቡትን ምልከታዎች ይገምግሙ። እውቅናዎች ለዚህ ክፍለ ጊዜ ግላዊ ናቸው፣ ምልከታዎች ሲለወጡ ጊዜያቸው ያልፋል፣ እና ማንቂያዎችን አያፍኑም ወይም ጤናን አይለውጡም።"
+
+#: src/OperatorPage.php
+msgid "Investigation"
+msgstr "ምርመራ"
+
+#: src/OperatorPage.php
+msgid "Object"
+msgstr "ነገር"
+
+#: src/OperatorPage.php
+msgid "Observed (UTC)"
+msgstr "የታየበት (UTC)"
+
+#: src/OperatorPage.php
+msgid "State"
+msgstr "ሁኔታ"
+
+#: src/OperatorPage.php
+msgid "Unknown or stale"
+msgstr "ያልታወቀ ወይም ያረጀ"
+
+#: src/OperatorPage.php
+msgid "Acknowledged; health unchanged."
+msgstr "እውቅና ተሰጥቷል፤ ጤና አልተለወጠም።"
+
+#: src/OperatorPage.php
+msgid "Acknowledge"
+msgstr "እውቅና ስጥ"
+
+#: src/OperatorPage.php
+msgid "No observations are available."
+msgstr "ምንም ምልከታዎች አይገኙም።"

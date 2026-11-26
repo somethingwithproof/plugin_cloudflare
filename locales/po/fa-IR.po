@@ -1,0 +1,774 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-FileCopyrightText: 2026 Thomas Vincent <thomasvincent@gmail.com>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cloudflare 0.4.0-dev\n"
+"Report-Msgid-Bugs-To: https://github.com/somethingwithproof/plugin_cloudflare/issues\n"
+"PO-Revision-Date: 2026-11-26 00:00+0000\n"
+"Last-Translator: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language-Team: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language: fa-IR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: cloudflare_operator.php
+msgid "Monitoring view"
+msgstr "نمای پایش"
+
+#: cloudflare_operator.php
+msgid "Observations could not be read. Ask an administrator to check the plugin log."
+msgstr "خواندن مشاهدات امکان‌پذیر نبود. از مدیر سیستم بخواهید گزارش افزونه را بررسی کند."
+
+#: includes/accounts.php
+msgid "Connection verified"
+msgstr "اتصال تایید شد"
+
+#: includes/accounts.php
+msgid "Token is not active; it may be expired or disabled"
+msgstr "توکن فعال نیست؛ ممکن است منقضی یا غیرفعال شده باشد"
+
+#: includes/accounts.php
+msgid "Token is invalid or expired"
+msgstr "توکن نامعتبر یا منقضی است"
+
+#: includes/accounts.php
+msgid "Token lacks the Account Cloudflare Tunnel Read permission"
+msgstr "توکن فاقد دسترسی Account Cloudflare Tunnel Read است"
+
+#: includes/accounts.php
+msgid "Cloudflare API is unreachable; try again later"
+msgstr "API سرویس Cloudflare در دسترس نیست؛ بعدا دوباره تلاش کنید"
+
+#: includes/accounts.php
+msgid "Cloudflare API rate limit reached; try again later"
+msgstr "به محدودیت نرخ درخواست API سرویس Cloudflare رسیده‌اید؛ بعدا دوباره تلاش کنید"
+
+#: includes/accounts.php
+msgid "Cloudflare API request failed unexpectedly"
+msgstr "درخواست API سرویس Cloudflare به‌طور غیرمنتظره ناموفق بود"
+
+#: includes/accounts.php
+msgid "Token lacks the permissions needed to verify it"
+msgstr "توکن دسترسی‌های لازم برای بررسی خود را ندارد"
+
+#: includes/accounts.php
+msgid "Stored token cannot be decrypted"
+msgstr "توکن ذخیره‌شده قابل رمزگشایی نیست"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing or unusable"
+msgstr "فایل کلید خزانه توکن وجود ندارد یا قابل استفاده نیست"
+
+#: includes/accounts.php
+msgid "Token file is missing or insecure"
+msgstr "فایل توکن وجود ندارد یا ناامن است"
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable; configure the key file or use a token file"
+msgstr "ذخیره‌سازی رمزنگاری‌شده در دسترس نیست؛ فایل کلید را پیکربندی کنید یا از فایل توکن استفاده کنید"
+
+#: includes/accounts.php
+msgid "Enter the 32-character hexadecimal Cloudflare account ID"
+msgstr "شناسه حساب کاربری 32 نویسه‌ای هگزادسیمال Cloudflare را وارد کنید"
+
+#: includes/accounts.php
+msgid "Enter a name of 1 to 100 characters without control characters"
+msgstr "نامی بین 1 تا 100 نویسه بدون نویسه‌های کنترلی وارد کنید"
+
+#: includes/accounts.php
+msgid "Choose an encrypted token or a token file"
+msgstr "یک توکن رمزنگاری‌شده یا یک فایل توکن انتخاب کنید"
+
+#: includes/accounts.php
+msgid "Enter an API token"
+msgstr "یک توکن API وارد کنید"
+
+#: includes/accounts.php
+msgid "Re-enter the token when changing the account ID"
+msgstr "هنگام تغییر شناسه حساب کاربری، توکن را دوباره وارد کنید"
+
+#: includes/accounts.php
+msgid "Enter an absolute path of at most 255 characters"
+msgstr "یک مسیر مطلق با حداکثر 255 نویسه وارد کنید"
+
+#: includes/accounts.php
+msgid "Must be 0 or 1"
+msgstr "باید 0 یا 1 باشد"
+
+#: includes/accounts.php
+msgid "Enter a whole number of seconds from 60 to 86400"
+msgstr "یک عدد صحیح برای ثانیه از 60 تا 86400 وارد کنید"
+
+#: includes/accounts.php
+msgid "This Cloudflare account ID is already configured"
+msgstr "این شناسه حساب کاربری Cloudflare از قبل پیکربندی شده است"
+
+#: includes/accounts.php
+msgid "Global API Keys are not accepted; use a scoped API token"
+msgstr "کلیدهای Global API پذیرفته نمی‌شوند؛ از یک توکن API با دسترسی محدود استفاده کنید"
+
+#: includes/accounts.php
+msgid "API token format is invalid"
+msgstr "قالب توکن API نامعتبر است"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing, unreadable, insecure or malformed"
+msgstr "فایل کلید خزانه توکن یافت نشد، خواندنی نیست، ناامن است یا قالب نادرست دارد"
+
+#: includes/accounts.php
+msgid "Stored API token could not be decrypted"
+msgstr "رمزگشایی توکن API ذخیره‌شده انجام نشد"
+
+#: includes/accounts.php
+msgid "Token file is missing, unreadable, not a regular file or too large"
+msgstr "فایل توکن یافت نشد، خواندنی نیست، یک فایل عادی نیست یا بیش از حد بزرگ است"
+
+#: includes/accounts.php
+msgid "Token file path is not absolute, is a symlink, or the file is world-readable or world-writable"
+msgstr "مسیر فایل توکن مطلق نیست، پیوند نمادین است، یا فایل برای همه کاربران قابل خواندن یا نوشتن است"
+
+#: includes/accounts.php
+msgid "Token file is not inside the Token File Directory"
+msgstr "فایل توکن در داخل دایرکتوری فایل توکن قرار ندارد"
+
+#: includes/accounts.php
+msgid "API token could not be encrypted"
+msgstr "رمزگذاری توکن API انجام نشد"
+
+#: includes/accounts.php
+msgid "Credential error"
+msgstr "خطای اطلاعات احراز هویت"
+
+#: includes/accounts.php includes/settings.php
+msgid "Cloudflare"
+msgstr "Cloudflare"
+
+#: includes/accounts.php
+msgid "Encrypted in the Cacti database"
+msgstr "رمزگذاری‌شده در پایگاه داده Cacti"
+
+#: includes/accounts.php
+msgid "Token file on this server"
+msgstr "فایل توکن روی این سرور"
+
+#: includes/accounts.php includes/viewer.php
+msgid "Account"
+msgstr "حساب کاربری"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Name"
+msgstr "نام"
+
+#: includes/accounts.php
+msgid "A label for this account in Cacti."
+msgstr "برچسبی برای این حساب کاربری در Cacti."
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Account ID"
+msgstr "شناسه حساب کاربری"
+
+#: includes/accounts.php
+msgid "The 32-character Cloudflare account ID, shown in the dashboard URL and on the account overview page."
+msgstr "شناسه 32 کاراکتری حساب کاربری Cloudflare که در نشانی داشبورد و صفحه نمای کلی حساب کاربری نمایش داده می‌شود."
+
+#: includes/accounts.php
+msgid "API Token"
+msgstr "توکن API"
+
+#: includes/accounts.php
+msgid "Token Storage"
+msgstr "محل ذخیره توکن"
+
+#: includes/accounts.php
+msgid "Where the scoped API token is kept. Global API Keys are not accepted."
+msgstr "محل نگهداری توکن API با دسترسی محدود. کلیدهای Global API پذیرفته نمی‌شوند."
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable because the key file in Settings is missing or unusable; only token files can be used."
+msgstr "ذخیره‌سازی رمزگذاری‌شده در دسترس نیست زیرا فایل کلید در تنظیمات یافت نشد یا قابل استفاده نیست؛ فقط می‌توان از فایل‌های توکن استفاده کرد."
+
+#: includes/accounts.php
+msgid "Leave blank to keep the current token"
+msgstr "برای حفظ توکن فعلی خالی بگذارید"
+
+#: includes/accounts.php
+msgid "A scoped API token with Account Cloudflare Tunnel Read permission."
+msgstr "یک توکن API با دسترسی محدود دارای مجوز Account Cloudflare Tunnel Read."
+
+#: includes/accounts.php
+msgid "Token File"
+msgstr "فایل توکن"
+
+#: includes/accounts.php
+msgid "Absolute path to a file that contains only the token. It must be readable by the web server and poller users and must not be world-readable."
+msgstr "مسیر مطلق به فایلی که فقط حاوی توکن است. این فایل باید برای کاربران وب‌سرور و گردآورنده (poller) خواندنی باشد و نباید برای همه کاربران قابل خواندن باشد."
+
+#: includes/accounts.php
+msgid "Collection"
+msgstr "جمع‌آوری"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Enabled"
+msgstr "فعال"
+
+#: includes/accounts.php
+msgid "Disabled accounts are not polled."
+msgstr "حساب‌های کاربری غیرفعال نمونه‌برداری نمی‌شوند."
+
+#: includes/accounts.php
+msgid "Collect Tunnels"
+msgstr "گردآوری تونل‌ها"
+
+#: includes/accounts.php
+msgid "Discover Cloudflare Tunnels and their connectors."
+msgstr "کشف Cloudflare Tunnels و اتصال‌دهنده‌های آن‌ها."
+
+#: includes/accounts.php
+msgid "Collect Analytics"
+msgstr "گردآوری تحلیل‌ها"
+
+#: includes/accounts.php
+msgid "Collect zone traffic analytics. This needs the Account Analytics Read and Analytics Read (Zone) permissions."
+msgstr "گردآوری تحلیل‌های ترافیک ناحیه (zone). این مورد به مجوزهای Account Analytics Read و Analytics Read (Zone) نیاز دارد."
+
+#: includes/accounts.php
+msgid "Create Graphs"
+msgstr "ایجاد نمودارها"
+
+#: includes/accounts.php
+msgid "Create graphs for each tunnel on the account's Cacti device. Turning this on needs the permission to edit Cacti devices."
+msgstr "ایجاد نمودار برای هر تونل روی دستگاه Cacti این حساب کاربری. فعال کردن این گزینه به دسترسی ویرایش دستگاه‌های Cacti نیاز دارد."
+
+#: includes/accounts.php
+msgid "Discovery Interval"
+msgstr "بازه کشف"
+
+#: includes/accounts.php
+msgid "Seconds between inventory refreshes, from 60 to 86400."
+msgstr "فاصله زمانی بر حسب ثانیه بین بازخوانی‌های فهرست دارایی، از 60 تا 86400."
+
+#: includes/accounts.php
+msgid "The token and its confirmation do not match"
+msgstr "توکن و تاییدیه آن مطابقت ندارند"
+
+#: includes/accounts_page.php
+msgid "Delete"
+msgstr "حذف"
+
+#: includes/accounts_page.php
+msgid "Verify"
+msgstr "بررسی"
+
+#: includes/accounts_page.php
+msgid "Enable"
+msgstr "فعال کردن"
+
+#: includes/accounts_page.php
+msgid "Disable"
+msgstr "غیرفعال کردن"
+
+#: includes/accounts_page.php
+msgid "Create Cacti Device"
+msgstr "ایجاد دستگاه Cacti"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to change Cloudflare accounts."
+msgstr "شما اجازه تغییر حساب‌های کاربری Cloudflare را ندارید."
+
+#: includes/accounts_page.php
+msgid "The Cloudflare account no longer exists."
+msgstr "این حساب کاربری Cloudflare دیگر وجود ندارد."
+
+#: includes/accounts_page.php
+msgid "The Cloudflare accounts could not be read. See the Cacti log for details."
+msgstr "خواندن حساب‌های کاربری Cloudflare انجام نشد. برای جزئیات، گزارش Cacti را بررسی کنید."
+
+#: includes/accounts_page.php
+msgid "Create Graphs was left off: turning it on needs the permission to edit Cacti devices."
+msgstr "گزینه ایجاد نمودارها خاموش ماند: فعال کردن آن به دسترسی ویرایش دستگاه‌های Cacti نیاز دارد."
+
+#: includes/accounts_page.php
+msgid "Cacti device created"
+msgstr "دستگاه Cacti ایجاد شد"
+
+#: includes/accounts_page.php
+msgid "A Cacti device already exists for this account"
+msgstr "یک دستگاه Cacti از قبل برای این حساب کاربری وجود دارد"
+
+#: includes/accounts_page.php
+msgid "The Cloudflare templates are not installed; see the Cacti log"
+msgstr "قالب‌های Cloudflare نصب نشده‌اند؛ گزارش Cacti را بررسی کنید"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices"
+msgstr "شما اجازه ایجاد دستگاه‌های Cacti را ندارید"
+
+#: includes/accounts_page.php
+msgid "The Cacti device could not be created; see the Cacti log"
+msgstr "ایجاد دستگاه Cacti انجام نشد؛ گزارش Cacti را بررسی کنید"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices."
+msgstr "شما اجازه ایجاد دستگاه‌های Cacti را ندارید."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Delete the following Cloudflare Account. Its discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgid_plural "Click 'Continue' to Delete the following Cloudflare Accounts. Their discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgstr[0] "برای حذف حساب کاربری Cloudflare زیر روی «ادامه» کلیک کنید. فهرست دارایی کشف‌شده و وضعیت کار آن حذف می‌شوند؛ دستگاه‌ها و نمودارهای Cacti حفظ می‌شوند."
+msgstr[1] "برای حذف حساب‌های کاربری Cloudflare زیر روی «ادامه» کلیک کنید. فهرست دارایی کشف‌شده و وضعیت کار آن‌ها حذف می‌شوند؛ دستگاه‌ها و نمودارهای Cacti حفظ می‌شوند."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Verify the following Cloudflare Account against the Cloudflare API."
+msgid_plural "Click 'Continue' to Verify the following Cloudflare Accounts against the Cloudflare API."
+msgstr[0] "برای راستی‌آزمایی حساب کاربری Cloudflare زیر در برابر Cloudflare API روی «ادامه» کلیک کنید."
+msgstr[1] "برای راستی‌آزمایی حساب‌های کاربری Cloudflare زیر در برابر Cloudflare API روی «ادامه» کلیک کنید."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Enable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Enable the following Cloudflare Accounts."
+msgstr[0] "برای فعال کردن حساب کاربری Cloudflare زیر روی «ادامه» کلیک کنید."
+msgstr[1] "برای فعال کردن حساب‌های کاربری Cloudflare زیر روی «ادامه» کلیک کنید."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Disable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Disable the following Cloudflare Accounts."
+msgstr[0] "برای غیرفعال کردن حساب کاربری Cloudflare زیر روی «ادامه» کلیک کنید."
+msgstr[1] "برای غیرفعال کردن حساب‌های کاربری Cloudflare زیر روی «ادامه» کلیک کنید."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to create a Cacti device for the following Cloudflare Account. An account that already has one is left as it is."
+msgid_plural "Click 'Continue' to create a Cacti device for each of the following Cloudflare Accounts. An account that already has one is left as it is."
+msgstr[0] "برای ایجاد یک دستگاه Cacti برای حساب کاربری Cloudflare زیر روی «ادامه» کلیک کنید. حسابی که از قبل دستگاه دارد بدون تغییر باقی می‌ماند."
+msgstr[1] "برای ایجاد یک دستگاه Cacti برای هر یک از حساب‌های کاربری Cloudflare زیر روی «ادامه» کلیک کنید. حسابی که از قبل دستگاه دارد بدون تغییر باقی می‌ماند."
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Cancel"
+msgstr "لغو"
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Continue"
+msgstr "ادامه"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Cloudflare Account [edit: %s]"
+msgstr "حساب کاربری Cloudflare [ویرایش: %s]"
+
+#: includes/accounts_page.php
+msgid "Cloudflare Account [new]"
+msgstr "حساب کاربری Cloudflare [جدید]"
+
+#: includes/accounts_page.php includes/viewer.php src/OperatorPage.php
+msgid "Never"
+msgstr "هرگز"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Status"
+msgstr "وضعیت"
+
+#: includes/accounts_page.php
+msgid "Message"
+msgstr "پیام"
+
+#: includes/accounts_page.php
+msgid "No"
+msgstr "خیر"
+
+#: includes/accounts_page.php
+msgid "Token Stored"
+msgstr "توکن ذخیره‌شده"
+
+#: includes/accounts_page.php
+msgid "Yes"
+msgstr "بله"
+
+#: includes/accounts_page.php
+msgid "Last Checked"
+msgstr "آخرین بررسی"
+
+#: includes/accounts_page.php
+msgid "Last Verified"
+msgstr "آخرین راستی‌آزمایی"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Permission: %s"
+msgstr "مجوز: %s"
+
+#: includes/accounts_page.php
+msgid "Granted"
+msgstr "اعطا شده"
+
+#: includes/accounts_page.php
+msgid "Missing"
+msgstr "ناموجود"
+
+#: includes/accounts_page.php
+msgid "Connection Status"
+msgstr "وضعیت اتصال"
+
+#: includes/accounts_page.php includes/settings.php includes/viewer.php
+msgid "Cloudflare Accounts"
+msgstr "حساب‌های کاربری Cloudflare"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Search"
+msgstr "جستجو"
+
+#: includes/accounts_page.php
+msgid "Accounts"
+msgstr "حساب‌های کاربری"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Default"
+msgstr "پیش‌فرض"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Go"
+msgstr "اجرا"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Set/Refresh Filters"
+msgstr "تنظیم/بازخوانی فیلترها"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear"
+msgstr "پاک کردن"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear Filters"
+msgstr "پاک کردن فیلترها"
+
+#: includes/accounts_page.php
+msgid "The name of this account in Cacti."
+msgstr "نام این حساب کاربری در Cacti."
+
+#: includes/accounts_page.php
+msgid "Whether an API token is configured. The edit page shows where it is kept."
+msgstr "مشخص می‌کند آیا یک توکن API پیکربندی شده است یا خیر. صفحه ویرایش محل نگهداری آن را نشان می‌دهد."
+
+#: includes/accounts_page.php
+msgid "The result of the last Verify."
+msgstr "نتیجه آخرین راستی‌آزمایی."
+
+#: includes/accounts_page.php
+msgid "ID"
+msgstr "شناسه"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "No Cloudflare Accounts Found"
+msgstr "هیچ حساب کاربری Cloudflare یافت نشد"
+
+#: includes/operator.php
+msgid "Inspect tunnels and connector counts. Escalate token changes, account configuration and graph creation to an administrator."
+msgstr "بازرسی تونل‌ها و تعداد اتصال‌دهنده‌ها. تغییرات توکن، پیکربندی حساب کاربری و ایجاد نمودار را به مدیر سیستم ارجاع دهید."
+
+#: includes/settings.php
+msgid "Configuration"
+msgstr "پیکربندی"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Cloudflare Operations"
+msgstr "عملیات Cloudflare"
+
+#: includes/settings.php
+msgid "Management"
+msgstr "مدیریت"
+
+#: includes/settings.php includes/viewer.php
+msgid "Cloudflare Tunnels"
+msgstr "تونل‌های Cloudflare"
+
+#: includes/settings.php
+msgid "(edit)"
+msgstr "(ویرایش)"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Actions"
+msgstr "عملیات"
+
+#: includes/settings.php includes/viewer.php
+msgid "Overview"
+msgstr "نمای کلی"
+
+#: includes/settings.php includes/viewer.php
+msgid "Tunnels"
+msgstr "تونل‌ها"
+
+#: includes/settings.php includes/viewer.php
+msgid "Connectors"
+msgstr "اتصال‌دهنده‌ها"
+
+#: includes/settings.php
+msgid "Token Vault Key File"
+msgstr "فایل کلید خزانه توکن"
+
+#: includes/settings.php
+msgid "Absolute path to the 32-byte key used to encrypt stored API tokens. It must be readable by the web server and poller users and not world-readable. When the file is missing, only token files can be used."
+msgstr "مسیر مطلق کلید 32 بایتی مورد استفاده برای رمزگذاری توکن‌های API ذخیره‌شده. این فایل باید برای کاربران وب‌سرور و گردآورنده (poller) خواندنی باشد و نباید برای همه کاربران قابل خواندن باشد. هنگامی که این فایل وجود ندارد، فقط می‌توان از فایل‌های توکن استفاده کرد."
+
+#: includes/settings.php
+msgid "Token File Directory"
+msgstr "دایرکتوری فایل توکن"
+
+#: includes/settings.php
+msgid "Absolute path of the directory that every account token file must be in. When empty, a token file may be anywhere the web server and poller users can read."
+msgstr "مسیر مطلق دایرکتوری که هر فایل توکن حساب کاربری باید در آن قرار داشته باشد. در صورت خالی بودن، فایل توکن می‌تواند در هر جایی باشد که کاربران وب‌سرور و گردآورنده (poller) بتوانند آن را بخوانند."
+
+#: includes/settings.php
+msgid "Interactive Request Timeout"
+msgstr "مهلت زمانی درخواست تعاملی"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made from the web interface, such as Verify."
+msgstr "مجموع زمان مجاز بر حسب ثانیه برای یک درخواست Cloudflare API ارسال‌شده از رابط وب، مانند راستی‌آزمایی."
+
+#: includes/settings.php
+msgid "Collector Request Timeout"
+msgstr "مهلت زمانی درخواست گردآورنده"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made by the background collector."
+msgstr "مجموع زمان مجاز بر حسب ثانیه برای یک درخواست Cloudflare API ارسال‌شده توسط گردآورنده پس‌زمینه."
+
+#: includes/settings.php
+msgid "Log Level"
+msgstr "سطح گزارش"
+
+#: includes/settings.php
+msgid "The amount of detail the plugin writes to the Cacti log."
+msgstr "میزان جزئیاتی که افزونه در گزارش Cacti می‌نویسد."
+
+#: includes/tunnel_retirement.php
+msgid "The tunnel could not be retired. Check permissions and retry after collection finishes."
+msgstr "خاتمه دادن به تونل انجام نشد. دسترسی‌ها را بررسی کنید و پس از پایان گردآوری دوباره تلاش کنید."
+
+#: includes/tunnel_retirement.php includes/viewer.php
+msgid "Retire tunnel"
+msgstr "خاتمه دادن به تونل"
+
+#: includes/tunnel_retirement.php
+msgid "Retiring removes the graphs and unshared data sources created for this deleted tunnel. Cacti controls RRD cleanup. The inventory record is kept."
+msgstr "خاتمه دادن، نمودارها و منابع داده غیراشتراکی ایجادشده برای این تونل حذف‌شده را پاک می‌کند. Cacti پاک‌سازی RRD را کنترل می‌کند. رکورد فهرست دارایی نگهداری می‌شود."
+
+#: includes/viewer.php
+msgid "The Cloudflare tunnels could not be read. See the Cacti log for details."
+msgstr "خواندن تونل‌های Cloudflare انجام نشد. برای جزئیات، گزارش Cacti را بررسی کنید."
+
+#: includes/viewer.php
+msgid "Zone Analytics"
+msgstr "تحلیل‌های ناحیه"
+
+#: includes/viewer.php
+msgid "Disabled"
+msgstr "غیرفعال"
+
+#: includes/viewer.php
+msgid "Not collected"
+msgstr "گردآوری نشده"
+
+#: includes/viewer.php
+msgid "Collection failing"
+msgstr "خطا در گردآوری"
+
+#: includes/viewer.php
+msgid "Not yet collected"
+msgstr "هنوز گردآوری نشده"
+
+#: includes/viewer.php
+msgid "Down"
+msgstr "از دسترس خارج"
+
+#: includes/viewer.php
+msgid "Degraded"
+msgstr "کاهش کارایی"
+
+#: includes/viewer.php
+msgid "Healthy"
+msgstr "سالم"
+
+#: includes/viewer.php
+msgid "Inactive"
+msgstr "غیرفعال"
+
+#: includes/viewer.php
+msgid "No active tunnels"
+msgstr "هیچ تونل فعالی وجود ندارد"
+
+#: includes/viewer.php
+msgid "The worst status among active tunnels, or Collection failing while discovery fails."
+msgstr "بدترین وضعیت در میان تونل‌های فعال، یا خطا در گردآوری در زمان شکست کشف."
+
+#: includes/viewer.php
+msgid "Active"
+msgstr "فعال"
+
+#: includes/viewer.php
+msgid "Unavailable"
+msgstr "غیرقابل دسترس"
+
+#: includes/viewer.php
+msgid "Deleted"
+msgstr "حذف‌شده"
+
+#: includes/viewer.php
+msgid "Last Successful Discovery"
+msgstr "آخرین کشف موفق"
+
+#: includes/viewer.php
+msgid "Consecutive Failures"
+msgstr "خطاهای متوالی"
+
+#: includes/viewer.php
+#, php-format
+msgid "Last error: %s"
+msgstr "آخرین خطا: %s"
+
+#: includes/viewer.php
+msgid "Tunnel"
+msgstr "تونل"
+
+#: includes/viewer.php
+msgid "Cloudflare Status"
+msgstr "وضعیت Cloudflare"
+
+#: includes/viewer.php
+msgid "The status Cloudflare reported at the last discovery."
+msgstr "وضعیتی که Cloudflare در آخرین کشف گزارش کرده است."
+
+#: includes/viewer.php
+msgid "Lifecycle"
+msgstr "چرخه حیات"
+
+#: includes/viewer.php
+msgid "Whether the last discoveries still found this tunnel."
+msgstr "نشان می‌دهد آیا آخرین کشف‌ها همچنان این تونل را یافته‌اند یا خیر."
+
+#: includes/viewer.php
+msgid "Type"
+msgstr "نوع"
+
+#: includes/viewer.php
+msgid "Connections"
+msgstr "اتصال‌ها"
+
+#: includes/viewer.php
+msgid "Last Seen"
+msgstr "آخرین مشاهده"
+
+#: includes/viewer.php
+msgid "Any"
+msgstr "هرکدام"
+
+#: includes/viewer.php
+msgid "All"
+msgstr "همه"
+
+#: includes/viewer.php
+msgid "No Cloudflare Tunnels Found"
+msgstr "هیچ تونل Cloudflare یافت نشد"
+
+#: includes/viewer.php
+msgid "Choose a tunnel on the Tunnels tab."
+msgstr "یک تونل را در برگه تونل‌ها انتخاب کنید."
+
+#: includes/viewer.php
+msgid "The tunnel no longer exists."
+msgstr "این تونل دیگر وجود ندارد."
+
+#: includes/viewer.php
+#, php-format
+msgid "Connectors for %s"
+msgstr "اتصال‌دهنده‌ها برای %s"
+
+#: includes/viewer.php
+msgid "Connector ID"
+msgstr "شناسه اتصال‌دهنده"
+
+#: includes/viewer.php
+msgid "Version"
+msgstr "نسخه"
+
+#: includes/viewer.php
+msgid "Architecture"
+msgstr "معماری"
+
+#: includes/viewer.php
+msgid "Running Since"
+msgstr "در حال اجرا از"
+
+#: includes/viewer.php
+msgid "Data Centers"
+msgstr "مراکز داده"
+
+#: includes/viewer.php
+msgid "Origin IPs"
+msgstr "نشانی‌های IP مبدا"
+
+#: includes/viewer.php
+#, php-format
+msgid "This tunnel is %s. These connectors were last seen while the tunnel was active."
+msgstr "این تونل %s است. این اتصال‌دهنده‌ها آخرین بار زمانی مشاهده شدند که تونل فعال بود."
+
+#: includes/viewer.php
+msgid "No connectors are running for this tunnel."
+msgstr "هیچ اتصال‌دهنده‌ای برای این تونل در حال اجرا نیست."
+
+#: includes/viewer.php
+msgid "Export"
+msgstr "خروجی گرفتن"
+
+#: includes/viewer.php
+msgid "Bytes/s"
+msgstr "بایت بر ثانیه"
+
+#: includes/viewer.php
+msgid "HTTP 5xx (%)"
+msgstr "HTTP 5xx (%)"
+
+#: includes/viewer.php
+msgid "Requests/s"
+msgstr "درخواست بر ثانیه"
+
+#: includes/viewer.php
+msgid "Zone"
+msgstr "ناحیه"
+
+#: src/OperatorPage.php
+msgid "Review the recorded observations below. Acknowledgments are personal to this session, expire when observations change, and never suppress alerts or change health."
+msgstr "مشاهدات ثبت‌شده زیر را بررسی کنید. تاییدیه‌ها مختص این نشست هستند، با تغییر مشاهدات منقضی می‌شوند و هرگز هشدارها را متوقف نمی‌کنند یا وضعیت سلامت را تغییر نمی‌دهند."
+
+#: src/OperatorPage.php
+msgid "Investigation"
+msgstr "بررسی"
+
+#: src/OperatorPage.php
+msgid "Object"
+msgstr "شیء"
+
+#: src/OperatorPage.php
+msgid "Observed (UTC)"
+msgstr "زمان مشاهده (UTC)"
+
+#: src/OperatorPage.php
+msgid "State"
+msgstr "وضعیت"
+
+#: src/OperatorPage.php
+msgid "Unknown or stale"
+msgstr "نامشخص یا قدیمی"
+
+#: src/OperatorPage.php
+msgid "Acknowledged; health unchanged."
+msgstr "تایید شد؛ وضعیت سلامت بدون تغییر است."
+
+#: src/OperatorPage.php
+msgid "Acknowledge"
+msgstr "تایید"
+
+#: src/OperatorPage.php
+msgid "No observations are available."
+msgstr "هیچ مشاهده‌ای در دسترس نیست."

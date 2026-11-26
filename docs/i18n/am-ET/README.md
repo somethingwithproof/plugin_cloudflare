@@ -324,6 +324,8 @@ Management > Cloudflare Tunnels የCloudflare: View ፈቃድን ይፈልጋል
   አሉት።
 - **Connectors** በTunnels ትር ላይ የተመረጠውን ቱነል connectors ያሳያል።
 
+<a name="tunnel-metrics-and-graphs"></a>
+
 ## የቱነል መለኪያዎች እና ግራፎች
 
 Cacti የቱነልን ሁኔታ የሚያነበው `ss_cloudflare.php` በሚባል የስክሪፕት

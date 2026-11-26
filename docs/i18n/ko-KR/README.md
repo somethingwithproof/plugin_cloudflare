@@ -309,6 +309,8 @@ Management > Cloudflare Tunnels는 Cloudflare: View 권한이 필요하며 읽�
   이름 필터와 정렬 가능한 열을 제공합니다.
 - **Connectors**는 Tunnels 탭에서 선택한 터널의 커넥터를 표시합니다.
 
+<a name="tunnel-metrics-and-graphs"></a>
+
 ## 터널 메트릭 및 그래프
 
 Cacti는 스크립트 서버 데이터 쿼리인 `ss_cloudflare.php`를 통해 터널 상태를

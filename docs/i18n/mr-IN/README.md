@@ -326,6 +326,8 @@ Management > Cloudflare Tunnels साठी Cloudflare: View परवानग
   सूचीबद्ध करते.
 - **Connectors** Tunnels टॅबवर निवडलेल्या टनेलचे कनेक्टर्स दाखवते.
 
+<a name="tunnel-metrics-and-graphs"></a>
+
 ## टनेल मेट्रिक्स आणि आलेख
 
 Cacti स्क्रिप्ट सर्व्हर डेटा क्वेरी `ss_cloudflare.php` द्वारे टनेल स्थिती

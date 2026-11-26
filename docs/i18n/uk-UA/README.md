@@ -388,6 +388,8 @@ Cloudflare (`healthy`, `degraded`, `down` або `inactive`):
   із можливістю сортування стовпців.
 - **Connectors** показує конектори тунелю, вибраного на вкладці Tunnels.
 
+<a name="tunnel-metrics-and-graphs"></a>
+
 ## Метрики та графіки тунелів
 
 Cacti зчитує стан тунелів через запит даних сервера сценаріїв

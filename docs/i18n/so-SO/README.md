@@ -356,6 +356,8 @@ akhris keliya ah:
   loogu talagalay akoonka, wareegga nololeed, xaaladda iyo magaca, iyo tiirar la kala sooci karo.
 - **Connectors** wuxuu muujiyaa xiriiriyayaasha tunnel-ka laga doortay tab-ka Tunnels.
 
+<a name="tunnel-metrics-and-graphs"></a>
+
 ## Qiyaasaha iyo jaantusyada tunnel-ka
 
 Cacti wuxuu ka akhriyaa xaaladda tunnel-ka iyadoo loo marayo waydiin xogta server-ka qoraalka,

@@ -368,6 +368,8 @@ Management > Cloudflare Tunnels chọrọ ikike Cloudflare: View ma ọ bụ mak
   nzacha maka akaụntụ, usoro ndụ, ọnọdụ na aha, na kọlụm a na-ahazi.
 - **Connectors** na-egosi njikọta (connectors) nke tunnel a họọrọ na taabụ Tunnels.
 
+<a name="tunnel-metrics-and-graphs"></a>
+
 ## Atụmatụ nha tunnel na eserese
 
 Cacti na-agụ ọnọdụ tunnel site na ajụjụ data script server,

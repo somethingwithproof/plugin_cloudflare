@@ -316,6 +316,8 @@ natao hovakiana ihany:
   ho an'ny kaonty, tsingerim-piainana, toetra ary anarana, ary tsanganana azo alamina.
 - **Connectors** dia mampiseho ny mpampifandray an'ilay tonelina voafidy tao amin'ny tabilao Tunnels.
 
+<a name="tunnel-metrics-and-graphs"></a>
+
 ## Metrika sy tabilaon'ny tonelina
 
 Mamaky ny toetry ny tonelina amin'ny alalan'ny fangatahana angon-drakitra script server ny Cacti,

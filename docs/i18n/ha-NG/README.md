@@ -370,6 +370,8 @@ karantawa ne kawai:
   don asusu, tsarin rayuwa, matsayi da suna, da ginshiƙai masu daidaitawa.
 - **Connectors** yana nuna masu haɗawa na tunnel ɗin da aka zaɓa a shafin Tunnels.
 
+<a name="tunnel-metrics-and-graphs"></a>
+
 ## Auna da zane-zanen tunnel
 
 Cacti tana karanta yanayin tunnel ta hanyar tambayar bayanai ta script server,

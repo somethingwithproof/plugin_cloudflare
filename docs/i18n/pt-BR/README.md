@@ -372,6 +372,8 @@ somente leitura:
   por conta, ciclo de vida, status e nome, e colunas ordenáveis.
 - **Connectors** mostra os conectores do túnel escolhido na aba Tunnels.
 
+<a name="tunnel-metrics-and-graphs"></a>
+
 ## Métricas e gráficos de túnel
 
 O Cacti lê o estado do túnel por meio de uma consulta de dados do servidor de scripts,

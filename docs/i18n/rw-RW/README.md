@@ -384,6 +384,8 @@ iyo gusomwa gusa:
   ya konti, ubuzima, imiterere n'izina, hamwe n'inkingi zishobora gutondekwa.
 - **Connectors** yerekana ibihuza bya tunnel yatoranyijwe ku gice cya Tunnels.
 
+<a name="tunnel-metrics-and-graphs"></a>
+
 ## Ibipimo n'ibishushanyo bya Tunnel
 
 Cacti isoma imiterere ya tunnel inyuze mu isabamakuru rya script server,

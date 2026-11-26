@@ -318,6 +318,8 @@ yeyokufunda kuphela:
   ze-akhawunti, umjikelo wobomi, imeko kunye negama, kunye neekholamu ezihlelekayo.
 - I-**Connectors** ibonisa iikhonektha zethaneli ekhethwe kwithebhu ye-Tunnels.
 
+<a name="tunnel-metrics-and-graphs"></a>
+
 ## Iimetriki zeethaneli neegrafu
 
 I-Cacti ifunda imeko yethaneli nge-script server data query,

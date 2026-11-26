@@ -316,6 +316,8 @@ Management > Cloudflare Tunnels-এর জন্য Cloudflare: View অনু�
   কলামসহ সব অ্যাকাউন্ট জুড়ে অথবা একটি অ্যাকাউন্টের জন্য টানেলগুলো তালিকাভুক্ত করে।
 - **Connectors** Tunnels ট্যাবে নির্বাচিত টানেলটির কানেক্টরগুলো দেখায়।
 
+<a name="tunnel-metrics-and-graphs"></a>
+
 ## টানেল মেট্রিক্স ও গ্রাফ
 
 Cacti একটি স্ক্রিপ্ট সার্ভার ডেটা কোয়েরি `ss_cloudflare.php`-এর মাধ্যমে টানেলের

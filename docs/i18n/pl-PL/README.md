@@ -387,6 +387,8 @@ działa w trybie tylko do odczytu:
   dla konta, cyklu życia, stanu i nazwy oraz sortowalnymi kolumnami.
 - **Connectors** pokazuje konektory tunelu wybranego na karcie Tunnels.
 
+<a name="tunnel-metrics-and-graphs"></a>
+
 ## Metryki i wykresy tuneli
 
 Cacti odczytuje stan tuneli za pomocą zapytania danych serwera skryptów

@@ -371,6 +371,8 @@ chỉ đọc:
   theo tài khoản, vòng đời, trạng thái và tên, cùng các cột có thể sắp xếp.
 - **Connectors** hiển thị các connector của tunnel được chọn trên thẻ Tunnels.
 
+<a name="tunnel-metrics-and-graphs"></a>
+
 ## Chỉ số và biểu đồ của tunnel
 
 Cacti đọc trạng thái tunnel thông qua một truy vấn dữ liệu máy chủ script,

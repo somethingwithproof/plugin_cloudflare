@@ -1,0 +1,784 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-FileCopyrightText: 2026 Thomas Vincent <thomasvincent@gmail.com>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cloudflare 0.4.0-dev\n"
+"Report-Msgid-Bugs-To: https://github.com/somethingwithproof/plugin_cloudflare/issues\n"
+"PO-Revision-Date: 2026-11-26 00:00+0000\n"
+"Last-Translator: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language-Team: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language: he-IL\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && n % 10 == 0) ? 2 : 3));\n"
+
+#: cloudflare_operator.php
+msgid "Monitoring view"
+msgstr "תצוגת ניטור"
+
+#: cloudflare_operator.php
+msgid "Observations could not be read. Ask an administrator to check the plugin log."
+msgstr "לא ניתן היה לקרוא תצפיות. בקש ממנהל המערכת לבדוק את יומן התוסף."
+
+#: includes/accounts.php
+msgid "Connection verified"
+msgstr "החיבור אומת"
+
+#: includes/accounts.php
+msgid "Token is not active; it may be expired or disabled"
+msgstr "האסימון אינו פעיל; ייתכן שפג תוקפו או שהוא מושבת"
+
+#: includes/accounts.php
+msgid "Token is invalid or expired"
+msgstr "האסימון אינו חוקי או שפג תוקפו"
+
+#: includes/accounts.php
+msgid "Token lacks the Account Cloudflare Tunnel Read permission"
+msgstr "לאסימון חסרה ההרשאה Account Cloudflare Tunnel Read"
+
+#: includes/accounts.php
+msgid "Cloudflare API is unreachable; try again later"
+msgstr "ממשק ה-API של Cloudflare אינו נגיש; נסה שוב מאוחר יותר"
+
+#: includes/accounts.php
+msgid "Cloudflare API rate limit reached; try again later"
+msgstr "הושגה מגבלת הקצב של ממשק ה-API של Cloudflare; נסה שוב מאוחר יותר"
+
+#: includes/accounts.php
+msgid "Cloudflare API request failed unexpectedly"
+msgstr "בקשת ממשק ה-API של Cloudflare נכשלה באופן בלתי צפוי"
+
+#: includes/accounts.php
+msgid "Token lacks the permissions needed to verify it"
+msgstr "לאסימון חסרות ההרשאות הנדרשות לאימותו"
+
+#: includes/accounts.php
+msgid "Stored token cannot be decrypted"
+msgstr "לא ניתן לפענח את האסימון השמור"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing or unusable"
+msgstr "קובץ מפתח כספת האסימונים חסר או שאינו שמיש"
+
+#: includes/accounts.php
+msgid "Token file is missing or insecure"
+msgstr "קובץ האסימון חסר או שאינו מאובטח"
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable; configure the key file or use a token file"
+msgstr "אחסון מוצפן אינו זמין; הגדר את קובץ המפתח או השתמש בקובץ אסימון"
+
+#: includes/accounts.php
+msgid "Enter the 32-character hexadecimal Cloudflare account ID"
+msgstr "הזן את מזהה חשבון Cloudflare ההקסדצימלי בן 32 תווים"
+
+#: includes/accounts.php
+msgid "Enter a name of 1 to 100 characters without control characters"
+msgstr "הזן שם באורך 1 עד 100 תווים ללא תווי בקרה"
+
+#: includes/accounts.php
+msgid "Choose an encrypted token or a token file"
+msgstr "בחר אסימון מוצפן או קובץ אסימון"
+
+#: includes/accounts.php
+msgid "Enter an API token"
+msgstr "הזן אסימון API"
+
+#: includes/accounts.php
+msgid "Re-enter the token when changing the account ID"
+msgstr "הזן מחדש את האסימון בעת שינוי מזהה החשבון"
+
+#: includes/accounts.php
+msgid "Enter an absolute path of at most 255 characters"
+msgstr "הזן נתיב מוחלט באורך של עד 255 תווים"
+
+#: includes/accounts.php
+msgid "Must be 0 or 1"
+msgstr "חייב להיות 0 או 1"
+
+#: includes/accounts.php
+msgid "Enter a whole number of seconds from 60 to 86400"
+msgstr "הזן מספר שלם של שניות בין 60 ל-86400"
+
+#: includes/accounts.php
+msgid "This Cloudflare account ID is already configured"
+msgstr "מזהה חשבון Cloudflare זה כבר מוגדר"
+
+#: includes/accounts.php
+msgid "Global API Keys are not accepted; use a scoped API token"
+msgstr "מפתחות API גלובליים אינם מתקבלים; יש להשתמש באסימון API מוגבל הרשאות"
+
+#: includes/accounts.php
+msgid "API token format is invalid"
+msgstr "תבנית אסימון ה-API אינה תקינה"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing, unreadable, insecure or malformed"
+msgstr "קובץ מפתח כספת האסימונים חסר, אינו קריא, אינו מאובטח או פגום"
+
+#: includes/accounts.php
+msgid "Stored API token could not be decrypted"
+msgstr "לא ניתן לפענח את אסימון ה-API השמור"
+
+#: includes/accounts.php
+msgid "Token file is missing, unreadable, not a regular file or too large"
+msgstr "קובץ האסימון חסר, אינו קריא, אינו קובץ רגיל או גדול מדי"
+
+#: includes/accounts.php
+msgid "Token file path is not absolute, is a symlink, or the file is world-readable or world-writable"
+msgstr "נתיב קובץ האסימון אינו מוחלט, הוא קישור סימבולי, או שהקובץ פתוח לקריאה או לכתיבה לכל המשתמשים"
+
+#: includes/accounts.php
+msgid "Token file is not inside the Token File Directory"
+msgstr "קובץ האסימון אינו נמצא בתוך תיקיית קובצי האסימונים"
+
+#: includes/accounts.php
+msgid "API token could not be encrypted"
+msgstr "לא ניתן להצפין את אסימון ה-API"
+
+#: includes/accounts.php
+msgid "Credential error"
+msgstr "שגיאת פרטי הזדהות"
+
+#: includes/accounts.php includes/settings.php
+msgid "Cloudflare"
+msgstr "Cloudflare"
+
+#: includes/accounts.php
+msgid "Encrypted in the Cacti database"
+msgstr "מוצפן במסד הנתונים של Cacti"
+
+#: includes/accounts.php
+msgid "Token file on this server"
+msgstr "קובץ אסימון בשרת זה"
+
+#: includes/accounts.php includes/viewer.php
+msgid "Account"
+msgstr "חשבון"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Name"
+msgstr "שם"
+
+#: includes/accounts.php
+msgid "A label for this account in Cacti."
+msgstr "תווית עבור חשבון זה ב-Cacti."
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Account ID"
+msgstr "מזהה חשבון"
+
+#: includes/accounts.php
+msgid "The 32-character Cloudflare account ID, shown in the dashboard URL and on the account overview page."
+msgstr "מזהה חשבון Cloudflare בן 32 התווים, המוצג בכתובת ה-URL של לוח הבקרה ובדף סקירת החשבון."
+
+#: includes/accounts.php
+msgid "API Token"
+msgstr "אסימון API"
+
+#: includes/accounts.php
+msgid "Token Storage"
+msgstr "אחסון אסימון"
+
+#: includes/accounts.php
+msgid "Where the scoped API token is kept. Global API Keys are not accepted."
+msgstr "המיקום שבו נשמר אסימון ה-API מוגבל ההרשאות. מפתחות API גלובליים אינם מתקבלים."
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable because the key file in Settings is missing or unusable; only token files can be used."
+msgstr "אחסון מוצפן אינו זמין מכיוון שקובץ המפתח בהגדרות חסר או שאינו שמיש; ניתן להשתמש בקובצי אסימונים בלבד."
+
+#: includes/accounts.php
+msgid "Leave blank to keep the current token"
+msgstr "השאר ריק כדי לשמור את האסימון הנוכחי"
+
+#: includes/accounts.php
+msgid "A scoped API token with Account Cloudflare Tunnel Read permission."
+msgstr "אסימון API מוגבל הרשאות עם הרשאת Account Cloudflare Tunnel Read."
+
+#: includes/accounts.php
+msgid "Token File"
+msgstr "קובץ אסימון"
+
+#: includes/accounts.php
+msgid "Absolute path to a file that contains only the token. It must be readable by the web server and poller users and must not be world-readable."
+msgstr "נתיב מוחלט לקובץ המכיל את האסימון בלבד. הקובץ חייב להיות קריא עבור משתמשי שרת האינטרנט והדוגם, ואסור שיהיה פתוח לקריאה לכל המשתמשים."
+
+#: includes/accounts.php
+msgid "Collection"
+msgstr "איסוף"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Enabled"
+msgstr "מופעל"
+
+#: includes/accounts.php
+msgid "Disabled accounts are not polled."
+msgstr "חשבונות מושבתים אינם נדגמים."
+
+#: includes/accounts.php
+msgid "Collect Tunnels"
+msgstr "איסוף מנהרות"
+
+#: includes/accounts.php
+msgid "Discover Cloudflare Tunnels and their connectors."
+msgstr "גילוי מנהרות Cloudflare והמחברים שלהן."
+
+#: includes/accounts.php
+msgid "Collect Analytics"
+msgstr "איסוף נתוני ניתוח"
+
+#: includes/accounts.php
+msgid "Collect zone traffic analytics. This needs the Account Analytics Read and Analytics Read (Zone) permissions."
+msgstr "איסוף נתוני ניתוח של תעבורת אזורים. פעולה זו דורשת את ההרשאות Account Analytics Read ו-Analytics Read (Zone)."
+
+#: includes/accounts.php
+msgid "Create Graphs"
+msgstr "יצירת גרפים"
+
+#: includes/accounts.php
+msgid "Create graphs for each tunnel on the account's Cacti device. Turning this on needs the permission to edit Cacti devices."
+msgstr "יצירת גרפים עבור כל מנהרה בהתקן ה-Cacti של החשבון. הפעלת אפשרות זו דורשת הרשאה לעריכת התקני Cacti."
+
+#: includes/accounts.php
+msgid "Discovery Interval"
+msgstr "מרווח גילוי"
+
+#: includes/accounts.php
+msgid "Seconds between inventory refreshes, from 60 to 86400."
+msgstr "מספר השניות בין רענוני מלאי, בין 60 ל-86400."
+
+#: includes/accounts.php
+msgid "The token and its confirmation do not match"
+msgstr "האסימון והאימות שלו אינם תואמים"
+
+#: includes/accounts_page.php
+msgid "Delete"
+msgstr "מחק"
+
+#: includes/accounts_page.php
+msgid "Verify"
+msgstr "אמת"
+
+#: includes/accounts_page.php
+msgid "Enable"
+msgstr "הפעלה"
+
+#: includes/accounts_page.php
+msgid "Disable"
+msgstr "השבתה"
+
+#: includes/accounts_page.php
+msgid "Create Cacti Device"
+msgstr "צור התקן Cacti"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to change Cloudflare accounts."
+msgstr "אין לך הרשאה לשנות חשבונות Cloudflare."
+
+#: includes/accounts_page.php
+msgid "The Cloudflare account no longer exists."
+msgstr "חשבון ה-Cloudflare אינו קיים עוד."
+
+#: includes/accounts_page.php
+msgid "The Cloudflare accounts could not be read. See the Cacti log for details."
+msgstr "לא ניתן לקרוא את חשבונות ה-Cloudflare. עיין ביומן Cacti לפרטים."
+
+#: includes/accounts_page.php
+msgid "Create Graphs was left off: turning it on needs the permission to edit Cacti devices."
+msgstr "האפשרות יצירת גרפים נותרה כבויה: הפעלתה דורשת הרשאה לעריכת התקני Cacti."
+
+#: includes/accounts_page.php
+msgid "Cacti device created"
+msgstr "התקן Cacti נוצר"
+
+#: includes/accounts_page.php
+msgid "A Cacti device already exists for this account"
+msgstr "כבר קיים התקן Cacti עבור חשבון זה"
+
+#: includes/accounts_page.php
+msgid "The Cloudflare templates are not installed; see the Cacti log"
+msgstr "תבניות Cloudflare אינן מותקנות; עיין ביומן Cacti"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices"
+msgstr "אין לך הרשאה ליצור התקני Cacti"
+
+#: includes/accounts_page.php
+msgid "The Cacti device could not be created; see the Cacti log"
+msgstr "לא ניתן ליצור את התקן ה-Cacti; עיין ביומן Cacti"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices."
+msgstr "אין לך הרשאה ליצור התקני Cacti."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Delete the following Cloudflare Account. Its discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgid_plural "Click 'Continue' to Delete the following Cloudflare Accounts. Their discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgstr[0] "לחץ על 'המשך' כדי למחוק את חשבון ה-Cloudflare הבא. המלאי שזוהה ומצב המשימות שלו יוסרו; התקני Cacti והגרפים יישמרו."
+msgstr[1] "לחץ על 'המשך' כדי למחוק את חשבונות ה-Cloudflare הבאים. המלאי שזוהה ומצב המשימות שלהם יוסרו; התקני Cacti והגרפים יישמרו."
+msgstr[2] "לחץ על 'המשך' כדי למחוק את חשבונות ה-Cloudflare הבאים. המלאי שזוהה ומצב המשימות שלהם יוסרו; התקני Cacti והגרפים יישמרו."
+msgstr[3] "לחץ על 'המשך' כדי למחוק את חשבונות ה-Cloudflare הבאים. המלאי שזוהה ומצב המשימות שלהם יוסרו; התקני Cacti והגרפים יישמרו."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Verify the following Cloudflare Account against the Cloudflare API."
+msgid_plural "Click 'Continue' to Verify the following Cloudflare Accounts against the Cloudflare API."
+msgstr[0] "לחץ על 'המשך' כדי לאמת את חשבון ה-Cloudflare הבא מול ה-API של Cloudflare."
+msgstr[1] "לחץ על 'המשך' כדי לאמת את חשבונות ה-Cloudflare הבאים מול ה-API של Cloudflare."
+msgstr[2] "לחץ על 'המשך' כדי לאמת את חשבונות ה-Cloudflare הבאים מול ה-API של Cloudflare."
+msgstr[3] "לחץ על 'המשך' כדי לאמת את חשבונות ה-Cloudflare הבאים מול ה-API של Cloudflare."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Enable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Enable the following Cloudflare Accounts."
+msgstr[0] "לחץ על 'המשך' כדי להפעיל את חשבון ה-Cloudflare הבא."
+msgstr[1] "לחץ על 'המשך' כדי להפעיל את חשבונות ה-Cloudflare הבאים."
+msgstr[2] "לחץ על 'המשך' כדי להפעיל את חשבונות ה-Cloudflare הבאים."
+msgstr[3] "לחץ על 'המשך' כדי להפעיל את חשבונות ה-Cloudflare הבאים."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Disable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Disable the following Cloudflare Accounts."
+msgstr[0] "לחץ על 'המשך' כדי להשבית את חשבון ה-Cloudflare הבא."
+msgstr[1] "לחץ על 'המשך' כדי להשבית את חשבונות ה-Cloudflare הבאים."
+msgstr[2] "לחץ על 'המשך' כדי להשבית את חשבונות ה-Cloudflare הבאים."
+msgstr[3] "לחץ על 'המשך' כדי להשבית את חשבונות ה-Cloudflare הבאים."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to create a Cacti device for the following Cloudflare Account. An account that already has one is left as it is."
+msgid_plural "Click 'Continue' to create a Cacti device for each of the following Cloudflare Accounts. An account that already has one is left as it is."
+msgstr[0] "לחץ על 'המשך' כדי ליצור התקן Cacti עבור חשבון ה-Cloudflare הבא. חשבון שכבר קיים עבורו התקן יישאר כפי שהוא."
+msgstr[1] "לחץ על 'המשך' כדי ליצור התקן Cacti עבור כל אחד מחשבונות ה-Cloudflare הבאים. חשבון שכבר קיים עבורו התקן יישאר כפי שהוא."
+msgstr[2] "לחץ על 'המשך' כדי ליצור התקן Cacti עבור כל אחד מחשבונות ה-Cloudflare הבאים. חשבון שכבר קיים עבורו התקן יישאר כפי שהוא."
+msgstr[3] "לחץ על 'המשך' כדי ליצור התקן Cacti עבור כל אחד מחשבונות ה-Cloudflare הבאים. חשבון שכבר קיים עבורו התקן יישאר כפי שהוא."
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Cancel"
+msgstr "ביטול"
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Continue"
+msgstr "המשך"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Cloudflare Account [edit: %s]"
+msgstr "חשבון Cloudflare [עריכה: %s]"
+
+#: includes/accounts_page.php
+msgid "Cloudflare Account [new]"
+msgstr "חשבון Cloudflare [חדש]"
+
+#: includes/accounts_page.php includes/viewer.php src/OperatorPage.php
+msgid "Never"
+msgstr "אף פעם"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Status"
+msgstr "מצב"
+
+#: includes/accounts_page.php
+msgid "Message"
+msgstr "הודעה"
+
+#: includes/accounts_page.php
+msgid "No"
+msgstr "לא"
+
+#: includes/accounts_page.php
+msgid "Token Stored"
+msgstr "אסימון שמור"
+
+#: includes/accounts_page.php
+msgid "Yes"
+msgstr "כן"
+
+#: includes/accounts_page.php
+msgid "Last Checked"
+msgstr "בדיקה אחרונה"
+
+#: includes/accounts_page.php
+msgid "Last Verified"
+msgstr "אימות אחרון"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Permission: %s"
+msgstr "הרשאה: %s"
+
+#: includes/accounts_page.php
+msgid "Granted"
+msgstr "ניתנה"
+
+#: includes/accounts_page.php
+msgid "Missing"
+msgstr "חסר"
+
+#: includes/accounts_page.php
+msgid "Connection Status"
+msgstr "מצב חיבור"
+
+#: includes/accounts_page.php includes/settings.php includes/viewer.php
+msgid "Cloudflare Accounts"
+msgstr "חשבונות Cloudflare"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Search"
+msgstr "חיפוש"
+
+#: includes/accounts_page.php
+msgid "Accounts"
+msgstr "חשבונות"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Default"
+msgstr "ברירת מחדל"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Go"
+msgstr "בצע"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Set/Refresh Filters"
+msgstr "הגדר/רענן מסננים"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear"
+msgstr "נקה"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear Filters"
+msgstr "נקה מסננים"
+
+#: includes/accounts_page.php
+msgid "The name of this account in Cacti."
+msgstr "השם של חשבון זה ב-Cacti."
+
+#: includes/accounts_page.php
+msgid "Whether an API token is configured. The edit page shows where it is kept."
+msgstr "האם מוגדר אסימון API. דף העריכה מציג היכן הוא נשמר."
+
+#: includes/accounts_page.php
+msgid "The result of the last Verify."
+msgstr "תוצאת האימות האחרון."
+
+#: includes/accounts_page.php
+msgid "ID"
+msgstr "מזהה"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "No Cloudflare Accounts Found"
+msgstr "לא נמצאו חשבונות Cloudflare"
+
+#: includes/operator.php
+msgid "Inspect tunnels and connector counts. Escalate token changes, account configuration and graph creation to an administrator."
+msgstr "בדיקת מנהרות וספירת מחברים. העבר שינויי אסימונים, הגדרות חשבון ויצירת גרפים למנהל המערכת."
+
+#: includes/settings.php
+msgid "Configuration"
+msgstr "תצורה"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Cloudflare Operations"
+msgstr "פעולות Cloudflare"
+
+#: includes/settings.php
+msgid "Management"
+msgstr "ניהול"
+
+#: includes/settings.php includes/viewer.php
+msgid "Cloudflare Tunnels"
+msgstr "מנהרות Cloudflare"
+
+#: includes/settings.php
+msgid "(edit)"
+msgstr "(עריכה)"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Actions"
+msgstr "פעולות"
+
+#: includes/settings.php includes/viewer.php
+msgid "Overview"
+msgstr "סקירה כללית"
+
+#: includes/settings.php includes/viewer.php
+msgid "Tunnels"
+msgstr "מנהרות"
+
+#: includes/settings.php includes/viewer.php
+msgid "Connectors"
+msgstr "מחברים"
+
+#: includes/settings.php
+msgid "Token Vault Key File"
+msgstr "קובץ מפתח כספת אסימונים"
+
+#: includes/settings.php
+msgid "Absolute path to the 32-byte key used to encrypt stored API tokens. It must be readable by the web server and poller users and not world-readable. When the file is missing, only token files can be used."
+msgstr "נתיב מוחלט למפתח בן 32 בתים המשמש להצפנת אסימוני API שמורים. הקובץ חייב להיות קריא עבור משתמשי שרת האינטרנט והדוגם, ולא פתוח לקריאה לכל המשתמשים. כאשר הקובץ חסר, ניתן להשתמש בקובצי אסימונים בלבד."
+
+#: includes/settings.php
+msgid "Token File Directory"
+msgstr "תיקיית קובצי אסימונים"
+
+#: includes/settings.php
+msgid "Absolute path of the directory that every account token file must be in. When empty, a token file may be anywhere the web server and poller users can read."
+msgstr "הנתיב המוחלט של התיקייה שבה חייב להימצא כל קובץ אסימון של חשבון. כאשר שדה זה ריק, קובץ אסימון יכול להימצא בכל מקום שמשתמשי שרת האינטרנט והדוגם יכולים לקרוא ממנו."
+
+#: includes/settings.php
+msgid "Interactive Request Timeout"
+msgstr "פסק זמן לבקשה אינטראקטיבית"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made from the web interface, such as Verify."
+msgstr "הזמן הכולל בשניות המותר לבקשת Cloudflare API הנשלחת מממשק האינטרנט, כגון אימות."
+
+#: includes/settings.php
+msgid "Collector Request Timeout"
+msgstr "פסק זמן לבקשת אוסף הנתונים"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made by the background collector."
+msgstr "הזמן הכולל בשניות המותר לבקשת Cloudflare API הנשלחת על ידי אוסף הנתונים ברקע."
+
+#: includes/settings.php
+msgid "Log Level"
+msgstr "רמת יומן"
+
+#: includes/settings.php
+msgid "The amount of detail the plugin writes to the Cacti log."
+msgstr "רמת הפירוט שהתוסף כותב ליומן Cacti."
+
+#: includes/tunnel_retirement.php
+msgid "The tunnel could not be retired. Check permissions and retry after collection finishes."
+msgstr "לא ניתן להוציא את המנהרה משימוש. בדוק את ההרשאות ונסה שוב לאחר סיום האיסוף."
+
+#: includes/tunnel_retirement.php includes/viewer.php
+msgid "Retire tunnel"
+msgstr "הוצאת מנהרה משימוש"
+
+#: includes/tunnel_retirement.php
+msgid "Retiring removes the graphs and unshared data sources created for this deleted tunnel. Cacti controls RRD cleanup. The inventory record is kept."
+msgstr "הוצאה משימוש מסירה את הגרפים ואת מקורות הנתונים הלא משותפים שנוצרו עבור מנהרה שנמחקה זו. Cacti שולט בניקוי קובצי RRD. רשומת המלאי נשמרת."
+
+#: includes/viewer.php
+msgid "The Cloudflare tunnels could not be read. See the Cacti log for details."
+msgstr "לא ניתן לקרוא את מנהרות ה-Cloudflare. עיין ביומן Cacti לפרטים."
+
+#: includes/viewer.php
+msgid "Zone Analytics"
+msgstr "ניתוח נתוני אזור"
+
+#: includes/viewer.php
+msgid "Disabled"
+msgstr "מושבת"
+
+#: includes/viewer.php
+msgid "Not collected"
+msgstr "לא נאסף"
+
+#: includes/viewer.php
+msgid "Collection failing"
+msgstr "האיסוף נכשל"
+
+#: includes/viewer.php
+msgid "Not yet collected"
+msgstr "טרם נאסף"
+
+#: includes/viewer.php
+msgid "Down"
+msgstr "לא זמין"
+
+#: includes/viewer.php
+msgid "Degraded"
+msgstr "ירוד"
+
+#: includes/viewer.php
+msgid "Healthy"
+msgstr "תקין"
+
+#: includes/viewer.php
+msgid "Inactive"
+msgstr "לא פעיל"
+
+#: includes/viewer.php
+msgid "No active tunnels"
+msgstr "אין מנהרות פעילות"
+
+#: includes/viewer.php
+msgid "The worst status among active tunnels, or Collection failing while discovery fails."
+msgstr "המצב החמור ביותר מבין המנהרות הפעילות, או 'האיסוף נכשל' כאשר הגילוי נכשל."
+
+#: includes/viewer.php
+msgid "Active"
+msgstr "פעיל"
+
+#: includes/viewer.php
+msgid "Unavailable"
+msgstr "לא זמין"
+
+#: includes/viewer.php
+msgid "Deleted"
+msgstr "נמחק"
+
+#: includes/viewer.php
+msgid "Last Successful Discovery"
+msgstr "גילוי מוצלח אחרון"
+
+#: includes/viewer.php
+msgid "Consecutive Failures"
+msgstr "כשלים רצופים"
+
+#: includes/viewer.php
+#, php-format
+msgid "Last error: %s"
+msgstr "שגיאה אחרונה: %s"
+
+#: includes/viewer.php
+msgid "Tunnel"
+msgstr "מנהרה"
+
+#: includes/viewer.php
+msgid "Cloudflare Status"
+msgstr "מצב Cloudflare"
+
+#: includes/viewer.php
+msgid "The status Cloudflare reported at the last discovery."
+msgstr "המצב שדיווח Cloudflare בגילוי האחרון."
+
+#: includes/viewer.php
+msgid "Lifecycle"
+msgstr "מחזור חיים"
+
+#: includes/viewer.php
+msgid "Whether the last discoveries still found this tunnel."
+msgstr "האם הגילויים האחרונים עדיין מצאו מנהרה זו."
+
+#: includes/viewer.php
+msgid "Type"
+msgstr "סוג"
+
+#: includes/viewer.php
+msgid "Connections"
+msgstr "חיבורים"
+
+#: includes/viewer.php
+msgid "Last Seen"
+msgstr "נראה לאחרונה"
+
+#: includes/viewer.php
+msgid "Any"
+msgstr "כלשהו"
+
+#: includes/viewer.php
+msgid "All"
+msgstr "הכל"
+
+#: includes/viewer.php
+msgid "No Cloudflare Tunnels Found"
+msgstr "לא נמצאו מנהרות Cloudflare"
+
+#: includes/viewer.php
+msgid "Choose a tunnel on the Tunnels tab."
+msgstr "בחר מנהרה בלשונית מנהרות."
+
+#: includes/viewer.php
+msgid "The tunnel no longer exists."
+msgstr "המנהרה אינה קיימת עוד."
+
+#: includes/viewer.php
+#, php-format
+msgid "Connectors for %s"
+msgstr "מחברים עבור %s"
+
+#: includes/viewer.php
+msgid "Connector ID"
+msgstr "מזהה מחבר"
+
+#: includes/viewer.php
+msgid "Version"
+msgstr "גרסה"
+
+#: includes/viewer.php
+msgid "Architecture"
+msgstr "ארכיטקטורה"
+
+#: includes/viewer.php
+msgid "Running Since"
+msgstr "פועל מאז"
+
+#: includes/viewer.php
+msgid "Data Centers"
+msgstr "מרכזי נתונים"
+
+#: includes/viewer.php
+msgid "Origin IPs"
+msgstr "כתובות IP של המקור"
+
+#: includes/viewer.php
+#, php-format
+msgid "This tunnel is %s. These connectors were last seen while the tunnel was active."
+msgstr "מנהרה זו במצב %s. מחברים אלה נראו לאחרונה כשהמנהרה הייתה פעילה."
+
+#: includes/viewer.php
+msgid "No connectors are running for this tunnel."
+msgstr "אין מחברים הפועלים עבור מנהרה זו."
+
+#: includes/viewer.php
+msgid "Export"
+msgstr "ייצוא"
+
+#: includes/viewer.php
+msgid "Bytes/s"
+msgstr "בתים/שנייה"
+
+#: includes/viewer.php
+msgid "HTTP 5xx (%)"
+msgstr "HTTP 5xx (%)"
+
+#: includes/viewer.php
+msgid "Requests/s"
+msgstr "בקשות/שנייה"
+
+#: includes/viewer.php
+msgid "Zone"
+msgstr "אזור"
+
+#: src/OperatorPage.php
+msgid "Review the recorded observations below. Acknowledgments are personal to this session, expire when observations change, and never suppress alerts or change health."
+msgstr "עיין בתצפיות המתועדות להלן. אישורי צפייה הם אישיים להפעלה זו, פגים כאשר התצפיות משתנות, ולעולם אינם משתיקים התראות או משנים את מצב התקינות."
+
+#: src/OperatorPage.php
+msgid "Investigation"
+msgstr "חקירה"
+
+#: src/OperatorPage.php
+msgid "Object"
+msgstr "אובייקט"
+
+#: src/OperatorPage.php
+msgid "Observed (UTC)"
+msgstr "נצפה (UTC)"
+
+#: src/OperatorPage.php
+msgid "State"
+msgstr "מצב"
+
+#: src/OperatorPage.php
+msgid "Unknown or stale"
+msgstr "לא ידוע או מיושן"
+
+#: src/OperatorPage.php
+msgid "Acknowledged; health unchanged."
+msgstr "אושר; התקינות לא השתנתה."
+
+#: src/OperatorPage.php
+msgid "Acknowledge"
+msgstr "אשר"
+
+#: src/OperatorPage.php
+msgid "No observations are available."
+msgstr "אין תצפיות זמינות."

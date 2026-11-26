@@ -1,0 +1,774 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-FileCopyrightText: 2026 Thomas Vincent <thomasvincent@gmail.com>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cloudflare 0.4.0-dev\n"
+"Report-Msgid-Bugs-To: https://github.com/somethingwithproof/plugin_cloudflare/issues\n"
+"PO-Revision-Date: 2026-11-26 00:00+0000\n"
+"Last-Translator: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language-Team: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language: af-ZA\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: cloudflare_operator.php
+msgid "Monitoring view"
+msgstr "Moniteringsaansig"
+
+#: cloudflare_operator.php
+msgid "Observations could not be read. Ask an administrator to check the plugin log."
+msgstr "Waarnemings kon nie gelees word nie. Vra 'n administrateur om die inproplogboek na te gaan."
+
+#: includes/accounts.php
+msgid "Connection verified"
+msgstr "Verbinding geverifieer"
+
+#: includes/accounts.php
+msgid "Token is not active; it may be expired or disabled"
+msgstr "Teken is nie aktief nie; dit is moontlik verval of gedeaktiveer"
+
+#: includes/accounts.php
+msgid "Token is invalid or expired"
+msgstr "Teken is ongeldig of het verval"
+
+#: includes/accounts.php
+msgid "Token lacks the Account Cloudflare Tunnel Read permission"
+msgstr "Teken het nie die toestemming Account Cloudflare Tunnel Read nie"
+
+#: includes/accounts.php
+msgid "Cloudflare API is unreachable; try again later"
+msgstr "Cloudflare API is onbereikbaar; probeer later weer"
+
+#: includes/accounts.php
+msgid "Cloudflare API rate limit reached; try again later"
+msgstr "Cloudflare API-tempobeperking bereik; probeer later weer"
+
+#: includes/accounts.php
+msgid "Cloudflare API request failed unexpectedly"
+msgstr "Cloudflare API-versoek het onverwags misluk"
+
+#: includes/accounts.php
+msgid "Token lacks the permissions needed to verify it"
+msgstr "Teken het nie die toestemmings wat nodig is om dit te verifieer nie"
+
+#: includes/accounts.php
+msgid "Stored token cannot be decrypted"
+msgstr "Gestoorde teken kan nie gedekripteer word nie"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing or unusable"
+msgstr "Tekenkluissleutellêer ontbreek of is onbruikbaar"
+
+#: includes/accounts.php
+msgid "Token file is missing or insecure"
+msgstr "Tekenlêer ontbreek of is onveilig"
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable; configure the key file or use a token file"
+msgstr "Geënkripteerde berging is onbeskikbaar; stel die sleutellêer op of gebruik 'n tekenlêer"
+
+#: includes/accounts.php
+msgid "Enter the 32-character hexadecimal Cloudflare account ID"
+msgstr "Voer die 32-karakter heksadesimale Cloudflare-rekening-ID in"
+
+#: includes/accounts.php
+msgid "Enter a name of 1 to 100 characters without control characters"
+msgstr "Voer 'n naam van 1 tot 100 karakters sonder beheerkarakters in"
+
+#: includes/accounts.php
+msgid "Choose an encrypted token or a token file"
+msgstr "Kies 'n geënkripteerde teken of 'n tekenlêer"
+
+#: includes/accounts.php
+msgid "Enter an API token"
+msgstr "Voer 'n API-teken in"
+
+#: includes/accounts.php
+msgid "Re-enter the token when changing the account ID"
+msgstr "Voer die teken weer in wanneer die rekening-ID verander word"
+
+#: includes/accounts.php
+msgid "Enter an absolute path of at most 255 characters"
+msgstr "Voer 'n absolute pad van hoogstens 255 karakters in"
+
+#: includes/accounts.php
+msgid "Must be 0 or 1"
+msgstr "Moet 0 of 1 wees"
+
+#: includes/accounts.php
+msgid "Enter a whole number of seconds from 60 to 86400"
+msgstr "Voer 'n heelgetal sekondes van 60 tot 86400 in"
+
+#: includes/accounts.php
+msgid "This Cloudflare account ID is already configured"
+msgstr "Hierdie Cloudflare-rekening-ID is reeds opgestel"
+
+#: includes/accounts.php
+msgid "Global API Keys are not accepted; use a scoped API token"
+msgstr "Globale API-sleutels word nie aanvaar nie; gebruik 'n beperkte API-teken"
+
+#: includes/accounts.php
+msgid "API token format is invalid"
+msgstr "API-tekenformaat is ongeldig"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing, unreadable, insecure or malformed"
+msgstr "Tekenkluis-sleutellêer ontbreek, is onleesbaar, onveilig of misvorm"
+
+#: includes/accounts.php
+msgid "Stored API token could not be decrypted"
+msgstr "Gestoorde API-teken kon nie gedekripteer word nie"
+
+#: includes/accounts.php
+msgid "Token file is missing, unreadable, not a regular file or too large"
+msgstr "Tekenlêer ontbreek, is onleesbaar, nie 'n gewone lêer nie of te groot"
+
+#: includes/accounts.php
+msgid "Token file path is not absolute, is a symlink, or the file is world-readable or world-writable"
+msgstr "Tekenlêerpad is nie absoluut nie, is 'n simboliese skakel, of die lêer is wêreldleesbaar of wêreldskryfbaar"
+
+#: includes/accounts.php
+msgid "Token file is not inside the Token File Directory"
+msgstr "Tekenlêer is nie binne die Tekenlêergids nie"
+
+#: includes/accounts.php
+msgid "API token could not be encrypted"
+msgstr "API-teken kon nie geënkripteer word nie"
+
+#: includes/accounts.php
+msgid "Credential error"
+msgstr "Aanmeldbewysfout"
+
+#: includes/accounts.php includes/settings.php
+msgid "Cloudflare"
+msgstr "Cloudflare"
+
+#: includes/accounts.php
+msgid "Encrypted in the Cacti database"
+msgstr "Geënkripteer in die Cacti-databasis"
+
+#: includes/accounts.php
+msgid "Token file on this server"
+msgstr "Tekenlêer op hierdie bediener"
+
+#: includes/accounts.php includes/viewer.php
+msgid "Account"
+msgstr "Rekening"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Name"
+msgstr "Naam"
+
+#: includes/accounts.php
+msgid "A label for this account in Cacti."
+msgstr "'n Etiket vir hierdie rekening in Cacti."
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Account ID"
+msgstr "Rekening-ID"
+
+#: includes/accounts.php
+msgid "The 32-character Cloudflare account ID, shown in the dashboard URL and on the account overview page."
+msgstr "Die 32-karakter Cloudflare-rekening-ID wat in die paneelbord-URL en op die rekeningoorsigbladsy gewys word."
+
+#: includes/accounts.php
+msgid "API Token"
+msgstr "API-teken"
+
+#: includes/accounts.php
+msgid "Token Storage"
+msgstr "Tekenberging"
+
+#: includes/accounts.php
+msgid "Where the scoped API token is kept. Global API Keys are not accepted."
+msgstr "Waar die beperkte API-teken gestoor word. Globale API-sleutels word nie aanvaar nie."
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable because the key file in Settings is missing or unusable; only token files can be used."
+msgstr "Geënkripteerde berging is nie beskikbaar nie omdat die sleutellêer in Instellings ontbreek of onbruikbaar is; slegs tekenlêers kan gebruik word."
+
+#: includes/accounts.php
+msgid "Leave blank to keep the current token"
+msgstr "Laat leeg om die huidige teken te behou"
+
+#: includes/accounts.php
+msgid "A scoped API token with Account Cloudflare Tunnel Read permission."
+msgstr "'n Beperkte API-teken met die toestemming Account Cloudflare Tunnel Read."
+
+#: includes/accounts.php
+msgid "Token File"
+msgstr "Tekenlêer"
+
+#: includes/accounts.php
+msgid "Absolute path to a file that contains only the token. It must be readable by the web server and poller users and must not be world-readable."
+msgstr "Absolute pad na 'n lêer wat slegs die teken bevat. Dit moet leesbaar wees vir die webbediener- en poller-gebruikers en mag nie wêreldleesbaar wees nie."
+
+#: includes/accounts.php
+msgid "Collection"
+msgstr "Insameling"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Enabled"
+msgstr "Geaktiveer"
+
+#: includes/accounts.php
+msgid "Disabled accounts are not polled."
+msgstr "Gedeaktiveerde rekeninge word nie gepol nie."
+
+#: includes/accounts.php
+msgid "Collect Tunnels"
+msgstr "Versamel tonnels"
+
+#: includes/accounts.php
+msgid "Discover Cloudflare Tunnels and their connectors."
+msgstr "Ontdek Cloudflare-tonnels en hul koppelaars."
+
+#: includes/accounts.php
+msgid "Collect Analytics"
+msgstr "Versamel analitika"
+
+#: includes/accounts.php
+msgid "Collect zone traffic analytics. This needs the Account Analytics Read and Analytics Read (Zone) permissions."
+msgstr "Versamel soneverkeersanalitika. Dit vereis die toestemmings Account Analytics Read en Analytics Read (Zone)."
+
+#: includes/accounts.php
+msgid "Create Graphs"
+msgstr "Skep grafieke"
+
+#: includes/accounts.php
+msgid "Create graphs for each tunnel on the account's Cacti device. Turning this on needs the permission to edit Cacti devices."
+msgstr "Skep grafieke vir elke tonnel op die rekening se Cacti-toestel. Om dit aan te skakel, vereis die toestemming om Cacti-toestelle te wysig."
+
+#: includes/accounts.php
+msgid "Discovery Interval"
+msgstr "Ontdekkingsinterval"
+
+#: includes/accounts.php
+msgid "Seconds between inventory refreshes, from 60 to 86400."
+msgstr "Sekondes tussen voorraadverfrissings, van 60 tot 86400."
+
+#: includes/accounts.php
+msgid "The token and its confirmation do not match"
+msgstr "Die teken en sy bevestiging stem nie ooreen nie"
+
+#: includes/accounts_page.php
+msgid "Delete"
+msgstr "Skrap"
+
+#: includes/accounts_page.php
+msgid "Verify"
+msgstr "Verifieer"
+
+#: includes/accounts_page.php
+msgid "Enable"
+msgstr "Aktiveer"
+
+#: includes/accounts_page.php
+msgid "Disable"
+msgstr "Deaktiveer"
+
+#: includes/accounts_page.php
+msgid "Create Cacti Device"
+msgstr "Skep Cacti-toestel"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to change Cloudflare accounts."
+msgstr "Jy het nie toestemming om Cloudflare-rekeninge te wysig nie."
+
+#: includes/accounts_page.php
+msgid "The Cloudflare account no longer exists."
+msgstr "Die Cloudflare-rekening bestaan nie meer nie."
+
+#: includes/accounts_page.php
+msgid "The Cloudflare accounts could not be read. See the Cacti log for details."
+msgstr "Die Cloudflare-rekeninge kon nie gelees word nie. Sien die Cacti-logboek vir besonderhede."
+
+#: includes/accounts_page.php
+msgid "Create Graphs was left off: turning it on needs the permission to edit Cacti devices."
+msgstr "Skep grafieke is afgelaat: om dit aan te skakel, vereis die toestemming om Cacti-toestelle te wysig."
+
+#: includes/accounts_page.php
+msgid "Cacti device created"
+msgstr "Cacti-toestel geskep"
+
+#: includes/accounts_page.php
+msgid "A Cacti device already exists for this account"
+msgstr "'n Cacti-toestel bestaan reeds vir hierdie rekening"
+
+#: includes/accounts_page.php
+msgid "The Cloudflare templates are not installed; see the Cacti log"
+msgstr "Die Cloudflare-sjablone is nie geïnstalleer nie; sien die Cacti-logboek"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices"
+msgstr "Jy het nie toestemming om Cacti-toestelle te skep nie"
+
+#: includes/accounts_page.php
+msgid "The Cacti device could not be created; see the Cacti log"
+msgstr "Die Cacti-toestel kon nie geskep word nie; sien die Cacti-logboek"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices."
+msgstr "Jy het nie toestemming om Cacti-toestelle te skep nie."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Delete the following Cloudflare Account. Its discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgid_plural "Click 'Continue' to Delete the following Cloudflare Accounts. Their discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgstr[0] "Klik 'Gaan voort' om die volgende Cloudflare-rekening te skrap. Sy ontdekte voorraad en werkstatus word verwyder; Cacti-toestelle en -grafieke word behou."
+msgstr[1] "Klik 'Gaan voort' om die volgende Cloudflare-rekeninge te skrap. Hul ontdekte voorraad en werkstatus word verwyder; Cacti-toestelle en -grafieke word behou."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Verify the following Cloudflare Account against the Cloudflare API."
+msgid_plural "Click 'Continue' to Verify the following Cloudflare Accounts against the Cloudflare API."
+msgstr[0] "Klik 'Gaan voort' om die volgende Cloudflare-rekening teen die Cloudflare API te verifieer."
+msgstr[1] "Klik 'Gaan voort' om die volgende Cloudflare-rekeninge teen die Cloudflare API te verifieer."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Enable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Enable the following Cloudflare Accounts."
+msgstr[0] "Klik 'Gaan voort' om die volgende Cloudflare-rekening te aktiveer."
+msgstr[1] "Klik 'Gaan voort' om die volgende Cloudflare-rekeninge te aktiveer."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Disable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Disable the following Cloudflare Accounts."
+msgstr[0] "Klik 'Gaan voort' om die volgende Cloudflare-rekening te deaktiveer."
+msgstr[1] "Klik 'Gaan voort' om die volgende Cloudflare-rekeninge te deaktiveer."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to create a Cacti device for the following Cloudflare Account. An account that already has one is left as it is."
+msgid_plural "Click 'Continue' to create a Cacti device for each of the following Cloudflare Accounts. An account that already has one is left as it is."
+msgstr[0] "Klik 'Gaan voort' om 'n Cacti-toestel vir die volgende Cloudflare-rekening te skep. 'n Rekening wat reeds een het, word gelaat soos dit is."
+msgstr[1] "Klik 'Gaan voort' om 'n Cacti-toestel vir elk van die volgende Cloudflare-rekeninge te skep. 'n Rekening wat reeds een het, word gelaat soos dit is."
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Cancel"
+msgstr "Kanselleer"
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Continue"
+msgstr "Gaan voort"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Cloudflare Account [edit: %s]"
+msgstr "Cloudflare-rekening [wysig: %s]"
+
+#: includes/accounts_page.php
+msgid "Cloudflare Account [new]"
+msgstr "Cloudflare-rekening [nuut]"
+
+#: includes/accounts_page.php includes/viewer.php src/OperatorPage.php
+msgid "Never"
+msgstr "Nooit"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Status"
+msgstr "Status"
+
+#: includes/accounts_page.php
+msgid "Message"
+msgstr "Boodskap"
+
+#: includes/accounts_page.php
+msgid "No"
+msgstr "Nee"
+
+#: includes/accounts_page.php
+msgid "Token Stored"
+msgstr "Teken gestoor"
+
+#: includes/accounts_page.php
+msgid "Yes"
+msgstr "Ja"
+
+#: includes/accounts_page.php
+msgid "Last Checked"
+msgstr "Laas nagegaan"
+
+#: includes/accounts_page.php
+msgid "Last Verified"
+msgstr "Laas geverifieer"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Permission: %s"
+msgstr "Toestemming: %s"
+
+#: includes/accounts_page.php
+msgid "Granted"
+msgstr "Toegestaan"
+
+#: includes/accounts_page.php
+msgid "Missing"
+msgstr "Ontbreek"
+
+#: includes/accounts_page.php
+msgid "Connection Status"
+msgstr "Verbindingstatus"
+
+#: includes/accounts_page.php includes/settings.php includes/viewer.php
+msgid "Cloudflare Accounts"
+msgstr "Cloudflare-rekeninge"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Search"
+msgstr "Soek"
+
+#: includes/accounts_page.php
+msgid "Accounts"
+msgstr "Rekeninge"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Default"
+msgstr "Verstek"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Go"
+msgstr "Gaan"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Set/Refresh Filters"
+msgstr "Stel/verfris filters"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear"
+msgstr "Maak skoon"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear Filters"
+msgstr "Maak filters skoon"
+
+#: includes/accounts_page.php
+msgid "The name of this account in Cacti."
+msgstr "Die naam van hierdie rekening in Cacti."
+
+#: includes/accounts_page.php
+msgid "Whether an API token is configured. The edit page shows where it is kept."
+msgstr "Of 'n API-teken opgestel is. Die wysigingsbladsy wys waar dit gestoor word."
+
+#: includes/accounts_page.php
+msgid "The result of the last Verify."
+msgstr "Die resultaat van die laaste Verifieer."
+
+#: includes/accounts_page.php
+msgid "ID"
+msgstr "ID"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "No Cloudflare Accounts Found"
+msgstr "Geen Cloudflare-rekeninge gevind nie"
+
+#: includes/operator.php
+msgid "Inspect tunnels and connector counts. Escalate token changes, account configuration and graph creation to an administrator."
+msgstr "Inspekteer tonnels en koppelaartellings. Eskaleer tekenwysigings, rekeningopstelling en grafiekskepping na 'n administrateur."
+
+#: includes/settings.php
+msgid "Configuration"
+msgstr "Opstelling"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Cloudflare Operations"
+msgstr "Cloudflare-bedrywighede"
+
+#: includes/settings.php
+msgid "Management"
+msgstr "Bestuur"
+
+#: includes/settings.php includes/viewer.php
+msgid "Cloudflare Tunnels"
+msgstr "Cloudflare-tonnels"
+
+#: includes/settings.php
+msgid "(edit)"
+msgstr "(wysig)"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Actions"
+msgstr "Aksies"
+
+#: includes/settings.php includes/viewer.php
+msgid "Overview"
+msgstr "Oorsig"
+
+#: includes/settings.php includes/viewer.php
+msgid "Tunnels"
+msgstr "Tonnels"
+
+#: includes/settings.php includes/viewer.php
+msgid "Connectors"
+msgstr "Koppelaars"
+
+#: includes/settings.php
+msgid "Token Vault Key File"
+msgstr "Tekenkluis-sleutellêer"
+
+#: includes/settings.php
+msgid "Absolute path to the 32-byte key used to encrypt stored API tokens. It must be readable by the web server and poller users and not world-readable. When the file is missing, only token files can be used."
+msgstr "Absolute pad na die 32-greep sleutel wat gebruik word om gestoorde API-tekens te enkripteer. Dit moet leesbaar wees vir die webbediener- en poller-gebruikers en nie wêreldleesbaar wees nie. Wanneer die lêer ontbreek, kan slegs tekenlêers gebruik word."
+
+#: includes/settings.php
+msgid "Token File Directory"
+msgstr "Tekenlêergids"
+
+#: includes/settings.php
+msgid "Absolute path of the directory that every account token file must be in. When empty, a token file may be anywhere the web server and poller users can read."
+msgstr "Absolute pad van die gids waarin elke rekeningtekenlêer moet wees. Wanneer leeg, kan 'n tekenlêer enige plek wees waar die webbediener- en poller-gebruikers kan lees."
+
+#: includes/settings.php
+msgid "Interactive Request Timeout"
+msgstr "Interaktiewe versoektydverstryking"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made from the web interface, such as Verify."
+msgstr "Totale tyd in sekondes toegelaat vir 'n Cloudflare API-versoek wat vanaf die webkoppelvlak gemaak word, soos Verifieer."
+
+#: includes/settings.php
+msgid "Collector Request Timeout"
+msgstr "Versamelaarversoek-tydverstryking"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made by the background collector."
+msgstr "Totale tyd in sekondes toegelaat vir 'n Cloudflare API-versoek wat deur die agtergrondversamelaar gemaak word."
+
+#: includes/settings.php
+msgid "Log Level"
+msgstr "Logboekvlak"
+
+#: includes/settings.php
+msgid "The amount of detail the plugin writes to the Cacti log."
+msgstr "Die hoeveelheid besonderhede wat die inprop na die Cacti-logboek skryf."
+
+#: includes/tunnel_retirement.php
+msgid "The tunnel could not be retired. Check permissions and retry after collection finishes."
+msgstr "Die tonnel kon nie uit diens gestel word nie. Gaan toestemmings na en probeer weer nadat versameling klaar is."
+
+#: includes/tunnel_retirement.php includes/viewer.php
+msgid "Retire tunnel"
+msgstr "Stel tonnel uit diens"
+
+#: includes/tunnel_retirement.php
+msgid "Retiring removes the graphs and unshared data sources created for this deleted tunnel. Cacti controls RRD cleanup. The inventory record is kept."
+msgstr "Uitdiensstelling verwyder die grafieke en ongedeelde databronne wat vir hierdie geskrapte tonnel geskep is. Cacti beheer RRD-opruiming. Die voorraadrekord word behou."
+
+#: includes/viewer.php
+msgid "The Cloudflare tunnels could not be read. See the Cacti log for details."
+msgstr "Die Cloudflare-tonnels kon nie gelees word nie. Sien die Cacti-logboek vir besonderhede."
+
+#: includes/viewer.php
+msgid "Zone Analytics"
+msgstr "Sone-analitika"
+
+#: includes/viewer.php
+msgid "Disabled"
+msgstr "Gedeaktiveer"
+
+#: includes/viewer.php
+msgid "Not collected"
+msgstr "Nie versamel nie"
+
+#: includes/viewer.php
+msgid "Collection failing"
+msgstr "Versameling misluk"
+
+#: includes/viewer.php
+msgid "Not yet collected"
+msgstr "Nog nie versamel nie"
+
+#: includes/viewer.php
+msgid "Down"
+msgstr "Af"
+
+#: includes/viewer.php
+msgid "Degraded"
+msgstr "Verswak"
+
+#: includes/viewer.php
+msgid "Healthy"
+msgstr "Gesond"
+
+#: includes/viewer.php
+msgid "Inactive"
+msgstr "Onaktief"
+
+#: includes/viewer.php
+msgid "No active tunnels"
+msgstr "Geen aktiewe tonnels nie"
+
+#: includes/viewer.php
+msgid "The worst status among active tunnels, or Collection failing while discovery fails."
+msgstr "Die slegste status onder aktiewe tonnels, of Versameling misluk terwyl ontdekking misluk."
+
+#: includes/viewer.php
+msgid "Active"
+msgstr "Aktief"
+
+#: includes/viewer.php
+msgid "Unavailable"
+msgstr "Onbeskikbaar"
+
+#: includes/viewer.php
+msgid "Deleted"
+msgstr "Geskrap"
+
+#: includes/viewer.php
+msgid "Last Successful Discovery"
+msgstr "Laaste suksesvolle ontdekking"
+
+#: includes/viewer.php
+msgid "Consecutive Failures"
+msgstr "Opeenvolgende mislukkings"
+
+#: includes/viewer.php
+#, php-format
+msgid "Last error: %s"
+msgstr "Laaste fout: %s"
+
+#: includes/viewer.php
+msgid "Tunnel"
+msgstr "Tonnel"
+
+#: includes/viewer.php
+msgid "Cloudflare Status"
+msgstr "Cloudflare-status"
+
+#: includes/viewer.php
+msgid "The status Cloudflare reported at the last discovery."
+msgstr "Die status wat Cloudflare by die laaste ontdekking gerapporteer het."
+
+#: includes/viewer.php
+msgid "Lifecycle"
+msgstr "Lewensiklus"
+
+#: includes/viewer.php
+msgid "Whether the last discoveries still found this tunnel."
+msgstr "Of die laaste ontdekkings hierdie tonnel steeds gevind het."
+
+#: includes/viewer.php
+msgid "Type"
+msgstr "Tipe"
+
+#: includes/viewer.php
+msgid "Connections"
+msgstr "Verbindings"
+
+#: includes/viewer.php
+msgid "Last Seen"
+msgstr "Laas gesien"
+
+#: includes/viewer.php
+msgid "Any"
+msgstr "Enige"
+
+#: includes/viewer.php
+msgid "All"
+msgstr "Alles"
+
+#: includes/viewer.php
+msgid "No Cloudflare Tunnels Found"
+msgstr "Geen Cloudflare-tonnels gevind nie"
+
+#: includes/viewer.php
+msgid "Choose a tunnel on the Tunnels tab."
+msgstr "Kies 'n tonnel op die Tonnels-oortjie."
+
+#: includes/viewer.php
+msgid "The tunnel no longer exists."
+msgstr "Die tonnel bestaan nie meer nie."
+
+#: includes/viewer.php
+#, php-format
+msgid "Connectors for %s"
+msgstr "Koppelaars vir %s"
+
+#: includes/viewer.php
+msgid "Connector ID"
+msgstr "Koppelaar-ID"
+
+#: includes/viewer.php
+msgid "Version"
+msgstr "Weergawe"
+
+#: includes/viewer.php
+msgid "Architecture"
+msgstr "Argitektuur"
+
+#: includes/viewer.php
+msgid "Running Since"
+msgstr "Loop sedert"
+
+#: includes/viewer.php
+msgid "Data Centers"
+msgstr "Datasentrums"
+
+#: includes/viewer.php
+msgid "Origin IPs"
+msgstr "Oorsprong-IP's"
+
+#: includes/viewer.php
+#, php-format
+msgid "This tunnel is %s. These connectors were last seen while the tunnel was active."
+msgstr "Hierdie tonnel is %s. Hierdie koppelaars is laas gesien terwyl die tonnel aktief was."
+
+#: includes/viewer.php
+msgid "No connectors are running for this tunnel."
+msgstr "Geen koppelaars loop vir hierdie tonnel nie."
+
+#: includes/viewer.php
+msgid "Export"
+msgstr "Voer uit"
+
+#: includes/viewer.php
+msgid "Bytes/s"
+msgstr "Grepe/s"
+
+#: includes/viewer.php
+msgid "HTTP 5xx (%)"
+msgstr "HTTP 5xx (%)"
+
+#: includes/viewer.php
+msgid "Requests/s"
+msgstr "Versoeke/s"
+
+#: includes/viewer.php
+msgid "Zone"
+msgstr "Sone"
+
+#: src/OperatorPage.php
+msgid "Review the recorded observations below. Acknowledgments are personal to this session, expire when observations change, and never suppress alerts or change health."
+msgstr "Hersien die aangetekende waarnemings hieronder. Erkennings is persoonlik tot hierdie sessie, verval wanneer waarnemings verander, en onderdruk nooit waarskuwings of verander gesondheid nie."
+
+#: src/OperatorPage.php
+msgid "Investigation"
+msgstr "Ondersoek"
+
+#: src/OperatorPage.php
+msgid "Object"
+msgstr "Objek"
+
+#: src/OperatorPage.php
+msgid "Observed (UTC)"
+msgstr "Waargeneem (UTC)"
+
+#: src/OperatorPage.php
+msgid "State"
+msgstr "Toestand"
+
+#: src/OperatorPage.php
+msgid "Unknown or stale"
+msgstr "Onbekend of verouderd"
+
+#: src/OperatorPage.php
+msgid "Acknowledged; health unchanged."
+msgstr "Erken; gesondheid onveranderd."
+
+#: src/OperatorPage.php
+msgid "Acknowledge"
+msgstr "Erken"
+
+#: src/OperatorPage.php
+msgid "No observations are available."
+msgstr "Geen waarnemings is beskikbaar nie."

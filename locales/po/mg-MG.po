@@ -1,0 +1,774 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-FileCopyrightText: 2026 Thomas Vincent <thomasvincent@gmail.com>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cloudflare 0.4.0-dev\n"
+"Report-Msgid-Bugs-To: https://github.com/somethingwithproof/plugin_cloudflare/issues\n"
+"PO-Revision-Date: 2026-11-26 00:00+0000\n"
+"Last-Translator: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language-Team: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language: mg-MG\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: cloudflare_operator.php
+msgid "Monitoring view"
+msgstr "Fomba fijery fanaraha-maso"
+
+#: cloudflare_operator.php
+msgid "Observations could not be read. Ask an administrator to check the plugin log."
+msgstr "Tsy azo novakiana ny fandinihana. Angataho ny mpitantana hanamarina ny firaketana ny plugin."
+
+#: includes/accounts.php
+msgid "Connection verified"
+msgstr "Voamarina ny fifandraisana"
+
+#: includes/accounts.php
+msgid "Token is not active; it may be expired or disabled"
+msgstr "Tsy miasa ny token; mety ho lany daty na tsy nalefa izany"
+
+#: includes/accounts.php
+msgid "Token is invalid or expired"
+msgstr "Tsy manan-kery na lany daty ny token"
+
+#: includes/accounts.php
+msgid "Token lacks the Account Cloudflare Tunnel Read permission"
+msgstr "Tsy ampy ny alalana Account Cloudflare Tunnel Read ny token"
+
+#: includes/accounts.php
+msgid "Cloudflare API is unreachable; try again later"
+msgstr "Tsy azo idirana ny Cloudflare API; andramo indray afaka kelikely"
+
+#: includes/accounts.php
+msgid "Cloudflare API rate limit reached; try again later"
+msgstr "Tonga amin'ny fetran'ny fangatahana ny Cloudflare API; andramo indray afaka kelikely"
+
+#: includes/accounts.php
+msgid "Cloudflare API request failed unexpectedly"
+msgstr "Tsy nahomby tampoka ny fangatahana Cloudflare API"
+
+#: includes/accounts.php
+msgid "Token lacks the permissions needed to verify it"
+msgstr "Tsy ampy ny alalana ilaina hanamarinana ny token"
+
+#: includes/accounts.php
+msgid "Stored token cannot be decrypted"
+msgstr "Tsy azo vahana ny fanafenana ny token voatahiry"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing or unusable"
+msgstr "Tsy hita na tsy azo ampiasaina ny rakitra fanalahidin'ny tahiry voaro ho an'ny token"
+
+#: includes/accounts.php
+msgid "Token file is missing or insecure"
+msgstr "Tsy hita na tsy azo antoka ny rakitra token"
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable; configure the key file or use a token file"
+msgstr "Tsy misy ny fitahirizana voaaro; kirakirao ny rakitra fanalahidy na mampiasà rakitra token"
+
+#: includes/accounts.php
+msgid "Enter the 32-character hexadecimal Cloudflare account ID"
+msgstr "Ampidiro ny ID kaonty Cloudflare hexadecimal misy marika 32"
+
+#: includes/accounts.php
+msgid "Enter a name of 1 to 100 characters without control characters"
+msgstr "Ampidiro anarana misy litera na marika 1 hatramin'ny 100 tsy misy marika fanaraha-maso"
+
+#: includes/accounts.php
+msgid "Choose an encrypted token or a token file"
+msgstr "Misafidiana token voaaro na rakitra token"
+
+#: includes/accounts.php
+msgid "Enter an API token"
+msgstr "Ampidiro ny API token"
+
+#: includes/accounts.php
+msgid "Re-enter the token when changing the account ID"
+msgstr "Ampidiro indray ny token rehefa manova ny ID kaonty"
+
+#: includes/accounts.php
+msgid "Enter an absolute path of at most 255 characters"
+msgstr "Ampidiro lalana feno misy marika farafahabetsany 255"
+
+#: includes/accounts.php
+msgid "Must be 0 or 1"
+msgstr "Tsy maintsy 0 na 1"
+
+#: includes/accounts.php
+msgid "Enter a whole number of seconds from 60 to 86400"
+msgstr "Ampidiro ny isa feno amin'ny segondra manomboka amin'ny 60 ka hatramin'ny 86400"
+
+#: includes/accounts.php
+msgid "This Cloudflare account ID is already configured"
+msgstr "Efa voakirakira ity ID kaonty Cloudflare ity"
+
+#: includes/accounts.php
+msgid "Global API Keys are not accepted; use a scoped API token"
+msgstr "Tsy ekena ny Global API Keys; mampiasà API token voafetra sehatra"
+
+#: includes/accounts.php
+msgid "API token format is invalid"
+msgstr "Tsy manan-kery ny endriky ny API token"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing, unreadable, insecure or malformed"
+msgstr "Tsy hita, tsy azo vakiana, tsy azo antoka na diso endrika ny rakitra fanalahidin'ny fitehirizana token"
+
+#: includes/accounts.php
+msgid "Stored API token could not be decrypted"
+msgstr "Tsy azo novohana ny fanafenana ny API token voatahiry"
+
+#: includes/accounts.php
+msgid "Token file is missing, unreadable, not a regular file or too large"
+msgstr "Tsy hita, tsy azo vakiana, tsy rakitra mahazatra na lehibe loatra ny rakitra token"
+
+#: includes/accounts.php
+msgid "Token file path is not absolute, is a symlink, or the file is world-readable or world-writable"
+msgstr "Tsy lalana feno ny lalan'ny rakitra token, rohy symlink izy io, na azo vakian'ny rehetra na azo soratan'ny rehetra ny rakitra"
+
+#: includes/accounts.php
+msgid "Token file is not inside the Token File Directory"
+msgstr "Tsy ao anatin'ny Token File Directory ny rakitra token"
+
+#: includes/accounts.php
+msgid "API token could not be encrypted"
+msgstr "Tsy azo nafenina ny API token"
+
+#: includes/accounts.php
+msgid "Credential error"
+msgstr "Hadisoana amin'ny fahazoan-dalana miditra"
+
+#: includes/accounts.php includes/settings.php
+msgid "Cloudflare"
+msgstr "Cloudflare"
+
+#: includes/accounts.php
+msgid "Encrypted in the Cacti database"
+msgstr "Nafenina tao amin'ny tahiry angona Cacti"
+
+#: includes/accounts.php
+msgid "Token file on this server"
+msgstr "Rakitra token ato amin'ity lohamilina ity"
+
+#: includes/accounts.php includes/viewer.php
+msgid "Account"
+msgstr "Kaonty"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Name"
+msgstr "Anarana"
+
+#: includes/accounts.php
+msgid "A label for this account in Cacti."
+msgstr "Anarana famantarana ity kaonty ity ao amin'ny Cacti."
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Account ID"
+msgstr "ID kaonty"
+
+#: includes/accounts.php
+msgid "The 32-character Cloudflare account ID, shown in the dashboard URL and on the account overview page."
+msgstr "Ny ID kaonty Cloudflare misy tarehintsoratra 32, aseho ao amin'ny URL-n'ny tabilao fampahalalana sy ao amin'ny pejy famintinana ny kaonty."
+
+#: includes/accounts.php
+msgid "API Token"
+msgstr "API Token"
+
+#: includes/accounts.php
+msgid "Token Storage"
+msgstr "Fitehirizana Token"
+
+#: includes/accounts.php
+msgid "Where the scoped API token is kept. Global API Keys are not accepted."
+msgstr "Ny toerana itahirizana ny API token voafetra sehatra. Tsy ekena ny Global API Keys."
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable because the key file in Settings is missing or unusable; only token files can be used."
+msgstr "Tsy azo ampiasaina ny fitehirizana voaaro fanafenana satria tsy hita na tsy azo ampiasaina ny rakitra fanalahidy ao amin'ny Fikirakirana; rakitra token ihany no azo ampiasaina."
+
+#: includes/accounts.php
+msgid "Leave blank to keep the current token"
+msgstr "Avelao ho foana raha hitazona ny token ankehitriny"
+
+#: includes/accounts.php
+msgid "A scoped API token with Account Cloudflare Tunnel Read permission."
+msgstr "API token voafetra sehatra manana fahazoan-dalana Account Cloudflare Tunnel Read."
+
+#: includes/accounts.php
+msgid "Token File"
+msgstr "Rakitra Token"
+
+#: includes/accounts.php
+msgid "Absolute path to a file that contains only the token. It must be readable by the web server and poller users and must not be world-readable."
+msgstr "Lalana feno mankany amin'ny rakitra tsy misy afa-tsy ny token. Tsy maintsy azon'ny mpampiasa lohamilina web sy poller vakiana izy io ary tsy tokony ho azon'ny rehetra vakiana."
+
+#: includes/accounts.php
+msgid "Collection"
+msgstr "Fanangonana"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Enabled"
+msgstr "Alefa"
+
+#: includes/accounts.php
+msgid "Disabled accounts are not polled."
+msgstr "Tsy angonina angona ny kaonty nakatona."
+
+#: includes/accounts.php
+msgid "Collect Tunnels"
+msgstr "Manangona Tunnels"
+
+#: includes/accounts.php
+msgid "Discover Cloudflare Tunnels and their connectors."
+msgstr "Mitady ny Cloudflare Tunnels sy ny mpampifandray azy ireo."
+
+#: includes/accounts.php
+msgid "Collect Analytics"
+msgstr "Manangona Antontan'isa"
+
+#: includes/accounts.php
+msgid "Collect zone traffic analytics. This needs the Account Analytics Read and Analytics Read (Zone) permissions."
+msgstr "Manangona antontan'isa momba ny fifamoivoizana amin'ny faritra. Mila ny fahazoan-dalana Account Analytics Read sy Analytics Read (Zone) izany."
+
+#: includes/accounts.php
+msgid "Create Graphs"
+msgstr "Mamorona Tabilao"
+
+#: includes/accounts.php
+msgid "Create graphs for each tunnel on the account's Cacti device. Turning this on needs the permission to edit Cacti devices."
+msgstr "Mamorona tabilao ho an'ny tunnel tsirairay ao amin'ny fitaovana Cacti-n'ilay kaonty. Ny famelomana ity safidy ity dia mila fahazoan-dalana hanova fitaovana Cacti."
+
+#: includes/accounts.php
+msgid "Discovery Interval"
+msgstr "Elanelam-potoana fitadiavana"
+
+#: includes/accounts.php
+msgid "Seconds between inventory refreshes, from 60 to 86400."
+msgstr "Segondra elanelan'ny fanavaozana ny lisitry ny fitaovana, manomboka amin'ny 60 ka hatramin'ny 86400."
+
+#: includes/accounts.php
+msgid "The token and its confirmation do not match"
+msgstr "Tsy mitovy ny token sy ny fanamafisana azy"
+
+#: includes/accounts_page.php
+msgid "Delete"
+msgstr "Fafao"
+
+#: includes/accounts_page.php
+msgid "Verify"
+msgstr "Hamarino"
+
+#: includes/accounts_page.php
+msgid "Enable"
+msgstr "Alefaso"
+
+#: includes/accounts_page.php
+msgid "Disable"
+msgstr "Ajanony"
+
+#: includes/accounts_page.php
+msgid "Create Cacti Device"
+msgstr "Mamorona fitaovana Cacti"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to change Cloudflare accounts."
+msgstr "Tsy manana fahazoan-dalana hanova kaonty Cloudflare ianao."
+
+#: includes/accounts_page.php
+msgid "The Cloudflare account no longer exists."
+msgstr "Tsy misy intsony ny kaonty Cloudflare."
+
+#: includes/accounts_page.php
+msgid "The Cloudflare accounts could not be read. See the Cacti log for details."
+msgstr "Tsy azo novakiana ny kaonty Cloudflare. Jereo ny firaketana Cacti raha mila fanazavana fanampiny."
+
+#: includes/accounts_page.php
+msgid "Create Graphs was left off: turning it on needs the permission to edit Cacti devices."
+msgstr "Najanonana ho tsy mandeha ny Mamorona Tabilao: ny famelomana azy dia mila fahazoan-dalana hanova fitaovana Cacti."
+
+#: includes/accounts_page.php
+msgid "Cacti device created"
+msgstr "Voaforona ny fitaovana Cacti"
+
+#: includes/accounts_page.php
+msgid "A Cacti device already exists for this account"
+msgstr "Efa misy fitaovana Cacti ho an'ity kaonty ity"
+
+#: includes/accounts_page.php
+msgid "The Cloudflare templates are not installed; see the Cacti log"
+msgstr "Tsy tafapetraka ny môdely Cloudflare; jereo ny firaketana Cacti"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices"
+msgstr "Tsy manana fahazoan-dalana hamorona fitaovana Cacti ianao"
+
+#: includes/accounts_page.php
+msgid "The Cacti device could not be created; see the Cacti log"
+msgstr "Tsy azo noforonina ny fitaovana Cacti; jereo ny firaketana Cacti"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices."
+msgstr "Tsy manana fahazoan-dalana hamorona fitaovana Cacti ianao."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Delete the following Cloudflare Account. Its discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgid_plural "Click 'Continue' to Delete the following Cloudflare Accounts. Their discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgstr[0] "Tsindrio ny 'Tohizo' raha hamafa ity Kaonty Cloudflare manaraka ity. Voafafa ny lisitry ny zavatra hitany sy ny toetry ny asa; tazonina kosa ny fitaovana Cacti sy ny tabilao."
+msgstr[1] "Tsindrio ny 'Tohizo' raha hamafa ireto Kaonty Cloudflare manaraka ireto. Voafafa ny lisitry ny zavatra hitan'izy ireo sy ny toetry ny asa; tazonina kosa ny fitaovana Cacti sy ny tabilao."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Verify the following Cloudflare Account against the Cloudflare API."
+msgid_plural "Click 'Continue' to Verify the following Cloudflare Accounts against the Cloudflare API."
+msgstr[0] "Tsindrio ny 'Tohizo' raha hanamarina ity Kaonty Cloudflare manaraka ity amin'ny alalan'ny Cloudflare API."
+msgstr[1] "Tsindrio ny 'Tohizo' raha hanamarina ireto Kaonty Cloudflare manaraka ireto amin'ny alalan'ny Cloudflare API."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Enable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Enable the following Cloudflare Accounts."
+msgstr[0] "Tsindrio ny 'Tohizo' raha handefa ity Kaonty Cloudflare manaraka ity."
+msgstr[1] "Tsindrio ny 'Tohizo' raha handefa ireto Kaonty Cloudflare manaraka ireto."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Disable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Disable the following Cloudflare Accounts."
+msgstr[0] "Tsindrio ny 'Tohizo' raha hampijanona ity Kaonty Cloudflare manaraka ity."
+msgstr[1] "Tsindrio ny 'Tohizo' raha hampijanona ireto Kaonty Cloudflare manaraka ireto."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to create a Cacti device for the following Cloudflare Account. An account that already has one is left as it is."
+msgid_plural "Click 'Continue' to create a Cacti device for each of the following Cloudflare Accounts. An account that already has one is left as it is."
+msgstr[0] "Tsindrio ny 'Tohizo' raha hamorona fitaovana Cacti ho an'ity Kaonty Cloudflare manaraka ity. Avela amin'izao ny kaonty efa manana."
+msgstr[1] "Tsindrio ny 'Tohizo' raha hamorona fitaovana Cacti ho an'ny tsirairay amin'ireto Kaonty Cloudflare manaraka ireto. Avela amin'izao ny kaonty efa manana."
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Cancel"
+msgstr "Foano"
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Continue"
+msgstr "Tohizo"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Cloudflare Account [edit: %s]"
+msgstr "Kaonty Cloudflare [fanovana: %s]"
+
+#: includes/accounts_page.php
+msgid "Cloudflare Account [new]"
+msgstr "Kaonty Cloudflare [vaovao]"
+
+#: includes/accounts_page.php includes/viewer.php src/OperatorPage.php
+msgid "Never"
+msgstr "Tsy mbola nisy"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Status"
+msgstr "Toetra"
+
+#: includes/accounts_page.php
+msgid "Message"
+msgstr "Hafatra"
+
+#: includes/accounts_page.php
+msgid "No"
+msgstr "Tsia"
+
+#: includes/accounts_page.php
+msgid "Token Stored"
+msgstr "Token Voatahiry"
+
+#: includes/accounts_page.php
+msgid "Yes"
+msgstr "Eny"
+
+#: includes/accounts_page.php
+msgid "Last Checked"
+msgstr "Nojerena Farany"
+
+#: includes/accounts_page.php
+msgid "Last Verified"
+msgstr "Nohamarinina Farany"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Permission: %s"
+msgstr "Fahazoan-dalana: %s"
+
+#: includes/accounts_page.php
+msgid "Granted"
+msgstr "Nomena"
+
+#: includes/accounts_page.php
+msgid "Missing"
+msgstr "Tsy hita"
+
+#: includes/accounts_page.php
+msgid "Connection Status"
+msgstr "Toetry ny Fifandraisana"
+
+#: includes/accounts_page.php includes/settings.php includes/viewer.php
+msgid "Cloudflare Accounts"
+msgstr "Kaonty Cloudflare"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Search"
+msgstr "Karoka"
+
+#: includes/accounts_page.php
+msgid "Accounts"
+msgstr "Kaonty"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Default"
+msgstr "Mahazatra"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Go"
+msgstr "Alefaso"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Set/Refresh Filters"
+msgstr "Mametraka/Manavao ny Sivana"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear"
+msgstr "Fafao"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear Filters"
+msgstr "Fafao ny Sivana"
+
+#: includes/accounts_page.php
+msgid "The name of this account in Cacti."
+msgstr "Ny anaran'ity kaonty ity ao amin'ny Cacti."
+
+#: includes/accounts_page.php
+msgid "Whether an API token is configured. The edit page shows where it is kept."
+msgstr "Raha voakirakira ny API token. Ny pejy fanovana no mampiseho ny toerana itahirizana azy."
+
+#: includes/accounts_page.php
+msgid "The result of the last Verify."
+msgstr "Ny vokatry ny Fanamarinana farany."
+
+#: includes/accounts_page.php
+msgid "ID"
+msgstr "ID"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "No Cloudflare Accounts Found"
+msgstr "Tsy Nahitana Kaonty Cloudflare"
+
+#: includes/operator.php
+msgid "Inspect tunnels and connector counts. Escalate token changes, account configuration and graph creation to an administrator."
+msgstr "Manara-maso ny tunnels sy ny isan'ny mpampifandray. Ampitao any amin'ny mpitantana ny fanovana token, ny fikirakirana kaonty ary ny famoronana tabilao."
+
+#: includes/settings.php
+msgid "Configuration"
+msgstr "Fikirakirana"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Cloudflare Operations"
+msgstr "Fampandehanana Cloudflare"
+
+#: includes/settings.php
+msgid "Management"
+msgstr "Fitantanana"
+
+#: includes/settings.php includes/viewer.php
+msgid "Cloudflare Tunnels"
+msgstr "Cloudflare Tunnels"
+
+#: includes/settings.php
+msgid "(edit)"
+msgstr "(hanova)"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Actions"
+msgstr "Hetsika"
+
+#: includes/settings.php includes/viewer.php
+msgid "Overview"
+msgstr "Famintinana"
+
+#: includes/settings.php includes/viewer.php
+msgid "Tunnels"
+msgstr "Tunnels"
+
+#: includes/settings.php includes/viewer.php
+msgid "Connectors"
+msgstr "Mpampifandray"
+
+#: includes/settings.php
+msgid "Token Vault Key File"
+msgstr "Rakitra Fanalahidin'ny Fitehirizana Token"
+
+#: includes/settings.php
+msgid "Absolute path to the 32-byte key used to encrypt stored API tokens. It must be readable by the web server and poller users and not world-readable. When the file is missing, only token files can be used."
+msgstr "Lalana feno mankany amin'ny fanalahidy 32-byte ampiasaina hanafenana ny API tokens voatahiry. Tsy maintsy azon'ny mpampiasa lohamilina web sy poller vakiana izy io ary tsy tokony ho azon'ny rehetra vakiana. Rehefa tsy hita ilay rakitra dia rakitra token ihany no azo ampiasaina."
+
+#: includes/settings.php
+msgid "Token File Directory"
+msgstr "Lahatahiry Rakitra Token"
+
+#: includes/settings.php
+msgid "Absolute path of the directory that every account token file must be in. When empty, a token file may be anywhere the web server and poller users can read."
+msgstr "Lalana feno mankany amin'ny lahatahiry tsy maintsy misy ny rakitra token-n'ny kaonty tsirairay. Rehefa foana izany dia mety ho na aiza na aiza azon'ny mpampiasa lohamilina web sy poller vakiana ny rakitra token."
+
+#: includes/settings.php
+msgid "Interactive Request Timeout"
+msgstr "Fe-potoana Fandefasana Fangatahana Mivantana"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made from the web interface, such as Verify."
+msgstr "Totalin'ny fotoana amin'ny segondra avela ho an'ny fangatahana Cloudflare API atao avy amin'ny sehatra web, toy ny Fanamarinana."
+
+#: includes/settings.php
+msgid "Collector Request Timeout"
+msgstr "Fe-potoana Fangatahana ho an'ny Mpanangona"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made by the background collector."
+msgstr "Totalin'ny fotoana amin'ny segondra avela ho an'ny fangatahana Cloudflare API ataon'ny mpanangona ao ambadika."
+
+#: includes/settings.php
+msgid "Log Level"
+msgstr "Haavon'ny Firaketana"
+
+#: includes/settings.php
+msgid "The amount of detail the plugin writes to the Cacti log."
+msgstr "Ny habetsahan'ny antsipiriany soratan'ny plugin ao amin'ny firaketana Cacti."
+
+#: includes/tunnel_retirement.php
+msgid "The tunnel could not be retired. Check permissions and retry after collection finishes."
+msgstr "Tsy azo nesorina tamin'ny fampiasana ny tunnel. Hamarino ny fahazoan-dalana ary andramo indray rehefa vita ny fanangonana."
+
+#: includes/tunnel_retirement.php includes/viewer.php
+msgid "Retire tunnel"
+msgstr "Esory tamin'ny fampiasana ny tunnel"
+
+#: includes/tunnel_retirement.php
+msgid "Retiring removes the graphs and unshared data sources created for this deleted tunnel. Cacti controls RRD cleanup. The inventory record is kept."
+msgstr "Ny fanesorana amin'ny fampiasana dia manala ny tabilao sy ny loharanom-baovao tsy itambarana noforonina ho an'ity tunnel voafafa ity. Ny Cacti no mifehy ny fanadiovana RRD. Tazonina ny firaketana ao amin'ny lisitra."
+
+#: includes/viewer.php
+msgid "The Cloudflare tunnels could not be read. See the Cacti log for details."
+msgstr "Tsy azo novakiana ny Cloudflare tunnels. Jereo ny firaketana Cacti raha mila fanazavana fanampiny."
+
+#: includes/viewer.php
+msgid "Zone Analytics"
+msgstr "Antontan'isa Faritra"
+
+#: includes/viewer.php
+msgid "Disabled"
+msgstr "Tsy alefa"
+
+#: includes/viewer.php
+msgid "Not collected"
+msgstr "Tsy nangonina"
+
+#: includes/viewer.php
+msgid "Collection failing"
+msgstr "Tsy mahomby ny fanangonana"
+
+#: includes/viewer.php
+msgid "Not yet collected"
+msgstr "Mbola tsy nangonina"
+
+#: includes/viewer.php
+msgid "Down"
+msgstr "Tsy azo tratrarina"
+
+#: includes/viewer.php
+msgid "Degraded"
+msgstr "Niharatsy"
+
+#: includes/viewer.php
+msgid "Healthy"
+msgstr "Salama tsara"
+
+#: includes/viewer.php
+msgid "Inactive"
+msgstr "Tsy miasa"
+
+#: includes/viewer.php
+msgid "No active tunnels"
+msgstr "Tsy misy tunnel miasa"
+
+#: includes/viewer.php
+msgid "The worst status among active tunnels, or Collection failing while discovery fails."
+msgstr "Ny toetra ratsy indrindra amin'ireo tunnel miasa, na Tsy mahomby ny fanangonana raha tsy mahomby ny fitadiavana."
+
+#: includes/viewer.php
+msgid "Active"
+msgstr "Miasa"
+
+#: includes/viewer.php
+msgid "Unavailable"
+msgstr "Tsy azo ampiasaina"
+
+#: includes/viewer.php
+msgid "Deleted"
+msgstr "Voafafa"
+
+#: includes/viewer.php
+msgid "Last Successful Discovery"
+msgstr "Fitadiavana Nahomby Farany"
+
+#: includes/viewer.php
+msgid "Consecutive Failures"
+msgstr "Tsy Fahombiazana Mifanesy"
+
+#: includes/viewer.php
+#, php-format
+msgid "Last error: %s"
+msgstr "Hadisoana farany: %s"
+
+#: includes/viewer.php
+msgid "Tunnel"
+msgstr "Tunnel"
+
+#: includes/viewer.php
+msgid "Cloudflare Status"
+msgstr "Toetry ny Cloudflare"
+
+#: includes/viewer.php
+msgid "The status Cloudflare reported at the last discovery."
+msgstr "Ny toetra notaterin'ny Cloudflare tamin'ny fitadiavana farany."
+
+#: includes/viewer.php
+msgid "Lifecycle"
+msgstr "Tsingerim-piainana"
+
+#: includes/viewer.php
+msgid "Whether the last discoveries still found this tunnel."
+msgstr "Raha mbola nahita ity tunnel ity ny fitadiavana farany."
+
+#: includes/viewer.php
+msgid "Type"
+msgstr "Karazana"
+
+#: includes/viewer.php
+msgid "Connections"
+msgstr "Fifandraisana"
+
+#: includes/viewer.php
+msgid "Last Seen"
+msgstr "Hita Farany"
+
+#: includes/viewer.php
+msgid "Any"
+msgstr "Na inona na inona"
+
+#: includes/viewer.php
+msgid "All"
+msgstr "Rehetra"
+
+#: includes/viewer.php
+msgid "No Cloudflare Tunnels Found"
+msgstr "Tsy Nahitana Cloudflare Tunnels"
+
+#: includes/viewer.php
+msgid "Choose a tunnel on the Tunnels tab."
+msgstr "Misafidiana tunnel ao amin'ny tabilao Tunnels."
+
+#: includes/viewer.php
+msgid "The tunnel no longer exists."
+msgstr "Tsy misy intsony ilay tunnel."
+
+#: includes/viewer.php
+#, php-format
+msgid "Connectors for %s"
+msgstr "Mpampifandray ho an'ny %s"
+
+#: includes/viewer.php
+msgid "Connector ID"
+msgstr "ID Mpampifandray"
+
+#: includes/viewer.php
+msgid "Version"
+msgstr "Kinova"
+
+#: includes/viewer.php
+msgid "Architecture"
+msgstr "Maritrano"
+
+#: includes/viewer.php
+msgid "Running Since"
+msgstr "Mandeha Hatramin'ny"
+
+#: includes/viewer.php
+msgid "Data Centers"
+msgstr "Foiben-tahiry Angona"
+
+#: includes/viewer.php
+msgid "Origin IPs"
+msgstr "IP Fiaviana"
+
+#: includes/viewer.php
+#, php-format
+msgid "This tunnel is %s. These connectors were last seen while the tunnel was active."
+msgstr "%s ity tunnel ity. Ireto mpampifandray ireto dia hita farany fony mbola niasa ilay tunnel."
+
+#: includes/viewer.php
+msgid "No connectors are running for this tunnel."
+msgstr "Tsy misy mpampifandray mandeha ho an'ity tunnel ity."
+
+#: includes/viewer.php
+msgid "Export"
+msgstr "Aondrana"
+
+#: includes/viewer.php
+msgid "Bytes/s"
+msgstr "Bytes/s"
+
+#: includes/viewer.php
+msgid "HTTP 5xx (%)"
+msgstr "HTTP 5xx (%)"
+
+#: includes/viewer.php
+msgid "Requests/s"
+msgstr "Fangatahana/s"
+
+#: includes/viewer.php
+msgid "Zone"
+msgstr "Faritra"
+
+#: src/OperatorPage.php
+msgid "Review the recorded observations below. Acknowledgments are personal to this session, expire when observations change, and never suppress alerts or change health."
+msgstr "Jereo eto ambany ny fandinihana voarakitra. Ny fanekena dia manokana ho an'ity fivoriana ity, lany daty rehefa miova ny fandinihana, ary tsy manafoana fampitandremana na manova ny fahasalamana velively."
+
+#: src/OperatorPage.php
+msgid "Investigation"
+msgstr "Fanadihadiana"
+
+#: src/OperatorPage.php
+msgid "Object"
+msgstr "Singa"
+
+#: src/OperatorPage.php
+msgid "Observed (UTC)"
+msgstr "Voamarika (UTC)"
+
+#: src/OperatorPage.php
+msgid "State"
+msgstr "Toetra"
+
+#: src/OperatorPage.php
+msgid "Unknown or stale"
+msgstr "Tsy fantatra na efa antitra"
+
+#: src/OperatorPage.php
+msgid "Acknowledged; health unchanged."
+msgstr "Voamarika ho ekena; tsy niova ny fahasalamana."
+
+#: src/OperatorPage.php
+msgid "Acknowledge"
+msgstr "Ekeo"
+
+#: src/OperatorPage.php
+msgid "No observations are available."
+msgstr "Tsy misy fanamarihana azo ampiasaina."

@@ -1,0 +1,774 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-FileCopyrightText: 2026 Thomas Vincent <thomasvincent@gmail.com>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cloudflare 0.4.0-dev\n"
+"Report-Msgid-Bugs-To: https://github.com/somethingwithproof/plugin_cloudflare/issues\n"
+"PO-Revision-Date: 2026-11-26 00:00+0000\n"
+"Last-Translator: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language-Team: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language: ha-NG\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: cloudflare_operator.php
+msgid "Monitoring view"
+msgstr "Duban sa ido"
+
+#: cloudflare_operator.php
+msgid "Observations could not be read. Ask an administrator to check the plugin log."
+msgstr "Ba a iya karanta abubuwan da aka lura ba. Nemi mai gudanarwa ya duba rajistar plugin."
+
+#: includes/accounts.php
+msgid "Connection verified"
+msgstr "An tabbatar da haɗi"
+
+#: includes/accounts.php
+msgid "Token is not active; it may be expired or disabled"
+msgstr "Alamar sirri ba ta aiki; tana iya ƙarewa ko an kashe ta"
+
+#: includes/accounts.php
+msgid "Token is invalid or expired"
+msgstr "Alamar sirri ba daidai ba ce ko ta ƙare"
+
+#: includes/accounts.php
+msgid "Token lacks the Account Cloudflare Tunnel Read permission"
+msgstr "Alamar sirri ba ta da izinin Account Cloudflare Tunnel Read"
+
+#: includes/accounts.php
+msgid "Cloudflare API is unreachable; try again later"
+msgstr "Ba a iya samun Cloudflare API ba; sake gwadawa an jima"
+
+#: includes/accounts.php
+msgid "Cloudflare API rate limit reached; try again later"
+msgstr "An kai iyakar ƙimar Cloudflare API; sake gwadawa an jima"
+
+#: includes/accounts.php
+msgid "Cloudflare API request failed unexpectedly"
+msgstr "Buƙatar Cloudflare API ta gaza ba zato ba tsammani"
+
+#: includes/accounts.php
+msgid "Token lacks the permissions needed to verify it"
+msgstr "Alamar sirri ba ta da izinin da ake buƙata don tabbatar da ita"
+
+#: includes/accounts.php
+msgid "Stored token cannot be decrypted"
+msgstr "Ba za a iya buɗe rufaffiyar alamar sirri da aka adana ba"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing or unusable"
+msgstr "Fayil ɗin maɓallin ma'ajiyar sirri na alamar sirri ya ɓace ko ba ya amfanuwa"
+
+#: includes/accounts.php
+msgid "Token file is missing or insecure"
+msgstr "Fayil ɗin alamar sirri ya ɓace ko ba shi da tsaro"
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable; configure the key file or use a token file"
+msgstr "Ma'ajiyar da aka rufa asiri ba ta samuwa; saita fayil ɗin maɓalli ko yi amfani da fayil ɗin alamar sirri"
+
+#: includes/accounts.php
+msgid "Enter the 32-character hexadecimal Cloudflare account ID"
+msgstr "Shigar da ID ɗin asusun Cloudflare mai haruffan hexadecimal 32"
+
+#: includes/accounts.php
+msgid "Enter a name of 1 to 100 characters without control characters"
+msgstr "Shigar da suna mai haruffa 1 zuwa 100 ba tare da haruffan sarrafawa ba"
+
+#: includes/accounts.php
+msgid "Choose an encrypted token or a token file"
+msgstr "Zaɓi alamar sirri da aka rufa asiri ko fayil ɗin alamar sirri"
+
+#: includes/accounts.php
+msgid "Enter an API token"
+msgstr "Shigar da alamar sirri ta API"
+
+#: includes/accounts.php
+msgid "Re-enter the token when changing the account ID"
+msgstr "Sake shigar da alamar sirri yayin canza ID ɗin asusu"
+
+#: includes/accounts.php
+msgid "Enter an absolute path of at most 255 characters"
+msgstr "Shigar da cikakkiyar hanya mai haruffa 255 a mafi yawa"
+
+#: includes/accounts.php
+msgid "Must be 0 or 1"
+msgstr "Dole ne ya zama 0 ko 1"
+
+#: includes/accounts.php
+msgid "Enter a whole number of seconds from 60 to 86400"
+msgstr "Shigar da cikakkiyar lambar daƙiƙoƙi daga 60 zuwa 86400"
+
+#: includes/accounts.php
+msgid "This Cloudflare account ID is already configured"
+msgstr "An riga an saita wannan lambar shaidar asusun Cloudflare"
+
+#: includes/accounts.php
+msgid "Global API Keys are not accepted; use a scoped API token"
+msgstr "Ba a karɓar Global API Keys; yi amfani da token ɗin API mai iyakataccen izini"
+
+#: includes/accounts.php
+msgid "API token format is invalid"
+msgstr "Tsarin token ɗin API ba daidai ba ne"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing, unreadable, insecure or malformed"
+msgstr "Fayil ɗin maƙullin ma'ajiyar token ya ɓace, ba ya karantuwa, ba shi da tsaro ko kuma yana da kuskuren tsari"
+
+#: includes/accounts.php
+msgid "Stored API token could not be decrypted"
+msgstr "Ba a iya warware ɓoyayyen token ɗin API da aka adana ba"
+
+#: includes/accounts.php
+msgid "Token file is missing, unreadable, not a regular file or too large"
+msgstr "Fayil ɗin token ya ɓace, ba ya karantuwa, ba fayil na yau da kullum ba ne ko kuma ya yi girma da yawa"
+
+#: includes/accounts.php
+msgid "Token file path is not absolute, is a symlink, or the file is world-readable or world-writable"
+msgstr "Hanyar fayil ɗin token ba cikakkiyar hanya (absolute) ba ce, symlink ce, ko kuma kowa na iya karanta fayil ɗin ko rubutu a cikinsa"
+
+#: includes/accounts.php
+msgid "Token file is not inside the Token File Directory"
+msgstr "Fayil ɗin token ba ya cikin kundin adana fayilolin token (Token File Directory)"
+
+#: includes/accounts.php
+msgid "API token could not be encrypted"
+msgstr "Ba a iya ɓoye token ɗin API ba"
+
+#: includes/accounts.php
+msgid "Credential error"
+msgstr "Kuskuren bayanan shiga"
+
+#: includes/accounts.php includes/settings.php
+msgid "Cloudflare"
+msgstr "Cloudflare"
+
+#: includes/accounts.php
+msgid "Encrypted in the Cacti database"
+msgstr "An ɓoye a cikin rumbun bayanai na Cacti"
+
+#: includes/accounts.php
+msgid "Token file on this server"
+msgstr "Fayil ɗin token a kan wannan uwar garke"
+
+#: includes/accounts.php includes/viewer.php
+msgid "Account"
+msgstr "Asusu"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Name"
+msgstr "Suna"
+
+#: includes/accounts.php
+msgid "A label for this account in Cacti."
+msgstr "Alamar suna don wannan asusu a cikin Cacti."
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Account ID"
+msgstr "ID ɗin Asusu"
+
+#: includes/accounts.php
+msgid "The 32-character Cloudflare account ID, shown in the dashboard URL and on the account overview page."
+msgstr "ID ɗin asusun Cloudflare mai haruffa 32, wanda aka nuna a cikin URL na dashboard da kuma a shafin bayanin asusu."
+
+#: includes/accounts.php
+msgid "API Token"
+msgstr "Token ɗin API"
+
+#: includes/accounts.php
+msgid "Token Storage"
+msgstr "Ma'ajiyar Token"
+
+#: includes/accounts.php
+msgid "Where the scoped API token is kept. Global API Keys are not accepted."
+msgstr "Inda ake adana token ɗin API mai iyakataccen izini. Ba a karɓar Global API Keys."
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable because the key file in Settings is missing or unusable; only token files can be used."
+msgstr "Ma'ajiyar da aka ɓoye ba ta samuwa saboda fayil ɗin maƙulli a cikin Saituna ya ɓace ko ba ya amfani; fayilolin token kaɗai za a iya amfani da su."
+
+#: includes/accounts.php
+msgid "Leave blank to keep the current token"
+msgstr "Bar shi fanko don ci gaba da amfani da token ɗin yanzu"
+
+#: includes/accounts.php
+msgid "A scoped API token with Account Cloudflare Tunnel Read permission."
+msgstr "Token ɗin API mai iyakataccen izini wanda ke da izinin Account Cloudflare Tunnel Read."
+
+#: includes/accounts.php
+msgid "Token File"
+msgstr "Fayil ɗin Token"
+
+#: includes/accounts.php
+msgid "Absolute path to a file that contains only the token. It must be readable by the web server and poller users and must not be world-readable."
+msgstr "Cikakkiyar hanya zuwa fayil da ke ɗauke da token kaɗai. Dole ne masu amfani na uwar garken yanar gizo da poller su iya karanta shi, kuma kada ya zama kowa zai iya karantawa."
+
+#: includes/accounts.php
+msgid "Collection"
+msgstr "Tattara Bayanai"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Enabled"
+msgstr "An kunna"
+
+#: includes/accounts.php
+msgid "Disabled accounts are not polled."
+msgstr "Ba a tattara bayanai daga asusan da aka dakatar."
+
+#: includes/accounts.php
+msgid "Collect Tunnels"
+msgstr "Tattara Tunnels"
+
+#: includes/accounts.php
+msgid "Discover Cloudflare Tunnels and their connectors."
+msgstr "Gano Cloudflare Tunnels da masu haɗawarsu."
+
+#: includes/accounts.php
+msgid "Collect Analytics"
+msgstr "Tattara Bayanan Alkaluma (Analytics)"
+
+#: includes/accounts.php
+msgid "Collect zone traffic analytics. This needs the Account Analytics Read and Analytics Read (Zone) permissions."
+msgstr "Tattara bayanan zirga-zirgar yanki (zone). Wannan yana buƙatar izinin Account Analytics Read da Analytics Read (Zone)."
+
+#: includes/accounts.php
+msgid "Create Graphs"
+msgstr "Ƙirƙiri Jadawalai"
+
+#: includes/accounts.php
+msgid "Create graphs for each tunnel on the account's Cacti device. Turning this on needs the permission to edit Cacti devices."
+msgstr "Ƙirƙiri jadawalai don kowane tunnel a kan na'urar Cacti ta asusun. Kunna wannan yana buƙatar izinin gyara na'urorin Cacti."
+
+#: includes/accounts.php
+msgid "Discovery Interval"
+msgstr "Tazarar Ganowa"
+
+#: includes/accounts.php
+msgid "Seconds between inventory refreshes, from 60 to 86400."
+msgstr "Daƙiƙoƙi tsakanin sabunta jerin kayayyaki, daga 60 zuwa 86400."
+
+#: includes/accounts.php
+msgid "The token and its confirmation do not match"
+msgstr "Token ɗin da tabbatarwarsa ba su dace ba"
+
+#: includes/accounts_page.php
+msgid "Delete"
+msgstr "Share"
+
+#: includes/accounts_page.php
+msgid "Verify"
+msgstr "Tabbatar"
+
+#: includes/accounts_page.php
+msgid "Enable"
+msgstr "Kunna"
+
+#: includes/accounts_page.php
+msgid "Disable"
+msgstr "Dakatar"
+
+#: includes/accounts_page.php
+msgid "Create Cacti Device"
+msgstr "Ƙirƙiri Na'urar Cacti"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to change Cloudflare accounts."
+msgstr "Ba ka da izinin sauya asusan Cloudflare."
+
+#: includes/accounts_page.php
+msgid "The Cloudflare account no longer exists."
+msgstr "Asusun Cloudflare ba ya wanzu yanzu."
+
+#: includes/accounts_page.php
+msgid "The Cloudflare accounts could not be read. See the Cacti log for details."
+msgstr "Ba a iya karanta asusan Cloudflare ba. Duba rajistar Cacti don ƙarin bayani."
+
+#: includes/accounts_page.php
+msgid "Create Graphs was left off: turning it on needs the permission to edit Cacti devices."
+msgstr "An bar Ƙirƙiri Jadawalai a kashe: kunna shi yana buƙatar izinin gyara na'urorin Cacti."
+
+#: includes/accounts_page.php
+msgid "Cacti device created"
+msgstr "An ƙirƙiri na'urar Cacti"
+
+#: includes/accounts_page.php
+msgid "A Cacti device already exists for this account"
+msgstr "An riga an yi na'urar Cacti don wannan asusun"
+
+#: includes/accounts_page.php
+msgid "The Cloudflare templates are not installed; see the Cacti log"
+msgstr "Ba a shigar da samfuran (templates) Cloudflare ba; duba rajistar Cacti"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices"
+msgstr "Ba ka da izinin ƙirƙirar na'urorin Cacti"
+
+#: includes/accounts_page.php
+msgid "The Cacti device could not be created; see the Cacti log"
+msgstr "Ba a iya ƙirƙirar na'urar Cacti ba; duba rajistar Cacti"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices."
+msgstr "Ba ka da izinin ƙirƙirar na'urorin Cacti."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Delete the following Cloudflare Account. Its discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgid_plural "Click 'Continue' to Delete the following Cloudflare Accounts. Their discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgstr[0] "Danna 'Ci gaba' don Goge wannan Asusun Cloudflare. Za a cire jerin abubuwan da aka gano da yanayin aikinsa; za a ajiye na'urori da jadawalan Cacti."
+msgstr[1] "Danna 'Ci gaba' don Goge waɗannan Asusan Cloudflare. Za a cire jerin abubuwan da aka gano da yanayin aikinsu; za a ajiye na'urori da jadawalan Cacti."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Verify the following Cloudflare Account against the Cloudflare API."
+msgid_plural "Click 'Continue' to Verify the following Cloudflare Accounts against the Cloudflare API."
+msgstr[0] "Danna 'Ci gaba' don Tabbatar da wannan Asusun Cloudflare ta hanyar Cloudflare API."
+msgstr[1] "Danna 'Ci gaba' don Tabbatar da waɗannan Asusan Cloudflare ta hanyar Cloudflare API."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Enable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Enable the following Cloudflare Accounts."
+msgstr[0] "Danna 'Ci gaba' don Kunna wannan Asusun Cloudflare."
+msgstr[1] "Danna 'Ci gaba' don Kunna waɗannan Asusan Cloudflare."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Disable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Disable the following Cloudflare Accounts."
+msgstr[0] "Danna 'Ci gaba' don Dakatar da wannan Asusun Cloudflare."
+msgstr[1] "Danna 'Ci gaba' don Dakatar da waɗannan Asusan Cloudflare."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to create a Cacti device for the following Cloudflare Account. An account that already has one is left as it is."
+msgid_plural "Click 'Continue' to create a Cacti device for each of the following Cloudflare Accounts. An account that already has one is left as it is."
+msgstr[0] "Danna 'Ci gaba' don ƙirƙirar na'urar Cacti don wannan Asusun Cloudflare. Asusun da ya riga yake da ita za a bar shi yadda yake."
+msgstr[1] "Danna 'Ci gaba' don ƙirƙirar na'urar Cacti don kowanne daga cikin waɗannan Asusan Cloudflare. Asusun da ya riga yake da ita za a bar shi yadda yake."
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Cancel"
+msgstr "Soke"
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Continue"
+msgstr "Ci gaba"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Cloudflare Account [edit: %s]"
+msgstr "Asusun Cloudflare [gyara: %s]"
+
+#: includes/accounts_page.php
+msgid "Cloudflare Account [new]"
+msgstr "Asusun Cloudflare [sabo]"
+
+#: includes/accounts_page.php includes/viewer.php src/OperatorPage.php
+msgid "Never"
+msgstr "Ba taɓa ba"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Status"
+msgstr "Yanayi"
+
+#: includes/accounts_page.php
+msgid "Message"
+msgstr "Saƙo"
+
+#: includes/accounts_page.php
+msgid "No"
+msgstr "A'a"
+
+#: includes/accounts_page.php
+msgid "Token Stored"
+msgstr "An Adana Token"
+
+#: includes/accounts_page.php
+msgid "Yes"
+msgstr "Ee"
+
+#: includes/accounts_page.php
+msgid "Last Checked"
+msgstr "Binciken Ƙarshe"
+
+#: includes/accounts_page.php
+msgid "Last Verified"
+msgstr "Tabbatarwa ta Ƙarshe"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Permission: %s"
+msgstr "Izini: %s"
+
+#: includes/accounts_page.php
+msgid "Granted"
+msgstr "An bayar"
+
+#: includes/accounts_page.php
+msgid "Missing"
+msgstr "Ya ɓace"
+
+#: includes/accounts_page.php
+msgid "Connection Status"
+msgstr "Yanayin Haɗi"
+
+#: includes/accounts_page.php includes/settings.php includes/viewer.php
+msgid "Cloudflare Accounts"
+msgstr "Asusan Cloudflare"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Search"
+msgstr "Bincika"
+
+#: includes/accounts_page.php
+msgid "Accounts"
+msgstr "Asusai"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Default"
+msgstr "Na asali"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Go"
+msgstr "Tafi"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Set/Refresh Filters"
+msgstr "Saita/Sabunta Masu Tacewa"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear"
+msgstr "Share"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear Filters"
+msgstr "Share Masu Tacewa"
+
+#: includes/accounts_page.php
+msgid "The name of this account in Cacti."
+msgstr "Sunan wannan asusu a cikin Cacti."
+
+#: includes/accounts_page.php
+msgid "Whether an API token is configured. The edit page shows where it is kept."
+msgstr "Ko an saita token ɗin API. Shafin gyara yana nuna inda ake ajiye shi."
+
+#: includes/accounts_page.php
+msgid "The result of the last Verify."
+msgstr "Sakamakon Tabbatarwa na ƙarshe."
+
+#: includes/accounts_page.php
+msgid "ID"
+msgstr "ID"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "No Cloudflare Accounts Found"
+msgstr "Ba a Sami Asusan Cloudflare Ba"
+
+#: includes/operator.php
+msgid "Inspect tunnels and connector counts. Escalate token changes, account configuration and graph creation to an administrator."
+msgstr "Duba tunnels da adadin masu haɗawa. Mika sauye-sauyen token, saitin asusu da ƙirƙirar jadawali zuwa ga mai gudanarwa."
+
+#: includes/settings.php
+msgid "Configuration"
+msgstr "Saiti"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Cloudflare Operations"
+msgstr "Ayyukan Cloudflare"
+
+#: includes/settings.php
+msgid "Management"
+msgstr "Gudanarwa"
+
+#: includes/settings.php includes/viewer.php
+msgid "Cloudflare Tunnels"
+msgstr "Cloudflare Tunnels"
+
+#: includes/settings.php
+msgid "(edit)"
+msgstr "(gyara)"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Actions"
+msgstr "Ayyuka"
+
+#: includes/settings.php includes/viewer.php
+msgid "Overview"
+msgstr "Taƙaitaccen Bayani"
+
+#: includes/settings.php includes/viewer.php
+msgid "Tunnels"
+msgstr "Tunnels"
+
+#: includes/settings.php includes/viewer.php
+msgid "Connectors"
+msgstr "Masu haɗawa"
+
+#: includes/settings.php
+msgid "Token Vault Key File"
+msgstr "Fayil ɗin Maƙullin Ma'ajiyar Token"
+
+#: includes/settings.php
+msgid "Absolute path to the 32-byte key used to encrypt stored API tokens. It must be readable by the web server and poller users and not world-readable. When the file is missing, only token files can be used."
+msgstr "Cikakkiyar hanya zuwa maƙulli mai byte 32 da ake amfani da shi wajen ɓoye token ɗin API da aka adana. Dole ne masu amfani na uwar garken yanar gizo da poller su iya karanta shi, kuma kada ya zama kowa zai iya karantawa. Idan fayil ɗin ya ɓace, fayilolin token kaɗai za a iya amfani da su."
+
+#: includes/settings.php
+msgid "Token File Directory"
+msgstr "Kundin Fayil ɗin Token"
+
+#: includes/settings.php
+msgid "Absolute path of the directory that every account token file must be in. When empty, a token file may be anywhere the web server and poller users can read."
+msgstr "Cikakkiyar hanyar kundin da kowane fayil ɗin token na asusu dole ne ya kasance a ciki. Idan yana fanko, fayil ɗin token zai iya kasancewa a ko'ina da masu amfani na uwar garken yanar gizo da poller za su iya karantawa."
+
+#: includes/settings.php
+msgid "Interactive Request Timeout"
+msgstr "Ƙayyadadden Lokacin Buƙatar Ma'amala"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made from the web interface, such as Verify."
+msgstr "Jimillar lokaci a daƙiƙoƙi da aka bayar don buƙatar Cloudflare API da aka yi daga shafin yanar gizo, kamar Tabbatarwa (Verify)."
+
+#: includes/settings.php
+msgid "Collector Request Timeout"
+msgstr "Ƙayyadadden Lokacin Buƙatar Mai Tattarawa"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made by the background collector."
+msgstr "Jimillar lokaci a daƙiƙoƙi da aka bayar don buƙatar Cloudflare API da mai tattarawa na baya ya yi."
+
+#: includes/settings.php
+msgid "Log Level"
+msgstr "Matakin Rajista"
+
+#: includes/settings.php
+msgid "The amount of detail the plugin writes to the Cacti log."
+msgstr "Yawan cikakken bayanin da ƙarin (plugin) ke rubutawa a cikin rajistar Cacti."
+
+#: includes/tunnel_retirement.php
+msgid "The tunnel could not be retired. Check permissions and retry after collection finishes."
+msgstr "Ba a iya cire tunnel ɗin daga aiki ba. Duba izini sannan a sake gwadawa bayan tattara bayanai ya ƙare."
+
+#: includes/tunnel_retirement.php includes/viewer.php
+msgid "Retire tunnel"
+msgstr "Cire tunnel daga aiki"
+
+#: includes/tunnel_retirement.php
+msgid "Retiring removes the graphs and unshared data sources created for this deleted tunnel. Cacti controls RRD cleanup. The inventory record is kept."
+msgstr "Cirewa daga aiki yana goge jadawalai da tushen bayanai marasa tarayya da aka ƙirƙira don wannan tunnel da aka goge. Cacti ne ke sarrafa tsaftacewar RRD. Ana ci gaba da adana tarihin lissafin kayayyaki."
+
+#: includes/viewer.php
+msgid "The Cloudflare tunnels could not be read. See the Cacti log for details."
+msgstr "Ba a iya karanta Cloudflare tunnels ba. Duba rajistar Cacti don ƙarin bayani."
+
+#: includes/viewer.php
+msgid "Zone Analytics"
+msgstr "Alkaluman Yanki (Zone Analytics)"
+
+#: includes/viewer.php
+msgid "Disabled"
+msgstr "An kashe"
+
+#: includes/viewer.php
+msgid "Not collected"
+msgstr "Ba a tattara ba"
+
+#: includes/viewer.php
+msgid "Collection failing"
+msgstr "Tattarawa yana gaza"
+
+#: includes/viewer.php
+msgid "Not yet collected"
+msgstr "Ba a tattara tukuna ba"
+
+#: includes/viewer.php
+msgid "Down"
+msgstr "Ya faɗi"
+
+#: includes/viewer.php
+msgid "Degraded"
+msgstr "Ya raunana"
+
+#: includes/viewer.php
+msgid "Healthy"
+msgstr "Lafiyayye"
+
+#: includes/viewer.php
+msgid "Inactive"
+msgstr "Ba mai aiki ba"
+
+#: includes/viewer.php
+msgid "No active tunnels"
+msgstr "Babu tunnels masu aiki"
+
+#: includes/viewer.php
+msgid "The worst status among active tunnels, or Collection failing while discovery fails."
+msgstr "Mafi munin yanayi a cikin tunnels masu aiki, ko Tattarawa yana gaza yayin da gano abubuwa ke gazawa."
+
+#: includes/viewer.php
+msgid "Active"
+msgstr "Mai aiki"
+
+#: includes/viewer.php
+msgid "Unavailable"
+msgstr "Ba ya samuwa"
+
+#: includes/viewer.php
+msgid "Deleted"
+msgstr "An goge"
+
+#: includes/viewer.php
+msgid "Last Successful Discovery"
+msgstr "Nasarar Gano ta Ƙarshe"
+
+#: includes/viewer.php
+msgid "Consecutive Failures"
+msgstr "Gazawa a Jere"
+
+#: includes/viewer.php
+#, php-format
+msgid "Last error: %s"
+msgstr "Kuskuren ƙarshe: %s"
+
+#: includes/viewer.php
+msgid "Tunnel"
+msgstr "Tunnel"
+
+#: includes/viewer.php
+msgid "Cloudflare Status"
+msgstr "Yanayin Cloudflare"
+
+#: includes/viewer.php
+msgid "The status Cloudflare reported at the last discovery."
+msgstr "Yanayin da Cloudflare ta ruwaito a lokacin gano na ƙarshe."
+
+#: includes/viewer.php
+msgid "Lifecycle"
+msgstr "Zagayowar Rayuwa"
+
+#: includes/viewer.php
+msgid "Whether the last discoveries still found this tunnel."
+msgstr "Ko binciken gano na ƙarshe sun ci gaba da samun wannan tunnel."
+
+#: includes/viewer.php
+msgid "Type"
+msgstr "Nau'i"
+
+#: includes/viewer.php
+msgid "Connections"
+msgstr "Haɗe-haɗe"
+
+#: includes/viewer.php
+msgid "Last Seen"
+msgstr "Ganin Ƙarshe"
+
+#: includes/viewer.php
+msgid "Any"
+msgstr "Kowane"
+
+#: includes/viewer.php
+msgid "All"
+msgstr "Duka"
+
+#: includes/viewer.php
+msgid "No Cloudflare Tunnels Found"
+msgstr "Ba a Sami Cloudflare Tunnels Ba"
+
+#: includes/viewer.php
+msgid "Choose a tunnel on the Tunnels tab."
+msgstr "Zaɓi tunnel a shafin Tunnels."
+
+#: includes/viewer.php
+msgid "The tunnel no longer exists."
+msgstr "Tunnel ɗin ba ya wanzu yanzu."
+
+#: includes/viewer.php
+#, php-format
+msgid "Connectors for %s"
+msgstr "Masu haɗawa don %s"
+
+#: includes/viewer.php
+msgid "Connector ID"
+msgstr "ID ɗin Mai Haɗawa"
+
+#: includes/viewer.php
+msgid "Version"
+msgstr "Siga"
+
+#: includes/viewer.php
+msgid "Architecture"
+msgstr "Tsarin Na'ura"
+
+#: includes/viewer.php
+msgid "Running Since"
+msgstr "Yana Aiki Tun"
+
+#: includes/viewer.php
+msgid "Data Centers"
+msgstr "Cibiyoyin Bayanai"
+
+#: includes/viewer.php
+msgid "Origin IPs"
+msgstr "IP na Asali"
+
+#: includes/viewer.php
+#, php-format
+msgid "This tunnel is %s. These connectors were last seen while the tunnel was active."
+msgstr "Wannan tunnel %s ne. An ga waɗannan masu haɗawar a ƙarshe yayin da tunnel ɗin ke aiki."
+
+#: includes/viewer.php
+msgid "No connectors are running for this tunnel."
+msgstr "Babu masu haɗawa da ke gudana don wannan tunnel."
+
+#: includes/viewer.php
+msgid "Export"
+msgstr "Fitarwa"
+
+#: includes/viewer.php
+msgid "Bytes/s"
+msgstr "Bytes/s"
+
+#: includes/viewer.php
+msgid "HTTP 5xx (%)"
+msgstr "HTTP 5xx (%)"
+
+#: includes/viewer.php
+msgid "Requests/s"
+msgstr "Buƙatu/s"
+
+#: includes/viewer.php
+msgid "Zone"
+msgstr "Yanki"
+
+#: src/OperatorPage.php
+msgid "Review the recorded observations below. Acknowledgments are personal to this session, expire when observations change, and never suppress alerts or change health."
+msgstr "Duba abubuwan da aka lura da aka yi rajista a ƙasa. Amincewa ta keɓanta ga wannan zaman ne, tana ƙarewa idan abubuwan da aka lura suka canza, kuma ba ta taɓa hana faɗakarwa ko canza lafiya ba."
+
+#: src/OperatorPage.php
+msgid "Investigation"
+msgstr "Bincike"
+
+#: src/OperatorPage.php
+msgid "Object"
+msgstr "Abu"
+
+#: src/OperatorPage.php
+msgid "Observed (UTC)"
+msgstr "An Lura (UTC)"
+
+#: src/OperatorPage.php
+msgid "State"
+msgstr "Hali"
+
+#: src/OperatorPage.php
+msgid "Unknown or stale"
+msgstr "Ba a sani ba ko ya tsufa"
+
+#: src/OperatorPage.php
+msgid "Acknowledged; health unchanged."
+msgstr "An amince; lafiya ba ta canza ba."
+
+#: src/OperatorPage.php
+msgid "Acknowledge"
+msgstr "Amince"
+
+#: src/OperatorPage.php
+msgid "No observations are available."
+msgstr "Babu sakamakon lura da ke samuwa."

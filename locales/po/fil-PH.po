@@ -1,0 +1,774 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-FileCopyrightText: 2026 Thomas Vincent <thomasvincent@gmail.com>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cloudflare 0.4.0-dev\n"
+"Report-Msgid-Bugs-To: https://github.com/somethingwithproof/plugin_cloudflare/issues\n"
+"PO-Revision-Date: 2026-11-26 00:00+0000\n"
+"Last-Translator: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language-Team: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language: fil-PH\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1 && n != 2 && n != 3 && (n % 10 == 4 || n % 10 == 6 || n % 10 == 9));\n"
+
+#: cloudflare_operator.php
+msgid "Monitoring view"
+msgstr "View ng pagsubaybay"
+
+#: cloudflare_operator.php
+msgid "Observations could not be read. Ask an administrator to check the plugin log."
+msgstr "Hindi mabasa ang mga obserbasyon. Hilingin sa isang administrator na suriin ang log ng plugin."
+
+#: includes/accounts.php
+msgid "Connection verified"
+msgstr "Na-verify ang koneksyon"
+
+#: includes/accounts.php
+msgid "Token is not active; it may be expired or disabled"
+msgstr "Hindi aktibo ang token; maaaring nag-expire na ito o naka-disable"
+
+#: includes/accounts.php
+msgid "Token is invalid or expired"
+msgstr "Hindi wasto o nag-expire na ang token"
+
+#: includes/accounts.php
+msgid "Token lacks the Account Cloudflare Tunnel Read permission"
+msgstr "Kulang ang token ng pahintulot na Account Cloudflare Tunnel Read"
+
+#: includes/accounts.php
+msgid "Cloudflare API is unreachable; try again later"
+msgstr "Hindi maabot ang Cloudflare API; subukan muli mamaya"
+
+#: includes/accounts.php
+msgid "Cloudflare API rate limit reached; try again later"
+msgstr "Naabot ang rate limit ng Cloudflare API; subukan muli mamaya"
+
+#: includes/accounts.php
+msgid "Cloudflare API request failed unexpectedly"
+msgstr "Hindi inaasahang nabigo ang kahilingan sa Cloudflare API"
+
+#: includes/accounts.php
+msgid "Token lacks the permissions needed to verify it"
+msgstr "Kulang ang token ng mga pahintulot na kailangan upang ma-verify ito"
+
+#: includes/accounts.php
+msgid "Stored token cannot be decrypted"
+msgstr "Hindi ma-decrypt ang nakaimbak na token"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing or unusable"
+msgstr "Nawawala o hindi magamit ang token vault key file"
+
+#: includes/accounts.php
+msgid "Token file is missing or insecure"
+msgstr "Nawawala o hindi ligtas ang token file"
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable; configure the key file or use a token file"
+msgstr "Hindi magagamit ang naka-encrypt na storage; i-configure ang key file o gumamit ng token file"
+
+#: includes/accounts.php
+msgid "Enter the 32-character hexadecimal Cloudflare account ID"
+msgstr "Ilagay ang 32-character na hexadecimal na Cloudflare account ID"
+
+#: includes/accounts.php
+msgid "Enter a name of 1 to 100 characters without control characters"
+msgstr "Maglagay ng pangalang may 1 hanggang 100 character na walang mga control character"
+
+#: includes/accounts.php
+msgid "Choose an encrypted token or a token file"
+msgstr "Pumili ng naka-encrypt na token o ng token file"
+
+#: includes/accounts.php
+msgid "Enter an API token"
+msgstr "Maglagay ng API token"
+
+#: includes/accounts.php
+msgid "Re-enter the token when changing the account ID"
+msgstr "Ilagay muli ang token kapag binabago ang account ID"
+
+#: includes/accounts.php
+msgid "Enter an absolute path of at most 255 characters"
+msgstr "Maglagay ng absolute path na may hanggang 255 character"
+
+#: includes/accounts.php
+msgid "Must be 0 or 1"
+msgstr "Dapat ay 0 o 1"
+
+#: includes/accounts.php
+msgid "Enter a whole number of seconds from 60 to 86400"
+msgstr "Maglagay ng buong bilang ng segundo mula 60 hanggang 86400"
+
+#: includes/accounts.php
+msgid "This Cloudflare account ID is already configured"
+msgstr "Naka-configure na ang Cloudflare account ID na ito"
+
+#: includes/accounts.php
+msgid "Global API Keys are not accepted; use a scoped API token"
+msgstr "Hindi tinatanggap ang mga Global API Key; gumamit ng scoped API token"
+
+#: includes/accounts.php
+msgid "API token format is invalid"
+msgstr "Hindi wasto ang format ng API token"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing, unreadable, insecure or malformed"
+msgstr "Nawawala, hindi mabasa, hindi ligtas, o mali ang pagkakabuo ng token vault key file"
+
+#: includes/accounts.php
+msgid "Stored API token could not be decrypted"
+msgstr "Hindi ma-decrypt ang nakaimbak na API token"
+
+#: includes/accounts.php
+msgid "Token file is missing, unreadable, not a regular file or too large"
+msgstr "Nawawala, hindi mabasa, hindi regular na file, o masyadong malaki ang token file"
+
+#: includes/accounts.php
+msgid "Token file path is not absolute, is a symlink, or the file is world-readable or world-writable"
+msgstr "Ang path ng token file ay hindi absolute, isang symlink, o ang file ay nababasa o nasusulat ng lahat"
+
+#: includes/accounts.php
+msgid "Token file is not inside the Token File Directory"
+msgstr "Ang token file ay wala sa loob ng Direktoryo ng Token File"
+
+#: includes/accounts.php
+msgid "API token could not be encrypted"
+msgstr "Hindi ma-encrypt ang API token"
+
+#: includes/accounts.php
+msgid "Credential error"
+msgstr "Error sa kredensyal"
+
+#: includes/accounts.php includes/settings.php
+msgid "Cloudflare"
+msgstr "Cloudflare"
+
+#: includes/accounts.php
+msgid "Encrypted in the Cacti database"
+msgstr "Naka-encrypt sa database ng Cacti"
+
+#: includes/accounts.php
+msgid "Token file on this server"
+msgstr "Token file sa server na ito"
+
+#: includes/accounts.php includes/viewer.php
+msgid "Account"
+msgstr "Account"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Name"
+msgstr "Pangalan"
+
+#: includes/accounts.php
+msgid "A label for this account in Cacti."
+msgstr "Isang label para sa account na ito sa Cacti."
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Account ID"
+msgstr "Account ID"
+
+#: includes/accounts.php
+msgid "The 32-character Cloudflare account ID, shown in the dashboard URL and on the account overview page."
+msgstr "Ang 32-character na Cloudflare account ID, na makikita sa URL ng dashboard at sa pahina ng pangkalahatang-ideya ng account."
+
+#: includes/accounts.php
+msgid "API Token"
+msgstr "API Token"
+
+#: includes/accounts.php
+msgid "Token Storage"
+msgstr "Imbakan ng Token"
+
+#: includes/accounts.php
+msgid "Where the scoped API token is kept. Global API Keys are not accepted."
+msgstr "Kung saan itinatago ang scoped API token. Hindi tinatanggap ang mga Global API Key."
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable because the key file in Settings is missing or unusable; only token files can be used."
+msgstr "Hindi magamit ang naka-encrypt na imbakan dahil nawawala o hindi magamit ang key file sa Mga Setting; mga token file lamang ang maaaring gamitin."
+
+#: includes/accounts.php
+msgid "Leave blank to keep the current token"
+msgstr "Iwanang blangko upang panatilihin ang kasalukuyang token"
+
+#: includes/accounts.php
+msgid "A scoped API token with Account Cloudflare Tunnel Read permission."
+msgstr "Isang scoped API token na may pahintulot na Account Cloudflare Tunnel Read."
+
+#: includes/accounts.php
+msgid "Token File"
+msgstr "Token File"
+
+#: includes/accounts.php
+msgid "Absolute path to a file that contains only the token. It must be readable by the web server and poller users and must not be world-readable."
+msgstr "Absolute path patungo sa isang file na naglalaman lamang ng token. Dapat itong mabasa ng mga user ng web server at poller at hindi dapat mabasa ng lahat."
+
+#: includes/accounts.php
+msgid "Collection"
+msgstr "Pagkolekta"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Enabled"
+msgstr "Naka-enable"
+
+#: includes/accounts.php
+msgid "Disabled accounts are not polled."
+msgstr "Hindi pino-poll ang mga naka-disable na account."
+
+#: includes/accounts.php
+msgid "Collect Tunnels"
+msgstr "Mangolekta ng mga Tunnel"
+
+#: includes/accounts.php
+msgid "Discover Cloudflare Tunnels and their connectors."
+msgstr "Tuklasin ang mga Cloudflare Tunnel at ang kanilang mga connector."
+
+#: includes/accounts.php
+msgid "Collect Analytics"
+msgstr "Mangolekta ng Analytics"
+
+#: includes/accounts.php
+msgid "Collect zone traffic analytics. This needs the Account Analytics Read and Analytics Read (Zone) permissions."
+msgstr "Mangolekta ng zone traffic analytics. Nangangailangan ito ng mga pahintulot na Account Analytics Read at Analytics Read (Zone)."
+
+#: includes/accounts.php
+msgid "Create Graphs"
+msgstr "Gumawa ng mga Graph"
+
+#: includes/accounts.php
+msgid "Create graphs for each tunnel on the account's Cacti device. Turning this on needs the permission to edit Cacti devices."
+msgstr "Gumawa ng mga graph para sa bawat tunnel sa kagamitan sa Cacti ng account. Ang pag-on nito ay nangangailangan ng pahintulot na mag-edit ng mga kagamitan sa Cacti."
+
+#: includes/accounts.php
+msgid "Discovery Interval"
+msgstr "Agwat ng Pagtuklas"
+
+#: includes/accounts.php
+msgid "Seconds between inventory refreshes, from 60 to 86400."
+msgstr "Bilang ng segundo sa pagitan ng mga pag-refresh ng imbentaryo, mula 60 hanggang 86400."
+
+#: includes/accounts.php
+msgid "The token and its confirmation do not match"
+msgstr "Hindi tugma ang token at ang kumpirmasyon nito"
+
+#: includes/accounts_page.php
+msgid "Delete"
+msgstr "I-delete"
+
+#: includes/accounts_page.php
+msgid "Verify"
+msgstr "I-verify"
+
+#: includes/accounts_page.php
+msgid "Enable"
+msgstr "I-enable"
+
+#: includes/accounts_page.php
+msgid "Disable"
+msgstr "I-disable"
+
+#: includes/accounts_page.php
+msgid "Create Cacti Device"
+msgstr "Gumawa ng Cacti Device"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to change Cloudflare accounts."
+msgstr "Wala kang pahintulot na baguhin ang mga Cloudflare account."
+
+#: includes/accounts_page.php
+msgid "The Cloudflare account no longer exists."
+msgstr "Wala na ang Cloudflare account."
+
+#: includes/accounts_page.php
+msgid "The Cloudflare accounts could not be read. See the Cacti log for details."
+msgstr "Hindi mabasa ang mga Cloudflare account. Tingnan ang Cacti log para sa mga detalye."
+
+#: includes/accounts_page.php
+msgid "Create Graphs was left off: turning it on needs the permission to edit Cacti devices."
+msgstr "Iniwang naka-off ang Gumawa ng mga Graph: ang pag-on nito ay nangangailangan ng pahintulot na mag-edit ng mga kagamitan sa Cacti."
+
+#: includes/accounts_page.php
+msgid "Cacti device created"
+msgstr "Nagawa na ang kagamitan sa Cacti"
+
+#: includes/accounts_page.php
+msgid "A Cacti device already exists for this account"
+msgstr "Mayroon nang kagamitan sa Cacti para sa account na ito"
+
+#: includes/accounts_page.php
+msgid "The Cloudflare templates are not installed; see the Cacti log"
+msgstr "Hindi naka-install ang mga Cloudflare template; tingnan ang Cacti log"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices"
+msgstr "Wala kang pahintulot na gumawa ng mga kagamitan sa Cacti"
+
+#: includes/accounts_page.php
+msgid "The Cacti device could not be created; see the Cacti log"
+msgstr "Hindi magawa ang kagamitan sa Cacti; tingnan ang Cacti log"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices."
+msgstr "Wala kang pahintulot na gumawa ng mga kagamitan sa Cacti."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Delete the following Cloudflare Account. Its discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgid_plural "Click 'Continue' to Delete the following Cloudflare Accounts. Their discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgstr[0] "I-click ang 'Magpatuloy' upang I-delete ang sumusunod na Cloudflare Account. Tatanggalin ang natuklasang imbentaryo at estado ng trabaho nito; pananatilihin ang mga kagamitan at graph sa Cacti."
+msgstr[1] "I-click ang 'Magpatuloy' upang I-delete ang mga sumusunod na Cloudflare Account. Tatanggalin ang kanilang natuklasang imbentaryo at estado ng trabaho; pananatilihin ang mga kagamitan at graph sa Cacti."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Verify the following Cloudflare Account against the Cloudflare API."
+msgid_plural "Click 'Continue' to Verify the following Cloudflare Accounts against the Cloudflare API."
+msgstr[0] "I-click ang 'Magpatuloy' upang I-verify ang sumusunod na Cloudflare Account laban sa Cloudflare API."
+msgstr[1] "I-click ang 'Magpatuloy' upang I-verify ang mga sumusunod na Cloudflare Account laban sa Cloudflare API."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Enable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Enable the following Cloudflare Accounts."
+msgstr[0] "I-click ang 'Magpatuloy' upang I-enable ang sumusunod na Cloudflare Account."
+msgstr[1] "I-click ang 'Magpatuloy' upang I-enable ang mga sumusunod na Cloudflare Account."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Disable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Disable the following Cloudflare Accounts."
+msgstr[0] "I-click ang 'Magpatuloy' upang I-disable ang sumusunod na Cloudflare Account."
+msgstr[1] "I-click ang 'Magpatuloy' upang I-disable ang mga sumusunod na Cloudflare Account."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to create a Cacti device for the following Cloudflare Account. An account that already has one is left as it is."
+msgid_plural "Click 'Continue' to create a Cacti device for each of the following Cloudflare Accounts. An account that already has one is left as it is."
+msgstr[0] "I-click ang 'Magpatuloy' upang gumawa ng kagamitan sa Cacti para sa sumusunod na Cloudflare Account. Ang account na mayroon na nito ay iiwanang hindi nababago."
+msgstr[1] "I-click ang 'Magpatuloy' upang gumawa ng kagamitan sa Cacti para sa bawat isa sa mga sumusunod na Cloudflare Account. Ang account na mayroon na nito ay iiwanang hindi nababago."
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Cancel"
+msgstr "Kanselahin"
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Continue"
+msgstr "Magpatuloy"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Cloudflare Account [edit: %s]"
+msgstr "Cloudflare Account [i-edit: %s]"
+
+#: includes/accounts_page.php
+msgid "Cloudflare Account [new]"
+msgstr "Cloudflare Account [bago]"
+
+#: includes/accounts_page.php includes/viewer.php src/OperatorPage.php
+msgid "Never"
+msgstr "Hindi kailanman"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Status"
+msgstr "Katayuan"
+
+#: includes/accounts_page.php
+msgid "Message"
+msgstr "Mensahe"
+
+#: includes/accounts_page.php
+msgid "No"
+msgstr "Hindi"
+
+#: includes/accounts_page.php
+msgid "Token Stored"
+msgstr "Nakaimbak ang Token"
+
+#: includes/accounts_page.php
+msgid "Yes"
+msgstr "Oo"
+
+#: includes/accounts_page.php
+msgid "Last Checked"
+msgstr "Huling Nasuri"
+
+#: includes/accounts_page.php
+msgid "Last Verified"
+msgstr "Huling Na-verify"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Permission: %s"
+msgstr "Pahintulot: %s"
+
+#: includes/accounts_page.php
+msgid "Granted"
+msgstr "Ipinagkaloob"
+
+#: includes/accounts_page.php
+msgid "Missing"
+msgstr "Nawawala"
+
+#: includes/accounts_page.php
+msgid "Connection Status"
+msgstr "Katayuan ng Koneksyon"
+
+#: includes/accounts_page.php includes/settings.php includes/viewer.php
+msgid "Cloudflare Accounts"
+msgstr "Mga Cloudflare Account"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Search"
+msgstr "Maghanap"
+
+#: includes/accounts_page.php
+msgid "Accounts"
+msgstr "Mga Account"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Default"
+msgstr "Default"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Go"
+msgstr "Pumunta"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Set/Refresh Filters"
+msgstr "Itakda/I-refresh ang mga Filter"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear"
+msgstr "I-clear"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear Filters"
+msgstr "I-clear ang mga Filter"
+
+#: includes/accounts_page.php
+msgid "The name of this account in Cacti."
+msgstr "Ang pangalan ng account na ito sa Cacti."
+
+#: includes/accounts_page.php
+msgid "Whether an API token is configured. The edit page shows where it is kept."
+msgstr "Kung naka-configure ang isang API token. Ipinapakita sa pahina ng pag-edit kung saan ito itinatago."
+
+#: includes/accounts_page.php
+msgid "The result of the last Verify."
+msgstr "Ang resulta ng huling pag-verify."
+
+#: includes/accounts_page.php
+msgid "ID"
+msgstr "ID"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "No Cloudflare Accounts Found"
+msgstr "Walang Nahanap na mga Cloudflare Account"
+
+#: includes/operator.php
+msgid "Inspect tunnels and connector counts. Escalate token changes, account configuration and graph creation to an administrator."
+msgstr "Suriin ang mga tunnel at bilang ng connector. I-escalate sa isang administrator ang mga pagbabago sa token, configuration ng account, at paggawa ng graph."
+
+#: includes/settings.php
+msgid "Configuration"
+msgstr "Configuration"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Cloudflare Operations"
+msgstr "Mga Operasyon ng Cloudflare"
+
+#: includes/settings.php
+msgid "Management"
+msgstr "Pamamahala"
+
+#: includes/settings.php includes/viewer.php
+msgid "Cloudflare Tunnels"
+msgstr "Mga Cloudflare Tunnel"
+
+#: includes/settings.php
+msgid "(edit)"
+msgstr "(i-edit)"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Actions"
+msgstr "Mga Aksyon"
+
+#: includes/settings.php includes/viewer.php
+msgid "Overview"
+msgstr "Pangkalahatang-ideya"
+
+#: includes/settings.php includes/viewer.php
+msgid "Tunnels"
+msgstr "Mga Tunnel"
+
+#: includes/settings.php includes/viewer.php
+msgid "Connectors"
+msgstr "Mga Connector"
+
+#: includes/settings.php
+msgid "Token Vault Key File"
+msgstr "Token Vault Key File"
+
+#: includes/settings.php
+msgid "Absolute path to the 32-byte key used to encrypt stored API tokens. It must be readable by the web server and poller users and not world-readable. When the file is missing, only token files can be used."
+msgstr "Absolute path patungo sa 32-byte key na ginagamit upang i-encrypt ang mga nakaimbak na API token. Dapat itong mabasa ng mga user ng web server at poller at hindi dapat mabasa ng lahat. Kapag nawawala ang file, mga token file lamang ang maaaring gamitin."
+
+#: includes/settings.php
+msgid "Token File Directory"
+msgstr "Direktoryo ng Token File"
+
+#: includes/settings.php
+msgid "Absolute path of the directory that every account token file must be in. When empty, a token file may be anywhere the web server and poller users can read."
+msgstr "Absolute path ng direktoryo kung saan dapat nakalagay ang bawat token file ng account. Kapag walang laman, maaaring nasa kahit saan ang token file na nababasa ng mga user ng web server at poller."
+
+#: includes/settings.php
+msgid "Interactive Request Timeout"
+msgstr "Timeout ng Interactive Request"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made from the web interface, such as Verify."
+msgstr "Kabuuang oras sa segundo na pinapayagan para sa isang kahilingan sa Cloudflare API na ginawa mula sa web interface, gaya ng Verify."
+
+#: includes/settings.php
+msgid "Collector Request Timeout"
+msgstr "Timeout ng Kahilingan ng Collector"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made by the background collector."
+msgstr "Kabuuang oras sa segundo na pinapayagan para sa isang kahilingan sa Cloudflare API na ginawa ng background collector."
+
+#: includes/settings.php
+msgid "Log Level"
+msgstr "Antas ng Log"
+
+#: includes/settings.php
+msgid "The amount of detail the plugin writes to the Cacti log."
+msgstr "Ang dami ng detalyeng isinusulat ng plugin sa Cacti log."
+
+#: includes/tunnel_retirement.php
+msgid "The tunnel could not be retired. Check permissions and retry after collection finishes."
+msgstr "Hindi ma-retire ang tunnel. Suriin ang mga pahintulot at subukan muli pagkatapos makumpleto ang pangongolekta."
+
+#: includes/tunnel_retirement.php includes/viewer.php
+msgid "Retire tunnel"
+msgstr "I-retire ang tunnel"
+
+#: includes/tunnel_retirement.php
+msgid "Retiring removes the graphs and unshared data sources created for this deleted tunnel. Cacti controls RRD cleanup. The inventory record is kept."
+msgstr "Tatanggalin ng pag-retire ang mga graph at hindi nakabahaging data source na ginawa para sa na-delete na tunnel na ito. Kinokontrol ng Cacti ang paglilinis ng RRD. Pananatilihin ang talaan ng imbentaryo."
+
+#: includes/viewer.php
+msgid "The Cloudflare tunnels could not be read. See the Cacti log for details."
+msgstr "Hindi mabasa ang mga Cloudflare tunnel. Tingnan ang Cacti log para sa mga detalye."
+
+#: includes/viewer.php
+msgid "Zone Analytics"
+msgstr "Zone Analytics"
+
+#: includes/viewer.php
+msgid "Disabled"
+msgstr "Naka-disable"
+
+#: includes/viewer.php
+msgid "Not collected"
+msgstr "Hindi nakolekta"
+
+#: includes/viewer.php
+msgid "Collection failing"
+msgstr "Nabibigo ang pangongolekta"
+
+#: includes/viewer.php
+msgid "Not yet collected"
+msgstr "Hindi pa nakokolekta"
+
+#: includes/viewer.php
+msgid "Down"
+msgstr "Down"
+
+#: includes/viewer.php
+msgid "Degraded"
+msgstr "Bumaba ang pagganap"
+
+#: includes/viewer.php
+msgid "Healthy"
+msgstr "Maayos"
+
+#: includes/viewer.php
+msgid "Inactive"
+msgstr "Hindi aktibo"
+
+#: includes/viewer.php
+msgid "No active tunnels"
+msgstr "Walang mga aktibong tunnel"
+
+#: includes/viewer.php
+msgid "The worst status among active tunnels, or Collection failing while discovery fails."
+msgstr "Ang pinakamalalang katayuan sa mga aktibong tunnel, o Nabibigo ang pangongolekta habang nabibigo ang pagtuklas."
+
+#: includes/viewer.php
+msgid "Active"
+msgstr "Aktibo"
+
+#: includes/viewer.php
+msgid "Unavailable"
+msgstr "Hindi magagamit"
+
+#: includes/viewer.php
+msgid "Deleted"
+msgstr "Na-delete"
+
+#: includes/viewer.php
+msgid "Last Successful Discovery"
+msgstr "Huling Matagumpay na Pagtuklas"
+
+#: includes/viewer.php
+msgid "Consecutive Failures"
+msgstr "Magkakasunod na Pagkabigo"
+
+#: includes/viewer.php
+#, php-format
+msgid "Last error: %s"
+msgstr "Huling error: %s"
+
+#: includes/viewer.php
+msgid "Tunnel"
+msgstr "Tunnel"
+
+#: includes/viewer.php
+msgid "Cloudflare Status"
+msgstr "Katayuan ng Cloudflare"
+
+#: includes/viewer.php
+msgid "The status Cloudflare reported at the last discovery."
+msgstr "Ang katayuang iniulat ng Cloudflare sa huling pagtuklas."
+
+#: includes/viewer.php
+msgid "Lifecycle"
+msgstr "Lifecycle"
+
+#: includes/viewer.php
+msgid "Whether the last discoveries still found this tunnel."
+msgstr "Kung nahanap pa rin ng mga huling pagtuklas ang tunnel na ito."
+
+#: includes/viewer.php
+msgid "Type"
+msgstr "Uri"
+
+#: includes/viewer.php
+msgid "Connections"
+msgstr "Mga Koneksyon"
+
+#: includes/viewer.php
+msgid "Last Seen"
+msgstr "Huling Nakita"
+
+#: includes/viewer.php
+msgid "Any"
+msgstr "Alinman"
+
+#: includes/viewer.php
+msgid "All"
+msgstr "Lahat"
+
+#: includes/viewer.php
+msgid "No Cloudflare Tunnels Found"
+msgstr "Walang Nahanap na mga Cloudflare Tunnel"
+
+#: includes/viewer.php
+msgid "Choose a tunnel on the Tunnels tab."
+msgstr "Pumili ng tunnel sa tab na Mga Tunnel."
+
+#: includes/viewer.php
+msgid "The tunnel no longer exists."
+msgstr "Wala na ang tunnel."
+
+#: includes/viewer.php
+#, php-format
+msgid "Connectors for %s"
+msgstr "Mga Connector para sa %s"
+
+#: includes/viewer.php
+msgid "Connector ID"
+msgstr "Connector ID"
+
+#: includes/viewer.php
+msgid "Version"
+msgstr "Bersyon"
+
+#: includes/viewer.php
+msgid "Architecture"
+msgstr "Arkitektura"
+
+#: includes/viewer.php
+msgid "Running Since"
+msgstr "Tumatakbo Simula"
+
+#: includes/viewer.php
+msgid "Data Centers"
+msgstr "Mga Data Center"
+
+#: includes/viewer.php
+msgid "Origin IPs"
+msgstr "Mga Origin IP"
+
+#: includes/viewer.php
+#, php-format
+msgid "This tunnel is %s. These connectors were last seen while the tunnel was active."
+msgstr "Ang tunnel na ito ay %s. Huling nakita ang mga connector na ito habang aktibo ang tunnel."
+
+#: includes/viewer.php
+msgid "No connectors are running for this tunnel."
+msgstr "Walang mga connector na tumatakbo para sa tunnel na ito."
+
+#: includes/viewer.php
+msgid "Export"
+msgstr "I-export"
+
+#: includes/viewer.php
+msgid "Bytes/s"
+msgstr "Bytes/s"
+
+#: includes/viewer.php
+msgid "HTTP 5xx (%)"
+msgstr "HTTP 5xx (%)"
+
+#: includes/viewer.php
+msgid "Requests/s"
+msgstr "Mga Kahilingan/s"
+
+#: includes/viewer.php
+msgid "Zone"
+msgstr "Zone"
+
+#: src/OperatorPage.php
+msgid "Review the recorded observations below. Acknowledgments are personal to this session, expire when observations change, and never suppress alerts or change health."
+msgstr "Suriin ang mga nakatalang obserbasyon sa ibaba. Ang mga pagkilala ay personal sa session na ito, nag-e-expire kapag nagbago ang mga obserbasyon, at hindi kailanman pinipigilan ang mga alerto o binabago ang kalusugan."
+
+#: src/OperatorPage.php
+msgid "Investigation"
+msgstr "Imbestigasyon"
+
+#: src/OperatorPage.php
+msgid "Object"
+msgstr "Bagay"
+
+#: src/OperatorPage.php
+msgid "Observed (UTC)"
+msgstr "Naobserbahan (UTC)"
+
+#: src/OperatorPage.php
+msgid "State"
+msgstr "Estado"
+
+#: src/OperatorPage.php
+msgid "Unknown or stale"
+msgstr "Hindi kilala o lipas na"
+
+#: src/OperatorPage.php
+msgid "Acknowledged; health unchanged."
+msgstr "Kinilala; hindi nagbago ang kalusugan."
+
+#: src/OperatorPage.php
+msgid "Acknowledge"
+msgstr "Kilalanin"
+
+#: src/OperatorPage.php
+msgid "No observations are available."
+msgstr "Walang magagamit na mga obserbasyon."

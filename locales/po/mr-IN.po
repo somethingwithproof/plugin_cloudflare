@@ -1,0 +1,774 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-FileCopyrightText: 2026 Thomas Vincent <thomasvincent@gmail.com>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cloudflare 0.4.0-dev\n"
+"Report-Msgid-Bugs-To: https://github.com/somethingwithproof/plugin_cloudflare/issues\n"
+"PO-Revision-Date: 2026-11-26 00:00+0000\n"
+"Last-Translator: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language-Team: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language: mr-IN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: cloudflare_operator.php
+msgid "Monitoring view"
+msgstr "निरीक्षण दृश्य"
+
+#: cloudflare_operator.php
+msgid "Observations could not be read. Ask an administrator to check the plugin log."
+msgstr "निरीक्षणे वाचता आली नाहीत. प्रशासकाला प्लगइन लॉग तपासण्यास सांगा."
+
+#: includes/accounts.php
+msgid "Connection verified"
+msgstr "कनेक्शन सत्यापित झाले"
+
+#: includes/accounts.php
+msgid "Token is not active; it may be expired or disabled"
+msgstr "टोकन सक्रिय नाही; ते कालबाह्य किंवा अक्षम असू शकते"
+
+#: includes/accounts.php
+msgid "Token is invalid or expired"
+msgstr "टोकन अवैध किंवा कालबाह्य आहे"
+
+#: includes/accounts.php
+msgid "Token lacks the Account Cloudflare Tunnel Read permission"
+msgstr "टोकनकडे Account Cloudflare Tunnel Read परवानगी नाही"
+
+#: includes/accounts.php
+msgid "Cloudflare API is unreachable; try again later"
+msgstr "Cloudflare API पर्यंत पोहोचता येत नाही; नंतर पुन्हा प्रयत्न करा"
+
+#: includes/accounts.php
+msgid "Cloudflare API rate limit reached; try again later"
+msgstr "Cloudflare API दर मर्यादा गाठली आहे; नंतर पुन्हा प्रयत्न करा"
+
+#: includes/accounts.php
+msgid "Cloudflare API request failed unexpectedly"
+msgstr "Cloudflare API विनंती अनपेक्षितपणे अयशस्वी झाली"
+
+#: includes/accounts.php
+msgid "Token lacks the permissions needed to verify it"
+msgstr "टोकन सत्यापित करण्यासाठी आवश्यक परवानग्या टोकनकडे नाहीत"
+
+#: includes/accounts.php
+msgid "Stored token cannot be decrypted"
+msgstr "साठवलेले टोकन डिक्रिप्ट करता येत नाही"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing or unusable"
+msgstr "टोकन व्हॉल्ट की फाइल गहाळ आहे किंवा वापरण्यायोग्य नाही"
+
+#: includes/accounts.php
+msgid "Token file is missing or insecure"
+msgstr "टोकन फाइल गहाळ आहे किंवा असुरक्षित आहे"
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable; configure the key file or use a token file"
+msgstr "एनक्रिप्ट केलेले स्टोरेज अनुपलब्ध आहे; की फाइल कॉन्फिगर करा किंवा टोकन फाइल वापरा"
+
+#: includes/accounts.php
+msgid "Enter the 32-character hexadecimal Cloudflare account ID"
+msgstr "32-वर्णांचा हेक्साडेसिमल Cloudflare खाते ID प्रविष्ट करा"
+
+#: includes/accounts.php
+msgid "Enter a name of 1 to 100 characters without control characters"
+msgstr "नियंत्रण वर्णाशिवाय 1 ते 100 वर्णांचे नाव प्रविष्ट करा"
+
+#: includes/accounts.php
+msgid "Choose an encrypted token or a token file"
+msgstr "एनक्रिप्ट केलेले टोकन किंवा टोकन फाइल निवडा"
+
+#: includes/accounts.php
+msgid "Enter an API token"
+msgstr "API टोकन प्रविष्ट करा"
+
+#: includes/accounts.php
+msgid "Re-enter the token when changing the account ID"
+msgstr "खाते ID बदलताना टोकन पुन्हा प्रविष्ट करा"
+
+#: includes/accounts.php
+msgid "Enter an absolute path of at most 255 characters"
+msgstr "कमाल 255 वर्णांचा पूर्ण मार्ग प्रविष्ट करा"
+
+#: includes/accounts.php
+msgid "Must be 0 or 1"
+msgstr "0 किंवा 1 असणे आवश्यक आहे"
+
+#: includes/accounts.php
+msgid "Enter a whole number of seconds from 60 to 86400"
+msgstr "60 ते 86400 मधील पूर्णांक सेकंद प्रविष्ट करा"
+
+#: includes/accounts.php
+msgid "This Cloudflare account ID is already configured"
+msgstr "हा Cloudflare खाते ID आधीच कॉन्फिगर केलेला आहे"
+
+#: includes/accounts.php
+msgid "Global API Keys are not accepted; use a scoped API token"
+msgstr "Global API Keys स्वीकारल्या जात नाहीत; स्कोप केलेले API टोकन वापरा"
+
+#: includes/accounts.php
+msgid "API token format is invalid"
+msgstr "API टोकन स्वरूप अवैध आहे"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing, unreadable, insecure or malformed"
+msgstr "टोकन व्हॉल्ट की फाइल गहाळ, वाचता न येण्याजोगी, असुरक्षित किंवा सदोष आहे"
+
+#: includes/accounts.php
+msgid "Stored API token could not be decrypted"
+msgstr "संग्रहित API टोकन डिक्रिप्ट करता आले नाही"
+
+#: includes/accounts.php
+msgid "Token file is missing, unreadable, not a regular file or too large"
+msgstr "टोकन फाइल गहाळ आहे, वाचता येत नाही, नियमित फाइल नाही किंवा खूप मोठी आहे"
+
+#: includes/accounts.php
+msgid "Token file path is not absolute, is a symlink, or the file is world-readable or world-writable"
+msgstr "टोकन फाइल मार्ग निरपेक्ष नाही, सिमलिंक आहे किंवा फाइल सर्वांना वाचण्याजोगी किंवा लिहिण्याजोगी आहे"
+
+#: includes/accounts.php
+msgid "Token file is not inside the Token File Directory"
+msgstr "टोकन फाइल 'टोकन फाइल निर्देशिका' मध्ये नाही"
+
+#: includes/accounts.php
+msgid "API token could not be encrypted"
+msgstr "API टोकन एनक्रिप्ट करता आले नाही"
+
+#: includes/accounts.php
+msgid "Credential error"
+msgstr "ओळखपत्र त्रुटी"
+
+#: includes/accounts.php includes/settings.php
+msgid "Cloudflare"
+msgstr "Cloudflare"
+
+#: includes/accounts.php
+msgid "Encrypted in the Cacti database"
+msgstr "Cacti डेटाबेसमध्ये एनक्रिप्ट केलेले"
+
+#: includes/accounts.php
+msgid "Token file on this server"
+msgstr "या सर्व्हरवरील टोकन फाइल"
+
+#: includes/accounts.php includes/viewer.php
+msgid "Account"
+msgstr "खाते"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Name"
+msgstr "नाव"
+
+#: includes/accounts.php
+msgid "A label for this account in Cacti."
+msgstr "Cacti मधील या खात्यासाठी लेबल."
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Account ID"
+msgstr "खाते ID"
+
+#: includes/accounts.php
+msgid "The 32-character Cloudflare account ID, shown in the dashboard URL and on the account overview page."
+msgstr "डॅशबोर्ड URL मध्ये आणि खाते विहंगावलोकन पृष्ठावर दर्शविलेला 32-वर्णांचा Cloudflare खाते ID."
+
+#: includes/accounts.php
+msgid "API Token"
+msgstr "API टोकन"
+
+#: includes/accounts.php
+msgid "Token Storage"
+msgstr "टोकन संग्रहण"
+
+#: includes/accounts.php
+msgid "Where the scoped API token is kept. Global API Keys are not accepted."
+msgstr "स्कोप केलेले API टोकन कोठे ठेवले जाते. Global API Keys स्वीकारल्या जात नाहीत."
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable because the key file in Settings is missing or unusable; only token files can be used."
+msgstr "सेटिंग्जमधील की फाइल गहाळ किंवा निरुपयोगी असल्यामुळे एनक्रिप्ट केलेले संग्रहण अनुपलब्ध आहे; फक्त टोकन फाइल्स वापरल्या जाऊ शकतात."
+
+#: includes/accounts.php
+msgid "Leave blank to keep the current token"
+msgstr "सध्याचे टोकन कायम ठेवण्यासाठी रिकामे सोडा"
+
+#: includes/accounts.php
+msgid "A scoped API token with Account Cloudflare Tunnel Read permission."
+msgstr "Account Cloudflare Tunnel Read परवानगी असलेले स्कोप केलेले API टोकन."
+
+#: includes/accounts.php
+msgid "Token File"
+msgstr "टोकन फाइल"
+
+#: includes/accounts.php
+msgid "Absolute path to a file that contains only the token. It must be readable by the web server and poller users and must not be world-readable."
+msgstr "फक्त टोकन असलेल्या फाइलचा निरपेक्ष मार्ग. ती वेब सर्व्हर आणि पोलर वापरकर्त्यांना वाचता येण्याजोगी असावी आणि सर्वांना वाचता येण्याजोगी नसावी."
+
+#: includes/accounts.php
+msgid "Collection"
+msgstr "संकलन"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Enabled"
+msgstr "सक्षम"
+
+#: includes/accounts.php
+msgid "Disabled accounts are not polled."
+msgstr "अक्षम केलेल्या खात्यांचे पोलिंग केले जात नाही."
+
+#: includes/accounts.php
+msgid "Collect Tunnels"
+msgstr "टनेल्स संकलित करा"
+
+#: includes/accounts.php
+msgid "Discover Cloudflare Tunnels and their connectors."
+msgstr "Cloudflare Tunnels आणि त्यांचे कनेक्टर्स शोधा."
+
+#: includes/accounts.php
+msgid "Collect Analytics"
+msgstr "विश्लेषणे संकलित करा"
+
+#: includes/accounts.php
+msgid "Collect zone traffic analytics. This needs the Account Analytics Read and Analytics Read (Zone) permissions."
+msgstr "झोन रहदारी विश्लेषणे संकलित करा. यासाठी Account Analytics Read आणि Analytics Read (Zone) परवानग्या आवश्यक आहेत."
+
+#: includes/accounts.php
+msgid "Create Graphs"
+msgstr "आलेख तयार करा"
+
+#: includes/accounts.php
+msgid "Create graphs for each tunnel on the account's Cacti device. Turning this on needs the permission to edit Cacti devices."
+msgstr "खात्याच्या Cacti डिव्हाइसवर प्रत्येक टनेलसाठी आलेख तयार करा. हे चालू करण्यासाठी Cacti डिव्हाइस संपादित करण्याची परवानगी आवश्यक आहे."
+
+#: includes/accounts.php
+msgid "Discovery Interval"
+msgstr "शोध अंतराल"
+
+#: includes/accounts.php
+msgid "Seconds between inventory refreshes, from 60 to 86400."
+msgstr "इन्व्हेंटरी रीफ्रेशमधील सेकंद, 60 ते 86400 पर्यंत."
+
+#: includes/accounts.php
+msgid "The token and its confirmation do not match"
+msgstr "टोकन आणि त्याची पुष्टी जुळत नाहीत"
+
+#: includes/accounts_page.php
+msgid "Delete"
+msgstr "हटवा"
+
+#: includes/accounts_page.php
+msgid "Verify"
+msgstr "सत्यापित करा"
+
+#: includes/accounts_page.php
+msgid "Enable"
+msgstr "सक्षम करा"
+
+#: includes/accounts_page.php
+msgid "Disable"
+msgstr "अक्षम करा"
+
+#: includes/accounts_page.php
+msgid "Create Cacti Device"
+msgstr "Cacti डिव्हाइस तयार करा"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to change Cloudflare accounts."
+msgstr "तुम्हाला Cloudflare खाती बदलण्याची परवानगी नाही."
+
+#: includes/accounts_page.php
+msgid "The Cloudflare account no longer exists."
+msgstr "Cloudflare खाते आता अस्तित्वात नाही."
+
+#: includes/accounts_page.php
+msgid "The Cloudflare accounts could not be read. See the Cacti log for details."
+msgstr "Cloudflare खाती वाचता आली नाहीत. तपशीलांसाठी Cacti लॉग पहा."
+
+#: includes/accounts_page.php
+msgid "Create Graphs was left off: turning it on needs the permission to edit Cacti devices."
+msgstr "आलेख तयार करणे बंद ठेवले गेले: ते चालू करण्यासाठी Cacti डिव्हाइस संपादित करण्याची परवानगी आवश्यक आहे."
+
+#: includes/accounts_page.php
+msgid "Cacti device created"
+msgstr "Cacti डिव्हाइस तयार केले"
+
+#: includes/accounts_page.php
+msgid "A Cacti device already exists for this account"
+msgstr "या खात्यासाठी Cacti डिव्हाइस आधीच अस्तित्वात आहे"
+
+#: includes/accounts_page.php
+msgid "The Cloudflare templates are not installed; see the Cacti log"
+msgstr "Cloudflare टेम्पलेट्स स्थापित केलेले नाहीत; Cacti लॉग पहा"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices"
+msgstr "तुम्हाला Cacti डिव्हाइस तयार करण्याची परवानगी नाही"
+
+#: includes/accounts_page.php
+msgid "The Cacti device could not be created; see the Cacti log"
+msgstr "Cacti डिव्हाइस तयार करता आले नाही; Cacti लॉग पहा"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices."
+msgstr "तुम्हाला Cacti डिव्हाइस तयार करण्याची परवानगी नाही."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Delete the following Cloudflare Account. Its discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgid_plural "Click 'Continue' to Delete the following Cloudflare Accounts. Their discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgstr[0] "खालील Cloudflare खाते हटवण्यासाठी 'पुढे जा' वर क्लिक करा. त्याची शोधलेली इन्व्हेंटरी आणि कार्य स्थिती काढून टाकली जाते; Cacti डिव्हाइस आणि आलेख ठेवले जातात."
+msgstr[1] "खालील Cloudflare खाती हटवण्यासाठी 'पुढे जा' वर क्लिक करा. त्यांची शोधलेली इन्व्हेंटरी आणि कार्य स्थिती काढून टाकली जाते; Cacti डिव्हाइस आणि आलेख ठेवले जातात."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Verify the following Cloudflare Account against the Cloudflare API."
+msgid_plural "Click 'Continue' to Verify the following Cloudflare Accounts against the Cloudflare API."
+msgstr[0] "Cloudflare API वर खालील Cloudflare खात्याची पडताळणी करण्यासाठी 'पुढे जा' वर क्लिक करा."
+msgstr[1] "Cloudflare API वर खालील Cloudflare खात्यांची पडताळणी करण्यासाठी 'पुढे जा' वर क्लिक करा."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Enable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Enable the following Cloudflare Accounts."
+msgstr[0] "खालील Cloudflare खाते सक्षम करण्यासाठी 'पुढे जा' वर क्लिक करा."
+msgstr[1] "खालील Cloudflare खाती सक्षम करण्यासाठी 'पुढे जा' वर क्लिक करा."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Disable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Disable the following Cloudflare Accounts."
+msgstr[0] "खालील Cloudflare खाते अक्षम करण्यासाठी 'पुढे जा' वर क्लिक करा."
+msgstr[1] "खालील Cloudflare खाती अक्षम करण्यासाठी 'पुढे जा' वर क्लिक करा."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to create a Cacti device for the following Cloudflare Account. An account that already has one is left as it is."
+msgid_plural "Click 'Continue' to create a Cacti device for each of the following Cloudflare Accounts. An account that already has one is left as it is."
+msgstr[0] "खालील Cloudflare खात्यासाठी Cacti डिव्हाइस तयार करण्यासाठी 'पुढे जा' वर क्लिक करा. ज्या खात्यात आधीच डिव्हाइस आहे ते तसेच ठेवले जाते."
+msgstr[1] "खालील प्रत्येक Cloudflare खात्यासाठी Cacti डिव्हाइस तयार करण्यासाठी 'पुढे जा' वर क्लिक करा. ज्या खात्यात आधीच डिव्हाइस आहे ते तसेच ठेवले जाते."
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Cancel"
+msgstr "रद्द करा"
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Continue"
+msgstr "पुढे जा"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Cloudflare Account [edit: %s]"
+msgstr "Cloudflare खाते [संपादन: %s]"
+
+#: includes/accounts_page.php
+msgid "Cloudflare Account [new]"
+msgstr "Cloudflare खाते [नवीन]"
+
+#: includes/accounts_page.php includes/viewer.php src/OperatorPage.php
+msgid "Never"
+msgstr "कधीही नाही"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Status"
+msgstr "स्थिती"
+
+#: includes/accounts_page.php
+msgid "Message"
+msgstr "संदेश"
+
+#: includes/accounts_page.php
+msgid "No"
+msgstr "नाही"
+
+#: includes/accounts_page.php
+msgid "Token Stored"
+msgstr "टोकन संग्रहित"
+
+#: includes/accounts_page.php
+msgid "Yes"
+msgstr "होय"
+
+#: includes/accounts_page.php
+msgid "Last Checked"
+msgstr "शेवटची तपासणी"
+
+#: includes/accounts_page.php
+msgid "Last Verified"
+msgstr "शेवटची पडताळणी"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Permission: %s"
+msgstr "परवानगी: %s"
+
+#: includes/accounts_page.php
+msgid "Granted"
+msgstr "मंजूर"
+
+#: includes/accounts_page.php
+msgid "Missing"
+msgstr "गहाळ"
+
+#: includes/accounts_page.php
+msgid "Connection Status"
+msgstr "कनेक्शन स्थिती"
+
+#: includes/accounts_page.php includes/settings.php includes/viewer.php
+msgid "Cloudflare Accounts"
+msgstr "Cloudflare खाती"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Search"
+msgstr "शोध"
+
+#: includes/accounts_page.php
+msgid "Accounts"
+msgstr "खाती"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Default"
+msgstr "डीफॉल्ट"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Go"
+msgstr "जा"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Set/Refresh Filters"
+msgstr "फिल्टर्स सेट/रीफ्रेश करा"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear"
+msgstr "साफ करा"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear Filters"
+msgstr "फिल्टर्स साफ करा"
+
+#: includes/accounts_page.php
+msgid "The name of this account in Cacti."
+msgstr "Cacti मधील या खात्याचे नाव."
+
+#: includes/accounts_page.php
+msgid "Whether an API token is configured. The edit page shows where it is kept."
+msgstr "API टोकन कॉन्फिगर केले आहे की नाही. ते कोठे ठेवले आहे हे संपादन पृष्ठ दर्शवते."
+
+#: includes/accounts_page.php
+msgid "The result of the last Verify."
+msgstr "शेवटच्या पडताळणीचा परिणाम."
+
+#: includes/accounts_page.php
+msgid "ID"
+msgstr "ID"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "No Cloudflare Accounts Found"
+msgstr "कोणतीही Cloudflare खाती आढळली नाहीत"
+
+#: includes/operator.php
+msgid "Inspect tunnels and connector counts. Escalate token changes, account configuration and graph creation to an administrator."
+msgstr "टनेल्स आणि कनेक्टर संख्या तपासा. टोकन बदल, खाते कॉन्फिगरेशन आणि आलेख निर्मिती प्रशासकाकडे पाठवा."
+
+#: includes/settings.php
+msgid "Configuration"
+msgstr "कॉन्फिगरेशन"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Cloudflare Operations"
+msgstr "Cloudflare ऑपरेशन्स"
+
+#: includes/settings.php
+msgid "Management"
+msgstr "व्यवस्थापन"
+
+#: includes/settings.php includes/viewer.php
+msgid "Cloudflare Tunnels"
+msgstr "Cloudflare Tunnels"
+
+#: includes/settings.php
+msgid "(edit)"
+msgstr "(संपादन)"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Actions"
+msgstr "क्रिया"
+
+#: includes/settings.php includes/viewer.php
+msgid "Overview"
+msgstr "विहंगावलोकन"
+
+#: includes/settings.php includes/viewer.php
+msgid "Tunnels"
+msgstr "टनेल्स"
+
+#: includes/settings.php includes/viewer.php
+msgid "Connectors"
+msgstr "कनेक्टर्स"
+
+#: includes/settings.php
+msgid "Token Vault Key File"
+msgstr "टोकन व्हॉल्ट की फाइल"
+
+#: includes/settings.php
+msgid "Absolute path to the 32-byte key used to encrypt stored API tokens. It must be readable by the web server and poller users and not world-readable. When the file is missing, only token files can be used."
+msgstr "संग्रहित API टोकन्स एनक्रिप्ट करण्यासाठी वापरल्या जाणाऱ्या 32-बाइट कीचा निरपेक्ष मार्ग. ती वेब सर्व्हर आणि पोलर वापरकर्त्यांना वाचता येण्याजोगी असावी आणि सर्वांना वाचता येण्याजोगी नसावी. फाइल गहाळ असल्यास, फक्त टोकन फाइल्स वापरल्या जाऊ शकतात."
+
+#: includes/settings.php
+msgid "Token File Directory"
+msgstr "टोकन फाइल निर्देशिका"
+
+#: includes/settings.php
+msgid "Absolute path of the directory that every account token file must be in. When empty, a token file may be anywhere the web server and poller users can read."
+msgstr "प्रत्येक खाते टोकन फाइल ज्या निर्देशिकेत असणे आवश्यक आहे तिचा निरपेक्ष मार्ग. रिकामा असल्यास, टोकन फाइल वेब सर्व्हर आणि पोलर वापरकर्ते वाचू शकतील अशा कोणत्याही ठिकाणी असू शकते."
+
+#: includes/settings.php
+msgid "Interactive Request Timeout"
+msgstr "इंटरअ‍ॅक्टिव्ह विनंती टाइमआउट"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made from the web interface, such as Verify."
+msgstr "वेब इंटरफेसवरून केलेल्या Cloudflare API विनंतीसाठी (जसे की पडताळणी) परवानगी असलेला एकूण सेकंद वेळ."
+
+#: includes/settings.php
+msgid "Collector Request Timeout"
+msgstr "संकलक विनंती टाइमआउट"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made by the background collector."
+msgstr "पार्श्वभूमी संकलकाद्वारे केलेल्या Cloudflare API विनंतीसाठी परवानगी असलेला एकूण सेकंद वेळ."
+
+#: includes/settings.php
+msgid "Log Level"
+msgstr "लॉग पातळी"
+
+#: includes/settings.php
+msgid "The amount of detail the plugin writes to the Cacti log."
+msgstr "प्लगइन Cacti लॉगमध्ये लिहीत असलेल्या तपशीलाचे प्रमाण."
+
+#: includes/tunnel_retirement.php
+msgid "The tunnel could not be retired. Check permissions and retry after collection finishes."
+msgstr "टनेल निवृत्त करता आला नाही. परवानग्या तपासा आणि संकलन पूर्ण झाल्यानंतर पुन्हा प्रयत्न करा."
+
+#: includes/tunnel_retirement.php includes/viewer.php
+msgid "Retire tunnel"
+msgstr "टनेल निवृत्त करा"
+
+#: includes/tunnel_retirement.php
+msgid "Retiring removes the graphs and unshared data sources created for this deleted tunnel. Cacti controls RRD cleanup. The inventory record is kept."
+msgstr "निवृत्त केल्याने या हटवलेल्या टनेलसाठी तयार केलेले आलेख आणि शेअर न केलेले डेटा स्रोत काढून टाकले जातात. Cacti RRD साफसफाई नियंत्रित करते. इन्व्हेंटरी नोंद ठेवली जाते."
+
+#: includes/viewer.php
+msgid "The Cloudflare tunnels could not be read. See the Cacti log for details."
+msgstr "Cloudflare टनेल्स वाचता आले नाहीत. तपशीलांसाठी Cacti लॉग पहा."
+
+#: includes/viewer.php
+msgid "Zone Analytics"
+msgstr "झोन विश्लेषणे"
+
+#: includes/viewer.php
+msgid "Disabled"
+msgstr "अक्षम"
+
+#: includes/viewer.php
+msgid "Not collected"
+msgstr "संकलित नाही"
+
+#: includes/viewer.php
+msgid "Collection failing"
+msgstr "संकलन अयशस्वी होत आहे"
+
+#: includes/viewer.php
+msgid "Not yet collected"
+msgstr "अद्याप संकलित नाही"
+
+#: includes/viewer.php
+msgid "Down"
+msgstr "डाउन"
+
+#: includes/viewer.php
+msgid "Degraded"
+msgstr "क्षीण"
+
+#: includes/viewer.php
+msgid "Healthy"
+msgstr "सुस्थितीत"
+
+#: includes/viewer.php
+msgid "Inactive"
+msgstr "निष्क्रिय"
+
+#: includes/viewer.php
+msgid "No active tunnels"
+msgstr "कोणतेही सक्रिय टनेल्स नाहीत"
+
+#: includes/viewer.php
+msgid "The worst status among active tunnels, or Collection failing while discovery fails."
+msgstr "सक्रिय टनेल्समधील सर्वात वाईट स्थिती, किंवा शोध अयशस्वी होत असताना 'संकलन अयशस्वी होत आहे'."
+
+#: includes/viewer.php
+msgid "Active"
+msgstr "सक्रिय"
+
+#: includes/viewer.php
+msgid "Unavailable"
+msgstr "अनुपलब्ध"
+
+#: includes/viewer.php
+msgid "Deleted"
+msgstr "हटवलेले"
+
+#: includes/viewer.php
+msgid "Last Successful Discovery"
+msgstr "शेवटचा यशस्वी शोध"
+
+#: includes/viewer.php
+msgid "Consecutive Failures"
+msgstr "सलग अपयश"
+
+#: includes/viewer.php
+#, php-format
+msgid "Last error: %s"
+msgstr "शेवटची त्रुटी: %s"
+
+#: includes/viewer.php
+msgid "Tunnel"
+msgstr "टनेल"
+
+#: includes/viewer.php
+msgid "Cloudflare Status"
+msgstr "Cloudflare स्थिती"
+
+#: includes/viewer.php
+msgid "The status Cloudflare reported at the last discovery."
+msgstr "शेवटच्या शोधात Cloudflare ने नोंदवलेली स्थिती."
+
+#: includes/viewer.php
+msgid "Lifecycle"
+msgstr "जीवनचक्र"
+
+#: includes/viewer.php
+msgid "Whether the last discoveries still found this tunnel."
+msgstr "शेवटच्या शोधांमध्ये हा टनेल अजूनही आढळला की नाही."
+
+#: includes/viewer.php
+msgid "Type"
+msgstr "प्रकार"
+
+#: includes/viewer.php
+msgid "Connections"
+msgstr "कनेक्शन्स"
+
+#: includes/viewer.php
+msgid "Last Seen"
+msgstr "शेवटचे पाहिलेले"
+
+#: includes/viewer.php
+msgid "Any"
+msgstr "कोणतेही"
+
+#: includes/viewer.php
+msgid "All"
+msgstr "सर्व"
+
+#: includes/viewer.php
+msgid "No Cloudflare Tunnels Found"
+msgstr "कोणतेही Cloudflare टनेल्स आढळले नाहीत"
+
+#: includes/viewer.php
+msgid "Choose a tunnel on the Tunnels tab."
+msgstr "टनेल्स टॅबवर टनेल निवडा."
+
+#: includes/viewer.php
+msgid "The tunnel no longer exists."
+msgstr "टनेल आता अस्तित्वात नाही."
+
+#: includes/viewer.php
+#, php-format
+msgid "Connectors for %s"
+msgstr "%s साठी कनेक्टर्स"
+
+#: includes/viewer.php
+msgid "Connector ID"
+msgstr "कनेक्टर ID"
+
+#: includes/viewer.php
+msgid "Version"
+msgstr "आवृत्ती"
+
+#: includes/viewer.php
+msgid "Architecture"
+msgstr "आर्किटेक्चर"
+
+#: includes/viewer.php
+msgid "Running Since"
+msgstr "सुरू झाल्यापासून"
+
+#: includes/viewer.php
+msgid "Data Centers"
+msgstr "डेटा सेंटर्स"
+
+#: includes/viewer.php
+msgid "Origin IPs"
+msgstr "मूळ IPs"
+
+#: includes/viewer.php
+#, php-format
+msgid "This tunnel is %s. These connectors were last seen while the tunnel was active."
+msgstr "हा टनेल %s आहे. टनेल सक्रिय असताना हे कनेक्टर्स शेवटचे पाहिले गेले होते."
+
+#: includes/viewer.php
+msgid "No connectors are running for this tunnel."
+msgstr "या टनेलसाठी कोणतेही कनेक्टर्स चालू नाहीत."
+
+#: includes/viewer.php
+msgid "Export"
+msgstr "निर्यात करा"
+
+#: includes/viewer.php
+msgid "Bytes/s"
+msgstr "बाइट्स/से"
+
+#: includes/viewer.php
+msgid "HTTP 5xx (%)"
+msgstr "HTTP 5xx (%)"
+
+#: includes/viewer.php
+msgid "Requests/s"
+msgstr "विनंत्या/से"
+
+#: includes/viewer.php
+msgid "Zone"
+msgstr "झोन"
+
+#: src/OperatorPage.php
+msgid "Review the recorded observations below. Acknowledgments are personal to this session, expire when observations change, and never suppress alerts or change health."
+msgstr "खाली नोंदवलेल्या निरीक्षणांचे पुनरावलोकन करा. पोचपावत्या या सत्रासाठी वैयक्तिक आहेत, निरीक्षणे बदलल्यावर कालबाह्य होतात आणि कधीही सूचना दाबत नाहीत किंवा स्थिती बदलत नाहीत."
+
+#: src/OperatorPage.php
+msgid "Investigation"
+msgstr "तपास"
+
+#: src/OperatorPage.php
+msgid "Object"
+msgstr "ऑब्जेक्ट"
+
+#: src/OperatorPage.php
+msgid "Observed (UTC)"
+msgstr "निरीक्षित (UTC)"
+
+#: src/OperatorPage.php
+msgid "State"
+msgstr "स्थिती"
+
+#: src/OperatorPage.php
+msgid "Unknown or stale"
+msgstr "अज्ञात किंवा जुने"
+
+#: src/OperatorPage.php
+msgid "Acknowledged; health unchanged."
+msgstr "पोचपावती दिली; आरोग्य स्थिती अपरिवर्तित."
+
+#: src/OperatorPage.php
+msgid "Acknowledge"
+msgstr "पोचपावती द्या"
+
+#: src/OperatorPage.php
+msgid "No observations are available."
+msgstr "कोणतीही निरीक्षणे उपलब्ध नाहीत."

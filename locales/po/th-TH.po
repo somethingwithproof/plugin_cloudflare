@@ -1,0 +1,769 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-FileCopyrightText: 2026 Thomas Vincent <thomasvincent@gmail.com>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cloudflare 0.4.0-dev\n"
+"Report-Msgid-Bugs-To: https://github.com/somethingwithproof/plugin_cloudflare/issues\n"
+"PO-Revision-Date: 2026-11-26 00:00+0000\n"
+"Last-Translator: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language-Team: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language: th-TH\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: cloudflare_operator.php
+msgid "Monitoring view"
+msgstr "มุมมองการติดตามตรวจสอบ"
+
+#: cloudflare_operator.php
+msgid "Observations could not be read. Ask an administrator to check the plugin log."
+msgstr "ไม่สามารถอ่านผลการสังเกตการณ์ได้ โปรดแจ้งผู้ดูแลระบบให้ตรวจสอบบันทึกของปลั๊กอิน"
+
+#: includes/accounts.php
+msgid "Connection verified"
+msgstr "ตรวจสอบการเชื่อมต่อแล้ว"
+
+#: includes/accounts.php
+msgid "Token is not active; it may be expired or disabled"
+msgstr "โทเคนไม่ได้ใช้งานอยู่ อาจหมดอายุหรือถูกปิดใช้งาน"
+
+#: includes/accounts.php
+msgid "Token is invalid or expired"
+msgstr "โทเคนไม่ถูกต้องหรือหมดอายุ"
+
+#: includes/accounts.php
+msgid "Token lacks the Account Cloudflare Tunnel Read permission"
+msgstr "โทเคนไม่มีสิทธิ์ Account Cloudflare Tunnel Read"
+
+#: includes/accounts.php
+msgid "Cloudflare API is unreachable; try again later"
+msgstr "ไม่สามารถติดต่อ Cloudflare API ได้ โปรดลองอีกครั้งในภายหลัง"
+
+#: includes/accounts.php
+msgid "Cloudflare API rate limit reached; try again later"
+msgstr "ถึงขีดจำกัดอัตราของ Cloudflare API แล้ว โปรดลองอีกครั้งในภายหลัง"
+
+#: includes/accounts.php
+msgid "Cloudflare API request failed unexpectedly"
+msgstr "คำขอ Cloudflare API ล้มเหลวโดยไม่คาดคิด"
+
+#: includes/accounts.php
+msgid "Token lacks the permissions needed to verify it"
+msgstr "โทเคนไม่มีสิทธิ์ที่จำเป็นสำหรับการตรวจสอบ"
+
+#: includes/accounts.php
+msgid "Stored token cannot be decrypted"
+msgstr "ไม่สามารถถอดรหัสโทเคนที่จัดเก็บไว้ได้"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing or unusable"
+msgstr "ไฟล์คีย์คลังข้อมูลลับของโทเคนสูญหายหรือไม่สามารถใช้งานได้"
+
+#: includes/accounts.php
+msgid "Token file is missing or insecure"
+msgstr "ไฟล์โทเคนสูญหายหรือไม่ปลอดภัย"
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable; configure the key file or use a token file"
+msgstr "พื้นที่จัดเก็บแบบเข้ารหัสไม่พร้อมใช้งาน โปรดตั้งค่าไฟล์คีย์หรือใช้ไฟล์โทเคน"
+
+#: includes/accounts.php
+msgid "Enter the 32-character hexadecimal Cloudflare account ID"
+msgstr "ป้อนรหัสบัญชี Cloudflare เลขฐานสิบหกความยาว 32 อักขระ"
+
+#: includes/accounts.php
+msgid "Enter a name of 1 to 100 characters without control characters"
+msgstr "ป้อนชื่อความยาว 1 ถึง 100 อักขระโดยไม่มีอักขระควบคุม"
+
+#: includes/accounts.php
+msgid "Choose an encrypted token or a token file"
+msgstr "เลือกโทเคนแบบเข้ารหัสหรือไฟล์โทเคน"
+
+#: includes/accounts.php
+msgid "Enter an API token"
+msgstr "ป้อนโทเคน API"
+
+#: includes/accounts.php
+msgid "Re-enter the token when changing the account ID"
+msgstr "ป้อนโทเคนใหม่อีกครั้งเมื่อเปลี่ยนรหัสบัญชี"
+
+#: includes/accounts.php
+msgid "Enter an absolute path of at most 255 characters"
+msgstr "ป้อนพาธแบบเต็มความยาวไม่เกิน 255 อักขระ"
+
+#: includes/accounts.php
+msgid "Must be 0 or 1"
+msgstr "ต้องเป็น 0 หรือ 1"
+
+#: includes/accounts.php
+msgid "Enter a whole number of seconds from 60 to 86400"
+msgstr "ป้อนจำนวนเต็มของวินาทีตั้งแต่ 60 ถึง 86400"
+
+#: includes/accounts.php
+msgid "This Cloudflare account ID is already configured"
+msgstr "มีการกำหนดค่า ID บัญชี Cloudflare นี้ไว้แล้ว"
+
+#: includes/accounts.php
+msgid "Global API Keys are not accepted; use a scoped API token"
+msgstr "ไม่รองรับ Global API Key โปรดใช้ API token แบบกำหนดขอบเขต"
+
+#: includes/accounts.php
+msgid "API token format is invalid"
+msgstr "รูปแบบ API token ไม่ถูกต้อง"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing, unreadable, insecure or malformed"
+msgstr "ไฟล์คีย์สำหรับเก็บโทเคนสูญหาย อ่านไม่ได้ ไม่ปลอดภัย หรือรูปแบบไม่ถูกต้อง"
+
+#: includes/accounts.php
+msgid "Stored API token could not be decrypted"
+msgstr "ไม่สามารถถอดรหัส API token ที่จัดเก็บไว้ได้"
+
+#: includes/accounts.php
+msgid "Token file is missing, unreadable, not a regular file or too large"
+msgstr "ไฟล์โทเคนสูญหาย อ่านไม่ได้ ไม่ใช่ไฟล์ปกติ หรือมีขนาดใหญ่เกินไป"
+
+#: includes/accounts.php
+msgid "Token file path is not absolute, is a symlink, or the file is world-readable or world-writable"
+msgstr "พาธไฟล์โทเคนไม่ใช่พาธแบบสัมบูรณ์ เป็น symlink หรือไฟล์อนุญาตให้ทุกคนอ่านหรือเขียนได้"
+
+#: includes/accounts.php
+msgid "Token file is not inside the Token File Directory"
+msgstr "ไฟล์โทเคนไม่ได้อยู่ในไดเรกทอรีไฟล์โทเคน"
+
+#: includes/accounts.php
+msgid "API token could not be encrypted"
+msgstr "ไม่สามารถเข้ารหัส API token ได้"
+
+#: includes/accounts.php
+msgid "Credential error"
+msgstr "ข้อผิดพลาดของข้อมูลรับรอง"
+
+#: includes/accounts.php includes/settings.php
+msgid "Cloudflare"
+msgstr "Cloudflare"
+
+#: includes/accounts.php
+msgid "Encrypted in the Cacti database"
+msgstr "เข้ารหัสไว้ในฐานข้อมูล Cacti"
+
+#: includes/accounts.php
+msgid "Token file on this server"
+msgstr "ไฟล์โทเคนบนเซิร์ฟเวอร์นี้"
+
+#: includes/accounts.php includes/viewer.php
+msgid "Account"
+msgstr "บัญชี"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Name"
+msgstr "ชื่อ"
+
+#: includes/accounts.php
+msgid "A label for this account in Cacti."
+msgstr "ป้ายกำกับสำหรับบัญชีนี้ใน Cacti"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Account ID"
+msgstr "ID บัญชี"
+
+#: includes/accounts.php
+msgid "The 32-character Cloudflare account ID, shown in the dashboard URL and on the account overview page."
+msgstr "ID บัญชี Cloudflare ความยาว 32 ตัวอักษร ซึ่งแสดงอยู่ใน URL ของแดชบอร์ดและบนหน้าภาพรวมบัญชี"
+
+#: includes/accounts.php
+msgid "API Token"
+msgstr "API Token"
+
+#: includes/accounts.php
+msgid "Token Storage"
+msgstr "ที่จัดเก็บโทเคน"
+
+#: includes/accounts.php
+msgid "Where the scoped API token is kept. Global API Keys are not accepted."
+msgstr "ตำแหน่งที่จัดเก็บ API token แบบกำหนดขอบเขต ไม่รองรับ Global API Key"
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable because the key file in Settings is missing or unusable; only token files can be used."
+msgstr "ที่จัดเก็บแบบเข้ารหัสไม่พร้อมใช้งานเนื่องจากไฟล์คีย์ในการตั้งค่าสูญหายหรือใช้งานไม่ได้ จึงใช้ได้เฉพาะไฟล์โทเคนเท่านั้น"
+
+#: includes/accounts.php
+msgid "Leave blank to keep the current token"
+msgstr "เว้นว่างไว้เพื่อใช้โทเคนปัจจุบันต่อไป"
+
+#: includes/accounts.php
+msgid "A scoped API token with Account Cloudflare Tunnel Read permission."
+msgstr "API token แบบกำหนดขอบเขตที่มีสิทธิ์ Account Cloudflare Tunnel Read"
+
+#: includes/accounts.php
+msgid "Token File"
+msgstr "ไฟล์โทเคน"
+
+#: includes/accounts.php
+msgid "Absolute path to a file that contains only the token. It must be readable by the web server and poller users and must not be world-readable."
+msgstr "พาธแบบสัมบูรณ์ไปยังไฟล์ที่มีเฉพาะโทเคนเท่านั้น ผู้ใช้เว็บเซิร์ฟเวอร์และ poller ต้องอ่านไฟล์นี้ได้ และต้องไม่อนุญาตให้ทุกคนอ่านได้"
+
+#: includes/accounts.php
+msgid "Collection"
+msgstr "การเก็บข้อมูล"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Enabled"
+msgstr "เปิดใช้งาน"
+
+#: includes/accounts.php
+msgid "Disabled accounts are not polled."
+msgstr "บัญชีที่ปิดใช้งานจะไม่ถูกโพล"
+
+#: includes/accounts.php
+msgid "Collect Tunnels"
+msgstr "รวบรวมข้อมูล Tunnel"
+
+#: includes/accounts.php
+msgid "Discover Cloudflare Tunnels and their connectors."
+msgstr "ค้นหา Cloudflare Tunnel และตัวเชื่อมต่อของ Tunnel เหล่านั้น"
+
+#: includes/accounts.php
+msgid "Collect Analytics"
+msgstr "รวบรวมข้อมูลวิเคราะห์"
+
+#: includes/accounts.php
+msgid "Collect zone traffic analytics. This needs the Account Analytics Read and Analytics Read (Zone) permissions."
+msgstr "รวบรวมข้อมูลวิเคราะห์ทราฟฟิกของโซน ต้องใช้สิทธิ์ Account Analytics Read และ Analytics Read (Zone)"
+
+#: includes/accounts.php
+msgid "Create Graphs"
+msgstr "สร้างกราฟ"
+
+#: includes/accounts.php
+msgid "Create graphs for each tunnel on the account's Cacti device. Turning this on needs the permission to edit Cacti devices."
+msgstr "สร้างกราฟสำหรับแต่ละ Tunnel บนอุปกรณ์ Cacti ของบัญชี การเปิดใช้งานนี้ต้องมีสิทธิ์แก้ไขอุปกรณ์ Cacti"
+
+#: includes/accounts.php
+msgid "Discovery Interval"
+msgstr "ช่วงเวลาการค้นหา"
+
+#: includes/accounts.php
+msgid "Seconds between inventory refreshes, from 60 to 86400."
+msgstr "จำนวนวินาทีระหว่างการรีเฟรชรายการทรัพยากร ตั้งแต่ 60 ถึง 86400"
+
+#: includes/accounts.php
+msgid "The token and its confirmation do not match"
+msgstr "โทเคนและการยืนยันโทเคนไม่ตรงกัน"
+
+#: includes/accounts_page.php
+msgid "Delete"
+msgstr "ลบ"
+
+#: includes/accounts_page.php
+msgid "Verify"
+msgstr "ตรวจสอบ"
+
+#: includes/accounts_page.php
+msgid "Enable"
+msgstr "เปิดใช้งาน"
+
+#: includes/accounts_page.php
+msgid "Disable"
+msgstr "ปิดใช้งาน"
+
+#: includes/accounts_page.php
+msgid "Create Cacti Device"
+msgstr "สร้างอุปกรณ์ Cacti"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to change Cloudflare accounts."
+msgstr "คุณไม่มีสิทธิ์แก้ไขบัญชี Cloudflare"
+
+#: includes/accounts_page.php
+msgid "The Cloudflare account no longer exists."
+msgstr "ไม่มีบัญชี Cloudflare นี้อยู่แล้ว"
+
+#: includes/accounts_page.php
+msgid "The Cloudflare accounts could not be read. See the Cacti log for details."
+msgstr "ไม่สามารถอ่านข้อมูลบัญชี Cloudflare ได้ ดูรายละเอียดในบันทึกของ Cacti"
+
+#: includes/accounts_page.php
+msgid "Create Graphs was left off: turning it on needs the permission to edit Cacti devices."
+msgstr "ปิดตัวเลือกสร้างกราฟไว้: การเปิดใช้งานต้องมีสิทธิ์แก้ไขอุปกรณ์ Cacti"
+
+#: includes/accounts_page.php
+msgid "Cacti device created"
+msgstr "สร้างอุปกรณ์ Cacti แล้ว"
+
+#: includes/accounts_page.php
+msgid "A Cacti device already exists for this account"
+msgstr "มีอุปกรณ์ Cacti สำหรับบัญชีนี้อยู่แล้ว"
+
+#: includes/accounts_page.php
+msgid "The Cloudflare templates are not installed; see the Cacti log"
+msgstr "ยังไม่ได้ติดตั้งเทมเพลต Cloudflare โปรดดูบันทึกของ Cacti"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices"
+msgstr "คุณไม่มีสิทธิ์สร้างอุปกรณ์ Cacti"
+
+#: includes/accounts_page.php
+msgid "The Cacti device could not be created; see the Cacti log"
+msgstr "ไม่สามารถสร้างอุปกรณ์ Cacti ได้ โปรดดูบันทึกของ Cacti"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices."
+msgstr "คุณไม่มีสิทธิ์สร้างอุปกรณ์ Cacti"
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Delete the following Cloudflare Account. Its discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgid_plural "Click 'Continue' to Delete the following Cloudflare Accounts. Their discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgstr[0] "คลิก 'ดำเนินการต่อ' เพื่อลบบัญชี Cloudflare ต่อไปนี้ รายการทรัพยากรที่ค้นพบและสถานะงานจะถูกลบออก แต่จะยังคงเก็บอุปกรณ์ Cacti และกราฟไว้"
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Verify the following Cloudflare Account against the Cloudflare API."
+msgid_plural "Click 'Continue' to Verify the following Cloudflare Accounts against the Cloudflare API."
+msgstr[0] "คลิก 'ดำเนินการต่อ' เพื่อตรวจสอบบัญชี Cloudflare ต่อไปนี้กับ Cloudflare API"
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Enable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Enable the following Cloudflare Accounts."
+msgstr[0] "คลิก 'ดำเนินการต่อ' เพื่อเปิดใช้งานบัญชี Cloudflare ต่อไปนี้"
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Disable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Disable the following Cloudflare Accounts."
+msgstr[0] "คลิก 'ดำเนินการต่อ' เพื่อปิดใช้งานบัญชี Cloudflare ต่อไปนี้"
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to create a Cacti device for the following Cloudflare Account. An account that already has one is left as it is."
+msgid_plural "Click 'Continue' to create a Cacti device for each of the following Cloudflare Accounts. An account that already has one is left as it is."
+msgstr[0] "คลิก 'ดำเนินการต่อ' เพื่อสร้างอุปกรณ์ Cacti สำหรับบัญชี Cloudflare ต่อไปนี้ บัญชีที่มีอุปกรณ์อยู่แล้วจะยังคงเดิม"
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Cancel"
+msgstr "ยกเลิก"
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Continue"
+msgstr "ดำเนินการต่อ"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Cloudflare Account [edit: %s]"
+msgstr "บัญชี Cloudflare [แก้ไข: %s]"
+
+#: includes/accounts_page.php
+msgid "Cloudflare Account [new]"
+msgstr "บัญชี Cloudflare [ใหม่]"
+
+#: includes/accounts_page.php includes/viewer.php src/OperatorPage.php
+msgid "Never"
+msgstr "ไม่เคย"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Status"
+msgstr "สถานะ"
+
+#: includes/accounts_page.php
+msgid "Message"
+msgstr "ข้อความ"
+
+#: includes/accounts_page.php
+msgid "No"
+msgstr "ไม่"
+
+#: includes/accounts_page.php
+msgid "Token Stored"
+msgstr "จัดเก็บโทเคนแล้ว"
+
+#: includes/accounts_page.php
+msgid "Yes"
+msgstr "ใช่"
+
+#: includes/accounts_page.php
+msgid "Last Checked"
+msgstr "ตรวจสอบล่าสุด"
+
+#: includes/accounts_page.php
+msgid "Last Verified"
+msgstr "ยืนยันล่าสุด"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Permission: %s"
+msgstr "สิทธิ์: %s"
+
+#: includes/accounts_page.php
+msgid "Granted"
+msgstr "ได้รับอนุญาต"
+
+#: includes/accounts_page.php
+msgid "Missing"
+msgstr "ขาดหาย"
+
+#: includes/accounts_page.php
+msgid "Connection Status"
+msgstr "สถานะการเชื่อมต่อ"
+
+#: includes/accounts_page.php includes/settings.php includes/viewer.php
+msgid "Cloudflare Accounts"
+msgstr "บัญชี Cloudflare"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Search"
+msgstr "ค้นหา"
+
+#: includes/accounts_page.php
+msgid "Accounts"
+msgstr "บัญชี"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Default"
+msgstr "ค่าเริ่มต้น"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Go"
+msgstr "ไป"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Set/Refresh Filters"
+msgstr "ตั้งค่า/รีเฟรชตัวกรอง"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear"
+msgstr "ล้าง"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear Filters"
+msgstr "ล้างตัวกรอง"
+
+#: includes/accounts_page.php
+msgid "The name of this account in Cacti."
+msgstr "ชื่อของบัญชีนี้ใน Cacti"
+
+#: includes/accounts_page.php
+msgid "Whether an API token is configured. The edit page shows where it is kept."
+msgstr "ระบุว่ามีการกำหนดค่า API token แล้วหรือไม่ หน้าแก้ไขจะแสดงตำแหน่งที่จัดเก็บ"
+
+#: includes/accounts_page.php
+msgid "The result of the last Verify."
+msgstr "ผลลัพธ์ของการตรวจสอบยืนยันครั้งล่าสุด"
+
+#: includes/accounts_page.php
+msgid "ID"
+msgstr "ID"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "No Cloudflare Accounts Found"
+msgstr "ไม่พบบัญชี Cloudflare"
+
+#: includes/operator.php
+msgid "Inspect tunnels and connector counts. Escalate token changes, account configuration and graph creation to an administrator."
+msgstr "ตรวจสอบ Tunnel และจำนวนตัวเชื่อมต่อ ส่งต่อการเปลี่ยนโทเคน การตั้งค่าบัญชี และการสร้างกราฟไปยังผู้ดูแลระบบ"
+
+#: includes/settings.php
+msgid "Configuration"
+msgstr "การกำหนดค่า"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Cloudflare Operations"
+msgstr "การดำเนินงาน Cloudflare"
+
+#: includes/settings.php
+msgid "Management"
+msgstr "การจัดการ"
+
+#: includes/settings.php includes/viewer.php
+msgid "Cloudflare Tunnels"
+msgstr "Cloudflare Tunnel"
+
+#: includes/settings.php
+msgid "(edit)"
+msgstr "(แก้ไข)"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Actions"
+msgstr "การดำเนินการ"
+
+#: includes/settings.php includes/viewer.php
+msgid "Overview"
+msgstr "ภาพรวม"
+
+#: includes/settings.php includes/viewer.php
+msgid "Tunnels"
+msgstr "Tunnel"
+
+#: includes/settings.php includes/viewer.php
+msgid "Connectors"
+msgstr "ตัวเชื่อมต่อ"
+
+#: includes/settings.php
+msgid "Token Vault Key File"
+msgstr "ไฟล์คีย์สำหรับเก็บโทเคน"
+
+#: includes/settings.php
+msgid "Absolute path to the 32-byte key used to encrypt stored API tokens. It must be readable by the web server and poller users and not world-readable. When the file is missing, only token files can be used."
+msgstr "พาธแบบสัมบูรณ์ไปยังคีย์ขนาด 32 ไบต์ที่ใช้เข้ารหัส API token ที่จัดเก็บไว้ ผู้ใช้เว็บเซิร์ฟเวอร์และ poller ต้องอ่านไฟล์นี้ได้ และต้องไม่อนุญาตให้ทุกคนอ่านได้ หากไม่พบไฟล์นี้ จะใช้ได้เฉพาะไฟล์โทเคนเท่านั้น"
+
+#: includes/settings.php
+msgid "Token File Directory"
+msgstr "ไดเรกทอรีไฟล์โทเคน"
+
+#: includes/settings.php
+msgid "Absolute path of the directory that every account token file must be in. When empty, a token file may be anywhere the web server and poller users can read."
+msgstr "พาธแบบสัมบูรณ์ของไดเรกทอรีที่ไฟล์โทเคนของทุกบัญชีต้องอยู่ หากเว้นว่างไว้ ไฟล์โทเคนสามารถอยู่ที่ใดก็ได้ที่ผู้ใช้เว็บเซิร์ฟเวอร์และ poller อ่านได้"
+
+#: includes/settings.php
+msgid "Interactive Request Timeout"
+msgstr "หมดเวลาคำขอแบบโต้ตอบ"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made from the web interface, such as Verify."
+msgstr "เวลารวมเป็นวินาทีที่อนุญาตสำหรับคำขอ Cloudflare API ที่ส่งจากหน้าเว็บ เช่น การตรวจสอบยืนยัน"
+
+#: includes/settings.php
+msgid "Collector Request Timeout"
+msgstr "หมดเวลาคำขอของตัวรวบรวมข้อมูล"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made by the background collector."
+msgstr "เวลารวมเป็นวินาทีที่อนุญาตสำหรับคำขอ Cloudflare API ที่ส่งโดยตัวรวบรวมข้อมูลเบื้องหลัง"
+
+#: includes/settings.php
+msgid "Log Level"
+msgstr "ระดับบันทึก"
+
+#: includes/settings.php
+msgid "The amount of detail the plugin writes to the Cacti log."
+msgstr "ระดับรายละเอียดที่ปลั๊กอินเขียนลงในบันทึกของ Cacti"
+
+#: includes/tunnel_retirement.php
+msgid "The tunnel could not be retired. Check permissions and retry after collection finishes."
+msgstr "ไม่สามารถปลดระวาง Tunnel ได้ โปรดตรวจสอบสิทธิ์และลองอีกครั้งหลังจากการรวบรวมข้อมูลเสร็จสิ้น"
+
+#: includes/tunnel_retirement.php includes/viewer.php
+msgid "Retire tunnel"
+msgstr "ปลดระวาง Tunnel"
+
+#: includes/tunnel_retirement.php
+msgid "Retiring removes the graphs and unshared data sources created for this deleted tunnel. Cacti controls RRD cleanup. The inventory record is kept."
+msgstr "การปลดระวางจะลบกราฟและแหล่งข้อมูลที่ไม่ได้ใช้ร่วมกันซึ่งสร้างขึ้นสำหรับ Tunnel ที่ถูกลบนี้ โดย Cacti จะควบคุมการล้างข้อมูล RRD และจะยังคงเก็บบันทึกข้อมูลทรัพยากรไว้"
+
+#: includes/viewer.php
+msgid "The Cloudflare tunnels could not be read. See the Cacti log for details."
+msgstr "ไม่สามารถอ่านข้อมูล Cloudflare Tunnel ได้ ดูรายละเอียดในบันทึกของ Cacti"
+
+#: includes/viewer.php
+msgid "Zone Analytics"
+msgstr "ข้อมูลวิเคราะห์โซน"
+
+#: includes/viewer.php
+msgid "Disabled"
+msgstr "ปิดใช้งาน"
+
+#: includes/viewer.php
+msgid "Not collected"
+msgstr "ยังไม่ได้รวบรวม"
+
+#: includes/viewer.php
+msgid "Collection failing"
+msgstr "การรวบรวมข้อมูลล้มเหลว"
+
+#: includes/viewer.php
+msgid "Not yet collected"
+msgstr "ยังไม่ได้รวบรวมข้อมูล"
+
+#: includes/viewer.php
+msgid "Down"
+msgstr "ไม่สามารถติดต่อได้"
+
+#: includes/viewer.php
+msgid "Degraded"
+msgstr "ประสิทธิภาพลดลง"
+
+#: includes/viewer.php
+msgid "Healthy"
+msgstr "ปกติ"
+
+#: includes/viewer.php
+msgid "Inactive"
+msgstr "ไม่ทำงาน"
+
+#: includes/viewer.php
+msgid "No active tunnels"
+msgstr "ไม่มี Tunnel ที่ใช้งานอยู่"
+
+#: includes/viewer.php
+msgid "The worst status among active tunnels, or Collection failing while discovery fails."
+msgstr "สถานะที่แย่ที่สุดในบรรดา Tunnel ที่ใช้งานอยู่ หรือการรวบรวมข้อมูลล้มเหลวในขณะที่การค้นหาล้มเหลว"
+
+#: includes/viewer.php
+msgid "Active"
+msgstr "ใช้งานอยู่"
+
+#: includes/viewer.php
+msgid "Unavailable"
+msgstr "ไม่พร้อมใช้งาน"
+
+#: includes/viewer.php
+msgid "Deleted"
+msgstr "ถูกลบแล้ว"
+
+#: includes/viewer.php
+msgid "Last Successful Discovery"
+msgstr "การค้นหาที่สำเร็จล่าสุด"
+
+#: includes/viewer.php
+msgid "Consecutive Failures"
+msgstr "ความล้มเหลวต่อเนื่อง"
+
+#: includes/viewer.php
+#, php-format
+msgid "Last error: %s"
+msgstr "ข้อผิดพลาดล่าสุด: %s"
+
+#: includes/viewer.php
+msgid "Tunnel"
+msgstr "Tunnel"
+
+#: includes/viewer.php
+msgid "Cloudflare Status"
+msgstr "สถานะ Cloudflare"
+
+#: includes/viewer.php
+msgid "The status Cloudflare reported at the last discovery."
+msgstr "สถานะที่ Cloudflare รายงานในการค้นหาครั้งล่าสุด"
+
+#: includes/viewer.php
+msgid "Lifecycle"
+msgstr "วงจรชีวิต"
+
+#: includes/viewer.php
+msgid "Whether the last discoveries still found this tunnel."
+msgstr "ระบุว่าการค้นหาครั้งล่าสุดยังคงพบ Tunnel นี้หรือไม่"
+
+#: includes/viewer.php
+msgid "Type"
+msgstr "ประเภท"
+
+#: includes/viewer.php
+msgid "Connections"
+msgstr "การเชื่อมต่อ"
+
+#: includes/viewer.php
+msgid "Last Seen"
+msgstr "พบล่าสุด"
+
+#: includes/viewer.php
+msgid "Any"
+msgstr "ใดๆ"
+
+#: includes/viewer.php
+msgid "All"
+msgstr "ทั้งหมด"
+
+#: includes/viewer.php
+msgid "No Cloudflare Tunnels Found"
+msgstr "ไม่พบ Cloudflare Tunnel"
+
+#: includes/viewer.php
+msgid "Choose a tunnel on the Tunnels tab."
+msgstr "เลือก Tunnel ในแท็บ Tunnel"
+
+#: includes/viewer.php
+msgid "The tunnel no longer exists."
+msgstr "ไม่มี Tunnel นี้อยู่แล้ว"
+
+#: includes/viewer.php
+#, php-format
+msgid "Connectors for %s"
+msgstr "ตัวเชื่อมต่อสำหรับ %s"
+
+#: includes/viewer.php
+msgid "Connector ID"
+msgstr "ID ตัวเชื่อมต่อ"
+
+#: includes/viewer.php
+msgid "Version"
+msgstr "เวอร์ชัน"
+
+#: includes/viewer.php
+msgid "Architecture"
+msgstr "สถาปัตยกรรม"
+
+#: includes/viewer.php
+msgid "Running Since"
+msgstr "ทำงานตั้งแต่"
+
+#: includes/viewer.php
+msgid "Data Centers"
+msgstr "ศูนย์ข้อมูล"
+
+#: includes/viewer.php
+msgid "Origin IPs"
+msgstr "IP ต้นทาง"
+
+#: includes/viewer.php
+#, php-format
+msgid "This tunnel is %s. These connectors were last seen while the tunnel was active."
+msgstr "Tunnel นี้อยู่ในสถานะ %s ตัวเชื่อมต่อเหล่านี้ถูกพบครั้งล่าสุดขณะที่ Tunnel ยังใช้งานอยู่"
+
+#: includes/viewer.php
+msgid "No connectors are running for this tunnel."
+msgstr "ไม่มีตัวเชื่อมต่อที่กำลังทำงานสำหรับ Tunnel นี้"
+
+#: includes/viewer.php
+msgid "Export"
+msgstr "ส่งออก"
+
+#: includes/viewer.php
+msgid "Bytes/s"
+msgstr "ไบต์/วินาที"
+
+#: includes/viewer.php
+msgid "HTTP 5xx (%)"
+msgstr "HTTP 5xx (%)"
+
+#: includes/viewer.php
+msgid "Requests/s"
+msgstr "คำขอ/วินาที"
+
+#: includes/viewer.php
+msgid "Zone"
+msgstr "โซน"
+
+#: src/OperatorPage.php
+msgid "Review the recorded observations below. Acknowledgments are personal to this session, expire when observations change, and never suppress alerts or change health."
+msgstr "ตรวจสอบผลการสังเกตการณ์ที่บันทึกไว้ด้านล่าง การรับทราบมีผลเฉพาะในเซสชันนี้ จะหมดอายุเมื่อผลการสังเกตการณ์เปลี่ยนแปลง และจะไม่ระงับการแจ้งเตือนหรือเปลี่ยนสถานะสุขภาพ"
+
+#: src/OperatorPage.php
+msgid "Investigation"
+msgstr "การตรวจสอบเชิงลึก"
+
+#: src/OperatorPage.php
+msgid "Object"
+msgstr "ออบเจ็กต์"
+
+#: src/OperatorPage.php
+msgid "Observed (UTC)"
+msgstr "เวลาที่สังเกตการณ์ (UTC)"
+
+#: src/OperatorPage.php
+msgid "State"
+msgstr "สถานะ"
+
+#: src/OperatorPage.php
+msgid "Unknown or stale"
+msgstr "ไม่ทราบค่าหรือข้อมูลเก่า"
+
+#: src/OperatorPage.php
+msgid "Acknowledged; health unchanged."
+msgstr "รับทราบแล้ว สถานะสุขภาพยังคงเดิม"
+
+#: src/OperatorPage.php
+msgid "Acknowledge"
+msgstr "รับทราบ"
+
+#: src/OperatorPage.php
+msgid "No observations are available."
+msgstr "ไม่มีข้อมูลการสังเกตการณ์ที่พร้อมใช้งาน"

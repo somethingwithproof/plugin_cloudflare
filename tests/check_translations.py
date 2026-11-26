@@ -14,7 +14,7 @@ from urllib.parse import unquote, urlsplit
 
 
 LOCALES = ("zh-CN", "hi-IN", "es-ES", "es-419", "ar-SA")
-ALL_LOCALES = ("zh-CN", "hi-IN", "es-ES", "es-419", "ar-SA", "af-ZA", "am-ET", "ar-EG", "ar-MA", "bn-BD", "de-DE", "fa-IR", "fil-PH", "fr-FR", "fr-MA", "fr-SN", "ha-NG", "he-IL", "id-ID", "ig-NG", "it-IT", "ja-JP", "ko-KR", "mg-MG", "mr-IN", "ms-MY", "nl-NL", "pl-PL", "pt-BR", "ru-RU", "rw-RW", "so-SO", "sv-SE", "sw-KE", "ta-IN", "te-IN", "th-TH", "tr-TR", "uk-UA", "ur-PK", "vi-VN", "xh-ZA", "yo-NG", "zh-TW", "zu-ZA")
+ALL_LOCALES = ("zh-CN", "hi-IN", "es-ES", "es-419", "ar-SA", "af-ZA", "am-ET", "ar-EG", "ar-MA", "bn-BD", "bs-BA", "de-DE", "fa-IR", "fil-PH", "fr-FR", "fr-MA", "fr-SN", "ha-NG", "he-IL", "hr-HR", "id-ID", "ig-NG", "it-IT", "ja-JP", "ko-KR", "mg-MG", "mr-IN", "ms-MY", "nl-NL", "pl-PL", "pt-BR", "ru-RU", "rw-RW", "so-SO", "sr-RS", "sv-SE", "sw-KE", "ta-IN", "te-IN", "th-TH", "tr-TR", "uk-UA", "ur-PK", "vi-VN", "xh-ZA", "yo-NG", "zh-TW", "zu-ZA")
 NAVIGATION = re.compile(r"<!-- translations:start -->\n.*?<!-- translations:end -->\n\n?", re.S)
 HEADER = re.compile(r"<!-- Source: ([^;]+); SHA256: ([a-f0-9]{64}) -->")
 TOKENS = re.compile(r"%(?:\d+\$)?[-+ 0#]*\d*(?:\.\d+)?[sdfuxXcoeEgGi]|%%|<[^>]*>")

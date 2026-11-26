@@ -1,0 +1,779 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-FileCopyrightText: 2026 Thomas Vincent <thomasvincent@gmail.com>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cloudflare 0.4.0-dev\n"
+"Report-Msgid-Bugs-To: https://github.com/somethingwithproof/plugin_cloudflare/issues\n"
+"PO-Revision-Date: 2026-11-26 00:00+0000\n"
+"Last-Translator: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language-Team: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language: bs-BA\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
+
+#: cloudflare_operator.php
+msgid "Monitoring view"
+msgstr "Prikaz nadzora"
+
+#: cloudflare_operator.php
+msgid "Observations could not be read. Ask an administrator to check the plugin log."
+msgstr "Zapažanja nije bilo moguće pročitati. Zamolite administratora da provjeri zapisnik dodatka."
+
+#: includes/accounts.php
+msgid "Connection verified"
+msgstr "Veza je verifikovana"
+
+#: includes/accounts.php
+msgid "Token is not active; it may be expired or disabled"
+msgstr "Token nije aktivan; moguće je da je istekao ili je onemogućen"
+
+#: includes/accounts.php
+msgid "Token is invalid or expired"
+msgstr "Token je neispravan ili je istekao"
+
+#: includes/accounts.php
+msgid "Token lacks the Account Cloudflare Tunnel Read permission"
+msgstr "Tokenu nedostaje dozvola Account Cloudflare Tunnel Read"
+
+#: includes/accounts.php
+msgid "Cloudflare API is unreachable; try again later"
+msgstr "Cloudflare API je nedostupan; pokušajte ponovo kasnije"
+
+#: includes/accounts.php
+msgid "Cloudflare API rate limit reached; try again later"
+msgstr "Dostignuto je ograničenje broja zahtjeva Cloudflare API-ja; pokušajte ponovo kasnije"
+
+#: includes/accounts.php
+msgid "Cloudflare API request failed unexpectedly"
+msgstr "Zahtjev prema Cloudflare API-ju neočekivano nije uspio"
+
+#: includes/accounts.php
+msgid "Token lacks the permissions needed to verify it"
+msgstr "Tokenu nedostaju dozvole potrebne za njegovu verifikaciju"
+
+#: includes/accounts.php
+msgid "Stored token cannot be decrypted"
+msgstr "Sačuvani token nije moguće dešifrovati"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing or unusable"
+msgstr "Datoteka ključa trezora tokena nedostaje ili je neupotrebljiva"
+
+#: includes/accounts.php
+msgid "Token file is missing or insecure"
+msgstr "Datoteka tokena nedostaje ili nije sigurna"
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable; configure the key file or use a token file"
+msgstr "Šifrovano skladište nije dostupno; konfigurišite datoteku ključa ili koristite datoteku tokena"
+
+#: includes/accounts.php
+msgid "Enter the 32-character hexadecimal Cloudflare account ID"
+msgstr "Unesite 32-znakovni heksadecimalni ID Cloudflare naloga"
+
+#: includes/accounts.php
+msgid "Enter a name of 1 to 100 characters without control characters"
+msgstr "Unesite naziv od 1 do 100 znakova bez kontrolnih znakova"
+
+#: includes/accounts.php
+msgid "Choose an encrypted token or a token file"
+msgstr "Odaberite šifrovani token ili datoteku tokena"
+
+#: includes/accounts.php
+msgid "Enter an API token"
+msgstr "Unesite API token"
+
+#: includes/accounts.php
+msgid "Re-enter the token when changing the account ID"
+msgstr "Ponovo unesite token prilikom izmjene ID-a naloga"
+
+#: includes/accounts.php
+msgid "Enter an absolute path of at most 255 characters"
+msgstr "Unesite apsolutnu putanju od najviše 255 znakova"
+
+#: includes/accounts.php
+msgid "Must be 0 or 1"
+msgstr "Mora biti 0 ili 1"
+
+#: includes/accounts.php
+msgid "Enter a whole number of seconds from 60 to 86400"
+msgstr "Unesite cijeli broj sekundi od 60 do 86400"
+
+#: includes/accounts.php
+msgid "This Cloudflare account ID is already configured"
+msgstr "Ovaj ID Cloudflare naloga je već konfigurisan"
+
+#: includes/accounts.php
+msgid "Global API Keys are not accepted; use a scoped API token"
+msgstr "Global API Keys nisu prihvaćeni; koristite ograničeni API token"
+
+#: includes/accounts.php
+msgid "API token format is invalid"
+msgstr "Format API tokena nije ispravan"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing, unreadable, insecure or malformed"
+msgstr "Datoteka ključa trezora tokena nedostaje, nečitljiva je, nije sigurna ili je neispravnog formata"
+
+#: includes/accounts.php
+msgid "Stored API token could not be decrypted"
+msgstr "Sačuvani API token nije bilo moguće dešifrovati"
+
+#: includes/accounts.php
+msgid "Token file is missing, unreadable, not a regular file or too large"
+msgstr "Datoteka tokena nedostaje, nečitljiva je, nije obična datoteka ili je prevelika"
+
+#: includes/accounts.php
+msgid "Token file path is not absolute, is a symlink, or the file is world-readable or world-writable"
+msgstr "Putanja datoteke tokena nije apsolutna, predstavlja simboličku vezu, ili datoteku mogu čitati odnosno mijenjati svi korisnici"
+
+#: includes/accounts.php
+msgid "Token file is not inside the Token File Directory"
+msgstr "Datoteka tokena se ne nalazi unutar direktorija za datoteke tokena"
+
+#: includes/accounts.php
+msgid "API token could not be encrypted"
+msgstr "API token nije bilo moguće šifrovati"
+
+#: includes/accounts.php
+msgid "Credential error"
+msgstr "Greška pristupnih podataka"
+
+#: includes/accounts.php includes/settings.php
+msgid "Cloudflare"
+msgstr "Cloudflare"
+
+#: includes/accounts.php
+msgid "Encrypted in the Cacti database"
+msgstr "Šifrovano u Cacti bazi podataka"
+
+#: includes/accounts.php
+msgid "Token file on this server"
+msgstr "Datoteka tokena na ovom serveru"
+
+#: includes/accounts.php includes/viewer.php
+msgid "Account"
+msgstr "Nalog"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Name"
+msgstr "Naziv"
+
+#: includes/accounts.php
+msgid "A label for this account in Cacti."
+msgstr "Oznaka za ovaj nalog u Cacti sistemu."
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Account ID"
+msgstr "ID naloga"
+
+#: includes/accounts.php
+msgid "The 32-character Cloudflare account ID, shown in the dashboard URL and on the account overview page."
+msgstr "32-znakovni ID Cloudflare naloga, prikazan u URL-u kontrolne table i na stranici pregleda naloga."
+
+#: includes/accounts.php
+msgid "API Token"
+msgstr "API token"
+
+#: includes/accounts.php
+msgid "Token Storage"
+msgstr "Skladištenje tokena"
+
+#: includes/accounts.php
+msgid "Where the scoped API token is kept. Global API Keys are not accepted."
+msgstr "Mjesto gdje se čuva ograničeni API token. Global API Keys nisu prihvaćeni."
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable because the key file in Settings is missing or unusable; only token files can be used."
+msgstr "Šifrovano skladište nije dostupno jer datoteka ključa u Postavkama nedostaje ili je neupotrebljiva; mogu se koristiti samo datoteke tokena."
+
+#: includes/accounts.php
+msgid "Leave blank to keep the current token"
+msgstr "Ostavite prazno da zadržite trenutni token"
+
+#: includes/accounts.php
+msgid "A scoped API token with Account Cloudflare Tunnel Read permission."
+msgstr "Ograničeni API token sa dozvolom Account Cloudflare Tunnel Read."
+
+#: includes/accounts.php
+msgid "Token File"
+msgstr "Datoteka tokena"
+
+#: includes/accounts.php
+msgid "Absolute path to a file that contains only the token. It must be readable by the web server and poller users and must not be world-readable."
+msgstr "Apsolutna putanja do datoteke koja sadrži samo token. Mora biti čitljiva za korisnike web servera i pollera te ne smije biti čitljiva za ostale korisnike."
+
+#: includes/accounts.php
+msgid "Collection"
+msgstr "Prikupljanje"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Enabled"
+msgstr "Omogućeno"
+
+#: includes/accounts.php
+msgid "Disabled accounts are not polled."
+msgstr "Onemogućeni nalozi se ne ispituju."
+
+#: includes/accounts.php
+msgid "Collect Tunnels"
+msgstr "Prikupljaj tunele"
+
+#: includes/accounts.php
+msgid "Discover Cloudflare Tunnels and their connectors."
+msgstr "Otkrivaj Cloudflare tunele i njihove konektore."
+
+#: includes/accounts.php
+msgid "Collect Analytics"
+msgstr "Prikupljaj analitiku"
+
+#: includes/accounts.php
+msgid "Collect zone traffic analytics. This needs the Account Analytics Read and Analytics Read (Zone) permissions."
+msgstr "Prikupljaj analitiku saobraćaja zona. Za ovo su potrebne dozvole Account Analytics Read i Analytics Read (Zone)."
+
+#: includes/accounts.php
+msgid "Create Graphs"
+msgstr "Kreiraj grafikone"
+
+#: includes/accounts.php
+msgid "Create graphs for each tunnel on the account's Cacti device. Turning this on needs the permission to edit Cacti devices."
+msgstr "Kreiraj grafikone za svaki tunel na Cacti uređaju ovog naloga. Uključivanje ove opcije zahtijeva dozvolu za uređivanje Cacti uređaja."
+
+#: includes/accounts.php
+msgid "Discovery Interval"
+msgstr "Interval otkrivanja"
+
+#: includes/accounts.php
+msgid "Seconds between inventory refreshes, from 60 to 86400."
+msgstr "Broj sekundi između osvježavanja inventara, od 60 do 86400."
+
+#: includes/accounts.php
+msgid "The token and its confirmation do not match"
+msgstr "Token i njegova potvrda se ne podudaraju"
+
+#: includes/accounts_page.php
+msgid "Delete"
+msgstr "Obriši"
+
+#: includes/accounts_page.php
+msgid "Verify"
+msgstr "Verifikuj"
+
+#: includes/accounts_page.php
+msgid "Enable"
+msgstr "Omogući"
+
+#: includes/accounts_page.php
+msgid "Disable"
+msgstr "Onemogući"
+
+#: includes/accounts_page.php
+msgid "Create Cacti Device"
+msgstr "Kreiraj Cacti uređaj"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to change Cloudflare accounts."
+msgstr "Nemate dozvolu za izmjenu Cloudflare naloga."
+
+#: includes/accounts_page.php
+msgid "The Cloudflare account no longer exists."
+msgstr "Cloudflare nalog više ne postoji."
+
+#: includes/accounts_page.php
+msgid "The Cloudflare accounts could not be read. See the Cacti log for details."
+msgstr "Cloudflare naloge nije bilo moguće pročitati. Pogledajte Cacti zapisnik za detalje."
+
+#: includes/accounts_page.php
+msgid "Create Graphs was left off: turning it on needs the permission to edit Cacti devices."
+msgstr "Opcija Kreiraj grafikone ostala je isključena: njeno uključivanje zahtijeva dozvolu za uređivanje Cacti uređaja."
+
+#: includes/accounts_page.php
+msgid "Cacti device created"
+msgstr "Cacti uređaj je kreiran"
+
+#: includes/accounts_page.php
+msgid "A Cacti device already exists for this account"
+msgstr "Cacti uređaj već postoji za ovaj nalog"
+
+#: includes/accounts_page.php
+msgid "The Cloudflare templates are not installed; see the Cacti log"
+msgstr "Cloudflare šabloni nisu instalirani; pogledajte Cacti zapisnik"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices"
+msgstr "Nemate dozvolu za kreiranje Cacti uređaja"
+
+#: includes/accounts_page.php
+msgid "The Cacti device could not be created; see the Cacti log"
+msgstr "Cacti uređaj nije bilo moguće kreirati; pogledajte Cacti zapisnik"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices."
+msgstr "Nemate dozvolu za kreiranje Cacti uređaja."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Delete the following Cloudflare Account. Its discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgid_plural "Click 'Continue' to Delete the following Cloudflare Accounts. Their discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgstr[0] "Kliknite 'Nastavi' da obrišete sljedeći Cloudflare nalog. Njegov otkriveni inventar i stanje zadataka bit će uklonjeni; Cacti uređaji i grafikoni se zadržavaju."
+msgstr[1] "Kliknite 'Nastavi' da obrišete sljedeće Cloudflare naloge. Njihov otkriveni inventar i stanje zadataka bit će uklonjeni; Cacti uređaji i grafikoni se zadržavaju."
+msgstr[2] "Kliknite 'Nastavi' da obrišete sljedeće Cloudflare naloge. Njihov otkriveni inventar i stanje zadataka bit će uklonjeni; Cacti uređaji i grafikoni se zadržavaju."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Verify the following Cloudflare Account against the Cloudflare API."
+msgid_plural "Click 'Continue' to Verify the following Cloudflare Accounts against the Cloudflare API."
+msgstr[0] "Kliknite 'Nastavi' da verifikujete sljedeći Cloudflare nalog putem Cloudflare API-ja."
+msgstr[1] "Kliknite 'Nastavi' da verifikujete sljedeće Cloudflare naloge putem Cloudflare API-ja."
+msgstr[2] "Kliknite 'Nastavi' da verifikujete sljedeće Cloudflare naloge putem Cloudflare API-ja."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Enable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Enable the following Cloudflare Accounts."
+msgstr[0] "Kliknite 'Nastavi' da omogućite sljedeći Cloudflare nalog."
+msgstr[1] "Kliknite 'Nastavi' da omogućite sljedeće Cloudflare naloge."
+msgstr[2] "Kliknite 'Nastavi' da omogućite sljedeće Cloudflare naloge."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Disable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Disable the following Cloudflare Accounts."
+msgstr[0] "Kliknite 'Nastavi' da onemogućite sljedeći Cloudflare nalog."
+msgstr[1] "Kliknite 'Nastavi' da onemogućite sljedeće Cloudflare naloge."
+msgstr[2] "Kliknite 'Nastavi' da onemogućite sljedeće Cloudflare naloge."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to create a Cacti device for the following Cloudflare Account. An account that already has one is left as it is."
+msgid_plural "Click 'Continue' to create a Cacti device for each of the following Cloudflare Accounts. An account that already has one is left as it is."
+msgstr[0] "Kliknite 'Nastavi' da kreirate Cacti uređaj za sljedeći Cloudflare nalog. Nalog koji ga već ima ostaje kakav jeste."
+msgstr[1] "Kliknite 'Nastavi' da kreirate Cacti uređaj za svaki od sljedećih Cloudflare naloga. Nalog koji ga već ima ostaje kakav jeste."
+msgstr[2] "Kliknite 'Nastavi' da kreirate Cacti uređaj za svaki od sljedećih Cloudflare naloga. Nalog koji ga već ima ostaje kakav jeste."
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Cancel"
+msgstr "Otkaži"
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Continue"
+msgstr "Nastavi"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Cloudflare Account [edit: %s]"
+msgstr "Cloudflare nalog [uređivanje: %s]"
+
+#: includes/accounts_page.php
+msgid "Cloudflare Account [new]"
+msgstr "Cloudflare nalog [novi]"
+
+#: includes/accounts_page.php includes/viewer.php src/OperatorPage.php
+msgid "Never"
+msgstr "Nikada"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Status"
+msgstr "Status"
+
+#: includes/accounts_page.php
+msgid "Message"
+msgstr "Poruka"
+
+#: includes/accounts_page.php
+msgid "No"
+msgstr "Ne"
+
+#: includes/accounts_page.php
+msgid "Token Stored"
+msgstr "Token sačuvan"
+
+#: includes/accounts_page.php
+msgid "Yes"
+msgstr "Da"
+
+#: includes/accounts_page.php
+msgid "Last Checked"
+msgstr "Posljednja provjera"
+
+#: includes/accounts_page.php
+msgid "Last Verified"
+msgstr "Posljednja verifikacija"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Permission: %s"
+msgstr "Dozvola: %s"
+
+#: includes/accounts_page.php
+msgid "Granted"
+msgstr "Dodijeljena"
+
+#: includes/accounts_page.php
+msgid "Missing"
+msgstr "Nedostaje"
+
+#: includes/accounts_page.php
+msgid "Connection Status"
+msgstr "Status veze"
+
+#: includes/accounts_page.php includes/settings.php includes/viewer.php
+msgid "Cloudflare Accounts"
+msgstr "Cloudflare nalozi"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Search"
+msgstr "Pretraži"
+
+#: includes/accounts_page.php
+msgid "Accounts"
+msgstr "Nalozi"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Default"
+msgstr "Podrazumijevano"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Go"
+msgstr "Primijeni"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Set/Refresh Filters"
+msgstr "Postavi/osvježi filtere"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear"
+msgstr "Očisti"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear Filters"
+msgstr "Očisti filtere"
+
+#: includes/accounts_page.php
+msgid "The name of this account in Cacti."
+msgstr "Naziv ovog naloga u Cacti sistemu."
+
+#: includes/accounts_page.php
+msgid "Whether an API token is configured. The edit page shows where it is kept."
+msgstr "Da li je API token konfigurisan. Stranica za uređivanje prikazuje gdje se čuva."
+
+#: includes/accounts_page.php
+msgid "The result of the last Verify."
+msgstr "Rezultat posljednje verifikacije."
+
+#: includes/accounts_page.php
+msgid "ID"
+msgstr "ID"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "No Cloudflare Accounts Found"
+msgstr "Nije pronađen nijedan Cloudflare nalog"
+
+#: includes/operator.php
+msgid "Inspect tunnels and connector counts. Escalate token changes, account configuration and graph creation to an administrator."
+msgstr "Pregledajte tunele i broj konektora. Izmjene tokena, konfiguraciju naloga i kreiranje grafikona proslijedite administratoru."
+
+#: includes/settings.php
+msgid "Configuration"
+msgstr "Konfiguracija"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Cloudflare Operations"
+msgstr "Cloudflare operacije"
+
+#: includes/settings.php
+msgid "Management"
+msgstr "Upravljanje"
+
+#: includes/settings.php includes/viewer.php
+msgid "Cloudflare Tunnels"
+msgstr "Cloudflare tuneli"
+
+#: includes/settings.php
+msgid "(edit)"
+msgstr "(uredi)"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Actions"
+msgstr "Radnje"
+
+#: includes/settings.php includes/viewer.php
+msgid "Overview"
+msgstr "Pregled"
+
+#: includes/settings.php includes/viewer.php
+msgid "Tunnels"
+msgstr "Tuneli"
+
+#: includes/settings.php includes/viewer.php
+msgid "Connectors"
+msgstr "Konektori"
+
+#: includes/settings.php
+msgid "Token Vault Key File"
+msgstr "Datoteka ključa trezora tokena"
+
+#: includes/settings.php
+msgid "Absolute path to the 32-byte key used to encrypt stored API tokens. It must be readable by the web server and poller users and not world-readable. When the file is missing, only token files can be used."
+msgstr "Apsolutna putanja do 32-bajtnog ključa koji se koristi za šifrovanje sačuvanih API tokena. Mora biti čitljiva za korisnike web servera i pollera te ne smije biti čitljiva za sve korisnike. Kada datoteka nedostaje, mogu se koristiti samo datoteke tokena."
+
+#: includes/settings.php
+msgid "Token File Directory"
+msgstr "Direktorij datoteka tokena"
+
+#: includes/settings.php
+msgid "Absolute path of the directory that every account token file must be in. When empty, a token file may be anywhere the web server and poller users can read."
+msgstr "Apsolutna putanja direktorija u kojem se mora nalaziti svaka datoteka tokena naloga. Kada je polje prazno, datoteka tokena može biti bilo gdje odakle je korisnici web servera i pollera mogu pročitati."
+
+#: includes/settings.php
+msgid "Interactive Request Timeout"
+msgstr "Vremensko ograničenje interaktivnog zahtjeva"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made from the web interface, such as Verify."
+msgstr "Ukupno vrijeme u sekundama dozvoljeno za zahtjev prema Cloudflare API-ju poslat iz web interfejsa, kao što je Verifikuj."
+
+#: includes/settings.php
+msgid "Collector Request Timeout"
+msgstr "Vremensko ograničenje zahtjeva prikupljača"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made by the background collector."
+msgstr "Ukupno vrijeme u sekundama dozvoljeno za zahtjev prema Cloudflare API-ju koji šalje pozadinski prikupljač."
+
+#: includes/settings.php
+msgid "Log Level"
+msgstr "Nivo zapisivanja"
+
+#: includes/settings.php
+msgid "The amount of detail the plugin writes to the Cacti log."
+msgstr "Količina detalja koje dodatak upisuje u Cacti zapisnik."
+
+#: includes/tunnel_retirement.php
+msgid "The tunnel could not be retired. Check permissions and retry after collection finishes."
+msgstr "Tunel nije bilo moguće povući iz upotrebe. Provjerite dozvole i pokušajte ponovo nakon završetka prikupljanja."
+
+#: includes/tunnel_retirement.php includes/viewer.php
+msgid "Retire tunnel"
+msgstr "Povuci tunel"
+
+#: includes/tunnel_retirement.php
+msgid "Retiring removes the graphs and unshared data sources created for this deleted tunnel. Cacti controls RRD cleanup. The inventory record is kept."
+msgstr "Povlačenje uklanja grafikone i nedijeljene izvore podataka kreirane za ovaj obrisani tunel. Cacti upravlja čišćenjem RRD datoteka. Zapis u inventaru se zadržava."
+
+#: includes/viewer.php
+msgid "The Cloudflare tunnels could not be read. See the Cacti log for details."
+msgstr "Cloudflare tunele nije bilo moguće pročitati. Pogledajte Cacti zapisnik za detalje."
+
+#: includes/viewer.php
+msgid "Zone Analytics"
+msgstr "Analitika zona"
+
+#: includes/viewer.php
+msgid "Disabled"
+msgstr "Onemogućeno"
+
+#: includes/viewer.php
+msgid "Not collected"
+msgstr "Ne prikuplja se"
+
+#: includes/viewer.php
+msgid "Collection failing"
+msgstr "Prikupljanje ne uspijeva"
+
+#: includes/viewer.php
+msgid "Not yet collected"
+msgstr "Još nije prikupljeno"
+
+#: includes/viewer.php
+msgid "Down"
+msgstr "U prekidu"
+
+#: includes/viewer.php
+msgid "Degraded"
+msgstr "Degradiran"
+
+#: includes/viewer.php
+msgid "Healthy"
+msgstr "Ispravan"
+
+#: includes/viewer.php
+msgid "Inactive"
+msgstr "Neaktivan"
+
+#: includes/viewer.php
+msgid "No active tunnels"
+msgstr "Nema aktivnih tunela"
+
+#: includes/viewer.php
+msgid "The worst status among active tunnels, or Collection failing while discovery fails."
+msgstr "Najlošiji status među aktivnim tunelima, ili Prikupljanje ne uspijeva dok otkrivanje ne uspijeva."
+
+#: includes/viewer.php
+msgid "Active"
+msgstr "Aktivan"
+
+#: includes/viewer.php
+msgid "Unavailable"
+msgstr "Nedostupan"
+
+#: includes/viewer.php
+msgid "Deleted"
+msgstr "Obrisan"
+
+#: includes/viewer.php
+msgid "Last Successful Discovery"
+msgstr "Posljednje uspješno otkrivanje"
+
+#: includes/viewer.php
+msgid "Consecutive Failures"
+msgstr "Uzastopni neuspjesi"
+
+#: includes/viewer.php
+#, php-format
+msgid "Last error: %s"
+msgstr "Posljednja greška: %s"
+
+#: includes/viewer.php
+msgid "Tunnel"
+msgstr "Tunel"
+
+#: includes/viewer.php
+msgid "Cloudflare Status"
+msgstr "Cloudflare status"
+
+#: includes/viewer.php
+msgid "The status Cloudflare reported at the last discovery."
+msgstr "Status koji je Cloudflare prijavio prilikom posljednjeg otkrivanja."
+
+#: includes/viewer.php
+msgid "Lifecycle"
+msgstr "Životni ciklus"
+
+#: includes/viewer.php
+msgid "Whether the last discoveries still found this tunnel."
+msgstr "Da li su posljednja otkrivanja i dalje pronašla ovaj tunel."
+
+#: includes/viewer.php
+msgid "Type"
+msgstr "Tip"
+
+#: includes/viewer.php
+msgid "Connections"
+msgstr "Veze"
+
+#: includes/viewer.php
+msgid "Last Seen"
+msgstr "Posljednji put viđen"
+
+#: includes/viewer.php
+msgid "Any"
+msgstr "Bilo koji"
+
+#: includes/viewer.php
+msgid "All"
+msgstr "Svi"
+
+#: includes/viewer.php
+msgid "No Cloudflare Tunnels Found"
+msgstr "Nije pronađen nijedan Cloudflare tunel"
+
+#: includes/viewer.php
+msgid "Choose a tunnel on the Tunnels tab."
+msgstr "Odaberite tunel na kartici Tuneli."
+
+#: includes/viewer.php
+msgid "The tunnel no longer exists."
+msgstr "Tunel više ne postoji."
+
+#: includes/viewer.php
+#, php-format
+msgid "Connectors for %s"
+msgstr "Konektori za %s"
+
+#: includes/viewer.php
+msgid "Connector ID"
+msgstr "ID konektora"
+
+#: includes/viewer.php
+msgid "Version"
+msgstr "Verzija"
+
+#: includes/viewer.php
+msgid "Architecture"
+msgstr "Arhitektura"
+
+#: includes/viewer.php
+msgid "Running Since"
+msgstr "Aktivan od"
+
+#: includes/viewer.php
+msgid "Data Centers"
+msgstr "Podatkovni centri"
+
+#: includes/viewer.php
+msgid "Origin IPs"
+msgstr "Izvorne IP adrese"
+
+#: includes/viewer.php
+#, php-format
+msgid "This tunnel is %s. These connectors were last seen while the tunnel was active."
+msgstr "Ovaj tunel je %s. Ovi konektori su posljednji put viđeni dok je tunel bio aktivan."
+
+#: includes/viewer.php
+msgid "No connectors are running for this tunnel."
+msgstr "Za ovaj tunel trenutno ne radi nijedan konektor."
+
+#: includes/viewer.php
+msgid "Export"
+msgstr "Izvezi"
+
+#: includes/viewer.php
+msgid "Bytes/s"
+msgstr "Bajtova/s"
+
+#: includes/viewer.php
+msgid "HTTP 5xx (%)"
+msgstr "HTTP 5xx (%)"
+
+#: includes/viewer.php
+msgid "Requests/s"
+msgstr "Zahtjeva/s"
+
+#: includes/viewer.php
+msgid "Zone"
+msgstr "Zona"
+
+#: src/OperatorPage.php
+msgid "Review the recorded observations below. Acknowledgments are personal to this session, expire when observations change, and never suppress alerts or change health."
+msgstr "Pregledajte zabilježena zapažanja u nastavku. Potvrde su lične za ovu sesiju, ističu kada se zapažanja promijene i nikada ne potiskuju upozorenja niti mijenjaju zdravstveno stanje."
+
+#: src/OperatorPage.php
+msgid "Investigation"
+msgstr "Ispitivanje"
+
+#: src/OperatorPage.php
+msgid "Object"
+msgstr "Objekt"
+
+#: src/OperatorPage.php
+msgid "Observed (UTC)"
+msgstr "Zabilježeno (UTC)"
+
+#: src/OperatorPage.php
+msgid "State"
+msgstr "Stanje"
+
+#: src/OperatorPage.php
+msgid "Unknown or stale"
+msgstr "Nepoznato ili zastarjelo"
+
+#: src/OperatorPage.php
+msgid "Acknowledged; health unchanged."
+msgstr "Potvrđeno; stanje nepromijenjeno."
+
+#: src/OperatorPage.php
+msgid "Acknowledge"
+msgstr "Potvrdi"
+
+#: src/OperatorPage.php
+msgid "No observations are available."
+msgstr "Nema dostupnih zapažanja."

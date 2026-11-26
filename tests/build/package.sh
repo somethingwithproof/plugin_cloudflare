@@ -54,7 +54,7 @@ for prefix in cloudflare/tests/ cloudflare/features/ cloudflare/vendor/ cloudfla
 done
 
 # The template, the sources and the compiled catalogs Cacti loads.
-for locale in af-ZA am-ET ar-EG ar-MA ar-SA bn-BD de-DE es-419 es-ES fa-IR fil-PH fr-FR fr-MA fr-SN ha-NG he-IL hi-IN id-ID ig-NG it-IT ja-JP ko-KR mg-MG mr-IN ms-MY nl-NL pl-PL pt-BR ru-RU rw-RW so-SO sv-SE sw-KE ta-IN te-IN th-TH tr-TR uk-UA ur-PK vi-VN xh-ZA yo-NG zh-CN zh-TW zu-ZA; do
+for locale in af-ZA am-ET ar-EG ar-MA ar-SA bn-BD bs-BA de-DE es-419 es-ES fa-IR fil-PH fr-FR fr-MA fr-SN ha-NG he-IL hi-IN hr-HR id-ID ig-NG it-IT ja-JP ko-KR mg-MG mr-IN ms-MY nl-NL pl-PL pt-BR ru-RU rw-RW so-SO sr-RS sv-SE sw-KE ta-IN te-IN th-TH tr-TR uk-UA ur-PK vi-VN xh-ZA yo-NG zh-CN zh-TW zu-ZA; do
     for path in "cloudflare/locales/po/${locale}.po" "cloudflare/locales/LC_MESSAGES/${locale}.mo"; do
         if ! grep -qxF -- "${path}" <<<"${listing}"; then
             printf 'FAIL: %s is missing from %s\n' "${path}" "${archive}" >&2

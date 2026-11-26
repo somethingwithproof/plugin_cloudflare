@@ -35,8 +35,20 @@ final class CatalogTest extends TestCase {
 		'es-ES'  => 'nplurals=2; plural=(n != 1);',
 		'fr-FR'  => 'nplurals=2; plural=(n > 1);',
 		'hi-IN'  => 'nplurals=2; plural=(n != 1);',
+		'id-ID'  => 'nplurals=1; plural=0;',
+		'it-IT'  => 'nplurals=2; plural=(n != 1);',
 		'ja-JP'  => 'nplurals=1; plural=0;',
+		'ko-KR'  => 'nplurals=1; plural=0;',
+		'nl-NL'  => 'nplurals=2; plural=(n != 1);',
+		'pl-PL'  => 'nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);',
+		'pt-BR'  => 'nplurals=2; plural=(n > 1);',
+		'ru-RU'  => 'nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);',
+		'sv-SE'  => 'nplurals=2; plural=(n != 1);',
+		'tr-TR'  => 'nplurals=2; plural=(n != 1);',
+		'uk-UA'  => 'nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);',
+		'vi-VN'  => 'nplurals=1; plural=0;',
 		'zh-CN'  => 'nplurals=1; plural=0;',
+		'zh-TW'  => 'nplurals=1; plural=0;',
 	);
 
 	private const ROOT = __DIR__ . '/../../..';

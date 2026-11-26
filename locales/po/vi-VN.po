@@ -1,0 +1,769 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-FileCopyrightText: 2026 Thomas Vincent <thomasvincent@gmail.com>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cloudflare 0.4.0-dev\n"
+"Report-Msgid-Bugs-To: https://github.com/somethingwithproof/plugin_cloudflare/issues\n"
+"PO-Revision-Date: 2026-11-26 00:00+0000\n"
+"Last-Translator: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language-Team: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language: vi-VN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: cloudflare_operator.php
+msgid "Monitoring view"
+msgstr "Chế độ xem giám sát"
+
+#: cloudflare_operator.php
+msgid "Observations could not be read. Ask an administrator to check the plugin log."
+msgstr "Không thể đọc các quan sát. Hãy yêu cầu quản trị viên kiểm tra nhật ký plugin."
+
+#: includes/accounts.php
+msgid "Connection verified"
+msgstr "Đã xác minh kết nối"
+
+#: includes/accounts.php
+msgid "Token is not active; it may be expired or disabled"
+msgstr "Token không hoạt động; token có thể đã hết hạn hoặc bị vô hiệu hóa"
+
+#: includes/accounts.php
+msgid "Token is invalid or expired"
+msgstr "Token không hợp lệ hoặc đã hết hạn"
+
+#: includes/accounts.php
+msgid "Token lacks the Account Cloudflare Tunnel Read permission"
+msgstr "Token thiếu quyền Account Cloudflare Tunnel Read"
+
+#: includes/accounts.php
+msgid "Cloudflare API is unreachable; try again later"
+msgstr "Không thể kết nối đến API Cloudflare; hãy thử lại sau"
+
+#: includes/accounts.php
+msgid "Cloudflare API rate limit reached; try again later"
+msgstr "Đã đạt giới hạn tốc độ API Cloudflare; hãy thử lại sau"
+
+#: includes/accounts.php
+msgid "Cloudflare API request failed unexpectedly"
+msgstr "Yêu cầu API Cloudflare thất bại bất ngờ"
+
+#: includes/accounts.php
+msgid "Token lacks the permissions needed to verify it"
+msgstr "Token thiếu các quyền cần thiết để xác minh"
+
+#: includes/accounts.php
+msgid "Stored token cannot be decrypted"
+msgstr "Không thể giải mã token đã lưu trữ"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing or unusable"
+msgstr "Tệp khóa kho bảo mật token bị thiếu hoặc không thể sử dụng"
+
+#: includes/accounts.php
+msgid "Token file is missing or insecure"
+msgstr "Tệp token bị thiếu hoặc không an toàn"
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable; configure the key file or use a token file"
+msgstr "Bộ nhớ mã hóa không khả dụng; hãy cấu hình tệp khóa hoặc sử dụng tệp token"
+
+#: includes/accounts.php
+msgid "Enter the 32-character hexadecimal Cloudflare account ID"
+msgstr "Nhập ID tài khoản Cloudflare hệ thập lục phân gồm 32 ký tự"
+
+#: includes/accounts.php
+msgid "Enter a name of 1 to 100 characters without control characters"
+msgstr "Nhập tên từ 1 đến 100 ký tự không chứa ký tự điều khiển"
+
+#: includes/accounts.php
+msgid "Choose an encrypted token or a token file"
+msgstr "Chọn token đã mã hóa hoặc tệp token"
+
+#: includes/accounts.php
+msgid "Enter an API token"
+msgstr "Nhập API token"
+
+#: includes/accounts.php
+msgid "Re-enter the token when changing the account ID"
+msgstr "Nhập lại token khi thay đổi ID tài khoản"
+
+#: includes/accounts.php
+msgid "Enter an absolute path of at most 255 characters"
+msgstr "Nhập đường dẫn tuyệt đối dài tối đa 255 ký tự"
+
+#: includes/accounts.php
+msgid "Must be 0 or 1"
+msgstr "Phải là 0 hoặc 1"
+
+#: includes/accounts.php
+msgid "Enter a whole number of seconds from 60 to 86400"
+msgstr "Nhập số giây nguyên từ 60 đến 86400"
+
+#: includes/accounts.php
+msgid "This Cloudflare account ID is already configured"
+msgstr "ID tài khoản Cloudflare này đã được cấu hình"
+
+#: includes/accounts.php
+msgid "Global API Keys are not accepted; use a scoped API token"
+msgstr "Không chấp nhận Global API Key; hãy sử dụng mã thông báo API có phạm vi"
+
+#: includes/accounts.php
+msgid "API token format is invalid"
+msgstr "Định dạng mã thông báo API không hợp lệ"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing, unreadable, insecure or malformed"
+msgstr "Tệp khóa kho mã thông báo bị thiếu, không thể đọc, không an toàn hoặc sai định dạng"
+
+#: includes/accounts.php
+msgid "Stored API token could not be decrypted"
+msgstr "Không thể giải mã mã thông báo API đã lưu"
+
+#: includes/accounts.php
+msgid "Token file is missing, unreadable, not a regular file or too large"
+msgstr "Tệp mã thông báo bị thiếu, không thể đọc, không phải tệp thông thường hoặc quá lớn"
+
+#: includes/accounts.php
+msgid "Token file path is not absolute, is a symlink, or the file is world-readable or world-writable"
+msgstr "Đường dẫn tệp mã thông báo không phải đường dẫn tuyệt đối, là liên kết tượng trưng (symlink), hoặc tệp có quyền đọc/ghi cho mọi người dùng"
+
+#: includes/accounts.php
+msgid "Token file is not inside the Token File Directory"
+msgstr "Tệp mã thông báo không nằm trong Thư mục tệp mã thông báo"
+
+#: includes/accounts.php
+msgid "API token could not be encrypted"
+msgstr "Không thể mã hóa mã thông báo API"
+
+#: includes/accounts.php
+msgid "Credential error"
+msgstr "Lỗi thông tin xác thực"
+
+#: includes/accounts.php includes/settings.php
+msgid "Cloudflare"
+msgstr "Cloudflare"
+
+#: includes/accounts.php
+msgid "Encrypted in the Cacti database"
+msgstr "Được mã hóa trong cơ sở dữ liệu Cacti"
+
+#: includes/accounts.php
+msgid "Token file on this server"
+msgstr "Tệp mã thông báo trên máy chủ này"
+
+#: includes/accounts.php includes/viewer.php
+msgid "Account"
+msgstr "Tài khoản"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Name"
+msgstr "Tên"
+
+#: includes/accounts.php
+msgid "A label for this account in Cacti."
+msgstr "Nhãn cho tài khoản này trong Cacti."
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Account ID"
+msgstr "ID tài khoản"
+
+#: includes/accounts.php
+msgid "The 32-character Cloudflare account ID, shown in the dashboard URL and on the account overview page."
+msgstr "ID tài khoản Cloudflare gồm 32 ký tự, hiển thị trong URL bảng điều khiển và trên trang tổng quan tài khoản."
+
+#: includes/accounts.php
+msgid "API Token"
+msgstr "Mã thông báo API"
+
+#: includes/accounts.php
+msgid "Token Storage"
+msgstr "Lưu trữ mã thông báo"
+
+#: includes/accounts.php
+msgid "Where the scoped API token is kept. Global API Keys are not accepted."
+msgstr "Nơi lưu giữ mã thông báo API có phạm vi. Không chấp nhận Global API Key."
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable because the key file in Settings is missing or unusable; only token files can be used."
+msgstr "Lưu trữ mã hóa không khả dụng vì tệp khóa trong phần Cài đặt bị thiếu hoặc không sử dụng được; chỉ có thể dùng tệp mã thông báo."
+
+#: includes/accounts.php
+msgid "Leave blank to keep the current token"
+msgstr "Để trống để giữ nguyên mã thông báo hiện tại"
+
+#: includes/accounts.php
+msgid "A scoped API token with Account Cloudflare Tunnel Read permission."
+msgstr "Mã thông báo API có phạm vi với quyền Account Cloudflare Tunnel Read."
+
+#: includes/accounts.php
+msgid "Token File"
+msgstr "Tệp mã thông báo"
+
+#: includes/accounts.php
+msgid "Absolute path to a file that contains only the token. It must be readable by the web server and poller users and must not be world-readable."
+msgstr "Đường dẫn tuyệt đối đến tệp chỉ chứa mã thông báo. Tệp phải có quyền đọc cho người dùng máy chủ web và tiến trình thu thập dữ liệu (poller), và không được cho phép mọi người dùng đọc."
+
+#: includes/accounts.php
+msgid "Collection"
+msgstr "Thu thập"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Enabled"
+msgstr "Đã bật"
+
+#: includes/accounts.php
+msgid "Disabled accounts are not polled."
+msgstr "Các tài khoản bị tắt sẽ không được thu thập dữ liệu."
+
+#: includes/accounts.php
+msgid "Collect Tunnels"
+msgstr "Thu thập Tunnel"
+
+#: includes/accounts.php
+msgid "Discover Cloudflare Tunnels and their connectors."
+msgstr "Phát hiện Cloudflare Tunnels và các trình kết nối của chúng."
+
+#: includes/accounts.php
+msgid "Collect Analytics"
+msgstr "Thu thập Phân tích"
+
+#: includes/accounts.php
+msgid "Collect zone traffic analytics. This needs the Account Analytics Read and Analytics Read (Zone) permissions."
+msgstr "Thu thập dữ liệu phân tích lưu lượng vùng (zone). Tính năng này cần quyền Account Analytics Read và Analytics Read (Zone)."
+
+#: includes/accounts.php
+msgid "Create Graphs"
+msgstr "Tạo biểu đồ"
+
+#: includes/accounts.php
+msgid "Create graphs for each tunnel on the account's Cacti device. Turning this on needs the permission to edit Cacti devices."
+msgstr "Tạo biểu đồ cho từng tunnel trên thiết bị Cacti của tài khoản. Bật tùy chọn này cần có quyền chỉnh sửa thiết bị Cacti."
+
+#: includes/accounts.php
+msgid "Discovery Interval"
+msgstr "Khoảng thời gian khám phá"
+
+#: includes/accounts.php
+msgid "Seconds between inventory refreshes, from 60 to 86400."
+msgstr "Số giây giữa các lần làm mới danh mục, từ 60 đến 86400."
+
+#: includes/accounts.php
+msgid "The token and its confirmation do not match"
+msgstr "Mã thông báo và phần xác nhận không khớp"
+
+#: includes/accounts_page.php
+msgid "Delete"
+msgstr "Xóa"
+
+#: includes/accounts_page.php
+msgid "Verify"
+msgstr "Xác minh"
+
+#: includes/accounts_page.php
+msgid "Enable"
+msgstr "Bật"
+
+#: includes/accounts_page.php
+msgid "Disable"
+msgstr "Tắt"
+
+#: includes/accounts_page.php
+msgid "Create Cacti Device"
+msgstr "Tạo thiết bị Cacti"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to change Cloudflare accounts."
+msgstr "Bạn không có quyền thay đổi các tài khoản Cloudflare."
+
+#: includes/accounts_page.php
+msgid "The Cloudflare account no longer exists."
+msgstr "Tài khoản Cloudflare này không còn tồn tại."
+
+#: includes/accounts_page.php
+msgid "The Cloudflare accounts could not be read. See the Cacti log for details."
+msgstr "Không thể đọc các tài khoản Cloudflare. Xem nhật ký Cacti để biết chi tiết."
+
+#: includes/accounts_page.php
+msgid "Create Graphs was left off: turning it on needs the permission to edit Cacti devices."
+msgstr "Tùy chọn Tạo biểu đồ vẫn bị tắt: việc bật tùy chọn này cần có quyền chỉnh sửa thiết bị Cacti."
+
+#: includes/accounts_page.php
+msgid "Cacti device created"
+msgstr "Đã tạo thiết bị Cacti"
+
+#: includes/accounts_page.php
+msgid "A Cacti device already exists for this account"
+msgstr "Đã tồn tại một thiết bị Cacti cho tài khoản này"
+
+#: includes/accounts_page.php
+msgid "The Cloudflare templates are not installed; see the Cacti log"
+msgstr "Chưa cài đặt các mẫu Cloudflare; hãy xem nhật ký Cacti"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices"
+msgstr "Bạn không có quyền tạo thiết bị Cacti"
+
+#: includes/accounts_page.php
+msgid "The Cacti device could not be created; see the Cacti log"
+msgstr "Không thể tạo thiết bị Cacti; hãy xem nhật ký Cacti"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices."
+msgstr "Bạn không có quyền tạo thiết bị Cacti."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Delete the following Cloudflare Account. Its discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgid_plural "Click 'Continue' to Delete the following Cloudflare Accounts. Their discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgstr[0] "Nhấn 'Tiếp tục' để Xóa Tài khoản Cloudflare sau. Danh mục đã phát hiện và trạng thái tác vụ tương ứng sẽ bị xóa; các thiết bị và biểu đồ Cacti vẫn được giữ nguyên."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Verify the following Cloudflare Account against the Cloudflare API."
+msgid_plural "Click 'Continue' to Verify the following Cloudflare Accounts against the Cloudflare API."
+msgstr[0] "Nhấn 'Tiếp tục' để Xác minh Tài khoản Cloudflare sau với API Cloudflare."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Enable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Enable the following Cloudflare Accounts."
+msgstr[0] "Nhấn 'Tiếp tục' để Bật Tài khoản Cloudflare sau."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Disable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Disable the following Cloudflare Accounts."
+msgstr[0] "Nhấn 'Tiếp tục' để Tắt Tài khoản Cloudflare sau."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to create a Cacti device for the following Cloudflare Account. An account that already has one is left as it is."
+msgid_plural "Click 'Continue' to create a Cacti device for each of the following Cloudflare Accounts. An account that already has one is left as it is."
+msgstr[0] "Nhấn 'Tiếp tục' để tạo thiết bị Cacti cho Tài khoản Cloudflare sau. Tài khoản đã có thiết bị sẽ được giữ nguyên."
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Cancel"
+msgstr "Hủy"
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Continue"
+msgstr "Tiếp tục"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Cloudflare Account [edit: %s]"
+msgstr "Tài khoản Cloudflare [chỉnh sửa: %s]"
+
+#: includes/accounts_page.php
+msgid "Cloudflare Account [new]"
+msgstr "Tài khoản Cloudflare [mới]"
+
+#: includes/accounts_page.php includes/viewer.php src/OperatorPage.php
+msgid "Never"
+msgstr "Chưa bao giờ"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Status"
+msgstr "Trạng thái"
+
+#: includes/accounts_page.php
+msgid "Message"
+msgstr "Thông báo"
+
+#: includes/accounts_page.php
+msgid "No"
+msgstr "Không"
+
+#: includes/accounts_page.php
+msgid "Token Stored"
+msgstr "Đã lưu mã thông báo"
+
+#: includes/accounts_page.php
+msgid "Yes"
+msgstr "Có"
+
+#: includes/accounts_page.php
+msgid "Last Checked"
+msgstr "Kiểm tra lần cuối"
+
+#: includes/accounts_page.php
+msgid "Last Verified"
+msgstr "Xác minh lần cuối"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Permission: %s"
+msgstr "Quyền: %s"
+
+#: includes/accounts_page.php
+msgid "Granted"
+msgstr "Đã cấp"
+
+#: includes/accounts_page.php
+msgid "Missing"
+msgstr "Thiếu"
+
+#: includes/accounts_page.php
+msgid "Connection Status"
+msgstr "Trạng thái kết nối"
+
+#: includes/accounts_page.php includes/settings.php includes/viewer.php
+msgid "Cloudflare Accounts"
+msgstr "Tài khoản Cloudflare"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Search"
+msgstr "Tìm kiếm"
+
+#: includes/accounts_page.php
+msgid "Accounts"
+msgstr "Tài khoản"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Default"
+msgstr "Mặc định"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Go"
+msgstr "Thực hiện"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Set/Refresh Filters"
+msgstr "Đặt/Làm mới bộ lọc"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear"
+msgstr "Xóa"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear Filters"
+msgstr "Xóa bộ lọc"
+
+#: includes/accounts_page.php
+msgid "The name of this account in Cacti."
+msgstr "Tên của tài khoản này trong Cacti."
+
+#: includes/accounts_page.php
+msgid "Whether an API token is configured. The edit page shows where it is kept."
+msgstr "Cho biết mã thông báo API đã được cấu hình hay chưa. Trang chỉnh sửa hiển thị nơi lưu giữ mã thông báo."
+
+#: includes/accounts_page.php
+msgid "The result of the last Verify."
+msgstr "Kết quả của lần Xác minh cuối cùng."
+
+#: includes/accounts_page.php
+msgid "ID"
+msgstr "ID"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "No Cloudflare Accounts Found"
+msgstr "Không tìm thấy tài khoản Cloudflare nào"
+
+#: includes/operator.php
+msgid "Inspect tunnels and connector counts. Escalate token changes, account configuration and graph creation to an administrator."
+msgstr "Kiểm tra các tunnel và số lượng trình kết nối. Chuyển các yêu cầu thay đổi mã thông báo, cấu hình tài khoản và tạo biểu đồ lên quản trị viên."
+
+#: includes/settings.php
+msgid "Configuration"
+msgstr "Cấu hình"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Cloudflare Operations"
+msgstr "Vận hành Cloudflare"
+
+#: includes/settings.php
+msgid "Management"
+msgstr "Quản lý"
+
+#: includes/settings.php includes/viewer.php
+msgid "Cloudflare Tunnels"
+msgstr "Cloudflare Tunnels"
+
+#: includes/settings.php
+msgid "(edit)"
+msgstr "(chỉnh sửa)"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Actions"
+msgstr "Thao tác"
+
+#: includes/settings.php includes/viewer.php
+msgid "Overview"
+msgstr "Tổng quan"
+
+#: includes/settings.php includes/viewer.php
+msgid "Tunnels"
+msgstr "Tunnel"
+
+#: includes/settings.php includes/viewer.php
+msgid "Connectors"
+msgstr "Trình kết nối"
+
+#: includes/settings.php
+msgid "Token Vault Key File"
+msgstr "Tệp khóa kho mã thông báo"
+
+#: includes/settings.php
+msgid "Absolute path to the 32-byte key used to encrypt stored API tokens. It must be readable by the web server and poller users and not world-readable. When the file is missing, only token files can be used."
+msgstr "Đường dẫn tuyệt đối đến khóa 32-byte dùng để mã hóa các mã thông báo API đã lưu. Tệp phải có quyền đọc cho người dùng máy chủ web và tiến trình thu thập dữ liệu (poller), và không được cho phép mọi người dùng đọc. Khi thiếu tệp này, chỉ có thể sử dụng tệp mã thông báo."
+
+#: includes/settings.php
+msgid "Token File Directory"
+msgstr "Thư mục tệp mã thông báo"
+
+#: includes/settings.php
+msgid "Absolute path of the directory that every account token file must be in. When empty, a token file may be anywhere the web server and poller users can read."
+msgstr "Đường dẫn tuyệt đối của thư mục chứa mọi tệp mã thông báo của tài khoản. Khi để trống, tệp mã thông báo có thể nằm ở bất kỳ đâu mà người dùng máy chủ web và tiến trình thu thập dữ liệu (poller) có thể đọc."
+
+#: includes/settings.php
+msgid "Interactive Request Timeout"
+msgstr "Thời gian chờ yêu cầu tương tác"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made from the web interface, such as Verify."
+msgstr "Tổng thời gian (tính bằng giây) cho phép đối với một yêu cầu API Cloudflare thực hiện từ giao diện web, chẳng hạn như Xác minh."
+
+#: includes/settings.php
+msgid "Collector Request Timeout"
+msgstr "Thời gian chờ yêu cầu bộ thu thập"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made by the background collector."
+msgstr "Tổng thời gian (tính bằng giây) cho phép đối với một yêu cầu API Cloudflare do bộ thu thập chạy nền thực hiện."
+
+#: includes/settings.php
+msgid "Log Level"
+msgstr "Mức nhật ký"
+
+#: includes/settings.php
+msgid "The amount of detail the plugin writes to the Cacti log."
+msgstr "Mức độ chi tiết mà plugin ghi vào nhật ký Cacti."
+
+#: includes/tunnel_retirement.php
+msgid "The tunnel could not be retired. Check permissions and retry after collection finishes."
+msgstr "Không thể ngừng sử dụng tunnel. Hãy kiểm tra quyền và thử lại sau khi quá trình thu thập hoàn tất."
+
+#: includes/tunnel_retirement.php includes/viewer.php
+msgid "Retire tunnel"
+msgstr "Ngừng sử dụng tunnel"
+
+#: includes/tunnel_retirement.php
+msgid "Retiring removes the graphs and unshared data sources created for this deleted tunnel. Cacti controls RRD cleanup. The inventory record is kept."
+msgstr "Việc ngừng sử dụng sẽ xóa các biểu đồ và nguồn dữ liệu không dùng chung đã tạo cho tunnel đã xóa này. Cacti quản lý việc dọn dẹp RRD. Bản ghi danh mục vẫn được giữ lại."
+
+#: includes/viewer.php
+msgid "The Cloudflare tunnels could not be read. See the Cacti log for details."
+msgstr "Không thể đọc các tunnel Cloudflare. Xem nhật ký Cacti để biết chi tiết."
+
+#: includes/viewer.php
+msgid "Zone Analytics"
+msgstr "Phân tích vùng"
+
+#: includes/viewer.php
+msgid "Disabled"
+msgstr "Đã tắt"
+
+#: includes/viewer.php
+msgid "Not collected"
+msgstr "Chưa thu thập"
+
+#: includes/viewer.php
+msgid "Collection failing"
+msgstr "Thu thập thất bại"
+
+#: includes/viewer.php
+msgid "Not yet collected"
+msgstr "Chưa được thu thập"
+
+#: includes/viewer.php
+msgid "Down"
+msgstr "Ngừng hoạt động"
+
+#: includes/viewer.php
+msgid "Degraded"
+msgstr "Suy giảm"
+
+#: includes/viewer.php
+msgid "Healthy"
+msgstr "Khỏe mạnh"
+
+#: includes/viewer.php
+msgid "Inactive"
+msgstr "Không hoạt động"
+
+#: includes/viewer.php
+msgid "No active tunnels"
+msgstr "Không có tunnel nào đang hoạt động"
+
+#: includes/viewer.php
+msgid "The worst status among active tunnels, or Collection failing while discovery fails."
+msgstr "Trạng thái tệ nhất trong các tunnel đang hoạt động, hoặc Thu thập thất bại khi quá trình phát hiện gặp lỗi."
+
+#: includes/viewer.php
+msgid "Active"
+msgstr "Đang hoạt động"
+
+#: includes/viewer.php
+msgid "Unavailable"
+msgstr "Không khả dụng"
+
+#: includes/viewer.php
+msgid "Deleted"
+msgstr "Đã xóa"
+
+#: includes/viewer.php
+msgid "Last Successful Discovery"
+msgstr "Phát hiện thành công lần cuối"
+
+#: includes/viewer.php
+msgid "Consecutive Failures"
+msgstr "Số lần thất bại liên tiếp"
+
+#: includes/viewer.php
+#, php-format
+msgid "Last error: %s"
+msgstr "Lỗi cuối cùng: %s"
+
+#: includes/viewer.php
+msgid "Tunnel"
+msgstr "Tunnel"
+
+#: includes/viewer.php
+msgid "Cloudflare Status"
+msgstr "Trạng thái Cloudflare"
+
+#: includes/viewer.php
+msgid "The status Cloudflare reported at the last discovery."
+msgstr "Trạng thái mà Cloudflare báo cáo ở lần phát hiện gần nhất."
+
+#: includes/viewer.php
+msgid "Lifecycle"
+msgstr "Vòng đời"
+
+#: includes/viewer.php
+msgid "Whether the last discoveries still found this tunnel."
+msgstr "Cho biết các lần phát hiện gần đây còn tìm thấy tunnel này hay không."
+
+#: includes/viewer.php
+msgid "Type"
+msgstr "Loại"
+
+#: includes/viewer.php
+msgid "Connections"
+msgstr "Kết nối"
+
+#: includes/viewer.php
+msgid "Last Seen"
+msgstr "Thấy lần cuối"
+
+#: includes/viewer.php
+msgid "Any"
+msgstr "Bất kỳ"
+
+#: includes/viewer.php
+msgid "All"
+msgstr "Tất cả"
+
+#: includes/viewer.php
+msgid "No Cloudflare Tunnels Found"
+msgstr "Không tìm thấy Cloudflare Tunnel nào"
+
+#: includes/viewer.php
+msgid "Choose a tunnel on the Tunnels tab."
+msgstr "Chọn một tunnel trên thẻ Tunnel."
+
+#: includes/viewer.php
+msgid "The tunnel no longer exists."
+msgstr "Tunnel này không còn tồn tại."
+
+#: includes/viewer.php
+#, php-format
+msgid "Connectors for %s"
+msgstr "Trình kết nối cho %s"
+
+#: includes/viewer.php
+msgid "Connector ID"
+msgstr "ID trình kết nối"
+
+#: includes/viewer.php
+msgid "Version"
+msgstr "Phiên bản"
+
+#: includes/viewer.php
+msgid "Architecture"
+msgstr "Kiến trúc"
+
+#: includes/viewer.php
+msgid "Running Since"
+msgstr "Hoạt động từ"
+
+#: includes/viewer.php
+msgid "Data Centers"
+msgstr "Trung tâm dữ liệu"
+
+#: includes/viewer.php
+msgid "Origin IPs"
+msgstr "IP gốc"
+
+#: includes/viewer.php
+#, php-format
+msgid "This tunnel is %s. These connectors were last seen while the tunnel was active."
+msgstr "Tunnel này đang ở trạng thái %s. Các trình kết nối này được thấy lần cuối khi tunnel đang hoạt động."
+
+#: includes/viewer.php
+msgid "No connectors are running for this tunnel."
+msgstr "Không có trình kết nối nào đang chạy cho tunnel này."
+
+#: includes/viewer.php
+msgid "Export"
+msgstr "Xuất"
+
+#: includes/viewer.php
+msgid "Bytes/s"
+msgstr "Byte/giây"
+
+#: includes/viewer.php
+msgid "HTTP 5xx (%)"
+msgstr "HTTP 5xx (%)"
+
+#: includes/viewer.php
+msgid "Requests/s"
+msgstr "Yêu cầu/giây"
+
+#: includes/viewer.php
+msgid "Zone"
+msgstr "Vùng"
+
+#: src/OperatorPage.php
+msgid "Review the recorded observations below. Acknowledgments are personal to this session, expire when observations change, and never suppress alerts or change health."
+msgstr "Xem lại các quan sát đã ghi nhận bên dưới. Xác nhận chỉ áp dụng riêng cho phiên này, hết hạn khi các quan sát thay đổi và không bao giờ ẩn cảnh báo hay thay đổi tình trạng."
+
+#: src/OperatorPage.php
+msgid "Investigation"
+msgstr "Điều tra"
+
+#: src/OperatorPage.php
+msgid "Object"
+msgstr "Đối tượng"
+
+#: src/OperatorPage.php
+msgid "Observed (UTC)"
+msgstr "Quan sát lúc (UTC)"
+
+#: src/OperatorPage.php
+msgid "State"
+msgstr "Trạng thái"
+
+#: src/OperatorPage.php
+msgid "Unknown or stale"
+msgstr "Không xác định hoặc cũ"
+
+#: src/OperatorPage.php
+msgid "Acknowledged; health unchanged."
+msgstr "Đã xác nhận; tình trạng không thay đổi."
+
+#: src/OperatorPage.php
+msgid "Acknowledge"
+msgstr "Xác nhận"
+
+#: src/OperatorPage.php
+msgid "No observations are available."
+msgstr "Không có dữ liệu quan sát nào."

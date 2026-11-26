@@ -1,0 +1,769 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-FileCopyrightText: 2026 Thomas Vincent <thomasvincent@gmail.com>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cloudflare 0.4.0-dev\n"
+"Report-Msgid-Bugs-To: https://github.com/somethingwithproof/plugin_cloudflare/issues\n"
+"PO-Revision-Date: 2026-11-26 00:00+0000\n"
+"Last-Translator: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language-Team: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language: zh-TW\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: cloudflare_operator.php
+msgid "Monitoring view"
+msgstr "監控檢視"
+
+#: cloudflare_operator.php
+msgid "Observations could not be read. Ask an administrator to check the plugin log."
+msgstr "無法讀取觀測紀錄。請聯繫管理員檢查外掛程式日誌。"
+
+#: includes/accounts.php
+msgid "Connection verified"
+msgstr "已驗證連線"
+
+#: includes/accounts.php
+msgid "Token is not active; it may be expired or disabled"
+msgstr "權杖未啟用；可能已過期或已停用"
+
+#: includes/accounts.php
+msgid "Token is invalid or expired"
+msgstr "權杖無效或已過期"
+
+#: includes/accounts.php
+msgid "Token lacks the Account Cloudflare Tunnel Read permission"
+msgstr "權杖缺少 Account Cloudflare Tunnel Read 權限"
+
+#: includes/accounts.php
+msgid "Cloudflare API is unreachable; try again later"
+msgstr "無法連線至 Cloudflare API；請稍後再試"
+
+#: includes/accounts.php
+msgid "Cloudflare API rate limit reached; try again later"
+msgstr "已達 Cloudflare API 速率限制；請稍後再試"
+
+#: includes/accounts.php
+msgid "Cloudflare API request failed unexpectedly"
+msgstr "Cloudflare API 請求發生非預期失敗"
+
+#: includes/accounts.php
+msgid "Token lacks the permissions needed to verify it"
+msgstr "權杖缺少驗證所需的權限"
+
+#: includes/accounts.php
+msgid "Stored token cannot be decrypted"
+msgstr "無法解密已儲存的權杖"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing or unusable"
+msgstr "權杖保存庫金鑰檔案遺失或無法使用"
+
+#: includes/accounts.php
+msgid "Token file is missing or insecure"
+msgstr "權杖檔案遺失或不安全"
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable; configure the key file or use a token file"
+msgstr "加密儲存空間無法使用；請設定金鑰檔案或使用權杖檔案"
+
+#: includes/accounts.php
+msgid "Enter the 32-character hexadecimal Cloudflare account ID"
+msgstr "請輸入 32 個字元的十六進位 Cloudflare 帳戶 ID"
+
+#: includes/accounts.php
+msgid "Enter a name of 1 to 100 characters without control characters"
+msgstr "請輸入 1 到 100 個字元的名稱，且不得包含控制字元"
+
+#: includes/accounts.php
+msgid "Choose an encrypted token or a token file"
+msgstr "請選擇加密權杖或權杖檔案"
+
+#: includes/accounts.php
+msgid "Enter an API token"
+msgstr "請輸入 API 權杖"
+
+#: includes/accounts.php
+msgid "Re-enter the token when changing the account ID"
+msgstr "變更帳戶 ID 時請重新輸入權杖"
+
+#: includes/accounts.php
+msgid "Enter an absolute path of at most 255 characters"
+msgstr "請輸入最多 255 個字元的絕對路徑"
+
+#: includes/accounts.php
+msgid "Must be 0 or 1"
+msgstr "必須為 0 或 1"
+
+#: includes/accounts.php
+msgid "Enter a whole number of seconds from 60 to 86400"
+msgstr "輸入 60 至 86400 之間的整數秒數"
+
+#: includes/accounts.php
+msgid "This Cloudflare account ID is already configured"
+msgstr "此 Cloudflare 帳戶 ID 已設定"
+
+#: includes/accounts.php
+msgid "Global API Keys are not accepted; use a scoped API token"
+msgstr "不接受全域 API 金鑰；請使用範圍限定的 API 權杖"
+
+#: includes/accounts.php
+msgid "API token format is invalid"
+msgstr "API 權杖格式無效"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing, unreadable, insecure or malformed"
+msgstr "權杖保存庫金鑰檔案遺失、無法讀取、不安全或格式錯誤"
+
+#: includes/accounts.php
+msgid "Stored API token could not be decrypted"
+msgstr "無法解密已儲存的 API 權杖"
+
+#: includes/accounts.php
+msgid "Token file is missing, unreadable, not a regular file or too large"
+msgstr "權杖檔案遺失、無法讀取、非一般檔案或過大"
+
+#: includes/accounts.php
+msgid "Token file path is not absolute, is a symlink, or the file is world-readable or world-writable"
+msgstr "權杖檔案路徑非絕對路徑、為符號連結，或該檔案可由所有使用者讀取或寫入"
+
+#: includes/accounts.php
+msgid "Token file is not inside the Token File Directory"
+msgstr "權杖檔案不在權杖檔案目錄內"
+
+#: includes/accounts.php
+msgid "API token could not be encrypted"
+msgstr "無法加密 API 權杖"
+
+#: includes/accounts.php
+msgid "Credential error"
+msgstr "憑證錯誤"
+
+#: includes/accounts.php includes/settings.php
+msgid "Cloudflare"
+msgstr "Cloudflare"
+
+#: includes/accounts.php
+msgid "Encrypted in the Cacti database"
+msgstr "在 Cacti 資料庫中加密"
+
+#: includes/accounts.php
+msgid "Token file on this server"
+msgstr "此伺服器上的權杖檔案"
+
+#: includes/accounts.php includes/viewer.php
+msgid "Account"
+msgstr "帳戶"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Name"
+msgstr "名稱"
+
+#: includes/accounts.php
+msgid "A label for this account in Cacti."
+msgstr "此帳戶在 Cacti 中的標籤。"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Account ID"
+msgstr "帳戶 ID"
+
+#: includes/accounts.php
+msgid "The 32-character Cloudflare account ID, shown in the dashboard URL and on the account overview page."
+msgstr "32 個字元的 Cloudflare 帳戶 ID，顯示於儀表板 URL 及帳戶概觀頁面中。"
+
+#: includes/accounts.php
+msgid "API Token"
+msgstr "API 權杖"
+
+#: includes/accounts.php
+msgid "Token Storage"
+msgstr "權杖儲存方式"
+
+#: includes/accounts.php
+msgid "Where the scoped API token is kept. Global API Keys are not accepted."
+msgstr "範圍限定 API 權杖的保存位置。不接受全域 API 金鑰。"
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable because the key file in Settings is missing or unusable; only token files can be used."
+msgstr "由於設定中的金鑰檔案遺失或無法使用，加密儲存無法使用；僅能使用權杖檔案。"
+
+#: includes/accounts.php
+msgid "Leave blank to keep the current token"
+msgstr "留空以保留目前的權杖"
+
+#: includes/accounts.php
+msgid "A scoped API token with Account Cloudflare Tunnel Read permission."
+msgstr "具備 Account Cloudflare Tunnel Read 權限的範圍限定 API 權杖。"
+
+#: includes/accounts.php
+msgid "Token File"
+msgstr "權杖檔案"
+
+#: includes/accounts.php
+msgid "Absolute path to a file that contains only the token. It must be readable by the web server and poller users and must not be world-readable."
+msgstr "僅包含權杖之檔案的絕對路徑。該檔案必須可由網頁伺服器與輪詢器使用者讀取，且不得允許所有使用者讀取。"
+
+#: includes/accounts.php
+msgid "Collection"
+msgstr "收集"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Enabled"
+msgstr "已啟用"
+
+#: includes/accounts.php
+msgid "Disabled accounts are not polled."
+msgstr "已停用的帳戶不會被輪詢。"
+
+#: includes/accounts.php
+msgid "Collect Tunnels"
+msgstr "收集通道"
+
+#: includes/accounts.php
+msgid "Discover Cloudflare Tunnels and their connectors."
+msgstr "探索 Cloudflare 通道及其連接器。"
+
+#: includes/accounts.php
+msgid "Collect Analytics"
+msgstr "收集分析資料"
+
+#: includes/accounts.php
+msgid "Collect zone traffic analytics. This needs the Account Analytics Read and Analytics Read (Zone) permissions."
+msgstr "收集區域流量分析資料。這需要 Account Analytics Read 與 Analytics Read (Zone) 權限。"
+
+#: includes/accounts.php
+msgid "Create Graphs"
+msgstr "建立圖表"
+
+#: includes/accounts.php
+msgid "Create graphs for each tunnel on the account's Cacti device. Turning this on needs the permission to edit Cacti devices."
+msgstr "為此帳戶之 Cacti 裝置上的每個通道建立圖表。開啟此項目需要編輯 Cacti 裝置的權限。"
+
+#: includes/accounts.php
+msgid "Discovery Interval"
+msgstr "探索間隔"
+
+#: includes/accounts.php
+msgid "Seconds between inventory refreshes, from 60 to 86400."
+msgstr "清冊重新整理之間的秒數，範圍為 60 至 86400。"
+
+#: includes/accounts.php
+msgid "The token and its confirmation do not match"
+msgstr "權杖與確認權杖不相符"
+
+#: includes/accounts_page.php
+msgid "Delete"
+msgstr "刪除"
+
+#: includes/accounts_page.php
+msgid "Verify"
+msgstr "驗證"
+
+#: includes/accounts_page.php
+msgid "Enable"
+msgstr "啟用"
+
+#: includes/accounts_page.php
+msgid "Disable"
+msgstr "停用"
+
+#: includes/accounts_page.php
+msgid "Create Cacti Device"
+msgstr "建立 Cacti 裝置"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to change Cloudflare accounts."
+msgstr "您無權變更 Cloudflare 帳戶。"
+
+#: includes/accounts_page.php
+msgid "The Cloudflare account no longer exists."
+msgstr "此 Cloudflare 帳戶已不存在。"
+
+#: includes/accounts_page.php
+msgid "The Cloudflare accounts could not be read. See the Cacti log for details."
+msgstr "無法讀取 Cloudflare 帳戶。請參閱 Cacti 日誌以取得詳細資訊。"
+
+#: includes/accounts_page.php
+msgid "Create Graphs was left off: turning it on needs the permission to edit Cacti devices."
+msgstr "建立圖表維持關閉：開啟它需要編輯 Cacti 裝置的權限。"
+
+#: includes/accounts_page.php
+msgid "Cacti device created"
+msgstr "已建立 Cacti 裝置"
+
+#: includes/accounts_page.php
+msgid "A Cacti device already exists for this account"
+msgstr "此帳戶已存在 Cacti 裝置"
+
+#: includes/accounts_page.php
+msgid "The Cloudflare templates are not installed; see the Cacti log"
+msgstr "尚未安裝 Cloudflare 範本；請參閱 Cacti 日誌"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices"
+msgstr "您無權建立 Cacti 裝置"
+
+#: includes/accounts_page.php
+msgid "The Cacti device could not be created; see the Cacti log"
+msgstr "無法建立 Cacti 裝置；請參閱 Cacti 日誌"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices."
+msgstr "您無權建立 Cacti 裝置。"
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Delete the following Cloudflare Account. Its discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgid_plural "Click 'Continue' to Delete the following Cloudflare Accounts. Their discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgstr[0] "點擊「繼續」以刪除下列 Cloudflare 帳戶。其探索到的清冊及工作狀態將會移除；Cacti 裝置與圖表將會保留。"
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Verify the following Cloudflare Account against the Cloudflare API."
+msgid_plural "Click 'Continue' to Verify the following Cloudflare Accounts against the Cloudflare API."
+msgstr[0] "點擊「繼續」以透過 Cloudflare API 驗證下列 Cloudflare 帳戶。"
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Enable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Enable the following Cloudflare Accounts."
+msgstr[0] "點擊「繼續」以啟用下列 Cloudflare 帳戶。"
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Disable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Disable the following Cloudflare Accounts."
+msgstr[0] "點擊「繼續」以停用下列 Cloudflare 帳戶。"
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to create a Cacti device for the following Cloudflare Account. An account that already has one is left as it is."
+msgid_plural "Click 'Continue' to create a Cacti device for each of the following Cloudflare Accounts. An account that already has one is left as it is."
+msgstr[0] "點擊「繼續」以建立下列 Cloudflare 帳戶的 Cacti 裝置。已有裝置的帳戶將保持不變。"
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Cancel"
+msgstr "取消"
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Continue"
+msgstr "繼續"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Cloudflare Account [edit: %s]"
+msgstr "Cloudflare 帳戶 [編輯: %s]"
+
+#: includes/accounts_page.php
+msgid "Cloudflare Account [new]"
+msgstr "Cloudflare 帳戶 [新增]"
+
+#: includes/accounts_page.php includes/viewer.php src/OperatorPage.php
+msgid "Never"
+msgstr "從未"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Status"
+msgstr "狀態"
+
+#: includes/accounts_page.php
+msgid "Message"
+msgstr "訊息"
+
+#: includes/accounts_page.php
+msgid "No"
+msgstr "否"
+
+#: includes/accounts_page.php
+msgid "Token Stored"
+msgstr "已儲存權杖"
+
+#: includes/accounts_page.php
+msgid "Yes"
+msgstr "是"
+
+#: includes/accounts_page.php
+msgid "Last Checked"
+msgstr "上次檢查時間"
+
+#: includes/accounts_page.php
+msgid "Last Verified"
+msgstr "上次驗證時間"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Permission: %s"
+msgstr "權限：%s"
+
+#: includes/accounts_page.php
+msgid "Granted"
+msgstr "已授與"
+
+#: includes/accounts_page.php
+msgid "Missing"
+msgstr "缺少"
+
+#: includes/accounts_page.php
+msgid "Connection Status"
+msgstr "連線狀態"
+
+#: includes/accounts_page.php includes/settings.php includes/viewer.php
+msgid "Cloudflare Accounts"
+msgstr "Cloudflare 帳戶"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Search"
+msgstr "搜尋"
+
+#: includes/accounts_page.php
+msgid "Accounts"
+msgstr "帳戶"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Default"
+msgstr "預設"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Go"
+msgstr "執行"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Set/Refresh Filters"
+msgstr "設定/重新整理篩選條件"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear"
+msgstr "清除"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear Filters"
+msgstr "清除篩選條件"
+
+#: includes/accounts_page.php
+msgid "The name of this account in Cacti."
+msgstr "此帳戶在 Cacti 中的名稱。"
+
+#: includes/accounts_page.php
+msgid "Whether an API token is configured. The edit page shows where it is kept."
+msgstr "是否已設定 API 權杖。編輯頁面會顯示其保存位置。"
+
+#: includes/accounts_page.php
+msgid "The result of the last Verify."
+msgstr "上次驗證的結果。"
+
+#: includes/accounts_page.php
+msgid "ID"
+msgstr "ID"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "No Cloudflare Accounts Found"
+msgstr "找不到 Cloudflare 帳戶"
+
+#: includes/operator.php
+msgid "Inspect tunnels and connector counts. Escalate token changes, account configuration and graph creation to an administrator."
+msgstr "檢視通道與連接器數量。權杖變更、帳戶設定與圖表建立請上報由管理員處理。"
+
+#: includes/settings.php
+msgid "Configuration"
+msgstr "組態設定"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Cloudflare Operations"
+msgstr "Cloudflare 維運"
+
+#: includes/settings.php
+msgid "Management"
+msgstr "管理"
+
+#: includes/settings.php includes/viewer.php
+msgid "Cloudflare Tunnels"
+msgstr "Cloudflare 通道"
+
+#: includes/settings.php
+msgid "(edit)"
+msgstr "(編輯)"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Actions"
+msgstr "動作"
+
+#: includes/settings.php includes/viewer.php
+msgid "Overview"
+msgstr "概觀"
+
+#: includes/settings.php includes/viewer.php
+msgid "Tunnels"
+msgstr "通道"
+
+#: includes/settings.php includes/viewer.php
+msgid "Connectors"
+msgstr "連接器"
+
+#: includes/settings.php
+msgid "Token Vault Key File"
+msgstr "權杖保存庫金鑰檔案"
+
+#: includes/settings.php
+msgid "Absolute path to the 32-byte key used to encrypt stored API tokens. It must be readable by the web server and poller users and not world-readable. When the file is missing, only token files can be used."
+msgstr "用於加密已儲存 API 權杖之 32 位元組金鑰的絕對路徑。該檔案必須可由網頁伺服器與輪詢器使用者讀取，且不得允許所有使用者讀取。當檔案遺失時，僅能使用權杖檔案。"
+
+#: includes/settings.php
+msgid "Token File Directory"
+msgstr "權杖檔案目錄"
+
+#: includes/settings.php
+msgid "Absolute path of the directory that every account token file must be in. When empty, a token file may be anywhere the web server and poller users can read."
+msgstr "每個帳戶權杖檔案必須所在的目錄絕對路徑。若留空，權杖檔案可位於網頁伺服器與輪詢器使用者可讀取的任何位置。"
+
+#: includes/settings.php
+msgid "Interactive Request Timeout"
+msgstr "互動式要求逾時"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made from the web interface, such as Verify."
+msgstr "從網頁介面發出 Cloudflare API 要求（例如驗證）所允許的總秒數。"
+
+#: includes/settings.php
+msgid "Collector Request Timeout"
+msgstr "收集器要求逾時"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made by the background collector."
+msgstr "背景收集器發出 Cloudflare API 要求所允許的總秒數。"
+
+#: includes/settings.php
+msgid "Log Level"
+msgstr "日誌層級"
+
+#: includes/settings.php
+msgid "The amount of detail the plugin writes to the Cacti log."
+msgstr "外掛程式寫入 Cacti 日誌的詳細程度。"
+
+#: includes/tunnel_retirement.php
+msgid "The tunnel could not be retired. Check permissions and retry after collection finishes."
+msgstr "無法除役此通道。請檢查權限並在收集完成後重試。"
+
+#: includes/tunnel_retirement.php includes/viewer.php
+msgid "Retire tunnel"
+msgstr "除役通道"
+
+#: includes/tunnel_retirement.php
+msgid "Retiring removes the graphs and unshared data sources created for this deleted tunnel. Cacti controls RRD cleanup. The inventory record is kept."
+msgstr "除役會移除為此已刪除通道建立的圖表與未共用資料來源。RRD 清理作業由 Cacti 控制。清冊記錄將會保留。"
+
+#: includes/viewer.php
+msgid "The Cloudflare tunnels could not be read. See the Cacti log for details."
+msgstr "無法讀取 Cloudflare 通道。請參閱 Cacti 日誌以取得詳細資訊。"
+
+#: includes/viewer.php
+msgid "Zone Analytics"
+msgstr "區域分析"
+
+#: includes/viewer.php
+msgid "Disabled"
+msgstr "已停用"
+
+#: includes/viewer.php
+msgid "Not collected"
+msgstr "未收集"
+
+#: includes/viewer.php
+msgid "Collection failing"
+msgstr "收集失敗"
+
+#: includes/viewer.php
+msgid "Not yet collected"
+msgstr "尚未收集"
+
+#: includes/viewer.php
+msgid "Down"
+msgstr "離線"
+
+#: includes/viewer.php
+msgid "Degraded"
+msgstr "降級"
+
+#: includes/viewer.php
+msgid "Healthy"
+msgstr "健康"
+
+#: includes/viewer.php
+msgid "Inactive"
+msgstr "非作用中"
+
+#: includes/viewer.php
+msgid "No active tunnels"
+msgstr "沒有作用中的通道"
+
+#: includes/viewer.php
+msgid "The worst status among active tunnels, or Collection failing while discovery fails."
+msgstr "作用中通道中最差的狀態，或在探索失敗時顯示收集失敗。"
+
+#: includes/viewer.php
+msgid "Active"
+msgstr "作用中"
+
+#: includes/viewer.php
+msgid "Unavailable"
+msgstr "無法使用"
+
+#: includes/viewer.php
+msgid "Deleted"
+msgstr "已刪除"
+
+#: includes/viewer.php
+msgid "Last Successful Discovery"
+msgstr "上次成功探索時間"
+
+#: includes/viewer.php
+msgid "Consecutive Failures"
+msgstr "連續失敗次數"
+
+#: includes/viewer.php
+#, php-format
+msgid "Last error: %s"
+msgstr "上次錯誤：%s"
+
+#: includes/viewer.php
+msgid "Tunnel"
+msgstr "通道"
+
+#: includes/viewer.php
+msgid "Cloudflare Status"
+msgstr "Cloudflare 狀態"
+
+#: includes/viewer.php
+msgid "The status Cloudflare reported at the last discovery."
+msgstr "Cloudflare 在上次探索時回報的狀態。"
+
+#: includes/viewer.php
+msgid "Lifecycle"
+msgstr "生命週期"
+
+#: includes/viewer.php
+msgid "Whether the last discoveries still found this tunnel."
+msgstr "最近幾次探索是否仍能找到此通道。"
+
+#: includes/viewer.php
+msgid "Type"
+msgstr "類型"
+
+#: includes/viewer.php
+msgid "Connections"
+msgstr "連線"
+
+#: includes/viewer.php
+msgid "Last Seen"
+msgstr "最後出現時間"
+
+#: includes/viewer.php
+msgid "Any"
+msgstr "任何"
+
+#: includes/viewer.php
+msgid "All"
+msgstr "全部"
+
+#: includes/viewer.php
+msgid "No Cloudflare Tunnels Found"
+msgstr "找不到 Cloudflare 通道"
+
+#: includes/viewer.php
+msgid "Choose a tunnel on the Tunnels tab."
+msgstr "請在「通道」分頁上選擇一個通道。"
+
+#: includes/viewer.php
+msgid "The tunnel no longer exists."
+msgstr "此通道已不存在。"
+
+#: includes/viewer.php
+#, php-format
+msgid "Connectors for %s"
+msgstr "%s 的連接器"
+
+#: includes/viewer.php
+msgid "Connector ID"
+msgstr "連接器 ID"
+
+#: includes/viewer.php
+msgid "Version"
+msgstr "版本"
+
+#: includes/viewer.php
+msgid "Architecture"
+msgstr "架構"
+
+#: includes/viewer.php
+msgid "Running Since"
+msgstr "執行起始時間"
+
+#: includes/viewer.php
+msgid "Data Centers"
+msgstr "資料中心"
+
+#: includes/viewer.php
+msgid "Origin IPs"
+msgstr "來源 IP"
+
+#: includes/viewer.php
+#, php-format
+msgid "This tunnel is %s. These connectors were last seen while the tunnel was active."
+msgstr "此通道目前為 %s。這些連接器是上次通道處於作用中狀態時偵測到的。"
+
+#: includes/viewer.php
+msgid "No connectors are running for this tunnel."
+msgstr "此通道目前沒有正在執行的連接器。"
+
+#: includes/viewer.php
+msgid "Export"
+msgstr "匯出"
+
+#: includes/viewer.php
+msgid "Bytes/s"
+msgstr "位元組/秒"
+
+#: includes/viewer.php
+msgid "HTTP 5xx (%)"
+msgstr "HTTP 5xx (%)"
+
+#: includes/viewer.php
+msgid "Requests/s"
+msgstr "要求/秒"
+
+#: includes/viewer.php
+msgid "Zone"
+msgstr "區域"
+
+#: src/OperatorPage.php
+msgid "Review the recorded observations below. Acknowledgments are personal to this session, expire when observations change, and never suppress alerts or change health."
+msgstr "請檢視下方已記錄的觀測項目。確認狀態僅適用於目前的工作階段，會在觀測項目變更時失效，且永遠不會抑制警示或變更健康狀態。"
+
+#: src/OperatorPage.php
+msgid "Investigation"
+msgstr "調查"
+
+#: src/OperatorPage.php
+msgid "Object"
+msgstr "物件"
+
+#: src/OperatorPage.php
+msgid "Observed (UTC)"
+msgstr "觀測時間 (UTC)"
+
+#: src/OperatorPage.php
+msgid "State"
+msgstr "狀態"
+
+#: src/OperatorPage.php
+msgid "Unknown or stale"
+msgstr "未知或已過時"
+
+#: src/OperatorPage.php
+msgid "Acknowledged; health unchanged."
+msgstr "已確認；健康狀態不變。"
+
+#: src/OperatorPage.php
+msgid "Acknowledge"
+msgstr "確認"
+
+#: src/OperatorPage.php
+msgid "No observations are available."
+msgstr "沒有可用的觀測資料。"

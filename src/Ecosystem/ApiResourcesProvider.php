@@ -19,6 +19,11 @@
 
 namespace Somethingwithproof\Cloudflare\Ecosystem;
 
+use Somethingwithproof\Cloudflare\Account\Account;
+use Somethingwithproof\Cloudflare\Account\AccountRepository;
+use Somethingwithproof\Cloudflare\Discovery\TunnelRepository;
+use Somethingwithproof\Cloudflare\Storage\Database;
+
 /**
  * Plain-array Google AIP resource descriptor provider for the optional
  * api_register_resources hook.
@@ -30,124 +35,206 @@ final class ApiResourcesProvider {
 	/** @var string Resource group namespace for Cloudflare API resources. */
 	public const NAMESPACE_PREFIX = 'cloudflare';
 
+	/** @var Database|null Optional database handle for live list/get handlers. */
+	private $db;
+
 	/**
-	 * Return Google AIP-style plain-array resource descriptors for accounts,
-	 * tunnels, and zones.
+	 * Initialize ApiResourcesProvider.
 	 *
-	 * @return array<string, array<string, mixed>>
+	 * @param Database|null $db Optional plugin database wrapper
+	 */
+	public function __construct(?Database $db = null) {
+		$this->db = $db;
+	}
+
+	/**
+	 * Return canonical Google AIP plain-array resource descriptors for accounts
+	 * and tunnels.
+	 *
+	 * @return array<int, array<string, mixed>>
 	 */
 	public function descriptors(): array {
 		return array(
-			'cloudflare.accounts' => array(
-				'type'       => 'cloudflare.cacti.net/Account',
-				'collection' => 'cloudflare/accounts',
-				'singular'   => 'cloudflareAccount',
-				'plural'     => 'cloudflareAccounts',
-				'pattern'    => 'cloudflare/accounts/{account}',
-				'methods'    => array('list', 'get'),
-				'read_only'  => true,
-				'auth_realm' => 'cloudflare_accounts.php',
-				'table'      => 'plugin_cloudflare_accounts',
-				'primary_key' => 'id',
-				'fields'     => array(
-					'id',
-					'cf_account_id',
-					'name',
-					'token_source',
-					'enabled',
-					'status',
-					'status_message',
-					'collect_tunnels',
-					'collect_analytics',
-					'create_graphs',
-					'discovery_interval',
-					'last_checked_at',
-					'last_verified_at',
-					'created_at',
-					'updated_at',
+			array(
+				'plugin'        => self::NAMESPACE_PREFIX,
+				'collection'    => 'cloudflareAccounts',
+				'singleton'     => 'cloudflareAccount',
+				'description'   => 'Read-only Cloudflare accounts (secret token fields excluded).',
+				'realm_read'    => 'cloudflare.php',
+				'schema'        => 'schema/cloudflare.schema.yaml',
+				'filter_fields' => array('id', 'cf_account_id', 'name', 'enabled', 'status'),
+				'order_fields'  => array('id', 'name', 'status'),
+				'handlers'      => array(
+					'list' => array($this, 'listAccounts'),
+					'get'  => array($this, 'getAccount'),
 				),
-				'redacted_fields' => array('token_ciphertext', 'token_file'),
 			),
-			'cloudflare.tunnels' => array(
-				'type'        => 'cloudflare.cacti.net/Tunnel',
-				'collection'  => 'cloudflare/tunnels',
-				'singular'    => 'cloudflareTunnel',
-				'plural'      => 'cloudflareTunnels',
-				'pattern'     => 'cloudflare/accounts/{account}/tunnels/{tunnel}',
-				'parent'      => 'cloudflare/accounts/{account}',
-				'methods'     => array('list', 'get'),
-				'read_only'   => true,
-				'auth_realm'  => 'cloudflare.php',
-				'table'       => 'plugin_cloudflare_tunnels',
-				'primary_key' => 'id',
-				'fields'      => array(
-					'id',
-					'account_id',
-					'cf_tunnel_id',
-					'name',
-					'lifecycle',
-					'cf_status',
-					'tun_type',
-					'connector_count',
-					'connection_count',
-					'last_seen_at',
+			array(
+				'plugin'        => self::NAMESPACE_PREFIX,
+				'collection'    => 'cloudflareTunnels',
+				'singleton'     => 'cloudflareTunnel',
+				'description'   => 'Read-only Cloudflare tunnels.',
+				'realm_read'    => 'cloudflare.php',
+				'schema'        => 'schema/cloudflare.schema.yaml',
+				'filter_fields' => array('id', 'account_id', 'cf_tunnel_id', 'name', 'lifecycle', 'cf_status', 'tun_type'),
+				'order_fields'  => array('id', 'name', 'cf_status', 'last_seen_at'),
+				'handlers'      => array(
+					'list' => array($this, 'listTunnels'),
+					'get'  => array($this, 'getTunnel'),
 				),
-				'redacted_fields' => array(),
-			),
-			'cloudflare.zones' => array(
-				'type'        => 'cloudflare.cacti.net/Zone',
-				'collection'  => 'cloudflare/zones',
-				'singular'    => 'cloudflareZone',
-				'plural'      => 'cloudflareZones',
-				'pattern'     => 'cloudflare/accounts/{account}/zones/{zone}',
-				'parent'      => 'cloudflare/accounts/{account}',
-				'methods'     => array('list', 'get'),
-				'read_only'   => true,
-				'auth_realm'  => 'cloudflare.php',
-				'table'       => 'plugin_cloudflare_zones',
-				'primary_key' => 'zone_id',
-				'fields'      => array(
-					'account_id',
-					'zone_id',
-					'name',
-					'listed',
-					'status',
-					'sampled_at',
-					'window_start',
-					'window_end',
-					'requests',
-					'bytes',
-					'errors',
-					'sample_interval',
-				),
-				'redacted_fields' => array(),
 			),
 		);
 	}
 
 	/**
-	 * Register resource descriptors into an array or registrar object.
+	 * List read-only Cloudflare accounts without exposing token ciphertexts or file paths.
 	 *
-	 * @param mixed $resources Existing resource descriptor array or registrar object
-	 * @return mixed Updated resource descriptor array or registrar object
+	 * @param array<string, mixed> $context API handler context
+	 * @return array<int, array<string, mixed>>
 	 */
-	public function register($resources) {
-		$descriptors = $this->descriptors();
+	public function listAccounts(array $context = array()): array {
+		unset($context);
+
+		if ($this->db === null) {
+			return array();
+		}
+
+		$items = array();
+		foreach ((new AccountRepository($this->db))->all() as $account) {
+			$items[] = self::accountRecord($account);
+		}
+
+		return $items;
+	}
+
+	/**
+	 * Retrieve a single read-only Cloudflare account by numeric identifier.
+	 *
+	 * @param string               $id      Account identifier
+	 * @param array<string, mixed> $context API handler context
+	 * @return array<string, mixed>|null
+	 */
+	public function getAccount(string $id, array $context = array()): ?array {
+		unset($context);
+
+		if ($this->db === null || !ctype_digit($id) || (int) $id < 1) {
+			return null;
+		}
+
+		$account = (new AccountRepository($this->db))->find((int) $id);
+
+		return $account === null ? null : self::accountRecord($account);
+	}
+
+	/**
+	 * List read-only Cloudflare tunnels.
+	 *
+	 * @param array<string, mixed> $context API handler context
+	 * @return array<int, array<string, mixed>>
+	 */
+	public function listTunnels(array $context = array()): array {
+		unset($context);
+
+		if ($this->db === null) {
+			return array();
+		}
+
+		$items = array();
+		foreach ((new TunnelRepository($this->db))->forAccount(0, array(), 500, 0) as $row) {
+			$items[] = self::tunnelRecord($row);
+		}
+
+		return $items;
+	}
+
+	/**
+	 * Retrieve a single read-only Cloudflare tunnel by numeric identifier.
+	 *
+	 * @param string               $id      Tunnel identifier
+	 * @param array<string, mixed> $context API handler context
+	 * @return array<string, mixed>|null
+	 */
+	public function getTunnel(string $id, array $context = array()): ?array {
+		unset($context);
+
+		if ($this->db === null || !ctype_digit($id) || (int) $id < 1) {
+			return null;
+		}
+
+		$row = (new TunnelRepository($this->db))->find((int) $id);
+
+		return $row === null ? null : self::tunnelRecord($row);
+	}
+
+	/**
+	 * Append canonical Cloudflare resource descriptors to a plain list.
+	 *
+	 * @param mixed $resources Existing resource list passed by api_register_resources
+	 * @return array<int, array<string, mixed>>
+	 */
+	public function register($resources = array()): array {
+		$list = array();
 
 		if (is_array($resources)) {
-			foreach ($descriptors as $key => $descriptor) {
-				$resources[$key] = $descriptor;
-			}
-
-			return $resources;
-		}
-
-		if (is_object($resources) && method_exists($resources, 'register')) {
-			foreach ($descriptors as $key => $descriptor) {
-				$resources->register($key, $descriptor);
+			foreach ($resources as $existing) {
+				if (is_array($existing)) {
+					$list[] = $existing;
+				}
 			}
 		}
 
-		return $resources;
+		foreach ($this->descriptors() as $descriptor) {
+			$list[] = $descriptor;
+		}
+
+		return $list;
+	}
+
+	/**
+	 * Project an Account model into a secret-free API record.
+	 *
+	 * @param Account $account Account model
+	 * @return array<string, mixed>
+	 */
+	private static function accountRecord(Account $account): array {
+		$id = (string) $account->id();
+
+		return array(
+			'id'                 => $id,
+			'name'               => 'cloudflareAccounts/' . $id,
+			'cf_account_id'      => $account->cfAccountId(),
+			'display_name'       => $account->name(),
+			'enabled'            => $account->isEnabled(),
+			'status'             => $account->status(),
+			'status_message'     => $account->statusMessage(),
+			'collect_tunnels'    => $account->collectsTunnels(),
+			'collect_analytics'  => $account->collectsAnalytics(),
+			'create_graphs'      => $account->createsGraphs(),
+			'discovery_interval' => $account->discoveryInterval(),
+		);
+	}
+
+	/**
+	 * Project a tunnel row into a read-only API record.
+	 *
+	 * @param array<string, mixed> $row Database row from plugin_cloudflare_tunnels
+	 * @return array<string, mixed>
+	 */
+	private static function tunnelRecord(array $row): array {
+		$id = (string) (int) ($row['id'] ?? 0);
+
+		return array(
+			'id'               => $id,
+			'name'             => 'cloudflareTunnels/' . $id,
+			'account_id'       => (int) ($row['account_id'] ?? 0),
+			'cf_tunnel_id'     => (string) ($row['cf_tunnel_id'] ?? ''),
+			'display_name'     => (string) ($row['name'] ?? ''),
+			'lifecycle'        => (string) ($row['lifecycle'] ?? ''),
+			'cf_status'        => (string) ($row['cf_status'] ?? ''),
+			'tun_type'         => (string) ($row['tun_type'] ?? ''),
+			'connector_count'  => $row['connector_count'] === null ? null : (int) $row['connector_count'],
+			'connection_count' => $row['connection_count'] === null ? null : (int) $row['connection_count'],
+			'last_seen_at'     => $row['last_seen_at'] === null ? null : (int) $row['last_seen_at'],
+		);
 	}
 }

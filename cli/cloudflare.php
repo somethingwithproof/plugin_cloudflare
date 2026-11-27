@@ -99,7 +99,7 @@ function cloudflare_cli_main(array $argv, string $usage) : int {
 		}
 
 		foreach ($checks as $check) {
-			print sprintf("[%s] %s: %s -- %s\n", strtoupper($check['status']), $check['id'], $check['summary'], $check['detail']);
+			print sprintf("[%s] %s: %s -- %s\n", strtoupper($check['status']), $check['id'], $check['message'], $check['details']);
 		}
 
 		return $worst;

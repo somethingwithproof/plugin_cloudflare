@@ -76,18 +76,30 @@ final class DoctorChecks {
 	}
 
 	/**
+	 * Run or list Cloudflare diagnostic checks in Doctor's canonical descriptor shape.
+	 *
+	 * @param string $mode Execution mode ('run' or 'list')
 	 * @return array<int, array{
 	 *     id: string,
+	 *     plugin: string,
 	 *     category: string,
+	 *     title: string,
 	 *     status: string,
-	 *     summary: string,
-	 *     detail: string,
-	 *     repair: string,
-	 *     repairable: bool,
-	 *     assessment: string
+	 *     message: string,
+	 *     details: string,
+	 *     remediation: string
 	 * }>
 	 */
-	public function run(): array {
+	public function run(string $mode = 'run'): array {
+		if ($mode === 'list') {
+			return array(
+				self::result('cloudflare.vault_key', 'info', 'Cloudflare token vault key', 'Checks token vault key path, permissions, and key validity.', '', 'Ensure the token vault key is a regular 32-byte key file with mode 0600 or 0640.'),
+				self::result('cloudflare.token_dir', 'info', 'Cloudflare token directory', 'Checks token file directory restriction, readability, and permissions.', '', 'Configure cloudflare_token_dir to an absolute, non-world-writable directory.'),
+				self::result('cloudflare.tunnel_freshness', 'info', 'Cloudflare tunnel freshness', 'Checks whether active Cloudflare tunnels were observed within their freshness window.', '', 'Verify the Cloudflare discovery poller is running and API credentials are valid.'),
+				self::result('cloudflare.api_failure_rate', 'info', 'Cloudflare API collector failure rate', 'Checks recent collector job failure rates across configured Cloudflare accounts.', '', 'Inspect Cacti logs and Cloudflare account token permissions for failing collector jobs.'),
+			);
+		}
+
 		return array(
 			$this->checkVaultKey(),
 			$this->checkTokenDir(),
@@ -97,105 +109,113 @@ final class DoctorChecks {
 	}
 
 	/**
-	 * @param mixed $registry
-	 * @return mixed
+	 * Evaluate Cloudflare checks for doctor_register_checks without echoing $context.
+	 *
+	 * @param mixed $context Doctor hook context array
+	 * @return array<int, array{
+	 *     id: string,
+	 *     plugin: string,
+	 *     category: string,
+	 *     title: string,
+	 *     status: string,
+	 *     message: string,
+	 *     details: string,
+	 *     remediation: string
+	 * }>
 	 */
-	public function register($registry) {
-		$results = $this->run();
+	public function register($context = array()): array {
+		$mode = is_array($context) && isset($context['mode']) && is_string($context['mode']) ? $context['mode'] : 'run';
 
-		if (is_array($registry)) {
-			foreach ($results as $entry) {
-				$registry[] = $entry;
-			}
-
-			return $registry;
-		}
-
-		if (is_object($registry) && method_exists($registry, 'register')) {
-			foreach ($results as $entry) {
-				$registry->register($entry['id'], $entry);
-			}
-		}
-
-		return $registry;
+		return $this->run($mode);
 	}
 
 	/**
-	 * @return array{id: string, category: string, status: string, summary: string, detail: string, repair: string, repairable: bool, assessment: string}
+	 * Evaluate token vault key file existence, type, permissions, and format.
+	 *
+	 * @return array{id: string, plugin: string, category: string, title: string, status: string, message: string, details: string, remediation: string}
 	 */
 	private function checkVaultKey(): array {
-		$path = $this->keyFile;
+		$path  = $this->keyFile;
+		$title = 'Cloudflare token vault key';
 
 		if ($path === '') {
-			return self::result('cloudflare_vault_key', 'warn', 'Token vault key path is empty', 'No key file path is configured; only token files can be used.');
+			return self::result('cloudflare.vault_key', 'warn', $title, 'Token vault key path is empty', 'No key file path is configured; only token files can be used.', 'Configure cloudflare_key_file or store account credentials in token files.');
 		}
 
 		if (!file_exists($path) && !is_link($path)) {
-			return self::result('cloudflare_vault_key', 'ok', 'Token vault key file not present (token-file mode)', 'Key file ' . $path . ' is absent; accounts must use token files.');
+			return self::result('cloudflare.vault_key', 'ok', $title, 'Token vault key file not present (token-file mode)', 'Key file ' . $path . ' is absent; accounts must use token files.', '');
 		}
 
 		if (is_link($path)) {
-			return self::result('cloudflare_vault_key', 'fail', 'Token vault key file must not be a symbolic link', 'Refusing symlink at ' . $path . '; use a regular file with mode 0600 or 0640.');
+			return self::result('cloudflare.vault_key', 'fail', $title, 'Token vault key file must not be a symbolic link', 'Refusing symlink at ' . $path . '; use a regular file with mode 0600 or 0640.', 'Replace the symlink with a regular key file owned by the Cacti user (mode 0600).');
 		}
 
 		$stat = @stat($path);
 		if ($stat === false || ($stat['mode'] & 0170000) !== 0100000) {
-			return self::result('cloudflare_vault_key', 'fail', 'Token vault key path is not a regular file', 'Path ' . $path . ' cannot be stated as a regular file.');
+			return self::result('cloudflare.vault_key', 'fail', $title, 'Token vault key path is not a regular file', 'Path ' . $path . ' cannot be stated as a regular file.', 'Point cloudflare_key_file to a regular 32-byte key file.');
 		}
 
 		$perms = $stat['mode'] & 0777;
 		if (($perms & 0006) !== 0) {
 			return self::result(
-				'cloudflare_vault_key',
+				'cloudflare.vault_key',
 				'fail',
+				$title,
 				sprintf('Token vault key file permissions too permissive (%04o)', $perms),
-				sprintf('Key file %s has world read/write bits (%04o); restrict with chmod 0600 or 0640.', $path, $perms)
+				sprintf('Key file %s has world read/write bits (%04o); restrict with chmod 0600 or 0640.', $path, $perms),
+				'Restrict key file permissions using chmod 0600 or chmod 0640.'
 			);
 		}
 
 		try {
 			TokenVault::fromKeyFile($path);
 		} catch (SecretException $e) {
-			return self::result('cloudflare_vault_key', 'fail', 'Token vault key file rejected by TokenVault', 'Key file ' . $path . ' is unreadable or not a valid 32-byte/64-hex key.');
+			return self::result('cloudflare.vault_key', 'fail', $title, 'Token vault key file rejected by TokenVault', 'Key file ' . $path . ' is unreadable or not a valid 32-byte/64-hex key.', 'Provision a readable 32-byte or 64-hex key file for TokenVault.');
 		}
 
-		return self::result('cloudflare_vault_key', 'ok', 'Token vault key file is valid and properly restricted', sprintf('Key file %s passed mode (%04o) and length checks.', $path, $perms));
+		return self::result('cloudflare.vault_key', 'ok', $title, 'Token vault key file is valid and properly restricted', sprintf('Key file %s passed mode (%04o) and length checks.', $path, $perms), '');
 	}
 
 	/**
-	 * @return array{id: string, category: string, status: string, summary: string, detail: string, repair: string, repairable: bool, assessment: string}
+	 * Evaluate token directory restriction path and permissions.
+	 *
+	 * @return array{id: string, plugin: string, category: string, title: string, status: string, message: string, details: string, remediation: string}
 	 */
 	private function checkTokenDir(): array {
-		$dir = $this->tokenDir;
+		$dir   = $this->tokenDir;
+		$title = 'Cloudflare token directory';
 
 		if ($dir === '') {
-			return self::result('cloudflare_token_dir', 'warn', 'Token file directory restriction is not set', 'Set cloudflare_token_dir to confine account token files to one restricted directory.');
+			return self::result('cloudflare.token_dir', 'warn', $title, 'Token file directory restriction is not set', 'Set cloudflare_token_dir to confine account token files to one restricted directory.', 'Configure cloudflare_token_dir to an absolute directory with restricted permissions.');
 		}
 
 		if ($dir[0] !== '/') {
-			return self::result('cloudflare_token_dir', 'fail', 'Token file directory must be an absolute path', 'Configured path: ' . $dir);
+			return self::result('cloudflare.token_dir', 'fail', $title, 'Token file directory must be an absolute path', 'Configured path: ' . $dir, 'Set cloudflare_token_dir to an absolute path.');
 		}
 
 		if (is_link($dir)) {
-			return self::result('cloudflare_token_dir', 'fail', 'Token file directory must not be a symlink', 'Refusing symlink at ' . $dir);
+			return self::result('cloudflare.token_dir', 'fail', $title, 'Token file directory must not be a symlink', 'Refusing symlink at ' . $dir, 'Point cloudflare_token_dir to a real directory rather than a symlink.');
 		}
 
 		if (!is_dir($dir) || !is_readable($dir)) {
-			return self::result('cloudflare_token_dir', 'fail', 'Token file directory is missing or unreadable', 'Cannot read directory ' . $dir);
+			return self::result('cloudflare.token_dir', 'fail', $title, 'Token file directory is missing or unreadable', 'Cannot read directory ' . $dir, 'Create the token directory and grant read access to the Cacti poller user.');
 		}
 
 		$stat = @stat($dir);
 		if ($stat !== false && (($stat['mode'] & 0002) !== 0)) {
-			return self::result('cloudflare_token_dir', 'fail', 'Token file directory is world-writable', sprintf('Directory %s has mode %04o; remove world-writable permission.', $dir, $stat['mode'] & 0777));
+			return self::result('cloudflare.token_dir', 'fail', $title, 'Token file directory is world-writable', sprintf('Directory %s has mode %04o; remove world-writable permission.', $dir, $stat['mode'] & 0777), 'Remove world-writable permission from the token directory.');
 		}
 
-		return self::result('cloudflare_token_dir', 'ok', 'Token file directory is present and restricted', 'Token file directory ' . $dir . ' is readable and not world-writable.');
+		return self::result('cloudflare.token_dir', 'ok', $title, 'Token file directory is present and restricted', 'Token file directory ' . $dir . ' is readable and not world-writable.', '');
 	}
 
 	/**
-	 * @return array{id: string, category: string, status: string, summary: string, detail: string, repair: string, repairable: bool, assessment: string}
+	 * Evaluate active Cloudflare tunnel observation freshness.
+	 *
+	 * @return array{id: string, plugin: string, category: string, title: string, status: string, message: string, details: string, remediation: string}
 	 */
 	private function checkTunnelFreshness(): array {
+		$title     = 'Cloudflare tunnel freshness';
 		$intervals = array();
 		foreach ($this->accounts->all() as $account) {
 			$intervals[$account->id()] = $account->discoveryInterval();
@@ -203,7 +223,7 @@ final class DoctorChecks {
 
 		$rows = $this->db->fetchAll("SELECT account_id, name, last_seen_at FROM plugin_cloudflare_tunnels WHERE lifecycle = 'active' ORDER BY name");
 		if ($rows === array()) {
-			return self::result('cloudflare_tunnel_freshness', 'unknown', 'No active Cloudflare tunnels discovered', 'No active tunnel rows exist in plugin_cloudflare_tunnels.');
+			return self::result('cloudflare.tunnel_freshness', 'info', $title, 'No active Cloudflare tunnels discovered', 'No active tunnel rows exist in plugin_cloudflare_tunnels.', '');
 		}
 
 		$now   = $this->clock->now();
@@ -220,27 +240,32 @@ final class DoctorChecks {
 		}
 
 		if ($stale === array()) {
-			return self::result('cloudflare_tunnel_freshness', 'ok', 'All active Cloudflare tunnels are fresh', sprintf('All %d active tunnel(s) were observed within their freshness window.', count($rows)));
+			return self::result('cloudflare.tunnel_freshness', 'ok', $title, 'All active Cloudflare tunnels are fresh', sprintf('All %d active tunnel(s) were observed within their freshness window.', count($rows)), '');
 		}
 
 		$sample = implode(', ', array_slice($stale, 0, 10)) . (count($stale) > 10 ? ', ...' : '');
 
 		return self::result(
-			'cloudflare_tunnel_freshness',
+			'cloudflare.tunnel_freshness',
 			'warn',
+			$title,
 			sprintf('%d of %d active Cloudflare tunnel(s) are stale', count($stale), count($rows)),
-			'Stale tunnels: ' . $sample
+			'Stale tunnels: ' . $sample,
+			'Verify the Cloudflare discovery poller is running and able to reach the Cloudflare API.'
 		);
 	}
 
 	/**
-	 * @return array{id: string, category: string, status: string, summary: string, detail: string, repair: string, repairable: bool, assessment: string}
+	 * Evaluate Cloudflare collector job failure rate.
+	 *
+	 * @return array{id: string, plugin: string, category: string, title: string, status: string, message: string, details: string, remediation: string}
 	 */
 	private function checkApiFailureRate(): array {
-		$rows = $this->db->fetchAll('SELECT job_type, last_status, last_error_class, consecutive_failures FROM plugin_cloudflare_jobs');
+		$title = 'Cloudflare API collector failure rate';
+		$rows  = $this->db->fetchAll('SELECT job_type, last_status, last_error_class, consecutive_failures FROM plugin_cloudflare_jobs');
 
 		if ($rows === array()) {
-			return self::result('cloudflare_api_failure_rate', 'unknown', 'No Cloudflare collector jobs recorded yet', 'Run the collector poller to populate plugin_cloudflare_jobs.');
+			return self::result('cloudflare.api_failure_rate', 'info', $title, 'No Cloudflare collector jobs recorded yet', 'Run the collector poller to populate plugin_cloudflare_jobs.', '');
 		}
 
 		$total   = count($rows);
@@ -264,7 +289,7 @@ final class DoctorChecks {
 		$rate = round(100.0 * $failing / $total, 1);
 
 		if ($failing === 0) {
-			return self::result('cloudflare_api_failure_rate', 'ok', 'Cloudflare API collector jobs are healthy', sprintf('0 of %d collector job(s) failing.', $total));
+			return self::result('cloudflare.api_failure_rate', 'ok', $title, 'Cloudflare API collector jobs are healthy', sprintf('0 of %d collector job(s) failing.', $total), '');
 		}
 
 		$status = ($rate >= 50.0 || $maxFail >= 5) ? 'fail' : 'warn';
@@ -273,22 +298,61 @@ final class DoctorChecks {
 			$detail .= '; error classes: ' . implode(', ', array_keys($classes));
 		}
 
-		return self::result('cloudflare_api_failure_rate', $status, sprintf('Cloudflare API job failure rate %.1f%%', $rate), $detail);
+		return self::result(
+			'cloudflare.api_failure_rate',
+			$status,
+			$title,
+			sprintf('Cloudflare API job failure rate %.1f%%', $rate),
+			$detail,
+			'Inspect Cacti logs for Cloudflare collector failures and verify API token permissions and rate limits.'
+		);
 	}
 
 	/**
-	 * @return array{id: string, category: string, status: string, summary: string, detail: string, repair: string, repairable: bool, assessment: string}
+	 * Normalize a status token to Doctor's strict ok|warn|fail|info enum.
+	 *
+	 * @param string $status Raw status token
+	 * @return string
 	 */
-	private static function result(string $id, string $status, string $summary, string $detail): array {
+	private static function normalizeStatus(string $status): string {
+		$lower = strtolower(trim($status));
+
+		if ($lower === 'ok' || $lower === 'pass') {
+			return 'ok';
+		}
+
+		if ($lower === 'warn' || $lower === 'warning') {
+			return 'warn';
+		}
+
+		if ($lower === 'fail' || $lower === 'critical' || $lower === 'error') {
+			return 'fail';
+		}
+
+		return 'info';
+	}
+
+	/**
+	 * Format a single canonical Doctor check descriptor entry.
+	 *
+	 * @param string $id          Dot-prefixed check identifier
+	 * @param string $status      Check status normalized to ok|warn|fail|info
+	 * @param string $title       Human-readable check title
+	 * @param string $message     Non-empty summary message
+	 * @param string $details     Detailed diagnostic text
+	 * @param string $remediation Actionable remediation guidance
+	 * @return array{id: string, plugin: string, category: string, title: string, status: string, message: string, details: string, remediation: string}
+	 */
+	private static function result(string $id, string $status, string $title, string $message, string $details, string $remediation): array {
 		return array(
-			'id'         => $id,
-			'category'   => self::CATEGORY,
-			'status'     => $status,
-			'summary'    => $summary,
-			'detail'     => $detail,
-			'repair'     => '',
-			'repairable' => false,
-			'assessment' => 'assessed',
+			'id'          => $id,
+			'plugin'      => self::CATEGORY,
+			'category'    => self::CATEGORY,
+			'title'       => $title,
+			'status'      => self::normalizeStatus($status),
+			'message'     => $message,
+			'details'     => $details,
+			'remediation' => $remediation,
 		);
 	}
 }

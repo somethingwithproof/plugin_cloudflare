@@ -173,20 +173,20 @@ function cloudflare_abilities_register($registrar) : void {
  * doctor_register_checks hook: report vault key permissions, token dir hygiene,
  * tunnel freshness, and API collector failure rate.
  *
- * @param  mixed $checks
- * @return mixed
+ * @param  mixed                            $context
+ * @return array<int, array<string, mixed>>
  */
-function cloudflare_doctor_register_checks($checks = array()) {
+function cloudflare_doctor_register_checks($context = array()) : array {
 	if (!cloudflare_plugin_enabled()) {
-		return $checks;
+		return array();
 	}
 
 	try {
-		return cloudflare_doctor_checks()->register($checks);
+		return cloudflare_doctor_checks()->register($context);
 	} catch (Throwable $e) {
 		cacti_log('CLOUDFLARE: doctor checks failed (' . get_class($e) . ')', false, 'CLOUDFLARE');
 
-		return $checks;
+		return array();
 	}
 }
 
@@ -197,9 +197,9 @@ function cloudflare_doctor_register_checks($checks = array()) {
  * @param  mixed $providers
  * @return mixed
  */
-function cloudflare_casc_register_providers($providers = array()) {
+function cloudflare_casc_register_providers($providers = null) {
 	if (!cloudflare_plugin_enabled()) {
-		return $providers;
+		return is_array($providers) ? $providers : array();
 	}
 
 	try {
@@ -207,7 +207,7 @@ function cloudflare_casc_register_providers($providers = array()) {
 	} catch (Throwable $e) {
 		cacti_log('CLOUDFLARE: CasC provider registration failed (' . get_class($e) . ')', false, 'CLOUDFLARE');
 
-		return $providers;
+		return is_array($providers) ? $providers : array();
 	}
 }
 
@@ -215,20 +215,20 @@ function cloudflare_casc_register_providers($providers = array()) {
  * doctor_register_debug_info hook: contribute a redacted plain-array diagnostic
  * snapshot with zero cross-plugin imports and no exposed secrets.
  *
- * @param  mixed $sections
- * @return mixed
+ * @param  mixed                            $context
+ * @return array<int, array<string, mixed>>
  */
-function cloudflare_doctor_register_debug_info($sections = array()) {
+function cloudflare_doctor_register_debug_info($context = array()) : array {
 	if (!cloudflare_plugin_enabled()) {
-		return $sections;
+		return array();
 	}
 
 	try {
-		return cloudflare_doctor_debug_info()->register($sections);
+		return cloudflare_doctor_debug_info()->register($context);
 	} catch (Throwable $e) {
 		cacti_log('CLOUDFLARE: doctor debug info failed (' . get_class($e) . ')', false, 'CLOUDFLARE');
 
-		return $sections;
+		return array();
 	}
 }
 
@@ -236,20 +236,20 @@ function cloudflare_doctor_register_debug_info($sections = array()) {
  * api_register_resources hook: publish read-only Google AIP plain-array
  * resource descriptors with zero cross-plugin imports.
  *
- * @param  mixed $resources
- * @return mixed
+ * @param  mixed                            $resources
+ * @return array<int, array<string, mixed>>
  */
-function cloudflare_api_register_resources($resources = array()) {
+function cloudflare_api_register_resources($resources = array()) : array {
 	if (!cloudflare_plugin_enabled()) {
-		return $resources;
+		return is_array($resources) ? array_values(array_filter($resources, 'is_array')) : array();
 	}
 
 	try {
-		return (new ApiResourcesProvider())->register($resources);
+		return (new ApiResourcesProvider(cloudflare_db()))->register($resources);
 	} catch (Throwable $e) {
 		cacti_log('CLOUDFLARE: API resource registration failed (' . get_class($e) . ')', false, 'CLOUDFLARE');
 
-		return $resources;
+		return is_array($resources) ? array_values(array_filter($resources, 'is_array')) : array();
 	}
 }
 

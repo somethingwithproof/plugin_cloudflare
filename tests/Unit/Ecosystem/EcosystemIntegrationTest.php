@@ -217,17 +217,30 @@ final class EcosystemIntegrationTest extends TestCase {
 		$db->execute("INSERT INTO plugin_cloudflare_jobs (account_id, job_type, last_status, last_error_class, consecutive_failures) VALUES (1, 'discovery', 'failed', 'rate_limited', 5)");
 
 		$doctor = new DoctorChecks($db, new AccountRepository($db), new FrozenClock(1700005000), $keyFile, $this->tmpDir);
-		$checks = $doctor->register(array());
+		$checks = $doctor->register(array('mode' => 'run', 'plugin' => 'cloudflare'));
 		$byId   = array();
 		foreach ($checks as $entry) {
+			$this->assertSame('cloudflare', $entry['plugin']);
+			$this->assertStringStartsWith('cloudflare.', $entry['id']);
+			$this->assertContains($entry['status'], array('ok', 'warn', 'fail', 'info'));
+			$this->assertNotSame('', $entry['message']);
+			$this->assertArrayHasKey('details', $entry);
+			$this->assertArrayHasKey('remediation', $entry);
 			$byId[$entry['id']] = $entry;
 		}
 
-		$this->assertSame(array('cloudflare_vault_key', 'cloudflare_token_dir', 'cloudflare_tunnel_freshness', 'cloudflare_api_failure_rate'), array_keys($byId));
-		$this->assertSame('fail', $byId['cloudflare_vault_key']['status']);
-		$this->assertSame('ok', $byId['cloudflare_token_dir']['status']);
-		$this->assertSame('warn', $byId['cloudflare_tunnel_freshness']['status']);
-		$this->assertSame('fail', $byId['cloudflare_api_failure_rate']['status']);
+		$this->assertSame(array('cloudflare.vault_key', 'cloudflare.token_dir', 'cloudflare.tunnel_freshness', 'cloudflare.api_failure_rate'), array_keys($byId));
+		$this->assertSame('fail', $byId['cloudflare.vault_key']['status']);
+		$this->assertSame('ok', $byId['cloudflare.token_dir']['status']);
+		$this->assertSame('warn', $byId['cloudflare.tunnel_freshness']['status']);
+		$this->assertSame('fail', $byId['cloudflare.api_failure_rate']['status']);
+
+		$listed = $doctor->register(array('mode' => 'list', 'plugin' => 'cloudflare'));
+		$this->assertCount(4, $listed);
+		foreach ($listed as $entry) {
+			$this->assertSame('info', $entry['status']);
+			$this->assertStringStartsWith('cloudflare.', $entry['id']);
+		}
 
 		chmod($keyFile, 0600);
 		$cleanChecks = $doctor->run();
@@ -246,12 +259,64 @@ final class EcosystemIntegrationTest extends TestCase {
 			array(str_repeat('d', 32), 'Core', 'vault', $secret)
 		);
 
-		$casc      = new CascProvider(new ConfigService($db, new AccountRepository($db), new TunnelRepository($db), new MetricMappingRepository($db), new FrozenClock(1700000000)));
+		$casc = new CascProvider(new ConfigService($db, new AccountRepository($db), new TunnelRepository($db), new MetricMappingRepository($db), new FrozenClock(1700000000)));
+
+		// 1-argument ProviderRegistrar support
+		$cascObj = new class () {
+			/** @var array<int, array<string, mixed>> */
+			public $items = array();
+
+			/** @param array<string, mixed> $desc */
+			public function register(array $desc): void {
+				$this->items[] = $desc;
+			}
+		};
+		$descriptor = $casc->register($cascObj);
+		$this->assertCount(1, $cascObj->items);
+		$this->assertSame('cloudflare', $descriptor['slug']);
+		$this->assertSame('1.0', $descriptor['schemaVersion']);
+
 		$providers = $casc->register(array());
 		$this->assertArrayHasKey('cloudflare', $providers);
-		$yaml = ($providers['cloudflare']['export'])(ConfigCodec::FORMAT_YAML);
-		$this->assertStringNotContainsString($secret, $yaml);
-		$this->assertTrue(($providers['cloudflare']['validate'])($yaml, ConfigCodec::FORMAT_YAML)['valid']);
+		$this->assertSame('cloudflare', $casc->register()['slug']);
+
+		$exported = ($descriptor['export'])(array());
+		$this->assertSame('1.0', $exported['schemaVersion']);
+		$this->assertStringNotContainsString($secret, (string) json_encode($exported));
+		$this->assertSame(array(), ($descriptor['validate'])($exported));
+		$this->assertSame(array(), ($descriptor['plan'])($exported, array()));
+
+		// Mutated desired account produces plan item and confirmed apply succeeds
+		$changed                            = $exported['config'];
+		$changed['accounts'][0]['name']     = 'Core Updated';
+		$plan                               = ($descriptor['plan'])($changed, array());
+		$this->assertCount(1, $plan);
+		$this->assertSame('update', $plan[0]['operation']);
+		$this->assertSame(str_repeat('d', 32), $plan[0]['key']);
+		$this->assertNotSame('', $plan[0]['plan_hash']);
+
+		$applied = ($descriptor['apply'])($changed, $plan[0]['plan_hash'], array());
+		$this->assertTrue($applied['ok']);
+		$this->assertTrue($applied['applied']);
+		$this->assertSame(array(), $applied['errors']);
+
+		// Invalid payloads and raw secrets return non-empty list<string> and fail closed
+		$invalidErrors = ($descriptor['validate'])(array('schema_version' => 999));
+		$this->assertNotSame(array(), $invalidErrors);
+		$secretErrors = ($descriptor['validate'])(array('schema_version' => 1, 'token_ciphertext' => $secret));
+		$this->assertNotSame(array(), $secretErrors);
+
+		$invalidPlan = ($descriptor['plan'])(array('schema_version' => 999), array());
+		$this->assertSame('error', $invalidPlan[0]['operation']);
+		$secretPlan = ($descriptor['plan'])(array('schema_version' => 1, 'token_ciphertext' => $secret), array());
+		$this->assertSame('error', $secretPlan[0]['operation']);
+
+		$invalidApply = ($descriptor['apply'])(array('schema_version' => 999), 'bad', array());
+		$this->assertFalse($invalidApply['ok']);
+		$this->assertFalse($invalidApply['applied']);
+		$secretApply = ($descriptor['apply'])(array('schema_version' => 1, 'token_ciphertext' => $secret), 'bad', array());
+		$this->assertFalse($secretApply['ok']);
+		$this->assertFalse($secretApply['applied']);
 
 		$replication = new RemoteReplication($db);
 		$sink        = new class () {
@@ -284,22 +349,6 @@ final class EcosystemIntegrationTest extends TestCase {
 		$this->assertArrayHasKey('plugin_cloudflare_accounts', $tables);
 		$this->assertNull($tables['plugin_cloudflare_accounts']['rows'][0]['token_ciphertext']);
 		$this->assertStringNotContainsString($secret, (string) json_encode($tables));
-
-		// Object registrar coverage on CascProvider and invalid YAML error branches
-		$cascObj = new class () {
-			/** @var array<string, array<string, mixed>> */
-			public $items = array();
-
-			/** @param array<string, mixed> $desc */
-			public function register(string $slug, array $desc): void {
-				$this->items[$slug] = $desc;
-			}
-		};
-		$casc->register($cascObj);
-		$this->assertArrayHasKey('cloudflare', $cascObj->items);
-		$this->assertFalse(($providers['cloudflare']['validate'])("schema_version: 999\n", ConfigCodec::FORMAT_YAML)['valid']);
-		$this->assertFalse(($providers['cloudflare']['plan'])("schema_version: 999\n", ConfigCodec::FORMAT_YAML)['valid']);
-		$this->assertFalse(($providers['cloudflare']['apply'])("schema_version: 999\n", 'bad', ConfigCodec::FORMAT_YAML)['applied']);
 	}
 
 	public function testEcosystemGlueHooksAndViewRealmResolution(): void {
@@ -375,29 +424,43 @@ final class EcosystemIntegrationTest extends TestCase {
 		$this->assertTrue(($registrar->abilities['cloudflare-list-tunnels']['permission'])(10));
 		$this->assertFalse(($registrar->abilities['cloudflare-list-tunnels']['permission'])(12));
 
-		$checks = cloudflare_doctor_register_checks(array());
+		$checks = cloudflare_doctor_register_checks(array('mode' => 'run', 'plugin' => 'cloudflare'));
 		$this->assertCount(4, $checks);
+		$this->assertSame('cloudflare.vault_key', $checks[0]['id']);
 
-		$debugSections = cloudflare_doctor_register_debug_info(array());
-		$this->assertArrayHasKey('cloudflare', $debugSections);
-		$this->assertArrayHasKey('plugin_version', $debugSections['cloudflare']['fields']);
+		$debugSections = cloudflare_doctor_register_debug_info(array('plugin' => 'cloudflare'));
+		$this->assertCount(1, $debugSections);
+		$this->assertSame('cloudflare.overview', $debugSections[0]['id']);
+		$this->assertSame('cloudflare', $debugSections[0]['plugin']);
+		$this->assertArrayHasKey('plugin_version', $debugSections[0]['fields']);
 
-		$providers = cloudflare_casc_register_providers(array());
-		$this->assertArrayHasKey('cloudflare', $providers);
+		$cascRegistrar = new class () {
+			/** @var array<int, array<string, mixed>> */
+			public $registered = array();
+
+			/** @param array<string, mixed> $desc */
+			public function register(array $desc): void {
+				$this->registered[] = $desc;
+			}
+		};
+		$provider = cloudflare_casc_register_providers($cascRegistrar);
+		$this->assertCount(1, $cascRegistrar->registered);
+		$this->assertSame('cloudflare', $provider['slug']);
+		$this->assertSame('1.0', $provider['schemaVersion']);
 
 		$resources = cloudflare_api_register_resources(array());
-		$this->assertSame(array('cloudflare.accounts', 'cloudflare.tunnels', 'cloudflare.zones'), array_keys($resources));
+		$this->assertSame(array('cloudflareAccounts', 'cloudflareTunnels'), array_column($resources, 'collection'));
 
 		$rep = cloudflare_replicate_out(array('remote_poller_id' => 2, 'rcnn_id' => new stdClass(), 'class' => 'all'));
 		$this->assertSame(2, $rep['remote_poller_id']);
 
-		// Disabled plugin returns early on every hook
+		// Disabled plugin returns early without echoing Doctor context
 		cloudflare_glue_reset();
 		$GLOBALS['cloudflare_glue']['enabled'] = false;
-		$this->assertSame(array('keep'), cloudflare_doctor_register_checks(array('keep')));
-		$this->assertSame(array('keep'), cloudflare_doctor_register_debug_info(array('keep')));
+		$this->assertSame(array(), cloudflare_doctor_register_checks(array('mode' => 'run', 'plugin' => 'cloudflare')));
+		$this->assertSame(array(), cloudflare_doctor_register_debug_info(array('plugin' => 'cloudflare')));
 		$this->assertSame(array('keep'), cloudflare_casc_register_providers(array('keep')));
-		$this->assertSame(array('keep'), cloudflare_api_register_resources(array('keep')));
+		$this->assertSame(array(array('collection' => 'keep')), cloudflare_api_register_resources(array(array('collection' => 'keep'))));
 		$this->assertSame('raw', cloudflare_replicate_out('raw'));
 	}
 
@@ -433,11 +496,13 @@ final class EcosystemIntegrationTest extends TestCase {
 		$db->execute("INSERT INTO plugin_cloudflare_jobs (account_id, job_type, last_status, consecutive_failures) VALUES (1, 'discovery', 'ok', 0), (1, 'analytics', 'failed', 2)");
 
 		$info     = new DoctorDebugInfo($db, new AccountRepository($db), $keyFile, $this->tmpDir);
-		$sections = $info->register(array());
+		$sections = $info->register(array('plugin' => 'cloudflare'));
 		$encoded  = (string) json_encode($sections);
 
-		$this->assertArrayHasKey('cloudflare', $sections);
-		$fields = $sections['cloudflare']['fields'];
+		$this->assertCount(1, $sections);
+		$this->assertSame('cloudflare.overview', $sections[0]['id']);
+		$this->assertSame('cloudflare', $sections[0]['plugin']);
+		$fields = $sections[0]['fields'];
 		$this->assertSame('5', $fields['schema_version']['value']);
 		$this->assertSame('1 / 2', $fields['accounts_summary']['value']);
 		$this->assertSame('vault=1, file=1', $fields['token_sources']['value']);
@@ -451,19 +516,6 @@ final class EcosystemIntegrationTest extends TestCase {
 		$this->assertStringNotContainsString($secret, $encoded);
 		$this->assertStringNotContainsString($keyFile, $encoded);
 		$this->assertStringNotContainsString($tokenFile, $encoded);
-
-		// Object registrar + absent/unconfigured/symlink key states
-		$obj = new class () {
-			/** @var array<string, array<string, mixed>> */
-			public $items = array();
-
-			/** @param array<string, mixed> $section */
-			public function register(string $slug, array $section): void {
-				$this->items[$slug] = $section;
-			}
-		};
-		$info->register($obj);
-		$this->assertArrayHasKey('cloudflare', $obj->items);
 
 		$unconfigured = new DoctorDebugInfo($db, new AccountRepository($db), '', '');
 		$this->assertSame('unconfigured', $unconfigured->section()['fields']['vault_key_status']['value']);
@@ -487,31 +539,66 @@ final class EcosystemIntegrationTest extends TestCase {
 	}
 
 	public function testApiResourcesAreReadOnlyRedactedAndSchemaSeparatesConfigFromState(): void {
-		$provider  = new ApiResourcesProvider();
-		$resources = $provider->register(array());
-
-		$this->assertSame(array('cloudflare.accounts', 'cloudflare.tunnels', 'cloudflare.zones'), array_keys($resources));
-
-		foreach ($resources as $key => $descriptor) {
-			$this->assertTrue($descriptor['read_only'], $key);
-			$this->assertSame(array('list', 'get'), $descriptor['methods'], $key);
-			$this->assertNotContains('token_ciphertext', $descriptor['fields'], $key);
-			$this->assertNotContains('token_file', $descriptor['fields'], $key);
+		if (!extension_loaded('pdo_sqlite')) {
+			$this->markTestSkipped('pdo_sqlite is not loaded');
 		}
 
-		$this->assertContains('token_ciphertext', $resources['cloudflare.accounts']['redacted_fields']);
+		$db     = self::sqliteDb();
+		$secret = 'v1:' . base64_encode(str_repeat('q', 40));
+		$db->execute(
+			'INSERT INTO plugin_cloudflare_accounts (cf_account_id, name, token_source, token_ciphertext, enabled, discovery_interval) VALUES (?, ?, ?, ?, 1, 300)',
+			array(str_repeat('a', 32), 'Edge', 'vault', $secret)
+		);
+		$db->execute(
+			'INSERT INTO plugin_cloudflare_tunnels (account_id, cf_tunnel_id, name, lifecycle, cf_status, connector_count, connection_count, last_seen_at) VALUES (1, ?, ?, ?, ?, 2, 4, 1700000900)',
+			array('0b0e3f43-63a8-4f0c-bb4c-0d6b2b5a2f10', 'edge-nyc', 'active', 'healthy')
+		);
 
-		$obj = new class () {
-			/** @var array<string, array<string, mixed>> */
-			public $items = array();
+		$provider  = new ApiResourcesProvider($db);
+		$resources = $provider->register(array(array('plugin' => 'other', 'collection' => 'otherItems')));
 
-			/** @param array<string, mixed> $desc */
-			public function register(string $slug, array $desc): void {
-				$this->items[$slug] = $desc;
-			}
-		};
-		$provider->register($obj);
-		$this->assertSame(array('cloudflare.accounts', 'cloudflare.tunnels', 'cloudflare.zones'), array_keys($obj->items));
+		$this->assertCount(3, $resources);
+		$cfResources = array_slice($resources, 1);
+		$this->assertSame(array('cloudflareAccounts', 'cloudflareTunnels'), array_column($cfResources, 'collection'));
+
+		foreach ($cfResources as $descriptor) {
+			$this->assertSame('cloudflare', $descriptor['plugin']);
+			$this->assertMatchesRegularExpression('/^[a-z][A-Za-z0-9]{2,63}$/', $descriptor['collection']);
+			$this->assertSame('cloudflare.php', $descriptor['realm_read']);
+			$this->assertSame('schema/cloudflare.schema.yaml', $descriptor['schema']);
+			$this->assertIsCallable($descriptor['handlers']['list']);
+			$this->assertIsCallable($descriptor['handlers']['get']);
+		}
+
+		$accounts = ($cfResources[0]['handlers']['list'])(array('user_id' => 1));
+		$this->assertCount(1, $accounts);
+		$this->assertSame('cloudflareAccounts/1', $accounts[0]['name']);
+		$this->assertStringNotContainsString($secret, (string) json_encode($accounts));
+		$this->assertArrayNotHasKey('token_ciphertext', $accounts[0]);
+		$this->assertArrayNotHasKey('token_file', $accounts[0]);
+
+		$accountOne = ($cfResources[0]['handlers']['get'])('1', array('user_id' => 1));
+		$this->assertIsArray($accountOne);
+		$this->assertSame('Edge', $accountOne['display_name']);
+		$this->assertNull(($cfResources[0]['handlers']['get'])('999', array('user_id' => 1)));
+		$this->assertNull(($cfResources[0]['handlers']['get'])('bad', array('user_id' => 1)));
+
+		$tunnels = ($cfResources[1]['handlers']['list'])(array('user_id' => 1));
+		$this->assertCount(1, $tunnels);
+		$this->assertSame('cloudflareTunnels/1', $tunnels[0]['name']);
+
+		$tunnelOne = ($cfResources[1]['handlers']['get'])('1', array('user_id' => 1));
+		$this->assertIsArray($tunnelOne);
+		$this->assertSame('edge-nyc', $tunnelOne['display_name']);
+		$this->assertNull(($cfResources[1]['handlers']['get'])('999', array('user_id' => 1)));
+		$this->assertNull(($cfResources[1]['handlers']['get'])('bad', array('user_id' => 1)));
+
+		// Null-DB fallback returns empty lists and null lookups safely
+		$noDb = new ApiResourcesProvider();
+		$this->assertSame(array(), $noDb->listAccounts());
+		$this->assertNull($noDb->getAccount('1'));
+		$this->assertSame(array(), $noDb->listTunnels());
+		$this->assertNull($noDb->getTunnel('1'));
 
 		// Static Drupal-style schema exists and enforces Config vs. State separation
 		$root       = dirname(__DIR__, 3);

@@ -19,6 +19,7 @@
 
 namespace Somethingwithproof\Cloudflare\Ecosystem;
 
+use InvalidArgumentException;
 use Somethingwithproof\Cloudflare\Config\ConfigCodec;
 use Somethingwithproof\Cloudflare\Config\ConfigService;
 
@@ -46,11 +47,20 @@ final class CascProvider {
 	}
 
 	/**
-	 * @param mixed $providers
+	 * Register the canonical provider descriptor via 1-argument ProviderRegistrar
+	 * or return the descriptor directly.
+	 *
+	 * @param mixed $providers ProviderRegistrar instance or optional accumulator array
 	 * @return mixed
 	 */
-	public function register($providers) {
+	public function register($providers = null) {
 		$descriptor = $this->descriptor();
+
+		if (is_object($providers) && method_exists($providers, 'register')) {
+			$providers->register($descriptor);
+
+			return $descriptor;
+		}
 
 		if (is_array($providers)) {
 			$providers[self::SLUG] = $descriptor;
@@ -58,35 +68,156 @@ final class CascProvider {
 			return $providers;
 		}
 
-		if (is_object($providers) && method_exists($providers, 'register')) {
-			$providers->register(self::SLUG, $descriptor);
-		}
-
-		return $providers;
+		return $descriptor;
 	}
 
 	/**
+	 * Return the canonical plain-array CasC provider descriptor.
+	 *
 	 * @return array<string, mixed>
 	 */
 	public function descriptor(): array {
 		return array(
-			'name'           => self::SLUG,
-			'schema_version' => ConfigCodec::SCHEMA_VERSION,
-			'formats'        => array(ConfigCodec::FORMAT_YAML, ConfigCodec::FORMAT_XML),
-			'export'         => function (string $format = ConfigCodec::FORMAT_YAML): string {
-				return $this->service->export($format);
-			},
-			'validate' => function (string $content, string $format = ConfigCodec::FORMAT_YAML): array {
-				$result = $this->service->validate($content, $format);
+			'slug'          => self::SLUG,
+			'schemaVersion' => '1.0',
+			'export'        => function (array $options = array()): array {
+				unset($options);
 
-				return array('valid' => $result['valid'], 'errors' => $result['errors']);
+				return array(
+					'schemaVersion' => '1.0',
+					'config'        => $this->service->exportData(),
+				);
 			},
-			'plan' => function (string $content, string $format = ConfigCodec::FORMAT_YAML): array {
-				return $this->service->plan($content, $format);
+			'validate' => function (array $desired): array {
+				return $this->validateArray($desired);
 			},
-			'apply' => function (string $content, string $confirmHash, string $format = ConfigCodec::FORMAT_YAML): array {
-				return $this->service->apply($content, $confirmHash, $format);
+			'plan' => function (array $desired, array $options = array()): array {
+				return $this->planArray($desired, $options);
+			},
+			'apply' => function (array $desired, string $planHash = '', array $options = array()): array {
+				return $this->applyArray($desired, $planHash, $options);
 			},
 		);
+	}
+
+	/**
+	 * Validate a plain-array CasC payload and return a list of error strings.
+	 *
+	 * @param array<string, mixed> $desired Desired declarative payload
+	 * @return array<int, string>
+	 */
+	private function validateArray(array $desired): array {
+		try {
+			$yaml = self::encodeDesired($desired);
+		} catch (InvalidArgumentException $e) {
+			return array($e->getMessage());
+		}
+
+		$result = $this->service->validate($yaml, ConfigCodec::FORMAT_YAML);
+
+		return $result['errors'];
+	}
+
+	/**
+	 * Compute a declarative change plan list from a plain-array CasC payload.
+	 *
+	 * @param array<string, mixed> $desired Desired declarative payload
+	 * @param array<string, mixed> $options Optional planner options
+	 * @return array<int, array<string, mixed>>
+	 */
+	private function planArray(array $desired, array $options = array()): array {
+		unset($options);
+
+		try {
+			$yaml = self::encodeDesired($desired);
+		} catch (InvalidArgumentException $e) {
+			return array(
+				array(
+					'operation' => 'error',
+					'key'       => self::SLUG,
+					'message'   => $e->getMessage(),
+				),
+			);
+		}
+
+		$plan = $this->service->plan($yaml, ConfigCodec::FORMAT_YAML);
+
+		if (!$plan['valid']) {
+			$items = array();
+			foreach ($plan['errors'] as $error) {
+				$items[] = array(
+					'operation' => 'error',
+					'key'       => self::SLUG,
+					'message'   => $error,
+				);
+			}
+
+			return $items;
+		}
+
+		if ($plan['empty']) {
+			return array();
+		}
+
+		$items = array();
+		foreach ($plan['changes'] as $idx => $change) {
+			$op      = isset($change['op']) && $change['op'] === 'create_account' ? 'create' : 'update';
+			$key     = isset($change['cf_account_id']) && is_string($change['cf_account_id']) ? $change['cf_account_id'] : self::SLUG;
+			$message = isset($plan['lines'][$idx]) ? $plan['lines'][$idx] : ('Reconcile ' . $key);
+			$items[] = array(
+				'operation' => $op,
+				'key'       => $key,
+				'message'   => $message,
+				'plan_hash' => $plan['plan_hash'],
+			);
+		}
+
+		return $items;
+	}
+
+	/**
+	 * Apply a plain-array CasC payload with plan-hash confirmation.
+	 *
+	 * @param array<string, mixed> $desired  Desired declarative payload
+	 * @param string               $planHash Confirmed plan hash
+	 * @param array<string, mixed> $options  Optional apply options
+	 * @return array{ok: bool, applied: bool, plan_hash: string, errors: array<int, string>, lines: array<int, string>}
+	 */
+	private function applyArray(array $desired, string $planHash = '', array $options = array()): array {
+		unset($options);
+
+		try {
+			$yaml = self::encodeDesired($desired);
+		} catch (InvalidArgumentException $e) {
+			return array(
+				'ok'        => false,
+				'applied'   => false,
+				'plan_hash' => '',
+				'errors'    => array($e->getMessage()),
+				'lines'     => array(),
+			);
+		}
+
+		$result = $this->service->apply($yaml, $planHash, ConfigCodec::FORMAT_YAML);
+
+		return array(
+			'ok'        => $result['applied'],
+			'applied'   => $result['applied'],
+			'plan_hash' => $result['plan_hash'],
+			'errors'    => $result['errors'],
+			'lines'     => $result['lines'],
+		);
+	}
+
+	/**
+	 * Unwrap an optional 'config' envelope and encode as secret-checked YAML.
+	 *
+	 * @param array<string, mixed> $desired Desired declarative payload
+	 * @return string
+	 */
+	private static function encodeDesired(array $desired): string {
+		$payload = array_key_exists('config', $desired) && is_array($desired['config']) ? $desired['config'] : $desired;
+
+		return ConfigCodec::encode(ConfigCodec::FORMAT_YAML, $payload);
 	}
 }

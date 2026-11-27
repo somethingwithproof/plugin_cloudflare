@@ -72,8 +72,11 @@ final class DoctorDebugInfo {
 	 * Build a redacted diagnostic section safe to include in support bundles.
 	 *
 	 * @return array{
+	 *     id: string,
+	 *     plugin: string,
 	 *     label: string,
 	 *     description: string,
+	 *     private: bool,
 	 *     fields: array<string, array{label: string, value: string, private: bool}>
 	 * }
 	 */
@@ -105,8 +108,11 @@ final class DoctorDebugInfo {
 		$jobsFailing    = $this->safeIntCell('SELECT COUNT(*) FROM plugin_cloudflare_jobs WHERE consecutive_failures > 0');
 
 		return array(
+			'id'          => 'cloudflare.overview',
+			'plugin'      => self::SECTION,
 			'label'       => 'Cloudflare',
 			'description' => 'Read-only diagnostic summary for plugin_cloudflare (all tokens, ciphertexts, and secret paths redacted).',
+			'private'     => false,
 			'fields'      => array(
 				'plugin_version' => array(
 					'label'   => 'Plugin version',
@@ -163,25 +169,22 @@ final class DoctorDebugInfo {
 	}
 
 	/**
-	 * Register the redacted debug info section into an array or registrar object.
+	 * Return the redacted debug info section list without echoing $context.
 	 *
-	 * @param mixed $sections Existing sections array or registrar object
-	 * @return mixed Updated sections array or registrar object
+	 * @param mixed $context Doctor debug-info hook context
+	 * @return array<int, array{
+	 *     id: string,
+	 *     plugin: string,
+	 *     label: string,
+	 *     description: string,
+	 *     private: bool,
+	 *     fields: array<string, array{label: string, value: string, private: bool}>
+	 * }>
 	 */
-	public function register($sections) {
-		$section = $this->section();
+	public function register($context = array()): array {
+		unset($context);
 
-		if (is_array($sections)) {
-			$sections[self::SECTION] = $section;
-
-			return $sections;
-		}
-
-		if (is_object($sections) && method_exists($sections, 'register')) {
-			$sections->register(self::SECTION, $section);
-		}
-
-		return $sections;
+		return array($this->section());
 	}
 
 	/**

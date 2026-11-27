@@ -25,10 +25,14 @@ require_once __DIR__ . '/includes/ecosystem.php';
 use Somethingwithproof\Cloudflare\Storage\DatabaseException;
 use Somethingwithproof\Cloudflare\Storage\Migrator;
 
-/*
- * api_plugin_valid_entrypoint() (lib/plugins.php:1124) rejects hook and
- * realm registration unless the direct caller's name matches
- * /(install|upgrade|setup)/i, so registration stays in install(), upgrade(), and named setup helpers.
+/**
+ * Register plugin hooks, realms, schema tables, and Cacti templates on install.
+ *
+ * api_plugin_valid_entrypoint() (lib/plugins.php:1124) rejects hook and realm
+ * registration unless the direct caller's name matches /(install|upgrade|setup)/i,
+ * so registration stays in install(), upgrade(), and named setup helpers.
+ *
+ * @return void
  */
 function plugin_cloudflare_install() : void {
 	api_plugin_register_hook('cloudflare', 'config_arrays', 'cloudflare_config_arrays', 'includes/settings.php');
@@ -84,6 +88,11 @@ function plugin_cloudflare_version() : array {
 	return (is_array($info) && isset($info['info']) && is_array($info['info'])) ? $info['info'] : array();
 }
 
+/**
+ * Verify required PHP extensions and run idempotent plugin upgrades on enable.
+ *
+ * @return bool True when required extensions are present
+ */
 function plugin_cloudflare_check_config() : bool {
 	$loaded = isset($GLOBALS['cloudflare_extension_loaded']) && is_callable($GLOBALS['cloudflare_extension_loaded'])
 		? $GLOBALS['cloudflare_extension_loaded']
@@ -158,6 +167,11 @@ function plugin_cloudflare_upgrade(int $lock_timeout = 10) : bool {
 	return true;
 }
 
+/**
+ * Create or migrate all plugin database tables via Migrator.
+ *
+ * @return void
+ */
 function plugin_cloudflare_setup_database() : void {
 	(new Migrator(cloudflare_db(), Migrator::defaultMigrations()))->migrate();
 }
@@ -251,10 +265,12 @@ function cloudflare_setup_operator(bool $force = true) : void {
 /** Register ecosystem integration and remote replication hooks when installing, upgrading, or repairing missing rows. */
 function cloudflare_setup_ecosystem(bool $force = true) : void {
 	$hooks = array(
-		'abilities_register'      => 'cloudflare_abilities_register',
-		'doctor_register_checks'  => 'cloudflare_doctor_register_checks',
-		'casc_register_providers' => 'cloudflare_casc_register_providers',
-		'replicate_out'           => 'cloudflare_replicate_out',
+		'abilities_register'         => 'cloudflare_abilities_register',
+		'doctor_register_checks'     => 'cloudflare_doctor_register_checks',
+		'doctor_register_debug_info' => 'cloudflare_doctor_register_debug_info',
+		'casc_register_providers'    => 'cloudflare_casc_register_providers',
+		'api_register_resources'     => 'cloudflare_api_register_resources',
+		'replicate_out'              => 'cloudflare_replicate_out',
 	);
 
 	foreach ($hooks as $hook => $function) {

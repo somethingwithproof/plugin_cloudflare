@@ -249,7 +249,9 @@ PHP;
 			array('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', true),
 			array('cloudflare', 'abilities_register', 'cloudflare_abilities_register', 'includes/ecosystem.php', true),
 			array('cloudflare', 'doctor_register_checks', 'cloudflare_doctor_register_checks', 'includes/ecosystem.php', true),
+			array('cloudflare', 'doctor_register_debug_info', 'cloudflare_doctor_register_debug_info', 'includes/ecosystem.php', true),
 			array('cloudflare', 'casc_register_providers', 'cloudflare_casc_register_providers', 'includes/ecosystem.php', true),
+			array('cloudflare', 'api_register_resources', 'cloudflare_api_register_resources', 'includes/ecosystem.php', true),
 			array('cloudflare', 'replicate_out', 'cloudflare_replicate_out', 'includes/ecosystem.php', true),
 		), cloudflare_glue_calls('api_plugin_register_hook'));
 

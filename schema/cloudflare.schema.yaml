@@ -1,0 +1,231 @@
+# SPDX-FileCopyrightText: 2026 Thomas Vincent <thomasvincent@gmail.com>
+# SPDX-License-Identifier: GPL-2.0-or-later
+#
+# This file is part of plugin_cloudflare, a plugin for Cacti.
+# https://github.com/somethingwithproof/plugin_cloudflare
+#
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation; either version 2 of the License, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+# more details.
+
+# Static declarative schema for plugin_cloudflare following Drupal Config vs.
+# State separation:
+# - cloudflare.settings and cloudflare.casc describe portable declarative
+#   configuration (secret references only, never raw tokens or ciphertexts).
+# - cloudflare.state documents ephemeral runtime state owned by the poller,
+#   migrator, and template importer (never exported or applied via CasC).
+
+cloudflare.settings:
+  type: config_object
+  label: 'Cloudflare plugin global settings'
+  storage: cacti_settings
+  exportable: true
+  mapping:
+    cloudflare_key_file:
+      type: string
+      label: 'Token Vault Key File'
+      default: '/etc/cacti/cloudflare.key'
+      sensitive: true
+      constraints:
+        absolute_path: true
+        max_length: 255
+    cloudflare_token_dir:
+      type: string
+      label: 'Token File Directory'
+      default: ''
+      sensitive: true
+      constraints:
+        absolute_path_or_empty: true
+        max_length: 255
+    cloudflare_ui_timeout:
+      type: integer
+      label: 'Interactive Request Timeout (seconds)'
+      default: 10
+      constraints:
+        min: 5
+        max: 60
+    cloudflare_poller_timeout:
+      type: integer
+      label: 'Collector Request Timeout (seconds)'
+      default: 20
+      constraints:
+        min: 5
+        max: 120
+    cloudflare_log_level:
+      type: integer
+      label: 'Plugin Log Verbosity Level'
+      default: 2
+      constraints:
+        min: 1
+        max: 6
+
+cloudflare.casc:
+  type: config_object
+  label: 'Cloudflare Configuration-as-Code document'
+  schema_version: 1
+  exportable: true
+  mapping:
+    schema_version:
+      type: integer
+      label: 'CasC schema version'
+      required: true
+      constraints:
+        equals: 1
+    accounts:
+      type: sequence
+      label: 'Configured Cloudflare accounts (secret references only)'
+      sequence:
+        type: mapping
+        mapping:
+          cf_account_id:
+            type: string
+            label: 'Cloudflare 32-character lowercase hex account ID'
+            required: true
+            constraints:
+              regex: '^[0-9a-f]{32}$'
+          name:
+            type: string
+            label: 'Display name'
+            required: true
+            constraints:
+              min_length: 1
+              max_length: 128
+          enabled:
+            type: boolean
+            label: 'Account enabled'
+            default: true
+          collect_tunnels:
+            type: boolean
+            label: 'Collect tunnel inventory and connector health'
+            default: true
+          collect_analytics:
+            type: boolean
+            label: 'Collect zone analytics'
+            default: true
+          create_graphs:
+            type: boolean
+            label: 'Automatically create graphs for discovered resources'
+            default: false
+          discovery_interval:
+            type: integer
+            label: 'Discovery interval in seconds'
+            default: 300
+            constraints:
+              min: 60
+              max: 86400
+          token_ref:
+            type: string
+            label: 'Opaque secret reference (vault:<cf_account_id> or file:<absolute_path>)'
+            required: true
+            sensitive: false
+            constraints:
+              secret_reference_only: true
+    zones:
+      type: sequence
+      label: 'Zone monitoring entries'
+      sequence:
+        type: mapping
+        mapping:
+          cf_account_id:
+            type: string
+            label: 'Parent Cloudflare account ID'
+          zone_id:
+            type: string
+            label: 'Cloudflare 32-character hex zone ID'
+          name:
+            type: string
+            label: 'Zone DNS name'
+          listed:
+            type: boolean
+            label: 'Whether the zone is listed for collection'
+    tunnels:
+      type: sequence
+      label: 'Declared tunnel metadata'
+      sequence:
+        type: mapping
+        mapping:
+          cf_account_id:
+            type: string
+            label: 'Parent Cloudflare account ID'
+          cf_tunnel_id:
+            type: string
+            label: 'Cloudflare tunnel UUID'
+          name:
+            type: string
+            label: 'Tunnel name'
+          lifecycle:
+            type: string
+            label: 'Tunnel lifecycle state'
+            constraints:
+              enum: ['active', 'missing', 'retired']
+          cf_status:
+            type: string
+            label: 'Cloudflare reported tunnel status'
+    metric_mappings:
+      type: sequence
+      label: 'Cacti template to RRD data source mappings'
+      sequence:
+        type: mapping
+        mapping:
+          metric_name:
+            type: string
+            label: 'Canonical metric name'
+          schema_version:
+            type: integer
+            label: 'Metric schema version'
+          ds_type:
+            type: string
+            label: 'RRD data source type'
+          unit:
+            type: string
+            label: 'Measurement unit'
+          query_field:
+            type: string
+            label: 'Script server query field'
+          data_template_hash:
+            type: string
+            label: 'Cacti data template hash'
+          rrd_ds_name:
+            type: string
+            label: 'RRD internal DS name'
+
+cloudflare.state:
+  type: state_object
+  label: 'Cloudflare ephemeral runtime state (excluded from CasC export/apply)'
+  exportable: false
+  mapping:
+    settings_keys:
+      type: sequence
+      label: 'Internal state keys stored in Cacti settings'
+      sequence:
+        type: string
+      items:
+        - cloudflare_templates_sha256
+    tables:
+      type: mapping
+      label: 'Database tables holding runtime state and leases'
+      mapping:
+        plugin_cloudflare_migrations:
+          type: string
+          label: 'Applied schema migration versions and timestamps'
+        plugin_cloudflare_jobs:
+          type: string
+          label: 'Collector job leases, backoff windows, and consecutive failure counts'
+        plugin_cloudflare_tunnels:
+          type: string
+          label: 'Live tunnel status, connector counts, and last_seen_at observations'
+        plugin_cloudflare_connectors:
+          type: string
+          label: 'Live cloudflared connector observations'
+        plugin_cloudflare_zones:
+          type: string
+          label: 'Live zone analytics samples and sampling timestamps'
+        plugin_cloudflare_resources:
+          type: string
+          label: 'Local Cacti host_id mappings for managed devices'

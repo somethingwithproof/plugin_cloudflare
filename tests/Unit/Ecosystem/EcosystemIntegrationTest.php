@@ -25,8 +25,10 @@ use Somethingwithproof\Cloudflare\Config\ConfigService;
 use Somethingwithproof\Cloudflare\Discovery\RemoteReplication;
 use Somethingwithproof\Cloudflare\Discovery\TunnelRepository;
 use Somethingwithproof\Cloudflare\Ecosystem\AbilitiesProvider;
+use Somethingwithproof\Cloudflare\Ecosystem\ApiResourcesProvider;
 use Somethingwithproof\Cloudflare\Ecosystem\CascProvider;
 use Somethingwithproof\Cloudflare\Ecosystem\DoctorChecks;
+use Somethingwithproof\Cloudflare\Ecosystem\DoctorDebugInfo;
 use Somethingwithproof\Cloudflare\Metrics\MetricMappingRepository;
 use Somethingwithproof\Cloudflare\Storage\Database;
 use Somethingwithproof\Cloudflare\Tests\Support\FrozenClock;
@@ -376,8 +378,15 @@ final class EcosystemIntegrationTest extends TestCase {
 		$checks = cloudflare_doctor_register_checks(array());
 		$this->assertCount(4, $checks);
 
+		$debugSections = cloudflare_doctor_register_debug_info(array());
+		$this->assertArrayHasKey('cloudflare', $debugSections);
+		$this->assertArrayHasKey('plugin_version', $debugSections['cloudflare']['fields']);
+
 		$providers = cloudflare_casc_register_providers(array());
 		$this->assertArrayHasKey('cloudflare', $providers);
+
+		$resources = cloudflare_api_register_resources(array());
+		$this->assertSame(array('cloudflare.accounts', 'cloudflare.tunnels', 'cloudflare.zones'), array_keys($resources));
 
 		$rep = cloudflare_replicate_out(array('remote_poller_id' => 2, 'rcnn_id' => new stdClass(), 'class' => 'all'));
 		$this->assertSame(2, $rep['remote_poller_id']);
@@ -386,7 +395,140 @@ final class EcosystemIntegrationTest extends TestCase {
 		cloudflare_glue_reset();
 		$GLOBALS['cloudflare_glue']['enabled'] = false;
 		$this->assertSame(array('keep'), cloudflare_doctor_register_checks(array('keep')));
+		$this->assertSame(array('keep'), cloudflare_doctor_register_debug_info(array('keep')));
 		$this->assertSame(array('keep'), cloudflare_casc_register_providers(array('keep')));
+		$this->assertSame(array('keep'), cloudflare_api_register_resources(array('keep')));
 		$this->assertSame('raw', cloudflare_replicate_out('raw'));
+	}
+
+	public function testDoctorDebugInfoRedactsSecretsAndReportsCounts(): void {
+		if (!extension_loaded('pdo_sqlite')) {
+			$this->markTestSkipped('pdo_sqlite is not loaded');
+		}
+
+		$this->tmpDir = sys_get_temp_dir() . '/cf-debug-' . bin2hex(random_bytes(6));
+		mkdir($this->tmpDir, 0700);
+		$keyFile   = $this->tmpDir . '/secret-vault.key';
+		$tokenFile = $this->tmpDir . '/secret-token.txt';
+		$secret    = 'v1:' . base64_encode(str_repeat('z', 40));
+		file_put_contents($keyFile, bin2hex(random_bytes(32)));
+		chmod($keyFile, 0600);
+
+		$db = self::sqliteDb();
+		$db->execute('CREATE TABLE plugin_cloudflare_migrations (version INTEGER PRIMARY KEY, applied_at INTEGER NOT NULL)');
+		$db->execute('INSERT INTO plugin_cloudflare_migrations (version, applied_at) VALUES (5, 1700000000)');
+		$db->execute(
+			'INSERT INTO plugin_cloudflare_accounts (cf_account_id, name, token_source, token_ciphertext, enabled, discovery_interval) VALUES (?, ?, ?, ?, 1, 300)',
+			array(str_repeat('a', 32), 'Vault Account', 'vault', $secret)
+		);
+		$db->execute(
+			'INSERT INTO plugin_cloudflare_accounts (cf_account_id, name, token_source, token_file, enabled, discovery_interval) VALUES (?, ?, ?, ?, 0, 300)',
+			array(str_repeat('b', 32), 'File Account', 'file', $tokenFile)
+		);
+		$db->execute(
+			'INSERT INTO plugin_cloudflare_tunnels (account_id, cf_tunnel_id, name, lifecycle, cf_status) VALUES (1, ?, ?, ?, ?), (1, ?, ?, ?, ?)',
+			array('0b0e3f43-63a8-4f0c-bb4c-0d6b2b5a2f10', 'active-1', 'active', 'healthy', '1b0e3f43-63a8-4f0c-bb4c-0d6b2b5a2f11', 'old-1', 'retired', 'down')
+		);
+		$db->execute('INSERT INTO plugin_cloudflare_zones (account_id, zone_id, name, listed) VALUES (1, ?, ?, 1)', array(str_repeat('c', 32), 'example.com'));
+		$db->execute("INSERT INTO plugin_cloudflare_jobs (account_id, job_type, last_status, consecutive_failures) VALUES (1, 'discovery', 'ok', 0), (1, 'analytics', 'failed', 2)");
+
+		$info     = new DoctorDebugInfo($db, new AccountRepository($db), $keyFile, $this->tmpDir);
+		$sections = $info->register(array());
+		$encoded  = (string) json_encode($sections);
+
+		$this->assertArrayHasKey('cloudflare', $sections);
+		$fields = $sections['cloudflare']['fields'];
+		$this->assertSame('5', $fields['schema_version']['value']);
+		$this->assertSame('1 / 2', $fields['accounts_summary']['value']);
+		$this->assertSame('vault=1, file=1', $fields['token_sources']['value']);
+		$this->assertSame('present (mode 0600)', $fields['vault_key_status']['value']);
+		$this->assertSame('yes', $fields['token_dir_restricted']['value']);
+		$this->assertSame('1 / 1', $fields['tunnels_summary']['value']);
+		$this->assertSame('1', $fields['zones_listed']['value']);
+		$this->assertSame('1 / 2', $fields['collector_jobs']['value']);
+
+		// Zero secrets or secret paths leaked
+		$this->assertStringNotContainsString($secret, $encoded);
+		$this->assertStringNotContainsString($keyFile, $encoded);
+		$this->assertStringNotContainsString($tokenFile, $encoded);
+
+		// Object registrar + absent/unconfigured/symlink key states
+		$obj = new class () {
+			/** @var array<string, array<string, mixed>> */
+			public $items = array();
+
+			/** @param array<string, mixed> $section */
+			public function register(string $slug, array $section): void {
+				$this->items[$slug] = $section;
+			}
+		};
+		$info->register($obj);
+		$this->assertArrayHasKey('cloudflare', $obj->items);
+
+		$unconfigured = new DoctorDebugInfo($db, new AccountRepository($db), '', '');
+		$this->assertSame('unconfigured', $unconfigured->section()['fields']['vault_key_status']['value']);
+		$this->assertSame('no', $unconfigured->section()['fields']['token_dir_restricted']['value']);
+
+		$absent = new DoctorDebugInfo($db, new AccountRepository($db), $this->tmpDir . '/missing.key', '');
+		$this->assertSame('absent', $absent->section()['fields']['vault_key_status']['value']);
+
+		$dirAsKey = new DoctorDebugInfo($db, new AccountRepository($db), $this->tmpDir, '');
+		$this->assertSame('not_regular_file', $dirAsKey->section()['fields']['vault_key_status']['value']);
+
+		$linkKey = $this->tmpDir . '/link.key';
+		symlink($keyFile, $linkKey);
+		$symlinkKey = new DoctorDebugInfo($db, new AccountRepository($db), $linkKey, '');
+		$this->assertSame('symlink_refused', $symlinkKey->section()['fields']['vault_key_status']['value']);
+
+		// Missing migrations table falls back safely to schema_version 0
+		$dbNoMig = self::sqliteDb();
+		$noMig   = new DoctorDebugInfo($dbNoMig, new AccountRepository($dbNoMig), '', '');
+		$this->assertSame('0', $noMig->section()['fields']['schema_version']['value']);
+	}
+
+	public function testApiResourcesAreReadOnlyRedactedAndSchemaSeparatesConfigFromState(): void {
+		$provider  = new ApiResourcesProvider();
+		$resources = $provider->register(array());
+
+		$this->assertSame(array('cloudflare.accounts', 'cloudflare.tunnels', 'cloudflare.zones'), array_keys($resources));
+
+		foreach ($resources as $key => $descriptor) {
+			$this->assertTrue($descriptor['read_only'], $key);
+			$this->assertSame(array('list', 'get'), $descriptor['methods'], $key);
+			$this->assertNotContains('token_ciphertext', $descriptor['fields'], $key);
+			$this->assertNotContains('token_file', $descriptor['fields'], $key);
+		}
+
+		$this->assertContains('token_ciphertext', $resources['cloudflare.accounts']['redacted_fields']);
+
+		$obj = new class () {
+			/** @var array<string, array<string, mixed>> */
+			public $items = array();
+
+			/** @param array<string, mixed> $desc */
+			public function register(string $slug, array $desc): void {
+				$this->items[$slug] = $desc;
+			}
+		};
+		$provider->register($obj);
+		$this->assertSame(array('cloudflare.accounts', 'cloudflare.tunnels', 'cloudflare.zones'), array_keys($obj->items));
+
+		// Static Drupal-style schema exists and enforces Config vs. State separation
+		$root       = dirname(__DIR__, 3);
+		$schemaFile = $root . '/schema/cloudflare.schema.yaml';
+		$this->assertFileExists($schemaFile);
+		$yaml = (string) file_get_contents($schemaFile);
+		$this->assertStringContainsString('SPDX-FileCopyrightText:', $yaml);
+		$this->assertStringContainsString('cloudflare.settings:', $yaml);
+		$this->assertStringContainsString('cloudflare.casc:', $yaml);
+		$this->assertStringContainsString('cloudflare.state:', $yaml);
+		$this->assertStringContainsString('exportable: true', $yaml);
+		$this->assertStringContainsString('exportable: false', $yaml);
+
+		// Zero cross-plugin PHP imports in src/ and includes/
+		foreach (array($root . '/src/Ecosystem/DoctorDebugInfo.php', $root . '/src/Ecosystem/ApiResourcesProvider.php', $root . '/includes/ecosystem.php', $root . '/setup.php') as $file) {
+			$src = (string) file_get_contents($file);
+			$this->assertDoesNotMatchRegularExpression('/\b(use|require|include)\b[^\n;]*(plugin_doctor|plugin_api|CactiDoctor|CactiApi)/i', $src, $file);
+		}
 	}
 }

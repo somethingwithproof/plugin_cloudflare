@@ -25,13 +25,20 @@ use Somethingwithproof\Cloudflare\Config\ConfigService;
 use Somethingwithproof\Cloudflare\Discovery\RemoteReplication;
 use Somethingwithproof\Cloudflare\Discovery\TunnelRepository;
 use Somethingwithproof\Cloudflare\Ecosystem\AbilitiesProvider;
+use Somethingwithproof\Cloudflare\Ecosystem\ApiResourcesProvider;
 use Somethingwithproof\Cloudflare\Ecosystem\CascProvider;
 use Somethingwithproof\Cloudflare\Ecosystem\DoctorChecks;
+use Somethingwithproof\Cloudflare\Ecosystem\DoctorDebugInfo;
 use Somethingwithproof\Cloudflare\Metrics\MetricMappingRepository;
 use Somethingwithproof\Cloudflare\Storage\Database;
 use Somethingwithproof\Cloudflare\Storage\DatabaseException;
 use Somethingwithproof\Cloudflare\Support\SystemClock;
 
+/**
+ * Construct the CasC configuration service wired to the Cacti database.
+ *
+ * @return ConfigService
+ */
 function cloudflare_config_service() : ConfigService {
 	$db = cloudflare_db();
 
@@ -44,6 +51,11 @@ function cloudflare_config_service() : ConfigService {
 	);
 }
 
+/**
+ * Construct the Doctor health check runner for vault key, token dir, tunnels, and jobs.
+ *
+ * @return DoctorChecks
+ */
 function cloudflare_doctor_checks() : DoctorChecks {
 	$db      = cloudflare_db();
 	$keyFile = trim((string) read_config_option('cloudflare_key_file'));
@@ -56,6 +68,27 @@ function cloudflare_doctor_checks() : DoctorChecks {
 		$db,
 		new AccountRepository($db),
 		new SystemClock(),
+		$keyFile,
+		cloudflare_token_directory()
+	);
+}
+
+/**
+ * Construct the redacted Doctor debug information provider.
+ *
+ * @return DoctorDebugInfo
+ */
+function cloudflare_doctor_debug_info() : DoctorDebugInfo {
+	$db      = cloudflare_db();
+	$keyFile = trim((string) read_config_option('cloudflare_key_file'));
+
+	if ($keyFile === '') {
+		$keyFile = CLOUDFLARE_DEFAULT_KEY_FILE;
+	}
+
+	return new DoctorDebugInfo(
+		$db,
+		new AccountRepository($db),
 		$keyFile,
 		cloudflare_token_directory()
 	);
@@ -175,6 +208,48 @@ function cloudflare_casc_register_providers($providers = array()) {
 		cacti_log('CLOUDFLARE: CasC provider registration failed (' . get_class($e) . ')', false, 'CLOUDFLARE');
 
 		return $providers;
+	}
+}
+
+/**
+ * doctor_register_debug_info hook: contribute a redacted plain-array diagnostic
+ * snapshot with zero cross-plugin imports and no exposed secrets.
+ *
+ * @param  mixed $sections
+ * @return mixed
+ */
+function cloudflare_doctor_register_debug_info($sections = array()) {
+	if (!cloudflare_plugin_enabled()) {
+		return $sections;
+	}
+
+	try {
+		return cloudflare_doctor_debug_info()->register($sections);
+	} catch (Throwable $e) {
+		cacti_log('CLOUDFLARE: doctor debug info failed (' . get_class($e) . ')', false, 'CLOUDFLARE');
+
+		return $sections;
+	}
+}
+
+/**
+ * api_register_resources hook: publish read-only Google AIP plain-array
+ * resource descriptors with zero cross-plugin imports.
+ *
+ * @param  mixed $resources
+ * @return mixed
+ */
+function cloudflare_api_register_resources($resources = array()) {
+	if (!cloudflare_plugin_enabled()) {
+		return $resources;
+	}
+
+	try {
+		return (new ApiResourcesProvider())->register($resources);
+	} catch (Throwable $e) {
+		cacti_log('CLOUDFLARE: API resource registration failed (' . get_class($e) . ')', false, 'CLOUDFLARE');
+
+		return $resources;
 	}
 }
 

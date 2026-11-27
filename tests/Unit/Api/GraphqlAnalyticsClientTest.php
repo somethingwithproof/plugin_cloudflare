@@ -26,6 +26,7 @@ use Somethingwithproof\Cloudflare\Api\GraphqlAnalyticsClient;
 use Somethingwithproof\Cloudflare\Api\RetryPolicy;
 use Somethingwithproof\Cloudflare\Http\Response;
 use Somethingwithproof\Cloudflare\Metrics\AnalyticsSummary;
+use Somethingwithproof\Cloudflare\Metrics\EnterpriseMetrics;
 use Somethingwithproof\Cloudflare\Storage\Database;
 use Somethingwithproof\Cloudflare\Tests\Support\FakeTransport;
 use Somethingwithproof\Cloudflare\Tests\Support\FrozenClock;
@@ -102,9 +103,25 @@ final class GraphqlAnalyticsClientTest extends TestCase {
 
 	public function testAnalyticsSummaryEvaluatesTholdReadyThresholds(): void {
 		$templates = AnalyticsSummary::recommendedThresholds();
-		$this->assertCount(4, $templates);
+		$this->assertCount(13, $templates);
 		$this->assertSame('health', $templates[0]['data_source_name']);
 		$this->assertSame('error_pct', $templates[2]['data_source_name']);
+
+		$byDs = array();
+		foreach ($templates as $tpl) {
+			$byDs[$tpl['data_source_name']] = $tpl;
+		}
+		$this->assertArrayHasKey('cache_hit_req_pct', $byDs);
+		$this->assertSame('low', $byDs['cache_hit_req_pct']['direction']);
+		$this->assertArrayHasKey('cache_hit_bytes_pct', $byDs);
+		$this->assertArrayHasKey('error_4xx_pct', $byDs);
+		$this->assertArrayHasKey('error_5xx_pct', $byDs);
+		$this->assertArrayHasKey('waf_blocked_rate', $byDs);
+		$this->assertArrayHasKey('waf_challenged_rate', $byDs);
+		$this->assertArrayHasKey('origin_ttfb_p95_ms', $byDs);
+		$this->assertArrayHasKey('dns_servfail_rate', $byDs);
+		$this->assertArrayHasKey('tls_cert_expiry_days', $byDs);
+		$this->assertSame(14.0, $byDs['tls_cert_expiry_days']['thold_low']);
 
 		$ok = AnalyticsSummary::evaluateSample(array('requests' => 500.0, 'error_rate_pct' => 0.4, 'edge_latency_p95_ms' => 120.0));
 		$this->assertSame(AnalyticsSummary::STATUS_OK, $ok['status']);
@@ -162,5 +179,180 @@ final class GraphqlAnalyticsClientTest extends TestCase {
 		$this->transport->queue(new Response(200, array(), '{"data":null,"errors":[{"message":"query rejected"}]}'));
 		$this->expectException(ApiException::class);
 		$this->client->executeAllowlisted(GraphqlAnalyticsClient::QUERY_ZONE_SETTINGS, array('zoneTag' => str_repeat('a', 32)), 'cfut_' . str_repeat('a', 40));
+	}
+
+	public function testCollectsFullEnterpriseHttpWafDnsAndTlsMetrics(): void {
+		$zone  = str_repeat('a', 32);
+		$token = 'cfut_' . str_repeat('a', 40);
+		$nop   = static function (): void {
+		};
+
+		// 1. Settings + HTTP metrics with cache hit, 4xx/5xx split, and origin TTFB
+		$this->transport->queue(new Response(200, array(), '{"data":{"viewer":{"zones":[{"settings":{"httpRequestsAdaptiveGroups":{"enabled":true,"maxDuration":86400,"notOlderThan":86400,"maxPageSize":100,"maxNumberOfFields":40}}}]}},"errors":null}'));
+		$this->transport->queue(new Response(200, array(), '{"data":{"viewer":{"zones":[{"total":[{"count":2000,"sum":{"edgeResponseBytes":500000},"avg":{"sampleInterval":1,"edgeTimeToFirstByteMs":25.0,"originResponseDurationMs":110.5},"quantiles":{"edgeTimeToFirstByteMsP95":90.0,"originResponseDurationMsP95":420.25}}],"cached":[{"count":1500,"sum":{"edgeResponseBytes":400000}}],"errors4xx":[{"count":80}],"errors":[{"count":20}]}]}},"errors":null}'));
+
+		// 2. WAF events over 300s window: 90 blocked (0.3/s), 150 challenged (0.5/s)
+		$this->transport->queue(new Response(200, array(), '{"data":{"viewer":{"zones":[{"blocked":[{"count":90}],"challenged":[{"count":150}]}]}},"errors":null}'));
+
+		// 3. DNS analytics over 300s window: 3000 queries (10/s), 300 nxdomain (1/s), 15 servfail (0.05/s)
+		$this->transport->queue(new Response(200, array(), '{"data":{"viewer":{"zones":[{"total":[{"count":3000}],"nxdomain":[{"count":300}],"servfail":[{"count":15}]}]}},"errors":null}'));
+
+		// 4. TLS certificate packs: soonest active cert expires in exactly 20.5 days from now=1700000000
+		$now        = 1700000000;
+		$soonIso    = gmdate('Y-m-d\TH:i:s\Z', $now + (int) (20.5 * 86400));
+		$laterIso   = gmdate('Y-m-d\TH:i:s\Z', $now + 60 * 86400);
+		$expiredIso = gmdate('Y-m-d\TH:i:s\Z', $now - 10 * 86400);
+		$tlsBody    = json_encode(array(
+			'success' => true,
+			'errors'  => array(),
+			'result'  => array(
+				array(
+					'status'       => 'pending_validation',
+					'certificates' => array(array('expires_on' => $expiredIso)),
+				),
+				array(
+					'status'       => 'active',
+					'certificates' => array(
+						array('expires_on' => $laterIso),
+						array('expires_on' => $soonIso),
+					),
+				),
+			),
+		));
+		$this->transport->queue(new Response(200, array(), (string) $tlsBody));
+
+		$enterprise = $this->client->collectZoneEnterpriseMetrics($zone, $token, 1000, 1300, $now, $nop);
+
+		$this->assertSame(75.0, $enterprise->cacheHitRequestsPct());
+		$this->assertSame(80.0, $enterprise->cacheHitBytesPct());
+		$this->assertSame(4.0, $enterprise->error4xxPct());
+		$this->assertSame(1.0, $enterprise->error5xxPct());
+		$this->assertSame(0.3, $enterprise->wafBlockedRate());
+		$this->assertSame(0.5, $enterprise->wafChallengedRate());
+		$this->assertSame(110.5, $enterprise->originTtfbAvgMs());
+		$this->assertSame(420.25, $enterprise->originTtfbP95Ms());
+		$this->assertSame(10.0, $enterprise->dnsQueriesRate());
+		$this->assertSame(1.0, $enterprise->dnsNxdomainRate());
+		$this->assertSame(0.05, $enterprise->dnsServfailRate());
+		$this->assertSame(20.5, $enterprise->tlsCertExpiryDays());
+
+		$asArray = $enterprise->toArray();
+		$this->assertCount(12, $asArray);
+		$this->assertSame(75.0, $asArray['cache_hit_requests_pct']);
+		$this->assertSame(20.5, $asArray['tls_cert_expiry_days']);
+		$this->assertContains(GraphqlAnalyticsClient::QUERY_ZONE_WAF_EVENTS, GraphqlAnalyticsClient::allowedQueries());
+		$this->assertContains(GraphqlAnalyticsClient::QUERY_ZONE_DNS_ANALYTICS, GraphqlAnalyticsClient::allowedQueries());
+	}
+
+	public function testZeroDenominatorAndEmptyEnterpriseResponsesReturnNullRatios(): void {
+		$zone  = str_repeat('b', 32);
+		$token = 'cfut_' . str_repeat('b', 40);
+		$nop   = static function (): void {
+		};
+
+		// Zero HTTP requests and zero bytes
+		$this->transport->queue(new Response(200, array(), '{"data":{"viewer":{"zones":[{"settings":{"httpRequestsAdaptiveGroups":{"enabled":true,"maxDuration":86400,"notOlderThan":86400,"maxPageSize":100,"maxNumberOfFields":40}}}]}},"errors":null}'));
+		$this->transport->queue(new Response(200, array(), '{"data":{"viewer":{"zones":[{"total":[],"cached":[],"errors4xx":[],"errors":[]}]}},"errors":null}'));
+
+		$http = $this->client->collectZoneMetrics($zone, $token, 1000, 1300, $nop);
+		$this->assertNotNull($http);
+		$this->assertNull($http['cache_hit_requests_pct']);
+		$this->assertNull($http['cache_hit_bytes_pct']);
+		$this->assertNull($http['error_4xx_pct']);
+		$this->assertNull($http['error_5xx_pct']);
+		$this->assertNull($http['origin_ttfb_avg_ms']);
+		$this->assertNull($http['origin_ttfb_p95_ms']);
+
+		// Zero DNS queries
+		$this->transport->queue(new Response(200, array(), '{"data":{"viewer":{"zones":[{"total":[],"nxdomain":[],"servfail":[]}]}},"errors":null}'));
+		$dns = $this->client->collectZoneDnsMetrics($zone, $token, 1000, 1300, $nop);
+		$this->assertSame(0.0, $dns['dns_queries_rate']);
+		$this->assertNull($dns['dns_nxdomain_pct']);
+		$this->assertNull($dns['dns_servfail_pct']);
+
+		// No active TLS certificates
+		$this->transport->queue(new Response(200, array(), '{"success":true,"errors":[],"result":[]}'));
+		$tls = $this->client->collectZoneTlsExpiry($zone, $token, 1700000000, $nop);
+		$this->assertNull($tls['tls_cert_expiry_days']);
+		$this->assertNull($tls['soonest_expires_at']);
+		$this->assertSame(0, $tls['active_certificate_count']);
+
+		// EnterpriseMetrics::fromRawCounters zero-denominator and invalid-window safety
+		$zero = EnterpriseMetrics::fromRawCounters(0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.0, 5.0, null, null, 10.0, 1.0, 0.0, null, 1700000000);
+		$this->assertNull($zero->cacheHitRequestsPct());
+		$this->assertNull($zero->cacheHitBytesPct());
+		$this->assertNull($zero->error4xxPct());
+		$this->assertNull($zero->error5xxPct());
+		$this->assertNull($zero->wafBlockedRate());
+		$this->assertNull($zero->dnsQueriesRate());
+		$this->assertNull($zero->tlsCertExpiryDays());
+	}
+
+	public function testRejectsInconsistentEnterprisePayloadsAndEvaluatesBreaches(): void {
+		$zone  = str_repeat('c', 32);
+		$token = 'cfut_' . str_repeat('c', 40);
+		$nop   = static function (): void {
+		};
+
+		// Cached requests > total requests must throw MALFORMED
+		$this->transport->queue(new Response(200, array(), '{"data":{"viewer":{"zones":[{"settings":{"httpRequestsAdaptiveGroups":{"enabled":true,"maxDuration":86400,"notOlderThan":86400,"maxPageSize":100,"maxNumberOfFields":40}}}]}},"errors":null}'));
+		$this->transport->queue(new Response(200, array(), '{"data":{"viewer":{"zones":[{"total":[{"count":100,"sum":{"edgeResponseBytes":1000},"avg":{"sampleInterval":1}}],"cached":[{"count":150,"sum":{"edgeResponseBytes":500}}],"errors":[]}]}},"errors":null}'));
+		try {
+			$this->client->collectZoneMetrics($zone, $token, 1000, 1300, $nop);
+			$this->fail('expected ApiException for cached > requests');
+		} catch (ApiException $e) {
+			$this->assertSame(ErrorClass::MALFORMED, $e->getErrorClass());
+		}
+
+		// 4xx + 5xx > total requests must throw MALFORMED
+		$this->transport->queue(new Response(200, array(), '{"data":{"viewer":{"zones":[{"settings":{"httpRequestsAdaptiveGroups":{"enabled":true,"maxDuration":86400,"notOlderThan":86400,"maxPageSize":100,"maxNumberOfFields":40}}}]}},"errors":null}'));
+		$this->transport->queue(new Response(200, array(), '{"data":{"viewer":{"zones":[{"total":[{"count":100,"sum":{"edgeResponseBytes":1000},"avg":{"sampleInterval":1}}],"errors4xx":[{"count":60}],"errors":[{"count":50}]}]}},"errors":null}'));
+		try {
+			$this->client->collectZoneMetrics($zone, $token, 1000, 1300, $nop);
+			$this->fail('expected ApiException for 4xx + 5xx > requests');
+		} catch (ApiException $e) {
+			$this->assertSame(ErrorClass::MALFORMED, $e->getErrorClass());
+		}
+
+		// DNS NXDOMAIN + SERVFAIL > total must throw MALFORMED
+		$this->transport->queue(new Response(200, array(), '{"data":{"viewer":{"zones":[{"total":[{"count":10}],"nxdomain":[{"count":8}],"servfail":[{"count":5}]}]}},"errors":null}'));
+		try {
+			$this->client->collectZoneDnsMetrics($zone, $token, 1000, 1300, $nop);
+			$this->fail('expected ApiException for inconsistent DNS totals');
+		} catch (ApiException $e) {
+			$this->assertSame(ErrorClass::MALFORMED, $e->getErrorClass());
+		}
+
+		// Unparseable TLS expiry timestamp must throw MALFORMED
+		$this->transport->queue(new Response(200, array(), '{"success":true,"errors":[],"result":[{"status":"active","certificates":[{"expires_on":"not-a-timestamp"}]}]}'));
+		try {
+			$this->client->collectZoneTlsExpiry($zone, $token, 1700000000, $nop);
+			$this->fail('expected ApiException for bad TLS timestamp');
+		} catch (ApiException $e) {
+			$this->assertSame(ErrorClass::MALFORMED, $e->getErrorClass());
+		}
+
+		// Evaluate enterprise threshold breaches
+		$lowCache = AnalyticsSummary::evaluateSample(array('cache_hit_requests_pct' => 55.0));
+		$this->assertSame(AnalyticsSummary::STATUS_DEGRADED, $lowCache['status']);
+		$this->assertCount(1, $lowCache['breaches']);
+
+		$tlsWarn = AnalyticsSummary::evaluateSample(array('tls_cert_expiry_days' => 10.0));
+		$this->assertSame(AnalyticsSummary::STATUS_DEGRADED, $tlsWarn['status']);
+
+		$tlsCrit = AnalyticsSummary::evaluateSample(array('tls_cert_expiry_days' => 3.0));
+		$this->assertSame(AnalyticsSummary::STATUS_CRITICAL, $tlsCrit['status']);
+
+		$dnsCrit = AnalyticsSummary::evaluateSample(array('dns_servfail_rate' => 12.5));
+		$this->assertSame(AnalyticsSummary::STATUS_CRITICAL, $dnsCrit['status']);
+
+		$multi = AnalyticsSummary::evaluateSample(array(
+			'error_4xx_pct'       => 15.0,
+			'origin_ttfb_p95_ms'  => 1400.0,
+			'cache_hit_bytes_pct' => 40.0,
+			'waf_blocked_rate'    => 75.0,
+		));
+		$this->assertSame(AnalyticsSummary::STATUS_CRITICAL, $multi['status']);
+		$this->assertCount(4, $multi['breaches']);
 	}
 }

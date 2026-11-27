@@ -111,6 +111,96 @@ final class AnalyticsSummary {
 				'unit'             => 'seconds',
 				'description'      => 'Alert when zone analytics sample age exceeds staleness budget',
 			),
+			array(
+				'metric'           => 'cloudflare_zone_cache_hit_requests',
+				'data_source_name' => 'cache_hit_req_pct',
+				'direction'        => 'low',
+				'thold_hi'         => null,
+				'thold_low'        => 70.0,
+				'fail_trigger'     => 3,
+				'unit'             => 'percent',
+				'description'      => 'Alert when zone cache hit ratio by requests drops below 70%',
+			),
+			array(
+				'metric'           => 'cloudflare_zone_cache_hit_bytes',
+				'data_source_name' => 'cache_hit_bytes_pct',
+				'direction'        => 'low',
+				'thold_hi'         => null,
+				'thold_low'        => 70.0,
+				'fail_trigger'     => 3,
+				'unit'             => 'percent',
+				'description'      => 'Alert when zone cache hit ratio by bytes drops below 70%',
+			),
+			array(
+				'metric'           => 'cloudflare_zone_errors_4xx',
+				'data_source_name' => 'error_4xx_pct',
+				'direction'        => 'high',
+				'thold_hi'         => 10.0,
+				'thold_low'        => null,
+				'fail_trigger'     => 2,
+				'unit'             => 'percent',
+				'description'      => 'Alert when zone HTTP 4xx client error rate exceeds 10%',
+			),
+			array(
+				'metric'           => 'cloudflare_zone_errors_5xx',
+				'data_source_name' => 'error_5xx_pct',
+				'direction'        => 'high',
+				'thold_hi'         => 5.0,
+				'thold_low'        => null,
+				'fail_trigger'     => 2,
+				'unit'             => 'percent',
+				'description'      => 'Alert when zone HTTP 5xx server error rate exceeds 5%',
+			),
+			array(
+				'metric'           => 'cloudflare_zone_waf_blocked',
+				'data_source_name' => 'waf_blocked_rate',
+				'direction'        => 'high',
+				'thold_hi'         => 50.0,
+				'thold_low'        => null,
+				'fail_trigger'     => 2,
+				'unit'             => 'events/s',
+				'description'      => 'Alert when WAF blocked request rate exceeds 50 events/s',
+			),
+			array(
+				'metric'           => 'cloudflare_zone_waf_challenged',
+				'data_source_name' => 'waf_challenged_rate',
+				'direction'        => 'high',
+				'thold_hi'         => 100.0,
+				'thold_low'        => null,
+				'fail_trigger'     => 2,
+				'unit'             => 'events/s',
+				'description'      => 'Alert when WAF challenged request rate exceeds 100 events/s',
+			),
+			array(
+				'metric'           => 'cloudflare_zone_origin_ttfb_p95',
+				'data_source_name' => 'origin_ttfb_p95_ms',
+				'direction'        => 'high',
+				'thold_hi'         => 1000.0,
+				'thold_low'        => null,
+				'fail_trigger'     => 2,
+				'unit'             => 'milliseconds',
+				'description'      => 'Alert when origin TTFB p95 latency exceeds 1000 ms',
+			),
+			array(
+				'metric'           => 'cloudflare_zone_dns_servfail',
+				'data_source_name' => 'dns_servfail_rate',
+				'direction'        => 'high',
+				'thold_hi'         => 5.0,
+				'thold_low'        => null,
+				'fail_trigger'     => 2,
+				'unit'             => 'responses/s',
+				'description'      => 'Alert when zone DNS SERVFAIL rate exceeds 5 responses/s',
+			),
+			array(
+				'metric'           => 'cloudflare_zone_tls_cert_expiry',
+				'data_source_name' => 'tls_cert_expiry_days',
+				'direction'        => 'low',
+				'thold_hi'         => null,
+				'thold_low'        => 14.0,
+				'fail_trigger'     => 1,
+				'unit'             => 'days',
+				'description'      => 'Alert when soonest active TLS certificate expires in fewer than 14 days',
+			),
 		);
 	}
 
@@ -205,25 +295,64 @@ final class AnalyticsSummary {
 	}
 
 	/**
-	 * Evaluate a single GraphQL analytics sample against error-rate and latency thresholds.
+	 * Evaluate a single GraphQL or enterprise analytics sample against error-rate,
+	 * latency, cache-hit, WAF, DNS, and TLS expiry thresholds.
+	 *
+	 * Only metrics present and non-null in $sample are evaluated so minimal samples
+	 * remain backwards-compatible and unknown fields never trigger false breaches.
 	 *
 	 * @param array{
-	 *     requests: float,
-	 *     error_rate_pct: ?float,
+	 *     requests?: float,
+	 *     error_rate_pct?: ?float,
+	 *     error_5xx_pct?: ?float,
+	 *     error_4xx_pct?: ?float,
 	 *     edge_latency_avg_ms?: ?float,
-	 *     edge_latency_p95_ms?: ?float
+	 *     edge_latency_p95_ms?: ?float,
+	 *     origin_ttfb_avg_ms?: ?float,
+	 *     origin_ttfb_p95_ms?: ?float,
+	 *     cache_hit_requests_pct?: ?float,
+	 *     cache_hit_bytes_pct?: ?float,
+	 *     waf_blocked_rate?: ?float,
+	 *     waf_challenged_rate?: ?float,
+	 *     dns_servfail_rate?: ?float,
+	 *     tls_cert_expiry_days?: ?float
 	 * }|null $sample
+	 * @param float $maxErrorPct        Maximum allowed 5xx error rate (%)
+	 * @param float $maxLatencyMs       Maximum allowed edge latency (ms)
+	 * @param float $max4xxPct          Maximum allowed 4xx error rate (%)
+	 * @param float $minCacheHitPct     Minimum allowed cache hit ratio (%)
+	 * @param float $maxOriginTtfbMs    Maximum allowed origin TTFB latency (ms)
+	 * @param float $maxWafBlockedRate  Maximum allowed WAF blocked rate (events/s)
+	 * @param float $maxDnsServfailRate Maximum allowed DNS SERVFAIL rate (responses/s)
+	 * @param float $minTlsExpiryDays   Minimum days before TLS cert expiry warning
 	 * @return array{status: string, breaches: array<int, string>}
 	 */
-	public static function evaluateSample(?array $sample, float $maxErrorPct = 5.0, float $maxLatencyMs = 500.0): array {
+	public static function evaluateSample(
+		?array $sample,
+		float $maxErrorPct = 5.0,
+		float $maxLatencyMs = 500.0,
+		float $max4xxPct = 10.0,
+		float $minCacheHitPct = 70.0,
+		float $maxOriginTtfbMs = 1000.0,
+		float $maxWafBlockedRate = 50.0,
+		float $maxDnsServfailRate = 5.0,
+		float $minTlsExpiryDays = 14.0
+	): array {
 		if ($sample === null) {
 			return array('status' => self::STATUS_UNKNOWN, 'breaches' => array('no_sample'));
 		}
 
-		$breaches = array();
+		$breaches   = array();
+		$isCritical = false;
 
-		if (isset($sample['error_rate_pct']) && $sample['error_rate_pct'] > $maxErrorPct) {
-			$breaches[] = sprintf('error_rate_pct %.2f%% > %.2f%%', $sample['error_rate_pct'], $maxErrorPct);
+		$err5xx = $sample['error_5xx_pct'] ?? ($sample['error_rate_pct'] ?? null);
+		if ($err5xx !== null && $err5xx > $maxErrorPct) {
+			$breaches[] = sprintf('error_rate_pct %.2f%% > %.2f%%', $err5xx, $maxErrorPct);
+			$isCritical = true;
+		}
+
+		if (isset($sample['error_4xx_pct']) && $sample['error_4xx_pct'] > $max4xxPct) {
+			$breaches[] = sprintf('error_4xx_pct %.2f%% > %.2f%%', $sample['error_4xx_pct'], $max4xxPct);
 		}
 
 		$latency = $sample['edge_latency_p95_ms'] ?? ($sample['edge_latency_avg_ms'] ?? null);
@@ -231,11 +360,40 @@ final class AnalyticsSummary {
 			$breaches[] = sprintf('edge_latency_ms %.1f ms > %.1f ms', $latency, $maxLatencyMs);
 		}
 
+		$originTtfb = $sample['origin_ttfb_p95_ms'] ?? ($sample['origin_ttfb_avg_ms'] ?? null);
+		if ($originTtfb !== null && $originTtfb > $maxOriginTtfbMs) {
+			$breaches[] = sprintf('origin_ttfb_ms %.1f ms > %.1f ms', $originTtfb, $maxOriginTtfbMs);
+		}
+
+		if (isset($sample['cache_hit_requests_pct']) && $sample['cache_hit_requests_pct'] < $minCacheHitPct) {
+			$breaches[] = sprintf('cache_hit_requests_pct %.2f%% < %.2f%%', $sample['cache_hit_requests_pct'], $minCacheHitPct);
+		}
+
+		if (isset($sample['cache_hit_bytes_pct']) && $sample['cache_hit_bytes_pct'] < $minCacheHitPct) {
+			$breaches[] = sprintf('cache_hit_bytes_pct %.2f%% < %.2f%%', $sample['cache_hit_bytes_pct'], $minCacheHitPct);
+		}
+
+		if (isset($sample['waf_blocked_rate']) && $sample['waf_blocked_rate'] > $maxWafBlockedRate) {
+			$breaches[] = sprintf('waf_blocked_rate %.2f/s > %.2f/s', $sample['waf_blocked_rate'], $maxWafBlockedRate);
+		}
+
+		if (isset($sample['dns_servfail_rate']) && $sample['dns_servfail_rate'] > $maxDnsServfailRate) {
+			$breaches[] = sprintf('dns_servfail_rate %.2f/s > %.2f/s', $sample['dns_servfail_rate'], $maxDnsServfailRate);
+			$isCritical = true;
+		}
+
+		if (isset($sample['tls_cert_expiry_days']) && $sample['tls_cert_expiry_days'] < $minTlsExpiryDays) {
+			$breaches[] = sprintf('tls_cert_expiry_days %.1f d < %.1f d', $sample['tls_cert_expiry_days'], $minTlsExpiryDays);
+			if ($sample['tls_cert_expiry_days'] < 7.0) {
+				$isCritical = true;
+			}
+		}
+
 		if ($breaches === array()) {
 			return array('status' => self::STATUS_OK, 'breaches' => array());
 		}
 
-		$status = count($breaches) > 1 || (isset($sample['error_rate_pct']) && $sample['error_rate_pct'] > $maxErrorPct)
+		$status = ($isCritical || count($breaches) > 1)
 			? self::STATUS_CRITICAL
 			: self::STATUS_DEGRADED;
 

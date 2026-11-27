@@ -44,19 +44,62 @@ final class HyperLogLog {
 	/** @var float 2^32 hash space size from Flajolet et al. (2007). */
 	private const TWO_TO_32 = 4294967296.0;
 
+	/** @var array<int, float> Precomputed 2^(-r) table for register ranks 0..32 (avoids pow() in count()). */
+	private const INV_POW2 = array(
+		0  => 1.0,
+		1  => 0.5,
+		2  => 0.25,
+		3  => 0.125,
+		4  => 0.0625,
+		5  => 0.03125,
+		6  => 0.015625,
+		7  => 0.0078125,
+		8  => 0.00390625,
+		9  => 0.001953125,
+		10 => 0.0009765625,
+		11 => 0.00048828125,
+		12 => 0.000244140625,
+		13 => 0.0001220703125,
+		14 => 6.103515625e-5,
+		15 => 3.0517578125e-5,
+		16 => 1.52587890625e-5,
+		17 => 7.62939453125e-6,
+		18 => 3.814697265625e-6,
+		19 => 1.9073486328125e-6,
+		20 => 9.5367431640625e-7,
+		21 => 4.76837158203125e-7,
+		22 => 2.384185791015625e-7,
+		23 => 1.1920928955078125e-7,
+		24 => 5.960464477539063e-8,
+		25 => 2.9802322387695312e-8,
+		26 => 1.4901161193847656e-8,
+		27 => 7.450580596923828e-9,
+		28 => 3.725290298461914e-9,
+		29 => 1.862645149230957e-9,
+		30 => 9.313225746154785e-10,
+		31 => 4.656612873077393e-10,
+		32 => 2.3283064365386963e-10,
+	);
+
 	/** @var int Precision parameter p in [4, 16]. */
 	private $precision;
 
 	/** @var int Register count m = 2^p. */
 	private $registerCount;
 
+	/** @var int Bitmask (m - 1) for register indexing. */
+	private $indexMask;
+
 	/** @var int Remaining hash width (32 - p). */
 	private $remainingBits;
+
+	/** @var int Bitmask ((1 << (32 - p)) - 1) for suffix extraction. */
+	private $suffixMask;
 
 	/** @var float Bias correction constant alpha_m. */
 	private $alpha;
 
-	/** @var array<int, int> Register array indexed 0..(m - 1). */
+	/** @var string Packed 1-byte-per-register buffer of length m = 2^p. */
 	private $registers;
 
 	/**
@@ -74,9 +117,11 @@ final class HyperLogLog {
 
 		$this->precision     = $precision;
 		$this->registerCount = 1 << $precision;
+		$this->indexMask     = $this->registerCount - 1;
 		$this->remainingBits = 32 - $precision;
+		$this->suffixMask    = (1 << $this->remainingBits) - 1;
 		$this->alpha         = self::alphaFor($this->registerCount);
-		$this->registers     = array_fill(0, $this->registerCount, 0);
+		$this->registers     = str_repeat("\x00", $this->registerCount);
 	}
 
 	/**
@@ -87,12 +132,12 @@ final class HyperLogLog {
 	 */
 	public function add(string $value): void {
 		$hash   = self::hash32($value);
-		$index  = ($hash >> $this->remainingBits) & ($this->registerCount - 1);
-		$suffix = $hash & ((1 << $this->remainingBits) - 1);
+		$index  = ($hash >> $this->remainingBits) & $this->indexMask;
+		$suffix = $hash & $this->suffixMask;
 		$rank   = self::rho($suffix, $this->remainingBits);
 
-		if ($rank > $this->registers[$index]) {
-			$this->registers[$index] = $rank;
+		if ($rank > ord($this->registers[$index])) {
+			$this->registers[$index] = chr($rank);
 		}
 	}
 
@@ -103,17 +148,13 @@ final class HyperLogLog {
 	 * @return float Estimated distinct cardinality
 	 */
 	public function count(): float {
-		$m            = (float) $this->registerCount;
-		$harmonicSum  = 0.0;
-		$zeroCount    = 0;
+		$m           = (float) $this->registerCount;
+		$histogram   = count_chars($this->registers, 1);
+		$zeroCount   = $histogram[0] ?? 0;
+		$harmonicSum = 0.0;
 
-		for ($i = 0; $i < $this->registerCount; $i++) {
-			$reg = $this->registers[$i];
-			$harmonicSum += pow(2.0, (float) (-$reg));
-
-			if ($reg === 0) {
-				$zeroCount++;
-			}
+		foreach ($histogram as $reg => $freq) {
+			$harmonicSum += (float) $freq * self::INV_POW2[$reg];
 		}
 
 		$raw = $this->alpha * $m * $m / $harmonicSum;
@@ -161,15 +202,36 @@ final class HyperLogLog {
 			throw new InvalidArgumentException('Cannot merge HyperLogLog sketches with different precisions');
 		}
 
-		$merged = new self($this->precision);
-
-		for ($i = 0; $i < $this->registerCount; $i++) {
-			$merged->registers[$i] = $this->registers[$i] >= $other->registers[$i]
-				? $this->registers[$i]
-				: $other->registers[$i];
-		}
+		$merged = clone $this;
+		$merged->mergeInPlace($other);
 
 		return $merged;
+	}
+
+	/**
+	 * Merge another HyperLogLog of the same precision into this sketch in place
+	 * (for multi-poller fan-in aggregation without repeated allocations).
+	 *
+	 * @param self $other Sketch with the same precision
+	 * @return void
+	 * @throws InvalidArgumentException When precisions differ
+	 */
+	public function mergeInPlace(self $other): void {
+		if ($this->precision !== $other->precision) {
+			throw new InvalidArgumentException('Cannot merge HyperLogLog sketches with different precisions');
+		}
+
+		$target = $this->registers;
+		$source = $other->registers;
+		$len    = $this->registerCount;
+
+		for ($i = 0; $i < $len; $i++) {
+			if ($source[$i] > $target[$i]) {
+				$target[$i] = $source[$i];
+			}
+		}
+
+		$this->registers = $target;
 	}
 
 	/**
@@ -205,9 +267,11 @@ final class HyperLogLog {
 	 * @return array{precision: int, registers: array<int, int>}
 	 */
 	public function toArray(): array {
+		$unpacked = unpack('C*', $this->registers);
+
 		return array(
 			'precision' => $this->precision,
-			'registers' => $this->registers,
+			'registers' => is_array($unpacked) ? array_values($unpacked) : array(),
 		);
 	}
 
@@ -231,7 +295,7 @@ final class HyperLogLog {
 			throw new InvalidArgumentException('Serialized HyperLogLog register count must equal 2^precision');
 		}
 
-		$registers = array();
+		$buffer = str_repeat("\x00", $expected);
 
 		for ($i = 0; $i < $expected; $i++) {
 			if (!array_key_exists($i, $data['registers']) || !is_int($data['registers'][$i])) {
@@ -244,10 +308,12 @@ final class HyperLogLog {
 				throw new InvalidArgumentException('Serialized HyperLogLog register value out of range 0..' . $maxRank);
 			}
 
-			$registers[$i] = $val;
+			if ($val !== 0) {
+				$buffer[$i] = chr($val);
+			}
 		}
 
-		$hll->registers = $registers;
+		$hll->registers = $buffer;
 
 		return $hll;
 	}
@@ -282,7 +348,7 @@ final class HyperLogLog {
 	 */
 	private static function hash32(string $value): int {
 		$digest = hash('sha256', $value, true);
-		$parts  = unpack('Nh', substr($digest, 0, 4));
+		$parts  = unpack('Nh', $digest);
 
 		if (!is_array($parts) || !isset($parts['h'])) {
 			// @codeCoverageIgnoreStart
@@ -295,7 +361,7 @@ final class HyperLogLog {
 
 	/**
 	 * Compute rho(w): the 1-based position of the leftmost 1-bit in a $bits-wide
-	 * unsigned integer (returns $bits + 1 when $w === 0).
+	 * unsigned integer (returns $bits + 1 when $w === 0) via O(1) binary search.
 	 *
 	 * @param int $w    Suffix bits of the 32-bit hash
 	 * @param int $bits Number of bits in $w (32 - p)
@@ -306,14 +372,32 @@ final class HyperLogLog {
 			return $bits + 1;
 		}
 
-		$rank = 1;
-		$mask = 1 << ($bits - 1);
+		$msb = 0;
 
-		while (($w & $mask) === 0 && $mask > 0) {
-			$rank++;
-			$mask >>= 1;
+		if ($w >= 0x10000) {
+			$w >>= 16;
+			$msb += 16;
 		}
 
-		return $rank;
+		if ($w >= 0x100) {
+			$w >>= 8;
+			$msb += 8;
+		}
+
+		if ($w >= 0x10) {
+			$w >>= 4;
+			$msb += 4;
+		}
+
+		if ($w >= 0x4) {
+			$w >>= 2;
+			$msb += 2;
+		}
+
+		if ($w >= 0x2) {
+			$msb += 1;
+		}
+
+		return $bits - $msb;
 	}
 }

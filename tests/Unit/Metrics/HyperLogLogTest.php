@@ -100,6 +100,13 @@ final class HyperLogLogTest extends TestCase {
 		$this->assertLessThan(750, $b->estimate());
 		$this->assertGreaterThan(850, $merged->estimate());
 		$this->assertLessThan(1150, $merged->estimate());
+
+		// mergeInPlace matches immutable merge
+		$inPlace = new HyperLogLog(10);
+		$inPlace->mergeInPlace($a);
+		$inPlace->mergeInPlace($b);
+		$this->assertSame($expected->toArray(), $inPlace->toArray());
+		$this->assertEqualsWithDelta($expected->count(), $inPlace->count(), 1e-9);
 	}
 
 	public function testLargeRangeAndNoZeroSmallRangeCorrectionBranches(): void {

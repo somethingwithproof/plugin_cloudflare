@@ -109,6 +109,9 @@ final class CountMinSketch {
 	/**
 	 * Increment the frequency counter for a key.
 	 *
+	 * Uses Kirsch-Mitzenmacher incremental modular addition (no inner-loop
+	 * multiplication or modulo) over a single FIPS-safe SHA-256 digest.
+	 *
 	 * @param string $key   Stream key (such as an ASN, IP prefix, or URL path)
 	 * @param int    $count Non-negative increment
 	 * @return void
@@ -123,13 +126,19 @@ final class CountMinSketch {
 			return;
 		}
 
-		$pair = self::hashPair($key);
-		$h1   = $pair[0] % $this->width;
-		$h2   = $pair[1] % $this->width;
+		$width = $this->width;
+		$depth = $this->depth;
+		$pair  = self::hashPair($key);
+		$col   = $pair[0] % $width;
+		$step  = $pair[1] % $width;
 
-		for ($row = 0; $row < $this->depth; $row++) {
-			$col = ($h1 + (($row * $h2) % $this->width)) % $this->width;
+		for ($row = 0; $row < $depth; $row++) {
 			$this->rows[$row][$col] += $count;
+			$col += $step;
+
+			if ($col >= $width) {
+				$col -= $width;
+			}
 		}
 
 		$this->totalCount += $count;
@@ -142,21 +151,28 @@ final class CountMinSketch {
 	 * @return int Estimated frequency (>= true count)
 	 */
 	public function estimate(string $key): int {
-		$pair = self::hashPair($key);
-		$h1   = $pair[0] % $this->width;
-		$h2   = $pair[1] % $this->width;
-		$min  = null;
+		$width = $this->width;
+		$depth = $this->depth;
+		$pair  = self::hashPair($key);
+		$col   = $pair[0] % $width;
+		$step  = $pair[1] % $width;
+		$min   = $this->rows[0][$col];
 
-		for ($row = 0; $row < $this->depth; $row++) {
-			$col   = ($h1 + (($row * $h2) % $this->width)) % $this->width;
+		for ($row = 1; $row < $depth; $row++) {
+			$col += $step;
+
+			if ($col >= $width) {
+				$col -= $width;
+			}
+
 			$value = $this->rows[$row][$col];
 
-			if ($min === null || $value < $min) {
+			if ($value < $min) {
 				$min = $value;
 			}
 		}
 
-		return $min === null ? 0 : $min;
+		return $min;
 	}
 
 	/**
@@ -171,16 +187,42 @@ final class CountMinSketch {
 			throw new InvalidArgumentException('Cannot merge sketches with different dimensions');
 		}
 
-		$merged             = new self($this->width, $this->depth);
-		$merged->totalCount = $this->totalCount + $other->totalCount;
-
-		for ($row = 0; $row < $this->depth; $row++) {
-			for ($col = 0; $col < $this->width; $col++) {
-				$merged->rows[$row][$col] = $this->rows[$row][$col] + $other->rows[$row][$col];
-			}
-		}
+		$merged = clone $this;
+		$merged->mergeInPlace($other);
 
 		return $merged;
+	}
+
+	/**
+	 * Accumulate another sketch into this sketch in place without allocating
+	 * intermediate matrices (for multi-poller fan-in aggregation).
+	 *
+	 * @param self $other Sketch with matching width and depth
+	 * @return void
+	 * @throws InvalidArgumentException When dimensions do not match
+	 */
+	public function mergeInPlace(self $other): void {
+		if ($this->width !== $other->width || $this->depth !== $other->depth) {
+			throw new InvalidArgumentException('Cannot merge sketches with different dimensions');
+		}
+
+		$width = $this->width;
+		$depth = $this->depth;
+
+		for ($row = 0; $row < $depth; $row++) {
+			$targetRow = $this->rows[$row];
+			$sourceRow = $other->rows[$row];
+
+			for ($col = 0; $col < $width; $col++) {
+				if ($sourceRow[$col] !== 0) {
+					$targetRow[$col] += $sourceRow[$col];
+				}
+			}
+
+			$this->rows[$row] = $targetRow;
+		}
+
+		$this->totalCount += $other->totalCount;
 	}
 
 	/**
@@ -303,7 +345,7 @@ final class CountMinSketch {
 	 */
 	private static function hashPair(string $key): array {
 		$digest = hash('sha256', $key, true);
-		$parts  = unpack('N2h', substr($digest, 0, 8));
+		$parts  = unpack('N2h', $digest);
 
 		if (!is_array($parts) || !isset($parts['h1'], $parts['h2'])) {
 			// @codeCoverageIgnoreStart

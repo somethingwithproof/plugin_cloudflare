@@ -106,6 +106,12 @@ final class CountMinSketchTest extends TestCase {
 		foreach (array('AS13335', 'AS15169', 'AS16509', 'AS64512', 'AS99999') as $key) {
 			$this->assertSame($combined->estimate($key), $merged->estimate($key));
 		}
+
+		// mergeInPlace matches immutable merge across multiple pollers
+		$inPlace = new CountMinSketch(256, 5);
+		$inPlace->mergeInPlace($a);
+		$inPlace->mergeInPlace($b);
+		$this->assertSame($combined->toArray(), $inPlace->toArray());
 	}
 
 	public function testSerializationRoundTripPreservesState(): void {

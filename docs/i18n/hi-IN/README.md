@@ -24,18 +24,18 @@
 
 Cloudflare Tunnels और ज़ोन विश्लेषिकी की निगरानी के लिए बनाया जा रहा Cacti 1.2 प्लगइन। यह सीमित दायरे के API टोकन से Cloudflare API पढ़ता है, Cloudflare में कभी बदलाव नहीं करता और डेटा अपनी तालिकाओं में रखता है। Cacti में यह एक डेटा क्वेरी XML को `resource/script_server/` में कॉपी करता है और Cacti की अपनी API से डिवाइस, ग्राफ़ और टेम्पलेट बनाता है; कोर फ़ाइलें नहीं बदलता।
 
-**स्थिति: 0.4.0-dev, अप्रकाशित।** नवीनतम स्थिर संस्करण 0.3.0 है। विकास संस्करण में CSV इन्वेंट्री निर्यात, हटाए गए टनल को स्पष्ट स्वीकृति से निगरानी से हटाना, कैश की गई ज़ोन विश्लेषिकी और वैकल्पिक Thold टेम्पलेट शामिल हैं। वास्तविक क्लाउड खाते और तैनाती पर योग्यता जाँच बाकी है।
+**स्थिति: 0.4.0-dev, अप्रकाशित।** नवीनतम स्थिर संस्करण 0.3.0 है। विकास संस्करण में CSV इन्वेंट्री निर्यात, हटाए गए टनल को स्पष्ट स्वीकृति से निगरानी से हटाना, कैश की गई ज़ोन विश्लेषिकी, अनुमति-सूची वाला केवल-पठन GraphQL Analytics क्लाइंट (`GraphqlAnalyticsClient`) और Thold-तैयार सारांश सहायक (`AnalyticsSummary`), Configuration-as-Code CLI (`cli/cloudflare.php`), पारिस्थितिकी हुक (`abilities_register`, `doctor_register_checks`, `casc_register_providers`), तथा पोलर-सीमित दूरस्थ संग्राहक समर्थन (`replicate_out`) शामिल हैं। वास्तविक प्रदाता और परिनियोजन पर योग्यता जाँच बाकी है।
 
-नीचे की तालिका स्थिर संस्करण 0.3.0 का वर्णन करती है। विकास संस्करण के बदलाव आगे दिए गए संचालक कार्यप्रवाह और ज़ोन विश्लेषिकी अनुभाग में हैं।
+नीचे की तालिका स्थिर संस्करण 0.3.0 का वर्णन करती है। 0.4.0-dev के विकास परिवर्धन आगे दिए गए संचालक कार्यप्रवाह और ज़ोन विश्लेषिकी अनुभाग में हैं।
 
 | अभी उपलब्ध | नियोजित |
 |---|---|
-| Cacti प्लगइन प्रबंधक से इंस्टॉल, अपग्रेड, अक्षम और अनइंस्टॉल करना | GraphQL विश्लेषिकी और Thold अलर्ट (पड़ाव 4) |
+| Cacti प्लगइन प्रबंधक से इंस्टॉल, अपग्रेड, अक्षम और अनइंस्टॉल करना | वास्तविक खाते पर GraphQL और परिनियोजन योग्यता जाँच (पड़ाव 4 समाप्ति) |
 | Cloudflare: View, Operator और Configure अनुमतियाँ | दोष प्रविष्टि, TLA+ मॉडल और संपूर्ण दस्तावेज़ (पड़ाव 5) |
 | Cloudflare खाते जोड़ना, संपादित करना, हटाना, सक्षम और अक्षम करना | |
 | टोकन फ़ाइल में या Cacti डेटाबेस में एन्क्रिप्ट करके रखना | |
 | टोकन सत्यापित करना और टनल तथा ज़ोन पढ़ने की अनुमतियाँ जाँचना | |
-| मुख्य पोलर द्वारा शुरू किए गए पृष्ठभूमि संग्राहक में टनल और कनेक्टर खोज | |
+| पृष्ठभूमि संग्राहक (`poller_cloudflare.php`) में टनल और कनेक्टर खोज | |
 | Management > Cloudflare Tunnels में Overview, Tunnels और Connectors पृष्ठ | |
 | जीवनचक्र ट्रैकिंग: `active`, `unavailable` और `deleted` | |
 | प्रति खाता एक Cacti डिवाइस, जिसे प्रशासक बनाए और जिसके टनल डेटा क्वेरी के इंडेक्स हों | |
@@ -209,7 +209,7 @@ Cloudflare: Configure वाला कोई भी उपयोगकर्त�
 ## अपग्रेड
 
 1. `plugins/cloudflare` की फ़ाइलें नए रिलीज़ से बदलें, डायरेक्टरी का नाम वही रखें।
-2. प्रशासक के रूप में Console > Configuration > Plugins या Console > Configuration > Cloudflare Accounts एक बार खोलें। इससे migrations चलते हैं, Cloudflare टेम्पलेट आयात होते हैं और डेटा क्वेरी फ़ाइल कॉपी होती है ([टनल मेट्रिक और ग्राफ़](#tunnel-metrics-and-graphs) देखें); 0.1.0 से अपग्रेड पर `poller_bottom` hook भी पंजीकृत होता है।
+2. प्रशासक के रूप में Console > Configuration > Plugins या Console > Configuration > Cloudflare Accounts एक बार खोलें। इससे migrations चलते हैं, Cloudflare टेम्पलेट आयात होते हैं, डेटा क्वेरी फ़ाइल कॉपी होती है ([टनल मेट्रिक और ग्राफ़](#tunnel-metrics-and-graphs) देखें), `abilities_register`, `doctor_register_checks`, `casc_register_providers`, और `replicate_out` पारिस्थितिकी हुक (`includes/ecosystem.php`) पंजीकृत होते हैं, तथा 0.1.0 से अपग्रेड पर `poller_bottom` hook भी पंजीकृत होता है।
 
 `poller.php` प्लगइन अपग्रेड नहीं चलाता, इसलिए चरण 2 तक नया स्कीमा उपलब्ध नहीं होता। तब हर संग्राहक रन कुछ नहीं करता और `CLOUDFLARE: collector skipped; plugin upgrade pending, open Console > Plugins` लॉग करता है। Cloudflare Tunnels पृष्ठों को केवल Cloudflare: View चाहिए, इसलिए वे अपग्रेड कभी नहीं चलाते और चरण 2 तक “The Cloudflare tunnels could not be read” दिखा सकते हैं।
 
@@ -234,7 +234,7 @@ Verify खाते की स्थिति सेट करता है:
 <a id="tunnel-discovery"></a>
 ## टनल खोज
 
-मुख्य पोलर के हर चक्र के बाद, कम-से-कम एक सक्षम खाते में Collect Tunnels चालू होने पर `poller_bottom` hook, `exec_background` से पृष्ठभूमि संग्राहक शुरू करता है। संग्राहक पोलर की प्रक्रिया में कभी नहीं चलता, इसलिए धीमी Cloudflare API `poller.php` को विलंबित नहीं करती। दूरस्थ पोलर इसे कभी शुरू नहीं करते।
+कॉन्फ़िगर किए गए संग्राहक पोलर (`cloudflare_poller_id`, डिफ़ॉल्ट `1`) के हर चक्र के बाद, कम-से-कम एक सक्षम खाते में Collect Tunnels चालू होने पर `poller_bottom` hook, `exec_background` से पृष्ठभूमि संग्राहक शुरू करता है। संग्राहक पोलर की प्रक्रिया में कभी नहीं चलता, इसलिए धीमी Cloudflare API `poller.php` को विलंबित नहीं करती। `INFO` में `remote_collect:1` घोषित है, और `replicate_out` हुक (`RemoteReplication`) गोपनीय-रहित मेटाडेटा तालिकाएँ (`plugin_cloudflare_accounts` जिसमें `token_ciphertext` को `NULL` कर दिया जाता है, `plugin_cloudflare_tunnels`, `plugin_cloudflare_connectors`, `plugin_cloudflare_zones`, `plugin_cloudflare_metric_mappings`, और `plugin_cloudflare_resources`) दूरस्थ पोलरों (`poller_id > 1`) को भेजता है जबकि vault कुंजी सामग्री को बाहर रखता है।
 
 हर देय खाते के लिए संग्राहक टनल सूची लेता है, फिर सक्रिय टनलों के कनेक्शन पढ़ता है, जिससे कनेक्टर, संस्करण, डेटा केंद्र और मूल पते मिलते हैं। खाते हर Discovery Interval पर देय होते हैं, डिफ़ॉल्ट 300 सेकंड। रन 50 सेकंड बाद नया खाता शुरू नहीं करता और अधिकतम 200 कनेक्शन अनुरोध करता है। कोई भी सीमा खाते के कनेक्शन पढ़ते बीच में रोक सकती है; खाता `partial` दर्ज होता है और अगला रन उन टनलों से आगे बढ़ता है जिनका प्रयास सबसे पहले हुआ था। शुरू न हुए खाते अगले रन के लिए देय रहते हैं।
 
@@ -315,7 +315,7 @@ Settings > Cloudflare में हैं:
 
 - एक रन अधिकतम 200 कनेक्शन अनुरोध करता है। इससे आगे के टनल अवलोकन विंडो से कम आवृत्ति पर रीफ़्रेश होते हैं और उनके कनेक्शन ग्राफ़ में अंतराल आते हैं।
 - अपग्रेड में वितरित template XML बदले तो प्लगइन आयातित टेम्पलेट पर प्रशासक के बदलाव मिटा देता है।
-- खाते का डिवाइस मुख्य पोलर पर रहना चाहिए। प्लगइन तालिकाएँ मुख्य डेटाबेस में हैं और स्क्रिप्ट वहीं पढ़ती है।
+- दूरस्थ पोलरों को बिना क्रेडेंशियल के प्रतिकृत मेटाडेटा मिलता है (`token_ciphertext` को `NULL` कर दिया जाता है और vault कुंजियाँ कभी प्रतिकृत नहीं होतीं)। किसी निर्दिष्ट दूरस्थ पोलर (`cloudflare_poller_id`) पर संग्राहक चलाते समय, टोकन फ़ाइलें या vault कुंजी सीधे उसी संग्राहक होस्ट पर प्रदान करें।
 - हटे टनल डेटा क्वेरी इंडेक्स, ग्राफ़ और RRD में रहते हैं और `U` छापते हैं।
 - वास्तविक fatal error, जैसे मेमोरी समाप्त होने पर Cacti प्लगइन अक्षम कर देता है। [docs/security.md](docs/security.md) देखें।
 
@@ -326,13 +326,23 @@ Settings > Cloudflare में हैं:
 - टोकन आपकी तैयार फ़ाइल में या AES-256-GCM से एन्क्रिप्ट होकर रहते हैं; कुंजी फ़ाइल डेटाबेस में कभी नहीं जाती। टोकन पृष्ठ, लॉग या त्रुटि संदेश में कभी नहीं आते।
 - डेटाबेस त्रुटियों में केवल SQLSTATE और driver error code होते हैं, statement के मान कभी नहीं।
 - हर बदलाव Cacti CSRF टोकन से सुरक्षित POST है। खाते के प्रशासन और कॉन्फ़िगरेशन बदलाव के लिए Cloudflare: Configure चाहिए; व्यक्तिगत ट्रायेज़ स्वीकृतियों के लिए Cloudflare: Operator चाहिए। Cacti डिवाइस बनाना या Create Graphs चालू करना Cacti की Sites/Devices/Data अनुमति भी माँगता है। अक्षम प्लगइन अपने पृष्ठ अस्वीकार करता है।
+- Configuration-as-Code (`cli/cloudflare.php` और `casc_register_providers`) केवल `vault:<account_id>` या `file:<absolute_path>` गोपनीय संदर्भ स्वीकार करता है, कच्चे टोकन, vault साइफ़रटेक्स्ट और XML `DOCTYPE` घोषणाओं को अस्वीकार करता है, तथा लिखने से पहले सटीक `--confirm=<PLAN_HASH>` माँगता है।
+- पंजीकृत Abilities (`cloudflare-list-tunnels`, `cloudflare-get-health`) सख्ती से केवल पढ़ने योग्य हैं, कॉलर की उपयोगकर्ता ID के लिए सीधे Cacti auth तालिकाओं पर Cloudflare: View क्षेत्र का मूल्यांकन करती हैं (कभी सत्र स्थिति का नहीं), और कोई टोकन या कुंजी सामग्री नहीं लौटातीं।
 
 विवरण और ज्ञात सीमाएँ [docs/security.md](docs/security.md) में हैं। कमजोरियाँ [SECURITY.md](../../../SECURITY.md) के अनुसार निजी तौर पर बताएँ।
 
 <a id="roadmap"></a>
 ## संचालक कार्यप्रवाह और ज़ोन विश्लेषिकी
 
-विकास संस्करण हटाए गए टनल को स्पष्ट रूप से निगरानी से हटाने, हर ज़ोन की क्षमता के अनुसार विश्लेषिकी संग्रह करने और Cacti तथा Thold टेम्पलेट उपयोग करने देता है। ये सुविधाएँ अभी जारी नहीं हुई हैं और वास्तविक खातों पर जाँची नहीं गई हैं। सेटअप, मेट्रिक अर्थ और सत्यापन सीमाएँ [अंग्रेज़ी निर्देशों](../../analytics-and-alerting.md) में हैं।
+`0.4.0-dev` के विकास परिवर्धनों में हटाए गए टनल को स्पष्ट रूप से हटाना, क्षमता-सचेत GraphQL ज़ोन और टनल विश्लेषिकी, Thold-तैयार सारांश सहायक और आयात योग्य टेम्पलेट, एक CasC और स्वास्थ्य CLI, पारिस्थितिकी हुक, तथा दूरस्थ संग्राहक प्रतिकृति शामिल हैं। ये सुविधाएँ अभी जारी नहीं हुई हैं और वास्तविक खातों पर जाँची नहीं गई हैं। सेटअप, मेट्रिक अर्थ और सत्यापन सीमाएँ [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) में हैं।
+
+- **GraphQL विश्लेषिकी क्लाइंट और Thold सारांश (`src/Api/GraphqlAnalyticsClient.php`, `src/Metrics/AnalyticsSummary.php`)**: `GraphqlAnalyticsClient` ज़ोन और टनल अनुरोध मात्रा, HTTP 5xx त्रुटि दर, प्रतिक्रिया बाइट्स और एज विलंबता (औसत और p95) एकत्र करने के लिए `CloudflareClient` (TLS सत्यापित, `api.cloudflare.com` पर पिन किया गया, सीमित प्रतिक्रियाएँ, और `RetryPolicy` दर-सीमा बैकऑफ़) पर केवल संकलन-समय अनुमति-सूची वाली केवल-पठन क्वेरीज़ (`zone_settings`, `zone_http_metrics`, `zone_edge_latency`, `tunnel_analytics`) चलाता है। `AnalyticsSummary` प्लगइन के RRD DS नामों (`health`, `collect_age`, `error_pct`, `age`) से संरेखित `recommendedThresholds()`, `summarizeZones()`, और `evaluateSample()` प्रदान करता है।
+- **संचालक और CasC CLI (`cli/cloudflare.php`)**: `ConfigCodec` (`src/Config/ConfigCodec.php`) और `ConfigService` (`src/Config/ConfigService.php`) द्वारा समर्थित, जो `cli/cloudflare.php export [--format=yaml|xml] [--file=PATH]` (केवल `vault:` / `file:` गोपनीय संदर्भ उत्सर्जित करते हुए), `cli/cloudflare.php validate --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php plan --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php apply --file=PATH --confirm=<PLAN_HASH> [--format=yaml|xml]`, और `cli/cloudflare.php health [--format=text|json]` का समर्थन करता है।
+- **पारिस्थितिकी एकीकरण हुक (`includes/ecosystem.php`, `setup.php`)**:
+  - `abilities_register` (`AbilitiesProvider`): शून्य टोकन या गोपनीय मानों के साथ Cloudflare: View क्षेत्र (प्रत्यक्ष और समूह अनुदान) पर नियंत्रित केवल-पठन `cloudflare-list-tunnels` और `cloudflare-get-health` पंजीकृत करता है।
+  - `doctor_register_checks` (`DoctorChecks`): `cloudflare_vault_key` (मोड, सिमलिंक और लंबाई सत्यापन), `cloudflare_token_dir` (पूर्ण पथ, सिमलिंक और विश्व-लेखनीय जाँच), `cloudflare_tunnel_freshness`, और `cloudflare_api_failure_rate` उजागर करता है।
+  - `casc_register_providers` (`CascProvider`): खातों (केवल गोपनीय संदर्भ), ज़ोन, टनल और मेट्रिक मैपिंग के लिए `cloudflare` CasC प्रदाता (`export`, `validate`, `plan`, `apply`) उजागर करता है।
+  - `replicate_out` (`RemoteReplication`): `token_ciphertext` को `NULL` करके और vault कुंजी सामग्री को बाहर रखते हुए दूरस्थ पोलरों (`poller_id > 1`) में गोपनीय-रहित मेटाडेटा तालिकाओं की प्रतिकृति बनाता है।
 
 ### इन्वेंट्री निर्यात
 
@@ -347,7 +357,7 @@ Settings > Cloudflare में हैं:
 | 1. आधार | प्लगइन जीवनचक्र, अनुमतियाँ, खाता कॉन्फ़िगरेशन, कनेक्शन परीक्षण | 0.3.0 में जारी ([#2](https://github.com/somethingwithproof/plugin_cloudflare/pull/2) से [#5](https://github.com/somethingwithproof/plugin_cloudflare/pull/5)) |
 | 2. खोज | पृष्ठभूमि संग्राहक में टनल और कनेक्टर खोज, Overview, Tunnels और Connectors पृष्ठ | 0.3.0 में जारी ([#6](https://github.com/somethingwithproof/plugin_cloudflare/pull/6)) |
 | 3. मेट्रिक | टनल स्वास्थ्य डेटा स्रोत, ग्राफ़ टेम्पलेट, ऐसा बाधा प्रबंधन जो काल्पनिक शून्य कभी न लिखे | 0.3.0 में जारी ([#7](https://github.com/somethingwithproof/plugin_cloudflare/pull/7)) |
-| 4. विश्लेषिकी और अलर्ट | योजना के अनुसार प्रति ज़ोन GraphQL विश्लेषिकी, बाधा दमन सहित Thold सीमाएँ | नियोजित |
+| 4. विश्लेषिकी और अलर्ट | योजना-सचेत GraphQL विश्लेषिकी (`GraphqlAnalyticsClient`), Thold सारांश और टेम्पलेट (`AnalyticsSummary`), CasC CLI (`cli/cloudflare.php`), पारिस्थितिकी हुक और दूरस्थ प्रतिकृति | 0.4.0-dev में लागू; वास्तविक खाते पर योग्यता जाँच बाकी |
 | 5. सुदृढ़ीकरण | दोष प्रविष्टि, खोज और संग्रह के TLA+ मॉडल, संपूर्ण दस्तावेज़ | नियोजित |
 
 <a id="development"></a>

@@ -27,18 +27,18 @@ In Cacti kopieer dit datanavraag-XML-lêers na `resource/script_server/` en
 skep toestelle, grafieke en sjablone deur Cacti se eie API's, sonder enige
 kernlêerwysigings.
 
-**Status: 0.4.0-dev, onvrygestel.** Die laaste vrygestelde weergawe is 0.3.0. Die ontwikkelingsweergawe voeg CSV-voorraaduitvoere, eksplisiete aftreding van geskrapte tonnels, gekasde sone-analitika en opsionele Thold-sjablone by. Kwalifisering met 'n lewendige verskaffer en ontplooiingskwalifisering is steeds hangende.
+**Status: 0.4.0-dev, onvrygestel.** Die laaste vrygestelde weergawe is 0.3.0. Die ontwikkelingsweergawe voeg CSV-voorraaduitvoere, eksplisiete aftreding van geskrapte tonnels, gekasde sone-analitika, 'n toelaatlys-gebaseerde leesalleen GraphQL Analytics-kliënt (`GraphqlAnalyticsClient`) met Thold-gereed opsommingshulpmiddels (`AnalyticsSummary`), 'n Configuration-as-Code-CLI (`cli/cloudflare.php`), ekosisteemhake (`abilities_register`, `doctor_register_checks`, `casc_register_providers`) en poller-afgebakende afgeleë versamelaar-ondersteuning (`replicate_out`) by. Kwalifisering met 'n lewendige verskaffer en ontplooiingskwalifisering is steeds hangende.
 
-Die tabel hieronder beskryf die stabiele 0.3.0-vrystelling. Ontwikkelingstoevoegings word hieronder onder Operateurswerkvloeie en sone-analitika beskryf.
+Die tabel hieronder beskryf die stabiele 0.3.0-vrystelling. Ontwikkelingstoevoegings in 0.4.0-dev word hieronder onder Operateur-werkstrome en sone-analise beskryf.
 
 | Nou beskikbaar | Beplan |
 |---|---|
-| Installeer, gradeer op, deaktiveer en deïnstalleer deur Cacti se inpropbestuurder | GraphQL-analitika en Thold-waarskuwings (Mylpaal 4) |
+| Installeer, gradeer op, deaktiveer en deïnstalleer deur Cacti se inpropbestuurder | Lewendige-rekening-GraphQL- en ontplooiingskwalifisering (Mylpaal 4-uittree) |
 | Cloudflare: View-, Operator- en Configure-toestemmings | Foutinjektering, TLA+-modelle en volledige dokumentasie (Mylpaal 5) |
 | Voeg by, wysig, skrap, aktiveer en deaktiveer Cloudflare-rekeninge | |
 | Berg 'n teken in 'n lêer of geënkripteer in die Cacti-databasis | |
 | Verifieer 'n teken en kontroleer sy tonnel- en sone-leestoestemmings | |
-| Tonnel- en koppelaarontdekking in 'n agtergrondversamelaar wat deur die hoofpeiler begin word | |
+| Tonnel- en koppelaarontdekking in 'n agtergrondversamelaar (`poller_cloudflare.php`) | |
 | Overview-, Tunnels- en Connectors-bladsye onder Management > Cloudflare Tunnels | |
 | Lewensiklusopsporing: `active`, `unavailable` en `deleted` | |
 | Een Cacti-toestel per rekening, deur 'n administrateur geskep, met die tonnels as die indekse van 'n datanavraag | |
@@ -289,8 +289,10 @@ geweier. Sien [docs/security.md](../../security.md#token-file).
    die gidsnaam.
 2. Maak Console > Configuration > Plugins, of Console > Configuration >
    Cloudflare Accounts, een keer as 'n admin oop. Dit voer die inprop se migrasies uit,
-   voer die Cloudflare-sjablone in en kopieer die datanavraag-lêer (sien
-   [Tonnelmetrieke en -grafieke](#tunnel-metrics-and-graphs)), en registreer by 'n
+   voer die Cloudflare-sjablone in, kopieer die datanavraag-lêer (sien
+   [Tonnelmetrieke en -grafieke](#tunnel-metrics-and-graphs)), registreer die
+   `abilities_register`-, `doctor_register_checks`-, `casc_register_providers`-
+   en `replicate_out`-ekosisteemhake (`includes/ecosystem.php`), en registreer by 'n
    opgradering vanaf 0.1.0 die `poller_bottom`-haak.
 
 `poller.php` voer nie die inprop se opgradering uit nie, so tot by stap 2 ontbreek die nuwe
@@ -319,11 +321,15 @@ Die wysigingsbladsy wys ook of tonnellees- en sonelees-toestemming toegestaan is
 
 ## Tonnelontdekking
 
-Ná elke peilsiklus op die hoofpeiler begin die `poller_bottom`-haak
+Ná elke peilsiklus op die gekonfigureerde versamelaar-peiler (`cloudflare_poller_id`, verstek `1`), begin die `poller_bottom`-haak
 'n agtergrond-versamelaar met `exec_background` wanneer ten minste een geaktiveerde
 rekening Collect Tunnels aan het. Die versamelaar loop nooit in die peiler se
-proses nie, so 'n stadige Cloudflare-API vertraag nie `poller.php` nie. Afgeleë peilers
-begin dit nooit nie.
+proses nie, so 'n stadige Cloudflare-API vertraag nie `poller.php` nie. `INFO` verklaar
+`remote_collect:1`, en die `replicate_out`-haak (`RemoteReplication`) stuur nie-geheime
+metadatatabelle (`plugin_cloudflare_accounts` met `token_ciphertext` skoongemaak na `NULL`,
+`plugin_cloudflare_tunnels`, `plugin_cloudflare_connectors`, `plugin_cloudflare_zones`,
+`plugin_cloudflare_metric_mappings`, en `plugin_cloudflare_resources`) na afgeleë peilers
+(`poller_id > 1`) terwyl kluissleutelmateriaal uitgesluit word.
 
 Vir elke rekening wat verskuldig is, lys die versamelaar die rekening se tonnels, en lees dan
 die verbindings van sy aktiewe tonnels, wat elke tonnel se
@@ -495,8 +501,7 @@ nodig is nie.
   verbindingsgrafieke gapings toon.
 - Die inprop oorskryf administrateurwysigings aan die ingevoerde sjablone
   wanneer 'n opgradering die saamgestuurde sjabloon-XML verander.
-- Die rekening se toestel moet op die hoof-poller bly. Die inprop se tabelle is
-  in die hoofdatabasis en die skrip lees hulle daar.
+- Afgeleë peilers ontvang gerepliseerde metadata sonder aanmeldbewyse (`token_ciphertext` word skoongemaak na `NULL` en kluissleutels word nooit gerepliseer nie). Wanneer die versamelaar op 'n aangewese afgeleë peiler (`cloudflare_poller_id`) loop, voorsien tokenlêers of 'n kluissleutel direk op daardie versamelaar-gasheer.
 - Geskrapte tonnels bly in die datanavraagindeks en druk `U` totdat 'n
   administrateur hulle eksplisiet uit diens stel. Uitdienstelling verwyder slegs die
   inprop-aangetekende grafieke en ongedeelde databronne deur Cacti; die
@@ -518,17 +523,23 @@ nodig is nie.
   Cloudflare: Operateur. Om 'n Cacti-toestel te skep of Skep Grafieke aan te
   skakel, vereis ook Cacti se Werwe/Toestelle/Data-toestemming. 'n Gedeaktiveerde
   inprop weier sy bladsye.
+- Configuration-as-Code (`cli/cloudflare.php` en `casc_register_providers`) aanvaar slegs `vault:<account_id>`- of `file:<absolute_path>`-geheimverwysings, verwerp rou tokens, kluissifrotekse en XML `DOCTYPE`-verklarings, en vereis 'n presiese `--confirm=<PLAN_HASH>` voordat daar geskryf word.
+- Geregistreerde Abilities (`cloudflare-list-tunnels`, `cloudflare-get-health`) is streng leesalleen, evalueer die Cloudflare: View-gebied direk teen Cacti-verifikasietabelle vir die oproeper se gebruiker-ID (nooit sessietoestand nie), en gee geen tokens of sleutelmateriaal terug nie.
 
 Besonderhede en bekende beperkings is in [docs/security.md](../../security.md).
 Rapporteer kwesbaarhede privaat soos beskryf in [SECURITY.md](../../../SECURITY.md).
 
 ## Operateur-werkstrome en sone-analise
 
-Ontwikkelingstoevoegings sluit eksplisiete uitdienstelling van geskrapte tonnels,
-vermoëbewuste sone-analise en invoerbare Thold-sjablone in. Hierdie toevoegings
-het nog geen vrystellingmerker of lewendige-rekening-kwalifikasie nie. Sien
-[docs/analytics-and-alerting.md](../../analytics-and-alerting.md) vir opstelling,
-metrieksemantiek en verifikasiebeperkings.
+Ontwikkelingstoevoegings in `0.4.0-dev` sluit eksplisiete uitdienstelling van geskrapte tonnels, vermoëbewuste GraphQL-sone- en tonnelanalise, Thold-gereed opsommingshulpmiddels en invoerbare sjablone, 'n CasC- en gesondheids-CLI, ekosisteemhake en afgeleë versamelaar-replikasie in. Hierdie toevoegings het nog geen vrystellingmerker of lewendige-rekening-kwalifikasie nie. Sien [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) vir opstelling, metrieksemantiek en verifikasiebeperkings.
+
+- **GraphQL Analytics-kliënt en Thold-opsomming (`src/Api/GraphqlAnalyticsClient.php`, `src/Metrics/AnalyticsSummary.php`)**: `GraphqlAnalyticsClient` voer slegs kompileertyd-toegestane leesalleen-navrae (`zone_settings`, `zone_http_metrics`, `zone_edge_latency`, `tunnel_analytics`) oor `CloudflareClient` (TLS geverifieer, vasgepen aan `api.cloudflare.com`, begrensde antwoorde en `RetryPolicy`-tempobeperking-terugval) uit om sone- en tonnelversoekvolume, HTTP 5xx-foutkoerse, antwoordgrepe en randlatensie (gemiddeld en p95) in te samel. `AnalyticsSummary` bied `recommendedThresholds()` in lyn met die inprop se RRD DS-name (`health`, `collect_age`, `error_pct`, `age`), `summarizeZones()` en `evaluateSample()`.
+- **Operateur- en CasC-CLI (`cli/cloudflare.php`)**: gerugsteun deur `ConfigCodec` (`src/Config/ConfigCodec.php`) en `ConfigService` (`src/Config/ConfigService.php`), wat `cli/cloudflare.php export [--format=yaml|xml] [--file=PATH]` (gee slegs `vault:` / `file:`-geheimverwysings uit), `cli/cloudflare.php validate --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php plan --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php apply --file=PATH --confirm=<PLAN_HASH> [--format=yaml|xml]` en `cli/cloudflare.php health [--format=text|json]` ondersteun.
+- **Ekosisteem-integrasiehake (`includes/ecosystem.php`, `setup.php`)**:
+  - `abilities_register` (`AbilitiesProvider`): registreer leesalleen `cloudflare-list-tunnels` en `cloudflare-get-health` beperk tot die Cloudflare: View-gebied (direkte en groeptoenamings) met geen tokens of geheime in die afvoer nie.
+  - `doctor_register_checks` (`DoctorChecks`): stel `cloudflare_vault_key` (modus-, simboliese skakel- en lengtevalidering), `cloudflare_token_dir` (absolute pad-, simboliese skakel- en wêreldskryfbaar-kontroles), `cloudflare_tunnel_freshness` en `cloudflare_api_failure_rate` beskikbaar.
+  - `casc_register_providers` (`CascProvider`): stel die `cloudflare`-CasC-verskaffer (`export`, `validate`, `plan`, `apply`) vir rekeninge (slegs geheimverwysings), sones, tonnels en metriekkarterings beskikbaar.
+  - `replicate_out` (`RemoteReplication`): repliseer nie-geheime metadatatabelle na afgeleë peilers (`poller_id > 1`) met `token_ciphertext` skoongemaak na `NULL` en kluissleutelmateriaal uitgesluit.
 
 ### Inventarisuitvoere
 
@@ -546,7 +557,7 @@ mylpaal hieronder voltooi.
 | 1. Grondslag | Inprop-lewensiklus, toestemmings, rekeningkonfigurasie, verbindingstoets | Vrygestel in 0.3.0 ([#2](https://github.com/somethingwithproof/plugin_cloudflare/pull/2) tot [#5](https://github.com/somethingwithproof/plugin_cloudflare/pull/5)) |
 | 2. Ontdekking | Tonnel- en connector-ontdekking in 'n agtergrondversamelaar, Oorsig-, Tonnels- en Connectors-bladsye | Vrygestel in 0.3.0 ([#6](https://github.com/somethingwithproof/plugin_cloudflare/pull/6)) |
 | 3. Metrieke | Tonnelgesondheid-databronne, grafieksjablone, onderbrekingshantering wat nooit 'n versinde nul aanteken nie | Vrygestel in 0.3.0 ([#7](https://github.com/somethingwithproof/plugin_cloudflare/pull/7)) |
-| 4. Analise en waarskuwings | Planbewuste GraphQL-analise per sone, Thold-drempels met onderbrekingsonderdrukking | Beplan |
+| 4. Analise en waarskuwings | Planbewuste GraphQL-analise (`GraphqlAnalyticsClient`), Thold-opsomming en -sjablone (`AnalyticsSummary`), CasC-CLI (`cli/cloudflare.php`), ekosisteemhake en afgeleë replikasie | Geïmplementeer in 0.4.0-dev; lewendige-rekening-kwalifisering hangende |
 | 5. Verharding | Foutinjektering, TLA+-modelle van ontdekking en versameling, volledige dokumentasie | Beplan |
 
 ## Ontwikkeling

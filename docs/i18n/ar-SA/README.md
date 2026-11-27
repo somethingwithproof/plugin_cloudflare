@@ -24,18 +24,18 @@
 
 ملحق لمنصة Cacti 1.2 يجري تطويره لمراقبة Cloudflare Tunnels وتحليلات المناطق. يقرأ من Cloudflare API باستخدام رموز API محددة النطاق، ولا يغير شيئًا في Cloudflare مطلقًا، ويحتفظ ببياناته في جداول خاصة به. ينسخ داخل Cacti ملف XML واحدًا لاستعلام البيانات إلى `resource/script_server/` وينشئ الأجهزة والرسوم والقوالب عبر واجهات Cacti نفسها، دون تغيير ملفات النواة.
 
-**الحالة: 0.4.0-dev، غير منشور.** أحدث إصدار مستقر هو 0.3.0. يضيف إصدار التطوير تصدير المخزون بصيغة CSV، وإخراج الأنفاق المحذوفة من المراقبة بتأكيد صريح، وتحليلات المناطق المخزنة مؤقتًا، وقوالب Thold اختيارية. لا يزال التحقق من حسابات المزودين وبيئات النشر الفعلية معلقًا.
+**الحالة: 0.4.0-dev، غير منشور.** أحدث إصدار مستقر هو 0.3.0. يضيف إصدار التطوير تصدير المخزون بصيغة CSV، وإخراج الأنفاق المحذوفة من المراقبة بتأكيد صريح، وتحليلات المناطق المخزنة مؤقتًا، وعميل GraphQL Analytics للقراءة فقط وفق قائمة السماح (`GraphqlAnalyticsClient`) مع مساعدات الملخص الجاهزة لـ Thold (`AnalyticsSummary`)، وواجهة سطر أوامر التكوين كشيفرة (`cli/cloudflare.php`)، وخطافات المنظومة (`abilities_register` و`doctor_register_checks` و`casc_register_providers`)، ودعم المجمّع البعيد المقيد بنطاق المستطلع (`replicate_out`). لا يزال التحقق من المزوّد الحيّ وبيئات النشر الفعلية معلقًا.
 
-يصف الجدول التالي الإصدار المستقر 0.3.0. تظهر إضافات التطوير لاحقًا في قسم سير عمل المشغل وتحليلات المناطق.
+يصف الجدول التالي الإصدار المستقر 0.3.0. تظهر إضافات التطوير في `0.4.0-dev` لاحقًا في قسم سير عمل المشغل وتحليلات المناطق.
 
 | متاح الآن | مخطط له |
 |---|---|
-| التثبيت والترقية والتعطيل والإزالة عبر مدير ملحقات Cacti | تحليلات GraphQL وتنبيهات Thold (المرحلة 4) |
+| التثبيت والترقية والتعطيل والإزالة عبر مدير ملحقات Cacti | تأهيل GraphQL على حساب فعلي وتأهيل النشر (اكتمال المرحلة 4) |
 | أذونات Cloudflare: View وOperator وConfigure | حقن الأعطال ونماذج TLA+ ووثائق كاملة (المرحلة 5) |
 | إضافة حسابات Cloudflare وتحريرها وحذفها وتمكينها وتعطيلها | |
 | تخزين الرمز في ملف أو مشفرًا في قاعدة بيانات Cacti | |
 | التحقق من الرمز وفحص أذونات قراءة الأنفاق والمناطق | |
-| اكتشاف الأنفاق والموصلات في أداة جمع خلفية تبدأها أداة الاستطلاع الرئيسية | |
+| اكتشاف الأنفاق والموصلات في أداة جمع خلفية (`poller_cloudflare.php`) | |
 | صفحات Overview وTunnels وConnectors ضمن Management > Cloudflare Tunnels | |
 | تتبع دورة الحياة: `active` و`unavailable` و`deleted` | |
 | جهاز Cacti واحد لكل حساب ينشئه مسؤول، وتكون الأنفاق فهارس استعلام بيانات | |
@@ -209,7 +209,7 @@ sudo chmod 0440 /etc/cacti/cloudflare-account.token
 ## الترقية
 
 1. استبدل الملفات في `plugins/cloudflare` بالإصدار الجديد مع إبقاء اسم المجلد.
-2. افتح Console > Configuration > Plugins أو Console > Configuration > Cloudflare Accounts مرة واحدة بصفتك مسؤولًا. يشغّل ذلك ترحيلات الملحق ويستورد قوالب Cloudflare وينسخ ملف استعلام البيانات (راجع [مقاييس الأنفاق ورسومها](#tunnel-metrics-and-graphs))، ويسجل الخطاف `poller_bottom` عند الترقية من 0.1.0.
+2. افتح Console > Configuration > Plugins أو Console > Configuration > Cloudflare Accounts مرة واحدة بصفتك مسؤولًا. يشغّل ذلك ترحيلات الملحق ويستورد قوالب Cloudflare وينسخ ملف استعلام البيانات (راجع [مقاييس الأنفاق ورسومها](#tunnel-metrics-and-graphs))، ويسجّل خطافات المنظومة `abilities_register` و`doctor_register_checks` و`casc_register_providers` و`replicate_out` (`includes/ecosystem.php`)، ويسجل الخطاف `poller_bottom` عند الترقية من 0.1.0.
 
 لا يشغّل `poller.php` ترقية الملحق، لذا يظل المخطط الجديد مفقودًا حتى الخطوة 2. لا تفعل جولات الجمع حينئذ شيئًا وتسجل `CLOUDFLARE: collector skipped; plugin upgrade pending, open Console > Plugins`. لا تحتاج صفحات Cloudflare Tunnels إلا إلى Cloudflare: View، ولذلك لا تنفذ الترقية مطلقًا وقد تعرض “The Cloudflare tunnels could not be read” حتى الخطوة 2.
 
@@ -234,7 +234,7 @@ sudo chmod 0440 /etc/cacti/cloudflare-account.token
 <a id="tunnel-discovery"></a>
 ## اكتشاف الأنفاق
 
-بعد كل دورة استطلاع على الأداة الرئيسية، يبدأ الخطاف `poller_bottom` أداة جمع خلفية باستخدام `exec_background` إذا كان حساب مفعّل واحد على الأقل قد شغّل Collect Tunnels. لا تعمل أداة الجمع داخل عملية الاستطلاع مطلقًا، لذا لا تؤخر Cloudflare API البطيئة `poller.php`. ولا تبدأها أدوات الاستطلاع البعيدة أبدًا.
+بعد كل دورة استطلاع على مستطلع الجمع المُكوَّن (`cloudflare_poller_id`، الافتراضي `1`)، يبدأ الخطاف `poller_bottom` أداة جمع خلفية باستخدام `exec_background` إذا كان حساب مفعّل واحد على الأقل قد شغّل Collect Tunnels. لا تعمل أداة الجمع داخل عملية الاستطلاع مطلقًا، لذا لا تؤخر Cloudflare API البطيئة `poller.php`. ويعلن `INFO` عن `remote_collect:1`، ويدفع الخطاف `replicate_out` (`RemoteReplication`) جداول البيانات الوصفية غير السرية (`plugin_cloudflare_accounts` مع مسح `token_ciphertext` إلى `NULL`، و`plugin_cloudflare_tunnels` و`plugin_cloudflare_connectors` و`plugin_cloudflare_zones` و`plugin_cloudflare_metric_mappings` و`plugin_cloudflare_resources`) إلى المستطلعات البعيدة (`poller_id > 1`) مع استبعاد مادة مفتاح الخزنة.
 
 لكل حساب مستحق، تسرد أداة الجمع أنفاق الحساب ثم تقرأ اتصالات أنفاقه النشطة، لتحصل على موصلات كل نفق وإصداراتها ومراكز البيانات وعناوين الأصل. يستحق الحساب الجمع كل Discovery Interval، وافتراضيًا كل 300 ثانية. لا يبدأ التشغيل حسابًا جديدًا بعد 50 ثانية، ويجري 200 طلب اتصالات كحد أقصى. قد يوقف أي حد الحساب في منتصف قراءة اتصالاته؛ يُسجل حينها `partial` وتتابع الجولة التالية من الأنفاق الأقدم محاولةً. تبقى الحسابات التي لم تبدأ مستحقة للجولة التالية.
 
@@ -315,7 +315,7 @@ sudo chmod 0440 /etc/cacti/cloudflare-account.token
 
 - تجري الجولة 200 طلب اتصالات كحد أقصى. تتجدد الأنفاق التي تتجاوز الحد بوتيرة أقل من نافذة الملاحظة، فتظهر فجوات في رسوم اتصالاتها.
 - يستبدل الملحق تعديلات المسؤول على القوالب المستوردة عندما تغير الترقية XML القالب الموزع.
-- يجب إبقاء جهاز الحساب على أداة الاستطلاع الرئيسية. جداول الملحق في قاعدة البيانات الرئيسية ويقرؤها البرنامج هناك.
+- تتلقى المستطلعات البعيدة بيانات وصفية منسوخة دون بيانات اعتماد (يُمسح `token_ciphertext` إلى `NULL` ولا تُنسخ مفاتيح الخزنة أبدًا). عند تشغيل أداة الجمع على مستطلع بعيد مخصّص (`cloudflare_poller_id`)، وفّر ملفات الرموز أو مفتاح خزنة مباشرةً على مضيف أداة الجمع ذلك.
 - تبقى الأنفاق المحذوفة في فهرس استعلام البيانات مع رسومها وملفات RRD وتطبع `U`.
 - يعطل Cacti الملحق الذي ينتهي كوده بخطأ فادح حقيقي، مثل نفاد الذاكرة. راجع [docs/security.md](docs/security.md).
 
@@ -326,13 +326,23 @@ sudo chmod 0440 /etc/cacti/cloudflare-account.token
 - تُخزن الرموز في ملف تُعده أنت أو مشفرة بـ AES-256-GCM بمفتاح ملف لا يدخل قاعدة البيانات أبدًا. لا تُعرض الرموز في صفحة ولا تُكتب في سجل ولا تُدرج في رسالة خطأ.
 - لا تحمل أخطاء قاعدة البيانات إلا SQLSTATE ورمز خطأ برنامج التشغيل، ولا تحمل قيم العبارة مطلقًا.
 - كل تغيير طلب POST محمي برمز CSRF في Cacti. تتطلب التغييرات الإدارية للحسابات والإعدادات صلاحية Cloudflare: Configure؛ وتتطلب إقرارات الفرز الشخصية صلاحية Cloudflare: Operator. إنشاء جهاز Cacti أو تمكين Create Graphs يتطلب أيضًا صلاحية Sites/Devices/Data في Cacti. يرفض الملحق المعطل صفحاته.
+- لا تقبل أداة التكوين كشيفرة (`cli/cloudflare.php` و`casc_register_providers`) إلا مراجع الأسرار `vault:<account_id>` أو `file:<absolute_path>`، وترفض الرموز الخام ونصوص الخزنة المشفرة وتصريحات XML `DOCTYPE`، وتطلب قيمة `--confirm=<PLAN_HASH>` دقيقة قبل الكتابة.
+- القدرات المسجلة (`cloudflare-list-tunnels` و`cloudflare-get-health`) للقراءة فقط بشكل صارم، وتقيّم نطاق Cloudflare: View مباشرةً مقابل جداول مصادقة Cacti لمعرّف مستخدم المستدعي (وليس حالة الجلسة أبدًا)، ولا تعيد أي رموز أو مادة مفاتيح.
 
 التفاصيل والقيود المعروفة في [docs/security.md](docs/security.md). أبلغ عن الثغرات على نحو خاص وفق [SECURITY.md](../../../SECURITY.md).
 
 <a id="roadmap"></a>
 ## سير عمل المشغل وتحليلات المناطق
 
-يتيح إصدار التطوير إخراج الأنفاق المحذوفة من المراقبة بتأكيد صريح، وجمع التحليلات وفق قدرات كل منطقة، واستخدام قوالب Cacti وThold. لم تُنشر هذه الإضافات بعد ولم تُختبر على حسابات فعلية. راجع الإعداد ودلالات المقاييس وحدود التحقق في [الدليل الإنجليزي](../../analytics-and-alerting.md).
+تشمل إضافات التطوير في `0.4.0-dev` إخراج الأنفاق المحذوفة صراحةً، وتحليلات GraphQL للمناطق والأنفاق المراعية للإمكانات، ومساعدات الملخص الجاهزة لـ Thold والقوالب القابلة للاستيراد، وواجهة سطر أوامر CasC والصحة، وخطافات المنظومة، والنسخ المتماثل للمجمّع البعيد. لم تحصل هذه الإضافات على وسم إصدار أو تأهيل على حساب فعلي بعد. راجع [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) لمعرفة الإعداد ودلالات المقاييس وحدود التحقق.
+
+- **عميل GraphQL Analytics وملخص Thold (`src/Api/GraphqlAnalyticsClient.php` و`src/Metrics/AnalyticsSummary.php`)**: لا ينفّذ `GraphqlAnalyticsClient` سوى استعلامات القراءة فقط المدرجة في قائمة السماح وقت الترجمة (`zone_settings` و`zone_http_metrics` و`zone_edge_latency` و`tunnel_analytics`) عبر `CloudflareClient` (مع التحقق من TLS والتثبيت على `api.cloudflare.com` والاستجابات المحدودة وتراجع حدود المعدل عبر `RetryPolicy`) لجمع حجم طلبات المنطقة والنفق ومعدلات أخطاء HTTP 5xx وبايتات الاستجابة وزمن استجابة الحافة (المتوسط وp95). ويوفر `AnalyticsSummary` دوال `recommendedThresholds()` المتوافقة مع أسماء DS في ملفات RRD الخاصة بالملحق (`health` و`collect_age` و`error_pct` و`age`) و`summarizeZones()` و`evaluateSample()`.
+- **واجهة سطر أوامر المشغل وCasC (`cli/cloudflare.php`)**: مدعومة بـ `ConfigCodec` (`src/Config/ConfigCodec.php`) و`ConfigService` (`src/Config/ConfigService.php`)، وتدعم `cli/cloudflare.php export [--format=yaml|xml] [--file=PATH]` (تُصدر مراجع الأسرار `vault:` / `file:` فقط) و`cli/cloudflare.php validate --file=PATH [--format=yaml|xml]` و`cli/cloudflare.php plan --file=PATH [--format=yaml|xml]` و`cli/cloudflare.php apply --file=PATH --confirm=<PLAN_HASH> [--format=yaml|xml]` و`cli/cloudflare.php health [--format=text|json]`.
+- **خطافات تكامل المنظومة (`includes/ecosystem.php` و`setup.php`)**:
+  - `abilities_register` (`AbilitiesProvider`): يسجّل القدرتين للقراءة فقط `cloudflare-list-tunnels` و`cloudflare-get-health` المقيدتين بنطاق Cloudflare: View (المنح المباشرة ومنح المجموعات) دون أي رموز أو أسرار في المخرجات.
+  - `doctor_register_checks` (`DoctorChecks`): يعرض فحوصات `cloudflare_vault_key` (التحقق من الأذونات والروابط الرمزية والطول) و`cloudflare_token_dir` (فحوصات المسار المطلق والروابط الرمزية وإتاحة الكتابة للجميع) و`cloudflare_tunnel_freshness` و`cloudflare_api_failure_rate`.
+  - `casc_register_providers` (`CascProvider`): يعرض مزوّد CasC باسم `cloudflare` (`export` و`validate` و`plan` و`apply`) للحسابات (مراجع الأسرار فقط) والمناطق والأنفاق وتعيينات المقاييس.
+  - `replicate_out` (`RemoteReplication`): ينسخ جداول البيانات الوصفية غير السرية إلى المستطلعات البعيدة (`poller_id > 1`) مع مسح `token_ciphertext` إلى `NULL` واستبعاد مادة مفتاح الخزنة.
 
 ### تصدير المخزون
 
@@ -347,7 +357,7 @@ sudo chmod 0440 /etc/cacti/cloudflare-account.token
 | 1. الأساس | دورة حياة الملحق والأذونات وضبط الحساب واختبار الاتصال | منشور في 0.3.0 ([#2](https://github.com/somethingwithproof/plugin_cloudflare/pull/2) إلى [#5](https://github.com/somethingwithproof/plugin_cloudflare/pull/5)) |
 | 2. الاكتشاف | اكتشاف الأنفاق والموصلات في أداة خلفية وصفحات Overview وTunnels وConnectors | منشور في 0.3.0 ([#6](https://github.com/somethingwithproof/plugin_cloudflare/pull/6)) |
 | 3. المقاييس | مصادر بيانات سلامة الأنفاق وقوالب الرسوم ومعالجة الانقطاع دون تسجيل صفر مختلق | منشور في 0.3.0 ([#7](https://github.com/somethingwithproof/plugin_cloudflare/pull/7)) |
-| 4. التحليلات والتنبيهات | تحليلات GraphQL لكل منطقة وفق الخطة وحدود Thold مع كتم الانقطاع | مخطط |
+| 4. التحليلات والتنبيهات | تحليلات GraphQL المراعية للخطة (`GraphqlAnalyticsClient`)، وملخص وقوالب Thold (`AnalyticsSummary`)، وواجهة CasC (`cli/cloudflare.php`)، وخطافات المنظومة، والنسخ المتماثل البعيد | منفّذ في 0.4.0-dev؛ التأهيل على حساب فعلي قيد الانتظار |
 | 5. التقوية | حقن الأعطال ونماذج TLA+ للاكتشاف والجمع ووثائق كاملة | مخطط |
 
 <a id="development"></a>

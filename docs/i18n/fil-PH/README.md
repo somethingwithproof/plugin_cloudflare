@@ -27,18 +27,18 @@ Sa Cacti, kinokopya nito ang mga data query XML file sa `resource/script_server/
 lumilikha ng mga device, graph, at template sa pamamagitan ng sariling mga API ng Cacti, nang walang
 pagbabago sa mga core file.
 
-**Katayuan: 0.4.0-dev, hindi pa nailalabas.** Ang huling nailabas na bersyon ay 0.3.0. Nagdaragdag ang bersyong pang-development ng mga pag-export ng imbentaryo sa CSV, tahasang pagreretiro ng mga tinanggal na tunnel, naka-cache na analytics ng zone, at mga opsyonal na Thold template. Nakabinbin pa rin ang kwalipikasyon sa live provider at deployment.
+**Katayuan: 0.4.0-dev, hindi pa nailalabas.** Ang huling nailabas na bersyon ay 0.3.0. Nagdaragdag ang bersyong pang-development ng mga pag-export ng imbentaryo sa CSV, tahasang pagreretiro ng mga tinanggal na tunnel, naka-cache na analytics ng zone, isang allowlisted na read-only na GraphQL Analytics client (`GraphqlAnalyticsClient`) na may mga helper sa buod na handa para sa Thold (`AnalyticsSummary`), isang Configuration-as-Code CLI (`cli/cloudflare.php`), mga ecosystem hook (`abilities_register`, `doctor_register_checks`, `casc_register_providers`), at suporta sa remote collector na naka-scope sa poller (`replicate_out`). Nakabinbin pa rin ang kwalipikasyon sa live provider at deployment.
 
-Inilalarawan ng talahanayan sa ibaba ang matatag na bersyong 0.3.0. Inilalarawan ang mga karagdagan sa development sa ilalim ng mga daloy ng trabaho ng Operator at analytics ng zone sa ibaba.
+Inilalarawan ng talahanayan sa ibaba ang matatag na bersyong 0.3.0. Inilalarawan ang mga karagdagan sa development sa 0.4.0-dev sa ilalim ng mga daloy ng trabaho ng Operator at analytics ng zone sa ibaba.
 
 | Magagamit na ngayon | Nakaplano |
 |---|---|
-| Mag-install, mag-upgrade, mag-disable, at mag-uninstall sa pamamagitan ng plugin manager ng Cacti | GraphQL analytics at mga alerto sa Thold (Milestone 4) |
+| Mag-install, mag-upgrade, mag-disable, at mag-uninstall sa pamamagitan ng plugin manager ng Cacti | Live-account GraphQL at kwalipikasyon sa deployment (pagtatapos ng Milestone 4) |
 | Mga pahintulot na Cloudflare: View, Operator, at Configure | Fault injection, mga modelong TLA+, at kumpletong dokumentasyon (Milestone 5) |
 | Magdagdag, mag-edit, magtanggal, mag-enable, at mag-disable ng mga Cloudflare account | |
 | Mag-imbak ng token sa isang file o naka-encrypt sa database ng Cacti | |
 | Mag-verify ng token at suriin ang mga pahintulot nitong magbasa ng tunnel at zone | |
-| Pagtuklas ng tunnel at connector sa isang background collector na sinisimulan ng pangunahing poller | |
+| Pagtuklas ng tunnel at connector sa isang background collector (`poller_cloudflare.php`) | |
 | Mga pahinang Overview, Tunnels, at Connectors sa ilalim ng Management > Cloudflare Tunnels | |
 | Pagsubaybay sa lifecycle: `active`, `unavailable`, at `deleted` | |
 | Isang Cacti device bawat account, na nilikha ng isang administrator, kung saan ang mga tunnel ang mga index ng isang data query | |
@@ -270,7 +270,9 @@ tatanggihan. Tingnan ang [docs/security.md](../../security.md#token-file).
 2. Buksan ang Console > Configuration > Plugins, o Console > Configuration >
    Cloudflare Accounts, nang isang beses bilang isang admin. Pinapatakbo nito ang mga migration ng plugin,
    ini-import ang mga template ng Cloudflare at kinokopya ang data query file (tingnan ang
-   [Mga sukatan at graph ng tunnel](#tunnel-metrics-and-graphs)), at, sa isang
+   [Mga sukatan at graph ng tunnel](#tunnel-metrics-and-graphs)), inirerehistro ang mga ecosystem hook na
+   `abilities_register`, `doctor_register_checks`, `casc_register_providers`,
+   at `replicate_out` (`includes/ecosystem.php`), at, sa isang
    pag-upgrade mula sa 0.1.0, inirerehistro ang `poller_bottom` hook.
 
 Hindi pinapatakbo ng `poller.php` ang pag-upgrade ng plugin, kaya hanggang sa hakbang 2, nawawala ang bagong
@@ -299,10 +301,16 @@ Ipinapakita rin ng edit page kung ipinagkaloob ang tunnel read at zone read.
 
 ## Pagtuklas ng tunnel
 
-Pagkatapos ng bawat polling cycle sa main poller, sinisimulan ng `poller_bottom` hook
+Pagkatapos ng bawat polling cycle sa naka-configure na collector poller (`cloudflare_poller_id`, default `1`), sinisimulan ng `poller_bottom` hook
 ang isang background collector gamit ang `exec_background` kapag kahit isang naka-enable na
 account ay naka-on ang Collect Tunnels. Hindi kailanman tumatakbo ang collector sa proseso ng poller,
-kaya ang isang mabagal na Cloudflare API ay hindi nagpapaantala sa `poller.php`. Hindi ito kailanman sinisimulan ng mga remote poller.
+kaya ang isang mabagal na Cloudflare API ay hindi nagpapaantala sa `poller.php`. Nagdedeklara ang `INFO` ng
+`remote_collect:1`, at itinutulak ng `replicate_out` hook (`RemoteReplication`) ang mga
+hindi lihim na talahanayan ng metadata (`plugin_cloudflare_accounts` na may `token_ciphertext`
+na ginawang `NULL`, `plugin_cloudflare_tunnels`, `plugin_cloudflare_connectors`,
+`plugin_cloudflare_zones`, `plugin_cloudflare_metric_mappings`, at
+`plugin_cloudflare_resources`) sa mga remote poller (`poller_id > 1`) habang
+hindi isinasama ang vault key material.
 
 Para sa bawat account na nakatakda, inililista ng collector ang mga tunnel ng account, pagkatapos ay
 binabasa ang mga koneksyon ng mga aktibong tunnel nito, na nagbibigay ng mga connector ng bawat tunnel,
@@ -445,7 +453,7 @@ Hihinto sa pagtanggap ng data ang pinanatiling device. Pagkatapos ng pag-uninsta
 
 - Gumagawa ang isang pagtakbo ng hanggang 200 na kahilingan sa koneksyon. Ang mga tunnel na lampas sa limitasyong iyon ay mas madalang ma-refresh kaysa sa observation window, kaya nagpapakita ng mga puwang ang mga graph ng koneksyon ng mga ito.
 - Pinapatungan ng plugin ang mga pag-edit ng administrator sa mga na-import na template kapag binago ng isang upgrade ang kasamang template XML.
-- Dapat manatili sa pangunahing poller ang device ng account. Nasa pangunahing database ang mga talahanayan ng plugin at doon binabasa ng script ang mga ito.
+- Tumatanggap ang mga remote poller ng na-replicate na metadata nang walang mga kredensyal (ginagawang `NULL` ang `token_ciphertext` at hindi kailanman nire-replicate ang mga vault key). Kapag pinapatakbo ang collector sa isang itinalagang remote poller (`cloudflare_poller_id`), direktang mag-provision ng mga token file o vault key sa collector host na iyon.
 - Nananatili sa data query index ang mga naburang tunnel at nagpi-print ng `U` hanggang sa tahasang i-retire ang mga ito ng isang administrator. Inaalis lamang ng pag-retire ang mga graph na nakatala sa plugin at ang mga hindi nakabahaging data source sa pamamagitan ng Cacti; nananatiling nakikita ang row ng imbentaryo. Kinokontrol ng Cacti ang paglilinis ng RRD.
 - Hindi pinapagana ng Cacti ang isang plugin na ang code ay nagtatapos sa isang tunay na fatal error, tulad ng pagkaubos ng memory. Tingnan ang [docs/security.md](../../security.md).
 
@@ -455,12 +463,22 @@ Hihinto sa pagtanggap ng data ang pinanatiling device. Pagkatapos ng pag-uninsta
 - Iniimbak ang mga token sa isang file na iyong ipinoprovide o ine-encrypt gamit ang AES-256-GCM sa ilalim ng isang key file na hindi kailanman pumapasok sa database. Hindi kailanman ipinapakita ang mga ito sa isang pahina, isinusulat sa isang log, o isinasama sa isang mensahe ng error.
 - Nagdadala lamang ang mga error sa database ng SQLSTATE at ng driver error code, hindi kailanman ang mga halaga ng statement.
 - Ang bawat pagbabago ay isang POST na pinoprotektahan ng CSRF token ng Cacti. Ang mga pagbabago sa administratibong account at configuration ay nangangailangan ng Cloudflare: Configure; ang mga personal na pagkilala sa triage ay nangangailangan ng Cloudflare: Operator. Ang paggawa ng Cacti device o pag-on ng Create Graphs ay nangangailangan din ng pahintulot na Sites/Devices/Data ng Cacti. Tinatanggihan ng hindi pinaganang plugin ang mga pahina nito.
+- Ang Configuration-as-Code (`cli/cloudflare.php` at `casc_register_providers`) ay tumatanggap lamang ng mga lihim na sanggunian na `vault:<account_id>` o `file:<absolute_path>`, tinatanggihan ang mga hilaw na token, vault ciphertext, at mga deklarasyon ng XML `DOCTYPE`, at nangangailangan ng eksaktong `--confirm=<PLAN_HASH>` bago magsulat.
+- Ang mga nakarehistrong Ability (`cloudflare-list-tunnels`, `cloudflare-get-health`) ay mahigpit na read-only, sinusuri nang direkta ang Cloudflare: View realm laban sa mga talahanayan ng auth ng Cacti para sa user ID ng tumatawag (hindi kailanman ang estado ng session), at walang ibinabalik na mga token o key material.
 
 Nasa [docs/security.md](../../security.md) ang mga detalye at kilalang limitasyon. Mag-ulat ng mga kahinaan nang pribado tulad ng inilalarawan sa [SECURITY.md](../../../SECURITY.md).
 
 ## Mga workflow ng operator at analytics ng zone
 
-Kabilang sa mga karagdagan sa development ang tahasang pag-retire ng mga naburang tunnel, capability-aware na analytics ng zone, at mga mai-import na Thold template. Wala pang release tag o live-account qualification ang mga karagdagang ito. Tingnan ang [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) para sa pag-setup, kahulugan ng mga sukatan, at mga limitasyon sa pagberipika.
+Kabilang sa mga karagdagan sa development sa `0.4.0-dev` ang tahasang pag-retire ng mga naburang tunnel, capability-aware na GraphQL analytics ng zone at tunnel, mga helper ng buod na handa para sa Thold at mga mai-import na template, isang CasC at health CLI, mga ecosystem hook, at replikasyon ng remote collector. Wala pang release tag o live-account qualification ang mga karagdagang ito. Tingnan ang [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) para sa pag-setup, kahulugan ng mga sukatan, at mga limitasyon sa pagberipika.
+
+- **GraphQL Analytics client at buod ng Thold (`src/Api/GraphqlAnalyticsClient.php`, `src/Metrics/AnalyticsSummary.php`)**: Ang `GraphqlAnalyticsClient` ay nagpapatakbo lamang ng mga read-only na query na nasa allowlist sa oras ng compile (`zone_settings`, `zone_http_metrics`, `zone_edge_latency`, `tunnel_analytics`) sa pamamagitan ng `CloudflareClient` (naka-verify ang TLS, naka-pin sa `api.cloudflare.com`, may hangganang tugon, at `RetryPolicy` rate-limit backoff) upang mangolekta ng dami ng kahilingan sa zone at tunnel, mga rate ng error na HTTP 5xx, mga byte ng tugon, at edge latency (karaniwan at p95). Nagbibigay ang `AnalyticsSummary` ng `recommendedThresholds()` na nakaayon sa mga pangalan ng RRD DS ng plugin (`health`, `collect_age`, `error_pct`, `age`), `summarizeZones()`, at `evaluateSample()`.
+- **Operator at CasC CLI (`cli/cloudflare.php`)**: sinusuportahan ng `ConfigCodec` (`src/Config/ConfigCodec.php`) at `ConfigService` (`src/Config/ConfigService.php`), na sumusuporta sa `cli/cloudflare.php export [--format=yaml|xml] [--file=PATH]` (naglalabas lamang ng mga lihim na sanggunian na `vault:` / `file:`), `cli/cloudflare.php validate --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php plan --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php apply --file=PATH --confirm=<PLAN_HASH> [--format=yaml|xml]`, at `cli/cloudflare.php health [--format=text|json]`.
+- **Mga ecosystem integration hook (`includes/ecosystem.php`, `setup.php`)**:
+  - `abilities_register` (`AbilitiesProvider`): nagrerehistro ng read-only na `cloudflare-list-tunnels` at `cloudflare-get-health` na naka-gate sa Cloudflare: View realm (direkta at pangkatang pahintulot) na walang mga token o lihim sa output.
+  - `doctor_register_checks` (`DoctorChecks`): naglalantad ng `cloudflare_vault_key` (pagpapatunay ng mode, symlink, at haba), `cloudflare_token_dir` (mga pagsusuri ng absolute path, symlink, at world-writable), `cloudflare_tunnel_freshness`, at `cloudflare_api_failure_rate`.
+  - `casc_register_providers` (`CascProvider`): naglalantad ng `cloudflare` CasC provider (`export`, `validate`, `plan`, `apply`) para sa mga account (mga lihim na sanggunian lamang), mga zone, mga tunnel, at mga metric mapping.
+  - `replicate_out` (`RemoteReplication`): nire-replicate ang mga hindi lihim na talahanayan ng metadata sa mga remote poller (`poller_id > 1`) kung saan ginagawang `NULL` ang `token_ciphertext` at hindi isinasama ang vault key material.
 
 ### Mga pag-export ng imbentaryo
 
@@ -475,7 +493,7 @@ Ipinapadala ang bawat milestone bilang isang 0.x release na nakapangalan dito: a
 | 1. Foundation | Lifecycle ng plugin, mga pahintulot, configuration ng account, pagsubok ng koneksyon | Inilabas sa 0.3.0 ([#2](https://github.com/somethingwithproof/plugin_cloudflare/pull/2) hanggang [#5](https://github.com/somethingwithproof/plugin_cloudflare/pull/5)) |
 | 2. Discovery | Pagkatuklas ng tunnel at connector sa isang background collector, mga pahina ng Overview, Tunnels, at Connectors | Inilabas sa 0.3.0 ([#6](https://github.com/somethingwithproof/plugin_cloudflare/pull/6)) |
 | 3. Metrics | Mga data source ng kalusugan ng tunnel, mga graph template, paghawak ng outage na hindi kailanman nagtatala ng gawa-gawang zero | Inilabas sa 0.3.0 ([#7](https://github.com/somethingwithproof/plugin_cloudflare/pull/7)) |
-| 4. Analytics and alerting | Plan-aware na GraphQL analytics bawat zone, mga threshold ng Thold na may pagpigil sa outage | Nakaplano |
+| 4. Analytics and alerting | Plan-aware na GraphQL analytics (`GraphqlAnalyticsClient`), buod at mga template ng Thold (`AnalyticsSummary`), CasC CLI (`cli/cloudflare.php`), mga ecosystem hook, at remote replication | Ipinatupad sa 0.4.0-dev; nakabinbin ang live-account qualification |
 | 5. Hardening | Fault injection, mga modelong TLA+ ng discovery at collection, buong dokumentasyon | Nakaplano |
 
 ## Development

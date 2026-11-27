@@ -24,18 +24,18 @@
 
 Un complemento de Cacti 1.2 en desarrollo para supervisar Cloudflare Tunnels y la analítica de zonas. Lee la API de Cloudflare con tokens de API de ámbito limitado, nunca modifica Cloudflare y guarda sus datos en tablas propias. En Cacti copia un XML de consulta de datos a `resource/script_server/` y crea dispositivos, gráficos y plantillas mediante las API de Cacti, sin modificar ficheros del núcleo.
 
-**Estado: 0.4.0-dev, sin publicar.** La última versión estable es 0.3.0. La versión de desarrollo añade exportación CSV del inventario, retirada explícita de túneles eliminados, analítica de zonas en caché y plantillas opcionales de Thold. Queda pendiente la validación con proveedores y despliegues reales.
+**Estado: 0.4.0-dev, sin publicar.** La última versión estable es 0.3.0. La versión de desarrollo añade exportación CSV del inventario, retirada explícita de túneles eliminados, analítica de zonas en caché, un cliente GraphQL Analytics de solo lectura con lista blanca (`GraphqlAnalyticsClient`) y utilidades de resumen listas para Thold (`AnalyticsSummary`), una CLI de configuración como código (`cli/cloudflare.php`), hooks del ecosistema (`abilities_register`, `doctor_register_checks`, `casc_register_providers`) y soporte de recolectores remotos con ámbito de sondeador (`replicate_out`). Queda pendiente la validación con proveedores y despliegues reales.
 
-La tabla siguiente describe la versión estable 0.3.0. Las novedades de desarrollo se describen más adelante, en Flujos de operación y analítica de zonas.
+La tabla siguiente describe la versión estable 0.3.0. Las novedades de desarrollo en 0.4.0-dev se describen más adelante, en Flujos de operación y analítica de zonas.
 
 | Disponible ahora | Previsto |
 |---|---|
-| Instalación, actualización, desactivación y desinstalación mediante el gestor de complementos de Cacti | Analítica GraphQL y alertas de Thold (hito 4) |
+| Instalación, actualización, desactivación y desinstalación mediante el gestor de complementos de Cacti | Calificación de GraphQL con cuenta real y de despliegue (cierre del hito 4) |
 | Permisos Cloudflare: View, Operator y Configure | Inyección de fallos, modelos TLA+ y documentación completa (hito 5) |
 | Añadir, editar, eliminar, activar y desactivar cuentas de Cloudflare | |
 | Guardar un token en un fichero o cifrado en la base de datos de Cacti | |
 | Verificar un token y comprobar sus permisos de lectura de túneles y zonas | |
-| Descubrimiento de túneles y conectores en un recolector en segundo plano iniciado por el sondeador principal | |
+| Descubrimiento de túneles y conectores en un recolector en segundo plano (`poller_cloudflare.php`) | |
 | Páginas Overview, Tunnels y Connectors en Management > Cloudflare Tunnels | |
 | Seguimiento del ciclo de vida: `active`, `unavailable` y `deleted` | |
 | Un dispositivo de Cacti por cuenta, creado por un administrador, con los túneles como índices de una consulta de datos | |
@@ -209,7 +209,7 @@ Cualquiera con Cloudflare: Configure puede introducir cualquier ruta, que leerá
 ## Actualización
 
 1. Sustituya los ficheros de `plugins/cloudflare` por la nueva publicación, manteniendo el nombre del directorio.
-2. Abra una vez como administrador Console > Configuration > Plugins o Console > Configuration > Cloudflare Accounts. Esto ejecuta las migraciones, importa las plantillas Cloudflare y copia el fichero de consulta de datos (véase [Métricas y gráficos de túneles](#tunnel-metrics-and-graphs)); al actualizar desde 0.1.0 también registra el hook `poller_bottom`.
+2. Abra una vez como administrador Console > Configuration > Plugins o Console > Configuration > Cloudflare Accounts. Esto ejecuta las migraciones, importa las plantillas Cloudflare, copia el fichero de consulta de datos (véase [Métricas y gráficos de túneles](#tunnel-metrics-and-graphs)), registra los hooks del ecosistema `abilities_register`, `doctor_register_checks`, `casc_register_providers` y `replicate_out` (`includes/ecosystem.php`) y, al actualizar desde 0.1.0, también registra el hook `poller_bottom`.
 
 `poller.php` no ejecuta la actualización del complemento, por lo que falta el esquema nuevo hasta completar el paso 2. Entretanto, cada ejecución del recolector no hace nada y registra `CLOUDFLARE: collector skipped; plugin upgrade pending, open Console > Plugins`. Las páginas Cloudflare Tunnels solo necesitan Cloudflare: View, de modo que nunca ejecutan la actualización y pueden mostrar «The Cloudflare tunnels could not be read» hasta completar el paso 2.
 
@@ -234,7 +234,7 @@ La página de edición también muestra si se han autorizado las lecturas de tú
 <a id="tunnel-discovery"></a>
 ## Descubrimiento de túneles
 
-Tras cada ciclo de sondeo del sondeador principal, el hook `poller_bottom` inicia un recolector en segundo plano mediante `exec_background` cuando al menos una cuenta activada tiene Collect Tunnels activado. El recolector nunca se ejecuta dentro del proceso del sondeador, por lo que una API lenta de Cloudflare no retrasa `poller.php`. Los sondeadores remotos nunca lo inician.
+Tras cada ciclo de sondeo en el sondeador recolector configurado (`cloudflare_poller_id`, predeterminado `1`), el hook `poller_bottom` inicia un recolector en segundo plano mediante `exec_background` cuando al menos una cuenta activada tiene Collect Tunnels activado. El recolector nunca se ejecuta dentro del proceso del sondeador, por lo que una API lenta de Cloudflare no retrasa `poller.php`. `INFO` declara `remote_collect:1` y el hook `replicate_out` (`RemoteReplication`) envía las tablas de metadatos no secretos (`plugin_cloudflare_accounts` con `token_ciphertext` limpiado a `NULL`, `plugin_cloudflare_tunnels`, `plugin_cloudflare_connectors`, `plugin_cloudflare_zones`, `plugin_cloudflare_metric_mappings` y `plugin_cloudflare_resources`) a los sondeadores remotos (`poller_id > 1`) excluyendo el material de claves de la bóveda.
 
 Para cada cuenta pendiente, el recolector enumera los túneles y después lee las conexiones de los túneles activos, obteniendo los conectores, sus versiones, centros de datos y direcciones de origen. Las cuentas vencen cada Discovery Interval (300 segundos de forma predeterminada). Una ejecución no inicia cuentas nuevas pasados 50 segundos y hace como máximo 200 solicitudes de conexiones. Cualquiera de los límites puede detener una cuenta a mitad de lectura; esa cuenta queda como `partial` y la próxima ejecución continúa con los túneles cuyo último intento sea más antiguo. Las cuentas no iniciadas siguen pendientes para la siguiente ejecución.
 
@@ -315,7 +315,7 @@ El dispositivo conservado deja de recibir datos. Tras desinstalar o eliminar su 
 
 - Cada ejecución hace como máximo 200 solicitudes de conexiones. Los túneles que superan ese límite se actualizan con menos frecuencia que la ventana de observación y sus gráficos de conexiones muestran huecos.
 - El complemento sobrescribe los cambios administrativos en las plantillas importadas cuando una actualización cambia el XML distribuido.
-- El dispositivo de la cuenta debe permanecer en el sondeador principal. Las tablas del complemento están en la base de datos principal y el script las lee allí.
+- Los sondeadores remotos reciben metadatos replicados sin credenciales (`token_ciphertext` se limpia a `NULL` y las claves de la bóveda nunca se replican). Al ejecutar el recolector en un sondeador remoto designado (`cloudflare_poller_id`), aprovisione los ficheros de token o una clave de bóveda directamente en ese host recolector.
 - Los túneles eliminados permanecen en el índice de consulta con sus gráficos y RRD e imprimen `U`.
 - Cacti desactiva un complemento cuyo código termina con un error fatal real, como agotar la memoria. Véase [docs/security.md](docs/security.md).
 
@@ -326,13 +326,23 @@ El dispositivo conservado deja de recibir datos. Tras desinstalar o eliminar su 
 - Los tokens se guardan en un fichero que usted prepara o cifrados con AES-256-GCM mediante una clave de fichero que nunca entra en la base de datos. Nunca se muestran en páginas, se escriben en registros ni se incluyen en mensajes de error.
 - Los errores de base de datos solo incluyen SQLSTATE y el código del controlador, nunca los valores de la sentencia.
 - Cada cambio es un POST protegido por el token CSRF de Cacti. Los cambios administrativos de cuentas y configuración requieren Cloudflare: Configure; los reconocimientos personales de triaje requieren Cloudflare: Operator. Crear un dispositivo Cacti o activar Create Graphs también exige Sites/Devices/Data de Cacti. Un complemento desactivado rechaza sus páginas.
+- La configuración como código (`cli/cloudflare.php` y `casc_register_providers`) solo acepta referencias secretas `vault:<account_id>` o `file:<absolute_path>`, rechaza tokens sin cifrar, textos cifrados de la bóveda y declaraciones XML `DOCTYPE`, y exige un `--confirm=<PLAN_HASH>` exacto antes de escribir.
+- Las Abilities registradas (`cloudflare-list-tunnels`, `cloudflare-get-health`) son estrictamente de solo lectura, evalúan el ámbito Cloudflare: View directamente contra las tablas de autenticación de Cacti para el ID de usuario solicitante (nunca el estado de sesión) y no devuelven tokens ni material de claves.
 
 Los detalles y limitaciones están en [docs/security.md](docs/security.md). Comunique vulnerabilidades de forma privada como se indica en [SECURITY.md](../../../SECURITY.md).
 
 <a id="roadmap"></a>
 ## Flujos de operación y analítica de zonas
 
-La versión de desarrollo permite retirar explícitamente túneles eliminados, recopilar analítica según las capacidades de cada zona y utilizar plantillas de Cacti y Thold. Estas novedades aún no se han publicado ni validado con cuentas reales. Consulte la configuración, el significado de las métricas y los límites de validación en la [guía en inglés](../../analytics-and-alerting.md).
+Las novedades de desarrollo en `0.4.0-dev` incluyen la retirada explícita de túneles eliminados, analítica GraphQL de zonas y túneles adaptada a capacidades, utilidades de resumen listas para Thold y plantillas importables, una CLI de CasC y salud, hooks del ecosistema y replicación de recolectores remotos. Estas novedades aún no se han etiquetado ni validado con cuentas reales. Consulte la configuración, el significado de las métricas y los límites de validación en [docs/analytics-and-alerting.md](../../analytics-and-alerting.md).
+
+- **Cliente GraphQL Analytics y resumen Thold (`src/Api/GraphqlAnalyticsClient.php`, `src/Metrics/AnalyticsSummary.php`)**: `GraphqlAnalyticsClient` ejecuta únicamente consultas de solo lectura incluidas en lista blanca en tiempo de compilación (`zone_settings`, `zone_http_metrics`, `zone_edge_latency`, `tunnel_analytics`) a través de `CloudflareClient` (TLS verificado, fijado a `api.cloudflare.com`, respuestas acotadas y espera exponencial ante límites de tasa mediante `RetryPolicy`) para recopilar volumen de peticiones de zona y túnel, tasas de error HTTP 5xx, bytes de respuesta y latencia en el borde (media y p95). `AnalyticsSummary` ofrece `recommendedThresholds()` alineado con los nombres DS de RRD del complemento (`health`, `collect_age`, `error_pct`, `age`), `summarizeZones()` y `evaluateSample()`.
+- **CLI de operador y CasC (`cli/cloudflare.php`)**: respaldada por `ConfigCodec` (`src/Config/ConfigCodec.php`) y `ConfigService` (`src/Config/ConfigService.php`), con soporte para `cli/cloudflare.php export [--format=yaml|xml] [--file=PATH]` (emitiendo solo referencias secretas `vault:` / `file:`), `cli/cloudflare.php validate --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php plan --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php apply --file=PATH --confirm=<PLAN_HASH> [--format=yaml|xml]` y `cli/cloudflare.php health [--format=text|json]`.
+- **Hooks de integración del ecosistema (`includes/ecosystem.php`, `setup.php`)**:
+  - `abilities_register` (`AbilitiesProvider`): registra `cloudflare-list-tunnels` y `cloudflare-get-health` de solo lectura restringidas al ámbito Cloudflare: View (concesiones directas y de grupo) sin tokens ni secretos en la salida.
+  - `doctor_register_checks` (`DoctorChecks`): expone `cloudflare_vault_key` (validación de modo, enlace simbólico y longitud), `cloudflare_token_dir` (comprobaciones de ruta absoluta, enlace simbólico y permisos de escritura para otros), `cloudflare_tunnel_freshness` y `cloudflare_api_failure_rate`.
+  - `casc_register_providers` (`CascProvider`): expone el proveedor CasC `cloudflare` (`export`, `validate`, `plan`, `apply`) para cuentas (solo referencias secretas), zonas, túneles y asignaciones de métricas.
+  - `replicate_out` (`RemoteReplication`): replica tablas de metadatos no secretos a sondeadores remotos (`poller_id > 1`) limpiando `token_ciphertext` a `NULL` y excluyendo el material de claves de la bóveda.
 
 ### Exportación del inventario
 
@@ -347,7 +357,7 @@ Cada hito se publica como una versión 0.x con su número: el hito 3 es 0.3.0 y 
 | 1. Base | Ciclo de vida del complemento, permisos, configuración de cuentas y prueba de conexión | Publicado en 0.3.0 ([#2](https://github.com/somethingwithproof/plugin_cloudflare/pull/2) a [#5](https://github.com/somethingwithproof/plugin_cloudflare/pull/5)) |
 | 2. Descubrimiento | Descubrimiento de túneles y conectores en segundo plano, páginas Overview, Tunnels y Connectors | Publicado en 0.3.0 ([#6](https://github.com/somethingwithproof/plugin_cloudflare/pull/6)) |
 | 3. Métricas | Fuentes de datos de salud de túneles, plantillas de gráficos y gestión de interrupciones sin registrar ceros inventados | Publicado en 0.3.0 ([#7](https://github.com/somethingwithproof/plugin_cloudflare/pull/7)) |
-| 4. Analítica y alertas | Analítica GraphQL por zona adaptada al plan, umbrales de Thold con supresión durante interrupciones | Previsto |
+| 4. Analítica y alertas | Analítica GraphQL adaptada al plan (`GraphqlAnalyticsClient`), resumen y plantillas Thold (`AnalyticsSummary`), CLI CasC (`cli/cloudflare.php`), hooks del ecosistema y replicación remota | Implementado en 0.4.0-dev; calificación con cuenta real pendiente |
 | 5. Refuerzo | Inyección de fallos, modelos TLA+ del descubrimiento y la recopilación, documentación completa | Previsto |
 
 <a id="development"></a>

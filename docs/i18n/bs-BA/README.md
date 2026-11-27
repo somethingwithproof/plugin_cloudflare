@@ -27,18 +27,18 @@ tabelama. U Cacti sistemu kopira XML datoteke upita podataka u
 `resource/script_server/` te kreira uređaje, grafikone i šablone putem
 Cacti-jevih vlastitih API-ja, bez ikakvih izmjena u osnovnim datotekama.
 
-**Status: 0.4.0-dev, neobjavljena verzija.** Posljednja objavljena verzija je 0.3.0. Razvojna verzija dodaje CSV izvoz inventara, izričito povlačenje obrisanih tunela, keširanu analitiku zona i opcione Thold šablone. Kvalifikacija prema stvarnom provajderu i za produkcijsko postavljanje još je u toku.
+**Status: 0.4.0-dev, neobjavljena verzija.** Posljednja objavljena verzija je 0.3.0. Razvojna verzija dodaje CSV izvoz inventara, izričito povlačenje obrisanih tunela, keširanu analitiku zona, klijenta GraphQL Analytics samo za čitanje s listom dozvola (`GraphqlAnalyticsClient`) i pomoćnicima sažetka spremnim za Thold (`AnalyticsSummary`), Configuration-as-Code CLI (`cli/cloudflare.php`), kuke ekosistema (`abilities_register`, `doctor_register_checks`, `casc_register_providers`) i podršku za udaljene kolektore po polleru (`replicate_out`). Kvalifikacija prema stvarnom provajderu i za produkcijsko postavljanje još je u toku.
 
-Tabela u nastavku opisuje stabilno izdanje 0.3.0. Razvojni dodaci opisani su niže u odjeljku o tokovima rada operatera i analitici zona.
+Tabela u nastavku opisuje stabilno izdanje 0.3.0. Razvojni dodaci u verziji 0.4.0-dev opisani su niže u odjeljku o tokovima rada operatera i analitici zona.
 
 | Dostupno sada | Planirano |
 |---|---|
-| Instalacija, nadogradnja, onemogućavanje i deinstalacija kroz Cacti menadžer dodataka | GraphQL analitika i Thold upozorenja (Prekretnica 4) |
+| Instalacija, nadogradnja, onemogućavanje i deinstalacija kroz Cacti menadžer dodataka | GraphQL na stvarnom nalogu i kvalifikacija postavljanja (završetak prekretnice 4) |
 | Dozvole Cloudflare: View, Operator i Configure | Ubrizgavanje grešaka, TLA+ modeli i potpuna dokumentacija (Prekretnica 5) |
 | Dodavanje, uređivanje, brisanje, omogućavanje i onemogućavanje Cloudflare naloga | |
 | Čuvanje tokena u datoteci ili šifrovano u Cacti bazi podataka | |
 | Verifikacija tokena i provjera njegovih dozvola za čitanje tunela i zona | |
-| Otkrivanje tunela i konektora u pozadinskom prikupljaču koji pokreće glavni poller | |
+| Otkrivanje tunela i konektora u pozadinskom prikupljaču (`poller_cloudflare.php`) | |
 | Stranice Pregled, Tuneli i Konektori pod Upravljanje > Cloudflare tuneli | |
 | Praćenje životnog ciklusa: `active`, `unavailable` i `deleted` | |
 | Jedan Cacti uređaj po nalogu, koji kreira administrator, sa tunelima kao indeksima upita podataka | |
@@ -292,9 +292,11 @@ putanja izvan tog direktorija tada biva odbijena. Pogledajte
    direktorija.
 2. Otvorite Console > Configuration > Plugins ili Console > Configuration >
    Cloudflare Accounts jednom kao administrator. Time se pokreću migracije dodatka,
-   uvoze Cloudflare šabloni i kopira datoteka upita podataka (pogledajte
-   [Metrike i grafikoni tunela](#tunnel-metrics-and-graphs)), a pri nadogradnji sa
-   verzije 0.1.0 registruje se kuka `poller_bottom`.
+   uvoze Cloudflare šabloni, kopira datoteka upita podataka (pogledajte
+   [Metrike i grafikoni tunela](#tunnel-metrics-and-graphs)), registruju se kuke
+   ekosistema `abilities_register`, `doctor_register_checks`,
+   `casc_register_providers` i `replicate_out` (`includes/ecosystem.php`), a pri
+   nadogradnji sa verzije 0.1.0 registruje se kuka `poller_bottom`.
 
 `poller.php` ne izvršava nadogradnju dodatka, pa do koraka 2 nova šema nedostaje.
 Svako pokretanje prikupljača tada ne radi ništa i zapisuje
@@ -323,11 +325,15 @@ i čitanje zona.
 
 ## Otkrivanje tunela
 
-Nakon svakog ciklusa ispitivanja na glavnom polleru, kuka `poller_bottom` pokreće
+Nakon svakog ciklusa ispitivanja na podešenom polleru prikupljača (`cloudflare_poller_id`, podrazumijevano `1`), kuka `poller_bottom` pokreće
 pozadinski prikupljač pomoću `exec_background` kada je barem za jedan omogućeni
 nalog uključena opcija Prikupljaj tunele. Prikupljač se nikada ne izvršava u
-procesu pollera, pa spor Cloudflare API ne usporava `poller.php`. Udaljeni polleri
-ga nikada ne pokreću.
+procesu pollera, pa spor Cloudflare API ne usporava `poller.php`. `INFO` objavljuje
+`remote_collect:1`, a kuka `replicate_out` (`RemoteReplication`) šalje tabele metapodataka
+bez tajni (`plugin_cloudflare_accounts` sa `token_ciphertext` očišćenim na `NULL`,
+`plugin_cloudflare_tunnels`, `plugin_cloudflare_connectors`, `plugin_cloudflare_zones`,
+`plugin_cloudflare_metric_mappings` i `plugin_cloudflare_resources`) udaljenim
+pollerima (`poller_id > 1`) dok izostavlja materijal ključeva trezora.
 
 Za svaki nalog koji je na redu, prikupljač izlistava tunele naloga, a zatim čita
 veze njegovih aktivnih tunela, čime dobija konektore svakog tunela, njihove
@@ -495,8 +501,7 @@ bude potrebna.
   prekide.
 - Dodatak prepisuje administratorske izmjene na uvezenim šablonima kada nadogradnja
   promijeni isporučeni XML šablona.
-- Uređaj naloga mora ostati na glavnom polleru. Tabele dodatka nalaze se u glavnoj
-  bazi podataka i skripta ih čita odatle.
+- Udaljeni polleri primaju replicirane metapodatke bez pristupnih podataka (`token_ciphertext` se čisti na `NULL`, a ključevi trezora se nikada ne repliciraju). Kada prikupljač pokrećete na određenom udaljenom polleru (`cloudflare_poller_id`), obezbijedite datoteke tokena ili ključ trezora direktno na tom hostu prikupljača.
 - Obrisani tuneli ostaju u indeksu upita podataka i ispisuju `U` sve dok ih
   administrator izričito ne povuče iz upotrebe. Povlačenje uklanja samo grafikone
   koje je evidentirao dodatak i nedijeljene izvore podataka putem Cacti sistema;
@@ -517,6 +522,8 @@ bude potrebna.
   trijaže zahtijevaju Cloudflare: Operator. Kreiranje Cacti uređaja ili uključivanje
   opcije Kreiraj grafikone dodatno zahtijeva Cacti dozvolu Sites/Devices/Data.
   Onemogućen dodatak odbija pristup svojim stranicama.
+- Configuration-as-Code (`cli/cloudflare.php` i `casc_register_providers`) prihvata samo tajne reference `vault:<account_id>` ili `file:<absolute_path>`, odbacuje sirove tokene, šifrate trezora i XML `DOCTYPE` deklaracije te zahtijeva tačan `--confirm=<PLAN_HASH>` prije upisivanja.
+- Registrovane Abilities (`cloudflare-list-tunnels`, `cloudflare-get-health`) su strogo samo za čitanje, ocjenjuju područje Cloudflare: View direktno prema Cacti tabelama autentifikacije za ID korisnika pozivaoca (nikada stanje sesije) i ne vraćaju nikakve tokene ni materijal ključeva.
 
 Detalji i poznata ograničenja nalaze se u [docs/security.md](../../security.md).
 Sigurnosne ranjivosti prijavite privatno kako je opisano u
@@ -524,11 +531,15 @@ Sigurnosne ranjivosti prijavite privatno kako je opisano u
 
 ## Tokovi rada operatera i analitika zona
 
-Razvojni dodaci uključuju izričito povlačenje obrisanih tunela, analitiku zona
-svjesnu mogućnosti plana i Thold šablone spremne za uvoz. Ovi dodaci još nemaju
-oznaku izdanja niti kvalifikaciju na produkcijskom nalogu. Pogledajte
-[docs/analytics-and-alerting.md](../../analytics-and-alerting.md) za podešavanje,
-semantiku metrika i ograničenja verifikacije.
+Razvojni dodaci u verziji `0.4.0-dev` uključuju izričito povlačenje obrisanih tunela, GraphQL analitiku zona i tunela svjesnu mogućnosti plana, pomoćnike sažetka spremne za Thold i šablone za uvoz, CasC i zdravstveni CLI, kuke ekosistema i replikaciju udaljenih kolektora. Ovi dodaci još nemaju oznaku izdanja niti kvalifikaciju na produkcijskom nalogu. Pogledajte [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) za podešavanje, semantiku metrika i ograničenja verifikacije.
+
+- **GraphQL Analytics klijent i Thold sažetak (`src/Api/GraphqlAnalyticsClient.php`, `src/Metrics/AnalyticsSummary.php`)**: `GraphqlAnalyticsClient` izvršava isključivo upite samo za čitanje s liste dozvoljenih pri kompajliranju (`zone_settings`, `zone_http_metrics`, `zone_edge_latency`, `tunnel_analytics`) preko `CloudflareClient` (TLS verificiran, vezan na `api.cloudflare.com`, ograničeni odgovori i `RetryPolicy` povlačenje pri ograničenju brzine) kako bi prikupio obim zahtjeva zona i tunela, stope HTTP 5xx grešaka, bajtove odgovora i rubno kašnjenje (prosjek i p95). `AnalyticsSummary` pruža `recommendedThresholds()` usklađene s RRD DS nazivima dodatka (`health`, `collect_age`, `error_pct`, `age`), `summarizeZones()` i `evaluateSample()`.
+- **Operatorski i CasC CLI (`cli/cloudflare.php`)**: oslonjen na `ConfigCodec` (`src/Config/ConfigCodec.php`) i `ConfigService` (`src/Config/ConfigService.php`), podržava `cli/cloudflare.php export [--format=yaml|xml] [--file=PATH]` (emituje samo `vault:` / `file:` tajne reference), `cli/cloudflare.php validate --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php plan --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php apply --file=PATH --confirm=<PLAN_HASH> [--format=yaml|xml]` i `cli/cloudflare.php health [--format=text|json]`.
+- **Kuke za integraciju u ekosistem (`includes/ecosystem.php`, `setup.php`)**:
+  - `abilities_register` (`AbilitiesProvider`): registruje `cloudflare-list-tunnels` i `cloudflare-get-health` samo za čitanje, ograničene na područje Cloudflare: View (direktne i grupne dodjele) bez tokena ili tajni u izlazu.
+  - `doctor_register_checks` (`DoctorChecks`): izlaže `cloudflare_vault_key` (provjera moda, simboličke veze i dužine), `cloudflare_token_dir` (provjere apsolutne putanje, simboličke veze i prava upisa za sve), `cloudflare_tunnel_freshness` i `cloudflare_api_failure_rate`.
+  - `casc_register_providers` (`CascProvider`): izlaže `cloudflare` CasC provajdera (`export`, `validate`, `plan`, `apply`) za naloge (samo tajne reference), zone, tunele i mapiranja metrika.
+  - `replicate_out` (`RemoteReplication`): replicira tabele metapodataka bez tajni na udaljene pollere (`poller_id > 1`) sa `token_ciphertext` očišćenim na `NULL` i isključenim materijalom ključeva trezora.
 
 ### Izvoz inventara
 
@@ -552,7 +563,7 @@ prekretnicu navedenu u nastavku.
 | 1. Osnova | Životni ciklus dodatka, dozvole, konfiguracija naloga, test veze | Objavljeno u 0.3.0 ([#2](https://github.com/somethingwithproof/plugin_cloudflare/pull/2) do [#5](https://github.com/somethingwithproof/plugin_cloudflare/pull/5)) |
 | 2. Otkrivanje | Otkrivanje tunela i konektora u pozadinskom prikupljaču, stranice Pregled, Tuneli i Konektori | Objavljeno u 0.3.0 ([#6](https://github.com/somethingwithproof/plugin_cloudflare/pull/6)) |
 | 3. Metrike | Izvori podataka o zdravlju tunela, šabloni grafikona, obrada ispada koja nikada ne bilježi izmišljenu nulu | Objavljeno u 0.3.0 ([#7](https://github.com/somethingwithproof/plugin_cloudflare/pull/7)) |
-| 4. Analitika i upozoravanje | GraphQL analitika po zoni prilagođena planu, Thold pragovi sa potiskivanjem ispada | Planirano |
+| 4. Analitika i upozoravanje | Planu prilagođena GraphQL analitika (`GraphqlAnalyticsClient`), Thold sažetak i šabloni (`AnalyticsSummary`), CasC CLI (`cli/cloudflare.php`), kuke ekosistema i udaljena replikacija | Implementirano u 0.4.0-dev; kvalifikacija na produkcijskom nalogu u toku |
 | 5. Učvršćivanje | Ubrizgavanje grešaka, TLA+ modeli otkrivanja i prikupljanja, potpuna dokumentacija | Planirano |
 
 ## Razvoj

@@ -26,18 +26,18 @@ marnaba waxba kama beddelo Cloudflare, xogtiisana waxa uu ku hayaa miisas u gaar
 Gudaha Cacti waxa uu nuqul ka sameeyaa faylasha XML ee weydiinta xogta isaga oo geliya `resource/script_server/` waxa uuna
 ku abuuraa aaladaha, jaantusyada iyo qaab-dhismeedyada (templates) isaga oo adeegsanaya API-yada Cacti lafteeda, iyada oo aan wax isbeddel ah lagu samayn faylasha udub-dhexaadka ah.
 
-**Xaaladda: 0.4.0-dev, aan weli la sii dayn.** Noocii ugu dambeeyay ee la sii daayay waa 0.3.0. Nooca horumarinta waxa uu ku darayaa dhoofinta liiska alaabta ee CSV, ka-fariisinta cad ee godadka la tirtiray, falanqaynta aagga ee kaydsan (cached) iyo qaab-dhismeedyada Thold ee ikhtiyaariga ah. Xaqiijinta bixiyaha tooska ah iyo hawlgelinta weli way dhiman tahay.
+**Xaaladda: 0.4.0-dev, aan weli la sii dayn.** Noocii ugu dambeeyay ee la sii daayay waa 0.3.0. Nooca horumarinta waxa uu ku darayaa dhoofinta liiska alaabta ee CSV, ka-fariisinta cad ee godadka la tirtiray, falanqaynta aagga ee kaydsan (cached), macmiil GraphQL Analytics oo akhris-keliya ah oo leh liis oggolaansho (`GraphqlAnalyticsClient`) oo ay weheliyaan caawiyeyaasha soo koobidda ee diyaar u ah Thold (`AnalyticsSummary`), CLI-ga Configuration-as-Code (`cli/cloudflare.php`), hooks-ka nidaamka deegaanka (`abilities_register`, `doctor_register_checks`, `casc_register_providers`), iyo taageerada ururiyaha fog ee baaxadda poller-ka ku xaddidan (`replicate_out`). Xaqiijinta bixiyaha tooska ah iyo hawlgelinta weli way dhiman tahay.
 
-Shaxda hoose waxay sharxaysaa sii-daynta deggan ee 0.3.0. Ku-daridda horumarinta waxaa lagu sharxay qaybaha socodka shaqada ee hawlwadeenka iyo falanqaynta aagga ee hoose.
+Shaxda hoose waxay sharxaysaa sii-daynta deggan ee 0.3.0. Ku-daridda horumarinta ee 0.4.0-dev waxaa lagu sharxay qaybaha socodka shaqada ee hawlwadeenka iyo falanqaynta aagga ee hoose.
 
 | Waxa hadda diyaar ah | Waxa la qorsheeyay |
 |---|---|
-| Ku rakibidda, cusboonaysiinta, joojinta iyo ka-saaridda iyada oo loo marayo maamulaha plugin-ka ee Cacti | Falanqaynta GraphQL iyo digniinaha Thold (Marxaladda 4) |
+| Ku rakibidda, cusboonaysiinta, joojinta iyo ka-saaridda iyada oo loo marayo maamulaha plugin-ka ee Cacti | Xaqiijinta GraphQL ee akoonka nool iyo hawlgelinta (dhammaadka Marxaladda 4) |
 | Ogolaanshaha Cloudflare: View, Operator iyo Configure | Gelinta cilladaha (Fault injection), moodooyinka TLA+ iyo dukumeenti dhammaystiran (Marxaladda 5) |
 | Ku darista, wax ka beddelidda, tirtiridda, hawl-gelinta iyo joojinta koontooyinka Cloudflare | |
 | Ku kaydinta calaamadda (token) fayl ama iyada oo la siriyay gudaha kaydka xogta ee Cacti | |
 | Xaqiijinta calaamadda iyo hubinta ogolaansheheeda akhrinta tunnel-ka iyo aagga | |
-| Helitaanka tunnel-ka iyo xiriiriyaha ee ururiyaha gadaal ka shaqeeya (background collector) ee uu bilaabo poller-ka weyn | |
+| Helitaanka tunnel-ka iyo xiriiriyaha ee ururiyaha gadaal ka shaqeeya (`poller_cloudflare.php`) | |
 | Bogagga Overview, Tunnels iyo Connectors ee hoos yimaada Management > Cloudflare Tunnels | |
 | La-socoshada meertada nolosha: `active`, `unavailable` iyo `deleted` | |
 | Hal aalad Cacti ah koonto kasta, oo uu abuuro maamule, iyada oo godadka (tunnels) ay yihiin tusmooyinka weydiinta xogta | |
@@ -276,7 +276,9 @@ diidaa. Eeg [docs/security.md](../../security.md#token-file).
 2. Fur Console > Configuration > Plugins, ama Console > Configuration >
    Cloudflare Accounts, hal mar adigoo ah maamule. Taasi waxay socodsiisaa hijrada (migrations) plugin-ka,
    waxay soo dejisaa qaababka Cloudflare waxayna koobiyeysaa faylka waydiinta xogta (eeg
-   [Qiyaasaha iyo jaantusyada tunnel-ka](#tunnel-metrics-and-graphs)), iyo, marka laga kor-u-qaadayo
+   [Qiyaasaha iyo jaantusyada tunnel-ka](#tunnel-metrics-and-graphs)), waxayna diiwaangelisaa hooks-ka nidaamka deegaanka
+   `abilities_register`, `doctor_register_checks`, `casc_register_providers`,
+   iyo `replicate_out` (`includes/ecosystem.php`), iyo, marka laga kor-u-qaadayo
    0.1.0, waxay diiwaangelisaa hook-ga `poller_bottom`.
 
 `poller.php` ma socodsiiso kor-u-qaadidda plugin-ka, markaa ilaa tallaabo 2 qaab-dhismeedka cusub
@@ -305,11 +307,16 @@ Bogga wax-ka-beddelku wuxuu sidoo kale muujiyaa haddii akhrinta tunnel-ka iyo ak
 
 ## Helitaanka tunnel-ka
 
-Ka dib wareeg kasta oo cod-qaadis ah oo ku yaal poller-ka weyn, hook-ga `poller_bottom` wuxuu bilaabaa
+Ka dib wareeg kasta oo cod-qaadis ah oo ku yaal poller-ka ururiyaha ee la habeeyay (`cloudflare_poller_id`, caadi ahaan `1`), hook-ga `poller_bottom` wuxuu bilaabaa
 ururiye gadaal ka shaqeeya oo leh `exec_background` marka ugu yaraan hal akoon oo shaqaynaya
 uu leeyahay Collect Tunnels oo shidan. Ururiyuhu weligiis kuma dhex shaqeeyo habka poller-ka,
-markaa Cloudflare API oo gaabis ah ma daahiyo `poller.php`. Poller-rada fog
-weligood ma bilaabaan.
+markaa Cloudflare API oo gaabis ah ma daahiyo `poller.php`. `INFO` waxay caddeysaa
+`remote_collect:1`, hook-ga `replicate_out` (`RemoteReplication`) wuxuuna u riixaa
+miisaska xogta qarsoon aan ahayn (`plugin_cloudflare_accounts` oo `token_ciphertext`
+laga saaray loona beddelay `NULL`, `plugin_cloudflare_tunnels`, `plugin_cloudflare_connectors`,
+`plugin_cloudflare_zones`, `plugin_cloudflare_metric_mappings`, iyo
+`plugin_cloudflare_resources`) poller-rada fog (`poller_id > 1`) iyadoo
+laga saarayo agabka furaha vault-ka.
 
 Akoon kasta oo waqtigiisu joogo, ururiyuhu wuxuu taxaa tunnel-lada akoonka, ka dibna
 wuxuu akhriyaa xiriirrada tunnel-ladiisa firfircoon, taasoo bixisa xiriiriyayaasha tunnel kasta,
@@ -452,7 +459,7 @@ Qalabka la hayay wuxuu joojiyaa helitaanka xogta. Ka-saaris ka dib, ama marka ak
 
 - Hal orod wuxuu sameeyaa ugu badnaan 200 oo codsi oo xiriir ah. Tunnel-lada ka badan xadkaas waxaa dib loo cusboonaysiiyaa si ka yar daaqadda kormeerka, sidaas darteed garaafyada xiriirkoodu waxay muujiyaan daldaloolo.
 - Kordhintu waxay dib u qortaa wax-ka-beddelka maamulaha ee qaababka (templates) la soo dejiyay marka cusboonaysiin ay beddesho XML-ka qaabka la soo diray.
-- Qalabka akoonku waa inuu ku sii jiraa poller-ka weyn. Miisaska kordhintu waxay ku jiraan kaydka xogta weyn, qoraalkuna (script) halkaas ayuu ka akhriyaa.
+- Poller-rada fog waxay helaan xogta la koobiyay iyadoo aan lahayn aqoonsiyo sir ah (`token_ciphertext` waxaa loo beddelaa `NULL` furayaasha vault-kana waligood lama koobiyo). Marka ururiyaha lagu socodsiinayo poller fog oo loo asteeyay (`cloudflare_poller_id`), si toos ah ugu diyaari faylasha token-ka ama furaha vault-ka martigeliyaha ururiyahaas.
 - Tunnel-lada la tirtiray waxay ku sii jiraan tusmada weydiinta xogta (data query index) waxayna daabacaan `U` ilaa maamuluhu si cad u hawlgabiyo. Hawlgabintu waxay Cacti dhexdiisa ka saartaa oo keliya garaafyada kordhintu diiwaangelisay iyo ilaha xogta aan la wadaagin; safka liiska alaabtu wuxuu sii ahaadaa mid muuqda. Cacti ayaa xakamaysa nadiifinta RRD.
 - Cacti waxay damisaa kordhin kasta oo koodkeedu ku dhammaado khalad halis ah oo dhab ah, sida dhammaadka xusuusta. Eeg [docs/security.md](../../security.md).
 
@@ -462,12 +469,28 @@ Qalabka la hayay wuxuu joojiyaa helitaanka xogta. Ka-saaris ka dib, ama marka ak
 - Token-nada waxaa lagu kaydiyaa fayl aad adigu diyaarisay ama waxaa lagu xiraa sirta AES-256-GCM iyadoo la adeegsanayo fayl fure ah oo aan waligiis gelin kaydka xogta. Waligood laguma soo bandhigo bog, laguma qoro diiwaan (log), lagumana daro farriin khalad ah.
 - Khaladaadka kaydka xogtu waxay xambaaraan oo keliya SQLSTATE iyo lambarka khaladka darawalka, waligoodna ma xambaaraan qiimayaasha bayaanka.
 - Isbeddel kasta waa POST lagu ilaaliyay token-ka CSRF ee Cacti. Isbeddellada maamulka akoonka iyo qaabayntu waxay u baahan yihiin ogolaanshaha Cloudflare: Configure; aqoonsiga kala-soocidda shakhsi ahaaneed (triage acknowledgments) wuxuu u baahan yahay Cloudflare: Operator. Samaynta qalab Cacti ah ama shidista Create Graphs waxay sidoo kale u baahan tahay ogolaanshaha Sites/Devices/Data ee Cacti. Kordhin damisan waxay diidaa boggageeda.
+- Configuration-as-Code (`cli/cloudflare.php` iyo `casc_register_providers`)
+  waxay aqbashaa oo keliya tixraacyada sirta ee `vault:<account_id>` ama `file:<absolute_path>`,
+  waxay diiddaa token-nada cayriin, qoraallada sirta ah ee vault-ka, iyo bayaannada XML `DOCTYPE`, waxayna
+  u baahan tahay `--confirm=<PLAN_HASH>` oo sax ah ka hor inta aan la qorin.
+- Awoodaha Diiwaangashan (`cloudflare-list-tunnels`, `cloudflare-get-health`) waa
+  akhris keliya oo adag, waxay si toos ah ugu qiimeeyaan goobta Cloudflare: View
+  miisaska xaqiijinta Cacti ee aqoonsiga isticmaalaha wacaha (waligood ma isticmaalaan xaaladda fadhiga), mana soo celiyaan
+  wax token ah ama agab fure ah.
 
 Faahfaahinta iyo xaddidaadaha la yaqaan waxay ku jiraan [docs/security.md](../../security.md). Ku soo sheeg nuglaanshaha si qarsoodi ah sida lagu sharraxay [SECURITY.md](../../../SECURITY.md).
 
 ## Socodka shaqada hawlwadeenka iyo falanqaynta aagga (zone analytics)
 
-Waxyaabaha lagu daray horumarinta waxaa ka mid ah hawlgabinta cad ee tunnel-lada la tirtiray, falanqaynta aagga ee ogaata awoodaha (capability-aware zone analytics) iyo qaababka Thold ee la soo dejin karo. Waxyaabahan lagu daray weli ma laha sumadda sii-daynta ama xaqiijinta akoon nool. Eeg [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) si aad u hesho habaynta, macnaha cabbirrada iyo xaddidaadaha xaqiijinta.
+Waxyaabaha lagu daray horumarinta ee `0.4.0-dev` waxaa ka mid ah hawlgabinta cad ee tunnel-lada la tirtiray, falanqaynta GraphQL ee aagga iyo tunnel-ka ee ogaata awoodaha, caawiyeyaasha soo koobidda ee diyaar u ah Thold iyo qaababka la soo dejin karo, CLI-ga CasC iyo caafimaadka, hooks-ka nidaamka deegaanka, iyo koobiyaynta ururiyaha fog. Waxyaabahan lagu daray weli ma laha sumadda sii-daynta ama xaqiijinta akoon nool. Eeg [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) si aad u hesho habaynta, macnaha cabbirrada, iyo xaddidaadaha xaqiijinta.
+
+- **Macmiilka GraphQL Analytics iyo soo koobidda Thold (`src/Api/GraphqlAnalyticsClient.php`, `src/Metrics/AnalyticsSummary.php`)**: `GraphqlAnalyticsClient` wuxuu fuliyaa oo keliya weydiimaha akhris-keliya ah ee lagu oggolaaday wakhtiga isku-darka (`zone_settings`, `zone_http_metrics`, `zone_edge_latency`, `tunnel_analytics`) iyadoo loo marayo `CloudflareClient` (TLS la xaqiijiyay, ku xiran `api.cloudflare.com`, jawaabo xaddidan, iyo dib-u-dhigista xaddiga codsiga ee `RetryPolicy`) si loo ururiyo tirada codsiyada aagga iyo tunnel-ka, heerka khaladka HTTP 5xx, bytes-ka jawaabta, iyo daahitaanka cidhifka (celcelis iyo p95). `AnalyticsSummary` waxay bixisaa `recommendedThresholds()` oo la jaanqaadaysa magacyada RRD DS ee kordhinta (`health`, `collect_age`, `error_pct`, `age`), `summarizeZones()`, iyo `evaluateSample()`.
+- **CLI-ga Hawlwadeenka iyo CasC (`cli/cloudflare.php`)**: waxaa taageera `ConfigCodec` (`src/Config/ConfigCodec.php`) iyo `ConfigService` (`src/Config/ConfigService.php`), iyadoo taageeraysa `cli/cloudflare.php export [--format=yaml|xml] [--file=PATH]` (oo soo saarta tixraacyada sirta ah ee `vault:` / `file:` oo keliya), `cli/cloudflare.php validate --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php plan --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php apply --file=PATH --confirm=<PLAN_HASH> [--format=yaml|xml]`, iyo `cli/cloudflare.php health [--format=text|json]`.
+- **Hooks-ka isdhexgalka nidaamka deegaanka (`includes/ecosystem.php`, `setup.php`)**:
+  - `abilities_register` (`AbilitiesProvider`): waxay diiwaangelisaa `cloudflare-list-tunnels` iyo `cloudflare-get-health` oo akhris-keliya ah kuwaas oo ku xaddidan goobta Cloudflare: View (deeqaha tooska ah iyo kuwa kooxda) iyadoo aan wax token ah ama sir ah ku jirin wax-soo-saarka.
+  - `doctor_register_checks` (`DoctorChecks`): waxay soo bandhigtaa `cloudflare_vault_key` (xaqiijinta habka, symlink, iyo dhererka), `cloudflare_token_dir` (hubinta jidka buuxa, symlink, iyo qoraalka dadweynaha u furan), `cloudflare_tunnel_freshness`, iyo `cloudflare_api_failure_rate`.
+  - `casc_register_providers` (`CascProvider`): waxay soo bandhigtaa bixiyaha CasC ee `cloudflare` (`export`, `validate`, `plan`, `apply`) ee akoonnada (tixraacyada sirta ah oo keliya), aagagga, tunnel-lada, iyo meelaynta cabbirrada.
+  - `replicate_out` (`RemoteReplication`): waxay u koobiyaysaa miisaska xogta qarsoon aan ahayn poller-rada fog (`poller_id > 1`) iyadoo `token_ciphertext` loo beddelay `NULL` agabka furaha vault-kana laga reebay.
 
 ### Dhoofinta liiska agabka
 
@@ -482,7 +505,7 @@ Marxalad kasta waxay u soo baxdaa sidii sii-dayn 0.x ah oo loogu magac daray: Ma
 | 1. Aasaaska | Meertada nolosha kordhinta, ogolaanshaha, qaabaynta akoonka, tijaabada xiriirka | Waxaa lagu sii daayay 0.3.0 ([#2](https://github.com/somethingwithproof/plugin_cloudflare/pull/2) ilaa [#5](https://github.com/somethingwithproof/plugin_cloudflare/pull/5)) |
 | 2. Baaritaanka | Baaritaanka tunnel-ka iyo connector-ka ee ururiye gadaal ka shaqeeya, boggaga Overview, Tunnels iyo Connectors | Waxaa lagu sii daayay 0.3.0 ([#6](https://github.com/somethingwithproof/plugin_cloudflare/pull/6)) |
 | 3. Cabbirrada | Ilaha xogta caafimaadka tunnel-ka, qaababka garaafyada, maaraynta ciladda koronto/xiriir go'a oo aan waligeed diiwaangelin eber been abuur ah | Waxaa lagu sii daayay 0.3.0 ([#7](https://github.com/somethingwithproof/plugin_cloudflare/pull/7)) |
-| 4. Falanqaynta iyo digniinta | Falanqaynta GraphQL ee ku salaysan qorshaha aag kasta, xadadka Thold oo leh xakamaynta xilli-go'a | Qorshaysan |
+| 4. Falanqaynta iyo digniinta | Falanqaynta GraphQL ee ku salaysan qorshaha (`GraphqlAnalyticsClient`), soo koobidda iyo qaababka Thold (`AnalyticsSummary`), CLI-ga CasC (`cli/cloudflare.php`), hooks-ka nidaamka deegaanka, iyo koobiyaynta fog | Waxaa lagu hirgeliyay 0.4.0-dev; xaqiijinta akoon nool way dhiman tahay |
 | 5. Adkaynta | Duritaanka ciladaha (fault injection), moodooyinka TLA+ ee baaritaanka iyo ururinta, dukumentiyo dhammaystiran | Qorshaysan |
 
 ## Horumarinta

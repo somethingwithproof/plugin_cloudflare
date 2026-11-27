@@ -27,18 +27,18 @@ Na Cacti, ọ na-edepụtagasị faịlụ XML ajụjụ data n'ime `resource/sc
 na-emepụta ngwaọrụ, eserese na ndebiri site na API nke Cacti n'onwe ya, n'agbanweghị
 faịlụ isi.
 
-**Ọnọdụ: 0.4.0-dev, ebipụtabeghị.** Ụdị ikpeazụ e wepụtara bụ 0.3.0. Ụdị mmepe a na-agbakwunye mbupụ ndepụta ngwa ahịa CSV, mwepụ doro anya nke ọwara ndị e hichapụrụ, nchịkọta data mpaghara echekwara na nchekwa nwa oge (cached), na ndebiri Thold nhọrọ. Nnwale na onye na-enye ọrụ dị ndụ na ntinye n'ọrụ ka na-echere.
+**Ọnọdụ: 0.4.0-dev, ebipụtabeghị.** Ụdị ikpeazụ e wepụtara bụ 0.3.0. Ụdị mmepe a na-agbakwunye mbupụ ndepụta ngwa ahịa CSV, mwepụ doro anya nke ọwara ndị e hichapụrụ, nchịkọta data mpaghara echekwara na nchekwa nwa oge (cached), onye ahịa GraphQL Analytics na-agụ naanị n'ime ndepụta kwere (`GraphqlAnalyticsClient`) nke nwere ndị nnyemaaka nchịkọta dị njikere maka Thold (`AnalyticsSummary`), CLI nke Configuration-as-Code (`cli/cloudflare.php`), nko gburugburu ebe obibi (`abilities_register`, `doctor_register_checks`, `casc_register_providers`), na nkwado onye nchịkọta dịpụrụ adịpụ nwere oke na poller (`replicate_out`). Nnwale na onye na-enye ọrụ dị ndụ na ntinye n'ọrụ ka na-echere.
 
-Tebụl dị n'okpuru na-akọwa ntọhapụ kwụsiri ike 0.3.0. A kọwara mgbakwunye mmepe n'okpuru usoro ọrụ onye njikwa na nchịkọta data mpaghara n'okpuru.
+Tebụl dị n'okpuru na-akọwa ntọhapụ kwụsiri ike 0.3.0. A kọwara mgbakwunye mmepe na 0.4.0-dev n'okpuru usoro ọrụ onye njikwa na nchịkọta data mpaghara n'okpuru.
 
 | Dị ugbu a | Atụmatụ |
 |---|---|
-| Wụnye, kwalite, gbanyụọ ma wepụ site na njikwa ngwa mgbakwunye Cacti | Nchịkọta data GraphQL na ọkwa Thold (Milestone 4) |
+| Wụnye, kwalite, gbanyụọ ma wepụ site na njikwa ngwa mgbakwunye Cacti | Ntozu GraphQL akaụntụ dị ndụ na ntozu ntinye n'ọrụ (ọpụpụ Milestone 4) |
 | Ikike Cloudflare: View, Operator na Configure | Ntinye mmejọ (fault injection), ụdị TLA+ na akwụkwọ zuru ezu (Milestone 5) |
 | Tinye, dezie, hichapụ, gbanye ma gbanyụọ akaụntụ Cloudflare | |
 | Chekwaa token n'ime faịlụ ma ọ bụ zoo ya n'ụdị ezoro ezo na nchekwa data Cacti | |
 | Nyochaa token ma lelee ikike ọgụgụ ọwara (tunnel) na mpaghara (zone) ya | |
-| Nchọpụta ọwara na njikọ na nchịkọta azụ (background collector) nke isi poller malitere | |
+| Nchọpụta ọwara na njikọ na nchịkọta azụ (`poller_cloudflare.php`) | |
 | Ibe Overview, Tunnels na Connectors n'okpuru Management > Cloudflare Tunnels | |
 | Nleba anya usoro ndụ: `active`, `unavailable` na `deleted` | |
 | Otu ngwaọrụ Cacti maka akaụntụ ọ bụla, nke onye nchịkwa mepụtara, ebe ọwara ndị ahụ bụ ndeksi nke ajụjụ data | |
@@ -289,8 +289,10 @@ Lee [docs/security.md](../../security.md#token-file).
    aha ndekọ ahụ.
 2. Meghee Console > Configuration > Plugins, ma ọ bụ Console > Configuration >
    Cloudflare Accounts, otu ugboro dị ka onye nchịkwa. Nke ahụ na-agba mgbanwe (migrations)
-   nke ngwa mgbakwunye ahụ, na-ebubata ndebiri Cloudflare ma na-eṅomi faịlụ data query (lee
-   [Atụmatụ nha tunnel na eserese](#tunnel-metrics-and-graphs)), ma, na
+   nke ngwa mgbakwunye ahụ, na-ebubata ndebiri Cloudflare, na-eṅomi faịlụ data query (lee
+   [Atụmatụ nha tunnel na eserese](#tunnel-metrics-and-graphs)), na-edebanye aha nko gburugburu ebe obibi
+   `abilities_register`, `doctor_register_checks`, `casc_register_providers`,
+   na `replicate_out` (`includes/ecosystem.php`), ma, na
    nkwalite site na 0.1.0, na-edebanye aha njikọ `poller_bottom`.
 
 `poller.php` anaghị agba nkwalite nke ngwa mgbakwunye ahụ, ya mere ruo nzọụkwụ 2
@@ -319,11 +321,16 @@ Peeji ndezi ahụ na-egosikwa ma e nyere ikike ịgụ tunnel na ịgụ zone.
 
 ## Nchọpụta tunnel
 
-Mgbe okirikiri polling nke ọ bụla gasịrị na isi poller, njikọ `poller_bottom`
+Mgbe okirikiri polling nke ọ bụla gasịrị na poller nchịkọta ahaziri (`cloudflare_poller_id`, ndabara `1`), njikọ `poller_bottom`
 na-amalite collector dị n'azụ site na `exec_background` mgbe opekata mpe otu
 akaụntụ gbanyere nwere Collect Tunnels gbanyere. Collector anaghị agba n'ime
 usoro poller ahụ, ya mere Cloudflare API dị nwayọọ anaghị egbu oge `poller.php`.
-Ndị poller dị n'ebe dị anya anaghị amalite ya ma ọlị.
+`INFO` na-ekwupụta `remote_collect:1`, na njikọ `replicate_out` (`RemoteReplication`) na-eziga
+tebụl metadata na-abụghị nke nzuzo (`plugin_cloudflare_accounts` nwere `token_ciphertext`
+e wepụrụ ka ọ bụrụ `NULL`, `plugin_cloudflare_tunnels`, `plugin_cloudflare_connectors`,
+`plugin_cloudflare_zones`, `plugin_cloudflare_metric_mappings`, na
+`plugin_cloudflare_resources`) gaa na ndị poller dịpụrụ adịpụ (`poller_id > 1`) ka ọ
+na-ewepụ ihe igodo vault.
 
 Maka akaụntụ nke ọ bụla oge ya ruru, collector na-edepụta tunnel nke akaụntụ ahụ,
 wee gụọ njikọ nke tunnel ya ndị na-arụ ọrụ, nke na-enye njikọta (connectors) nke
@@ -491,8 +498,7 @@ ngwaọrụ ochie ahụ na Cacti ozugbo akụkọ ihe mere eme ya adịghịzi m
   na-egosi oghere.
 - Ngwa mgbakwunye ahụ na-edegharị mgbanwe onye nchịkwa na ndebiri e bubatara mgbe
   nkwalite gbanwere XML ndebiri e zipụrụ.
-- Ngwaọrụ akaụntụ ahụ ga-anọrịrị na isi poller. Tebụl ngwa mgbakwunye ahụ dị
-  na isi nchekwa data na edemede ahụ na-agụ ha n'ebe ahụ.
+- Ndị poller dị n'ebe dị anya na-anata metadata eṅomiri n'enweghị nzere nzuzo (a na-ewepụ `token_ciphertext` ka ọ bụrụ `NULL` ma a naghị eṅomi igodo vault ma ọlị). Mgbe ị na-agba collector na poller dịpụrụ adịpụ ahọpụtara (`cloudflare_poller_id`), nye faịlụ token ma ọ bụ igodo vault ozugbo n'elu host collector ahụ.
 - Tunnel e hichapụrụ na-anọgide na ndepụta ajụjụ data ma na-ebipụta `U` ruo mgbe onye nchịkwa lara ha ezumike nká n'ụzọ doro anya. Ila ezumike nká na-ewepụ naanị eserese ndị ngwa mgbakwunye dekọrọ na isi mmalite data a na-ekekọrịtaghị site na Cacti; ahịrị ngwa ahịa na-anọgide na-ahụ anya. Cacti na-achịkwa nhicha RRD.
 - Cacti na-agbanyụ ngwa mgbakwunye nke koodu ya kwụsịrị na ezigbo njehie dị egwu, dị ka
   ịgwụ ebe nchekwa. Lee [docs/security.md](../../security.md).
@@ -510,13 +516,23 @@ ngwaọrụ ochie ahụ na Cacti ozugbo akụkọ ihe mere eme ya adịghịzi m
   nhazi nke onwe chọrọ Cloudflare: Operator. Imepụta ngwaọrụ Cacti
   ma ọ bụ ịgbanye Create Graphs chọkwara ikike Sites/Devices/Data nke Cacti.
   Ngwa mgbakwunye a gbanyụrụ na-ajụ ibe ya.
+- Configuration-as-Code (`cli/cloudflare.php` na `casc_register_providers`) na-anabata naanị ntụaka nzuzo `vault:<account_id>` ma ọ bụ `file:<absolute_path>`, na-ajụ token ndị na-adịghị n'ụdị echekwara, ederede ezoro ezo nke vault, na nkwupụta XML `DOCTYPE`, ma na-achọ `--confirm=<PLAN_HASH>` kpọmkwem tupu edee ihe.
+- Ikike e debanyere aha (`cloudflare-list-tunnels`, `cloudflare-get-health`) bụ maka ọgụgụ naanị, ha na-enyocha mpaghara ikike Cloudflare: View ozugbo megide tebụl nkwenye Cacti maka ID onye ọrụ na-akpọ (ọ dịghị mgbe ọ bụ ọnọdụ nnọkọ), ma ha anaghị eweghachi token ma ọ bụ ihe igodo ọ bụla.
 
 Nkọwa na oke ndị a maara dị na [docs/security.md](../../security.md).
 Kọọ adịghị ike nchekwa na nzuzo dị ka e si kọwaa na [SECURITY.md](../../../SECURITY.md).
 
 ## Usoro ọrụ onye njikwa na nyocha mpaghara
 
-Mgbakwunye mmepe gụnyere ila ezumike nká doro anya nke tunnel e hichapụrụ, nyocha mpaghara maara ikike na ndebiri Thold a pụrụ ibubata. Mgbakwunye ndị a enwebeghị akara ntọhapụ ma ọ bụ ntozu akaụntụ dị ndụ ugbu a. Lee [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) maka nhazi, nkọwa nha na oke nkwenye.
+Mgbakwunye mmepe na `0.4.0-dev` gụnyere ila ezumike nká doro anya nke tunnel e hichapụrụ, nyocha GraphQL nke mpaghara na tunnel maara ikike, ndị nnyemaaka nchịkọta dị njikere maka Thold na ndebiri a pụrụ ibubata, CLI nke CasC na ahụike, nko gburugburu ebe obibi, na nṅomi onye nchịkọta dịpụrụ adịpụ. Mgbakwunye ndị a enwebeghị akara ntọhapụ ma ọ bụ ntozu akaụntụ dị ndụ ugbu a. Lee [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) maka nhazi, nkọwa nha na oke nkwenye.
+
+- **Onye ahịa GraphQL Analytics na nchịkọta Thold (`src/Api/GraphqlAnalyticsClient.php`, `src/Metrics/AnalyticsSummary.php`)**: `GraphqlAnalyticsClient` na-agba naanị ajụjụ ọgụgụ naanị dị na ndepụta kwere n'oge nchịkọta (`zone_settings`, `zone_http_metrics`, `zone_edge_latency`, `tunnel_analytics`) site na `CloudflareClient` (nwere nkwenye TLS, ejikọtara na `api.cloudflare.com`, nzaghachi nwere oke, na ndọghachi azụ oke ọsọ `RetryPolicy`) iji chịkọta ọnụọgụ arịrịọ mpaghara na tunnel, ọnụọgụ mmejọ HTTP 5xx, bytes nzaghachi, na igbu oge dị n'akụkụ (nkezi na p95). `AnalyticsSummary` na-enye `recommendedThresholds()` dabara na aha RRD DS nke ngwa mgbakwunye ahụ (`health`, `collect_age`, `error_pct`, `age`), `summarizeZones()`, na `evaluateSample()`.
+- **CLI onye njikwa na CasC (`cli/cloudflare.php`)**: nke `ConfigCodec` (`src/Config/ConfigCodec.php`) na `ConfigService` (`src/Config/ConfigService.php`) kwadoro, na-akwado `cli/cloudflare.php export [--format=yaml|xml] [--file=PATH]` (na-ewepụta naanị ntụaka nzuzo `vault:` / `file:`), `cli/cloudflare.php validate --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php plan --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php apply --file=PATH --confirm=<PLAN_HASH> [--format=yaml|xml]`, na `cli/cloudflare.php health [--format=text|json]`.
+- **Nko njikọta gburugburu ebe obibi (`includes/ecosystem.php`, `setup.php`)**:
+  - `abilities_register` (`AbilitiesProvider`): na-edebanye aha `cloudflare-list-tunnels` na `cloudflare-get-health` na-agụ naanị nke e mechiri na mpaghara ikike Cloudflare: View (onyinye kpọmkwem na nke otu) n'enweghị token ma ọ bụ ihe nzuzo na mmepụta.
+  - `doctor_register_checks` (`DoctorChecks`): na-ekpughe `cloudflare_vault_key` (nkwado ọnọdụ, symlink, na ogologo), `cloudflare_token_dir` (nlele ụzọ zuru oke, symlink, na ikike ide maka mmadụ niile), `cloudflare_tunnel_freshness`, na `cloudflare_api_failure_rate`.
+  - `casc_register_providers` (`CascProvider`): na-ekpughe onye na-enye CasC `cloudflare` (`export`, `validate`, `plan`, `apply`) maka akaụntụ (ntụaka nzuzo naanị), mpaghara, tunnel, na njikọta nha.
+  - `replicate_out` (`RemoteReplication`): na-eṅomi tebụl metadata na-abụghị nke nzuzo gaa na ndị poller dịpụrụ adịpụ (`poller_id > 1`) ebe a na-ewepụ `token_ciphertext` ka ọ bụrụ `NULL` ma wepụ ihe igodo vault.
 
 ### Mbupụ ngwa ahịa
 
@@ -534,7 +550,7 @@ nzọụkwụ ọ bụla dị n'okpuru.
 | 1. Ntọala | Usoro ndụ ngwa mgbakwunye, ikike, nhazi akaụntụ, ule njikọ | A tọhapụrụ na 0.3.0 ([#2](https://github.com/somethingwithproof/plugin_cloudflare/pull/2) ruo [#5](https://github.com/somethingwithproof/plugin_cloudflare/pull/5)) |
 | 2. Nchọpụta | Nchọpụta tunnel na njikọ na onye nnakọta ndabere, ibe Overview, Tunnels na Connectors | A tọhapụrụ na 0.3.0 ([#6](https://github.com/somethingwithproof/plugin_cloudflare/pull/6)) |
 | 3. Nha | Isi mmalite data ahụike tunnel, ndebiri eserese, njikwa ọdịda nke na-adịghị edekọ efu e chepụtara | A tọhapụrụ na 0.3.0 ([#7](https://github.com/somethingwithproof/plugin_cloudflare/pull/7)) |
-| 4. Nyocha na ịdọ aka ná ntị | Nyocha GraphQL maara atụmatụ maka mpaghara ọ bụla, oke Thold nwere nkwụsị ọdịda | A haziri |
+| 4. Nyocha na ịdọ aka ná ntị | Nyocha GraphQL maara atụmatụ (`GraphqlAnalyticsClient`), nchịkọta na ndebiri Thold (`AnalyticsSummary`), CasC CLI (`cli/cloudflare.php`), nko gburugburu ebe obibi, na nṅomi dịpụrụ adịpụ | E mejupụtala na 0.4.0-dev; ntozu akaụntụ dị ndụ na-echere |
 | 5. Ime ka o sie ike | Ntinye mmejọ, ụdị TLA+ nke nchọpụta na nnakọta, akwụkwọ zuru ezu | A haziri |
 
 ## Mmepe

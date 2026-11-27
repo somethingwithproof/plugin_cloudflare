@@ -22,18 +22,18 @@
 
 የCloudflare Tunnels እና የzone ትንታኔዎችን (analytics) ለመቆጣጠር እየተገነባ ያለ የCacti 1.2 ተሰኪ ነው። በተገደቡ የAPI ቶከኖች ከCloudflare API ያነባል፣ በCloudflare ውስጥ ምንም ነገር አይቀይርም፣ እንዲሁም ውሂቡን በራሱ ሰንጠረዦች ውስጥ ያስቀምጣል። በCacti ውስጥ የውሂብ መጠይቅ XML ፋይሎችን ወደ `resource/script_server/` ይቀዳል፤ እንዲሁም ምንም ዋና ፋይሎችን ሳይቀይር መሣሪያዎችን፣ ግራፎችን እና አብነቶችን (templates) በCacti የራሱ APIs በኩል ይፈጥራል።
 
-**ሁኔታ፡ 0.4.0-dev፣ ያልተለቀቀ።** የመጨረሻው የተለቀቀ ስሪት 0.3.0 ነው። የልማት ስሪቱ የCSV የንብረት ዝርዝር ወጪዎችን፣ የተሰረዙ tunnels በግልጽ ማሰናበትን፣ የተሸጎጡ (cached) የzone ትንታኔዎችን እና አማራጭ የThold አብነቶችን ያክላል። ከቀጥታ አቅራቢ ጋር እና የማሰማራት ማረጋገጫ ገና በመጠባበቅ ላይ ነው።
+**ሁኔታ፡ 0.4.0-dev፣ ያልተለቀቀ።** የመጨረሻው የተለቀቀ ስሪት 0.3.0 ነው። የልማት ስሪቱ የCSV የንብረት ዝርዝር ወጪዎችን፣ የተሰረዙ tunnels በግልጽ ማሰናበትን፣ የተሸጎጡ (cached) የzone ትንታኔዎችን፣ በፍቃድ-ዝርዝር (allowlist) የተገደበ ለንባብ-ብቻ የሆነ የGraphQL Analytics ደንበኛ (`GraphqlAnalyticsClient`) ከThold-ዝግጁ የማጠቃለያ አጋዦች (`AnalyticsSummary`) ጋር፣ የConfiguration-as-Code CLI (`cli/cloudflare.php`)፣ የሥነ-ምህዳር መንጠቆዎችን (`abilities_register`፣ `doctor_register_checks`፣ `casc_register_providers`)፣ እና በpoller የተገደበ የርቀት ሰብሳቢ ድጋፍን (`replicate_out`) ያክላል። ከቀጥታ አቅራቢ ጋር እና የማሰማራት ማረጋገጫ ገና በመጠባበቅ ላይ ነው።
 
-ከታች ያለው ሰንጠረዥ 0.3.0 የተረጋጋውን ልቀት ይገልጻል። የልማት ተጨማሪዎች ከታች በኦፕሬተር የሥራ ፍሰቶች እና የzone ትንታኔዎች ስር ተገልጸዋል።
+ከታች ያለው ሰንጠረዥ 0.3.0 የተረጋጋውን ልቀት ይገልጻል። በ0.4.0-dev ውስጥ ያሉ የልማት ተጨማሪዎች ከታች በኦፕሬተር የሥራ ፍሰቶች እና የzone ትንታኔዎች ስር ተገልጸዋል።
 
 | አሁን የሚገኙ | የታቀዱ |
 |---|---|
-| በCacti የተሰኪ አስተዳዳሪ በኩል መጫን፣ ማሻሻል፣ ማሰናከል እና ማራገፍ | GraphQL ትንታኔዎች እና የThold ማንቂያዎች (Milestone 4) |
+| በCacti የተሰኪ አስተዳዳሪ በኩል መጫን፣ ማሻሻል፣ ማሰናከል እና ማራገፍ | በቀጥታ መለያ ላይ GraphQL እና የማሰማራት ብቃት ማረጋገጫ (Milestone 4 መውጫ) |
 | የCloudflare ፈቃዶች፡ View፣ Operator እና Configure | የስህተት መርፌ (Fault injection)፣ TLA+ ሞዴሎች እና ሙሉ ሰነድ (Milestone 5) |
 | የCloudflare መለያዎችን ማከል፣ ማርትዕ፣ መሰረዝ፣ ማንቃት እና ማሰናከል | |
 | ቶከንን በፋይል ውስጥ ወይም በCacti የውሂብ ጎታ ውስጥ በተመሰጠረ መልኩ ማስቀመጥ | |
 | ቶከንን ማረጋገጥ እና የtunnel እንዲሁም የzone የማንበብ ፈቃዶቹን መፈተሽ | |
-| በዋናው poller በሚጀመር የጀርባ ሰብሳቢ ውስጥ የtunnel እና የconnector ግኝት | |
+| በጀርባ ሰብሳቢ (`poller_cloudflare.php`) ውስጥ የtunnel እና የconnector ግኝት | |
 | በManagement > Cloudflare Tunnels ስር ያሉ የOverview፣ Tunnels እና Connectors ገጾች | |
 | የሕይወት ዑደት ክትትል፡ `active`፣ `unavailable` እና `deleted` | |
 | በአንድ መለያ አንድ የCacti መሣሪያ (በአስተዳዳሪ የሚፈጠር)፣ tunnels የውሂብ መጠይቅ መረጃ ጠቋሚዎች ሆነው | |
@@ -241,9 +241,12 @@ Settings > Cloudflare > Token File Directoryን ለምሳሌ ወደ `/etc/cacti`
    ልቀት ይተኩ።
 2. እንደ አስተዳዳሪ በአንድ ጊዜ Console > Configuration > Pluginsን ወይም
    Console > Configuration > Cloudflare Accountsን ይክፈቱ። ያ የፕለጊኑን
-   ዝውውሮች ያስኪዳል፣ የCloudflare አብነቶችን ያስገባል እና የዳታ መጠይቅ ፋይሉን
+   ዝውውሮች ያስኪዳል፣ የCloudflare አብነቶችን ያስገባል፣ የዳታ መጠይቅ ፋይሉን
    ይቀዳል ([የቱነል መለኪያዎች እና ግራፎች](#tunnel-metrics-and-graphs)ን
-   ይመልከቱ)፣ እንዲሁም ከ0.1.0 ሲሻሻል `poller_bottom` hookን ይመዘግባል።
+   ይመልከቱ)፣ የ`abilities_register`፣ `doctor_register_checks`፣
+   `casc_register_providers` እና `replicate_out` የሥነ-ምህዳር መንጠቆዎችን
+   (`includes/ecosystem.php`) ይመዘግባል፣ እንዲሁም ከ0.1.0 ሲሻሻል `poller_bottom`
+   hookን ይመዘግባል።
 
 `poller.php` የፕለጊኑን ማሻሻያ አያስኪድም፣ ስለዚህ እስከ ደረጃ 2 ድረስ አዲሱ
 ስኪማ የለም። እያንዳንዱ የሰብሳቢ ሩጫ ምንም አያደርግም እና
@@ -271,11 +274,7 @@ Verify የመለያውን ሁኔታ ያዘጋጃል፦
 
 ## የቱነል ግኝት
 
-በዋናው poller ላይ ከእያንዳንዱ የpolling ዑደት በኋላ፣ ቢያንስ አንድ የነቃ መለያ
-Collect Tunnels የበራ ሲሆን የ`poller_bottom` hook በ`exec_background` የጀርባ
-ሰብሳቢ ያስጀምራል። ሰብሳቢው በpoller ሂደት ውስጥ በፍጹም አይሰራም፣ ስለዚህ
-ዘገምተኛ የCloudflare API `poller.php`ን አያዘገየውም። የርቀት pollerዎች በፍጹም
-አያስጀምሩትም።
+በተዋቀረው ሰብሳቢ poller (`cloudflare_poller_id`፣ ነባሪ `1`) ላይ ከእያንዳንዱ የpolling ዑደት በኋላ፣ ቢያንስ አንድ የነቃ መለያ Collect Tunnels የበራ ሲሆን የ`poller_bottom` hook በ`exec_background` የጀርባ ሰብሳቢ ያስጀምራል። ሰብሳቢው በpoller ሂደት ውስጥ በፍጹም አይሰራም፣ ስለዚህ ዘገምተኛ የCloudflare API `poller.php`ን አያዘገየውም። `INFO` `remote_collect:1`ን ያውጃል፣ እና የ`replicate_out` መንጠቆ (`RemoteReplication`) የvault ቁልፍ ቁሳቁሶችን እያስቀረ ምስጢራዊ ያልሆኑ የሜታዳታ ሰንጠረዦችን (`token_ciphertext` ወደ `NULL` የተጸዳበት `plugin_cloudflare_accounts`፣ `plugin_cloudflare_tunnels`፣ `plugin_cloudflare_connectors`፣ `plugin_cloudflare_zones`፣ `plugin_cloudflare_metric_mappings` እና `plugin_cloudflare_resources`) ወደ የርቀት pollerዎች (`poller_id > 1`) ይገፋል።
 
 ጊዜው ለደረሰ እያንዳንዱ መለያ፣ ሰብሳቢው የመለያውን ቱነሎች ይዘረዝራል፣ ከዚያም
 የንቁ ቱነሎቹን ግንኙነቶች ያነባል፣ ይህም የእያንዳንዱን ቱነል connectors፣
@@ -422,7 +421,7 @@ Create Cacti Device እንደገና ይሞክራል።
 
 - አንድ ሂደት ቢበዛ 200 የግንኙነት ጥያቄዎችን ያደርጋል። ከዚያ ገደብ በላይ ያሉ ዋሻዎች ከምልከታ መስኮቱ ባነሰ ድግግሞሽ ይታደሳሉ፣ ስለዚህ የግንኙነት ግራፎቻቸው ክፍተቶችን ያሳያሉ።
 - ማሻሻያ የቀረበውን የአብነት XML ሲቀይር፣ ተሰኪው አስተዳዳሪው በገቡት አብነቶች ላይ ያደረጋቸውን አርትዖቶች ይተካል።
-- የመለያው መሣሪያ በዋናው ፖለር ላይ መቆየት አለበት። የተሰኪው ሰንጠረዦች በዋናው የውሂብ ጎታ ውስጥ ናቸው እና ስክሪፕቱ ከዚያ ያነባቸዋል።
+- የርቀት pollerዎች ያለ ምስክርነቶች የተባዛ ሜታዳታ ይቀበላሉ (`token_ciphertext` ወደ `NULL` ይጸዳል እና የvault ቁልፎች በፍጹም አይባዙም)። ሰብሳቢውን በተመደበ የርቀት poller (`cloudflare_poller_id`) ላይ ሲያስኬዱ፣ የቶከን ፋይሎችን ወይም የvault ቁልፍን በቀጥታ በዚያ ሰብሳቢ አስተናጋጅ ላይ ያቅርቡ።
 - የተሰረዙ ዋሻዎች በውሂብ መጠይቅ መረጃ ጠቋሚ ውስጥ ይቆያሉ እና አስተዳዳሪው በግልጽ እስኪያሰናብታቸው ድረስ `U` ያትማሉ። ማሰናበት በCacti በኩል በተሰኪው የተመዘገቡትን ግራፎች እና ያልተጋሩ የውሂብ ምንጮችን ብቻ ያስወግዳል፤ የዝርዝር ረድፉ እንደታየ ይቆያል። Cacti የRRD ጽዳትን ይቆጣጠራል።
 - Cacti ኮዱ በእውነተኛ ከባድ ስህተት (ለምሳሌ የማህደረ ትውስታ እጥረት) የሚያበቃ ተሰኪን ያሰናክላል። [docs/security.md](../../security.md) ይመልከቱ።
 
@@ -432,13 +431,23 @@ Create Cacti Device እንደገና ይሞክራል።
 - ቶከኖች እርስዎ በሚያዘጋጁት ፋይል ውስጥ ይቀመጣሉ ወይም በAES-256-GCM ተመስጥረው ወደ ውሂብ ጎታ በፍጹም በማይገባ የቁልፍ ፋይል ሥር ይቀመጣሉ። በገጽ ላይ በፍጹም አይታዩም፣ ወደ መዝገብ አይጻፉም ወይም በስህተት መልዕክት ውስጥ አይካተቱም።
 - የውሂብ ጎታ ስህተቶች SQLSTATE እና የነጂውን የስህተት ኮድ ብቻ ይይዛሉ፣ የአረፍተ ነገሩን እሴቶች በፍጹም አይይዙም።
 - እያንዳንዱ ለውጥ በCacti የCSRF ቶከን የተጠበቀ POST ነው። አስተዳደራዊ የመለያ እና የውቅረት ለውጦች Cloudflare: Configure ያስፈልጋቸዋል፤ የግል የልየታ ማረጋገጫዎች Cloudflare: Operator ያስፈልጋቸዋል። የCacti መሣሪያ መፍጠር ወይም ግራፎችን መፍጠርን ማብራት እንዲሁ የCacti Sites/Devices/Data ፈቃድ ያስፈልገዋል። የተሰናከለ ተሰኪ ገጾቹን ይከለክላል።
+- Configuration-as-Code (`cli/cloudflare.php` እና `casc_register_providers`) የሚቀበለው `vault:<account_id>` ወይም `file:<absolute_path>` የምስጢር ማጣቀሻዎችን ብቻ ነው፣ ጥሬ ቶከኖችን፣ የvault ምስጠራ ጽሑፎችን እና የXML `DOCTYPE` መግለጫዎችን ውድቅ ያደርጋል፣ እንዲሁም ከመጻፉ በፊት ትክክለኛ `--confirm=<PLAN_HASH>` ይጠይቃል።
+- የተመዘገቡ Abilities (`cloudflare-list-tunnels`፣ `cloudflare-get-health`) በጥብቅ ለንባብ ብቻ ናቸው፣ የCloudflare: View ክልልን ለጠሪው የተጠቃሚ መታወቂያ በቀጥታ ከCacti የማረጋገጫ ሰንጠረዦች ጋር ይገመግማሉ (በፍጹም የክፍለ-ጊዜ ሁኔታን አይጠቀሙም)፣ እና ምንም ቶከኖችን ወይም የቁልፍ ቁሳቁሶችን አይመልሱም።
 
 ዝርዝሮች እና የታወቁ ገደቦች በ[docs/security.md](../../security.md) ውስጥ ይገኛሉ።
 ተጋላጭነቶችን በ[SECURITY.md](../../../SECURITY.md) ውስጥ እንደተገለጸው በግል ሪፖርት ያድርጉ።
 
 ## የኦፕሬተር የሥራ ፍሰቶች እና የዞን ትንታኔዎች
 
-የልማት ጭማሪዎች የተሰረዙ ዋሻዎችን በግልጽ ማሰናበትን፣ አቅምን ያገናዘበ የዞን ትንታኔዎችን እና ወደ ውስጥ የሚገቡ የThold አብነቶችን ያካትታሉ። እነዚህ ጭማሪዎች እስካሁን የእትም መለያ ወይም የቀጥታ መለያ ብቁነት የላቸውም። ለማዋቀር፣ ለመለኪያ ትርጉሞች እና ለማረጋገጫ ገደቦች [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) ይመልከቱ።
+በ`0.4.0-dev` ውስጥ ያሉ የልማት ጭማሪዎች የተሰረዙ ዋሻዎችን በግልጽ ማሰናበትን፣ አቅምን ያገናዘቡ የGraphQL ዞን እና ዋሻ ትንታኔዎችን፣ ለThold ዝግጁ የሆኑ የማጠቃለያ አጋዦችን እና ወደ ውስጥ የሚገቡ አብነቶችን፣ የCasC እና ጤና CLIን፣ የሥነ-ምህዳር መንጠቆዎችን እና የርቀት ሰብሳቢ ማባዛትን ያካትታሉ። እነዚህ ጭማሪዎች እስካሁን የእትም መለያ ወይም የቀጥታ መለያ ብቁነት የላቸውም። ለማዋቀር፣ ለመለኪያ ትርጉሞች እና ለማረጋገጫ ገደቦች [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) ይመልከቱ።
+
+- **የGraphQL Analytics ደንበኛ እና የThold ማጠቃለያ (`src/Api/GraphqlAnalyticsClient.php`፣ `src/Metrics/AnalyticsSummary.php`)**፦ `GraphqlAnalyticsClient` የዞን እና የዋሻ የጥያቄ መጠን፣ የHTTP 5xx የስህተት መጠኖች፣ የምላሽ ባይቶች እና የጠርዝ መዘግየት (አማካይ እና p95) ለመሰብሰብ በ`CloudflareClient` (TLS የተረጋገጠ፣ ወደ `api.cloudflare.com` የተሰካ፣ የተገደቡ ምላሾች እና `RetryPolicy` የመጠን-ገደብ ማፈግፈግ) ላይ በማጠናቀር-ጊዜ በፍቃድ-ዝርዝር ውስጥ የተካተቱ ለንባብ-ብቻ ጥያቄዎችን (`zone_settings`፣ `zone_http_metrics`፣ `zone_edge_latency`፣ `tunnel_analytics`) ብቻ ያስኬዳል። `AnalyticsSummary` ከተሰኪው የRRD DS ስሞች (`health`፣ `collect_age`፣ `error_pct`፣ `age`) ጋር የተጣጣሙ `recommendedThresholds()`፣ `summarizeZones()` እና `evaluateSample()` ያቀርባል።
+- **የኦፕሬተር እና CasC CLI (`cli/cloudflare.php`)**፦ በ`ConfigCodec` (`src/Config/ConfigCodec.php`) እና `ConfigService` (`src/Config/ConfigService.php`) የተደገፈ ሲሆን `cli/cloudflare.php export [--format=yaml|xml] [--file=PATH]` (`vault:` / `file:` የምስጢር ማጣቀሻዎችን ብቻ የሚያወጣ)፣ `cli/cloudflare.php validate --file=PATH [--format=yaml|xml]`፣ `cli/cloudflare.php plan --file=PATH [--format=yaml|xml]`፣ `cli/cloudflare.php apply --file=PATH --confirm=<PLAN_HASH> [--format=yaml|xml]` እና `cli/cloudflare.php health [--format=text|json]`ን ይደግፋል።
+- **የሥነ-ምህዳር ውህደት መንጠቆዎች (`includes/ecosystem.php`፣ `setup.php`)**፦
+  - `abilities_register` (`AbilitiesProvider`)፦ በውጤቱ ውስጥ ዜሮ ቶከኖች ወይም ምስጢሮች ሳይኖሩ በCloudflare: View ክልል (ቀጥታ እና የቡድን ፈቃዶች) የተገደቡ ለንባብ-ብቻ `cloudflare-list-tunnels` እና `cloudflare-get-health`ን ይመዘግባል።
+  - `doctor_register_checks` (`DoctorChecks`)፦ `cloudflare_vault_key` (ሁነታ፣ ሲምቦሊክ አገናኝ እና የርዝመት ማረጋገጫ)፣ `cloudflare_token_dir` (ሙሉ መንገድ፣ ሲምቦሊክ አገናኝ እና ለሁሉም-መጻፍ የሚችል ፍተሻዎች)፣ `cloudflare_tunnel_freshness` እና `cloudflare_api_failure_rate`ን ያጋልጣል።
+  - `casc_register_providers` (`CascProvider`)፦ ለመለያዎች (የምስጢር ማጣቀሻዎች ብቻ)፣ ዞኖች፣ ዋሻዎች እና የመለኪያ ካርታዎች የ`cloudflare` CasC አቅራቢን (`export`፣ `validate`፣ `plan`፣ `apply`) ያጋልጣል።
+  - `replicate_out` (`RemoteReplication`)፦ `token_ciphertext` ወደ `NULL` ተጸድቶ እና የvault ቁልፍ ቁሳቁሶች ተወግደው ምስጢራዊ ያልሆኑ የሜታዳታ ሰንጠረዦችን ወደ የርቀት pollerዎች (`poller_id > 1`) ያባዛል።
 
 ### የዝርዝር ወደ ውጭ መላኪያዎች
 
@@ -453,7 +462,7 @@ Create Cacti Device እንደገና ይሞክራል።
 | 1. መሠረት | የተሰኪ የሕይወት ዑደት፣ ፈቃዶች፣ የመለያ ውቅረት፣ የግንኙነት ሙከራ | በ0.3.0 ተለቋል ([#2](https://github.com/somethingwithproof/plugin_cloudflare/pull/2) እስከ [#5](https://github.com/somethingwithproof/plugin_cloudflare/pull/5)) |
 | 2. ግኝት | በበስተጀርባ ሰብሳቢ ውስጥ የዋሻ እና የአገናኝ ግኝት፣ አጠቃላይ እይታ፣ የዋሻዎች እና የአገናኞች ገጾች | በ0.3.0 ተለቋል ([#6](https://github.com/somethingwithproof/plugin_cloudflare/pull/6)) |
 | 3. መለኪያዎች | የዋሻ ጤና የውሂብ ምንጮች፣ የግራፍ አብነቶች፣ በጭራሽ የውሸት ዜሮ የማይመዘግብ የመቋረጥ አያያዝ | በ0.3.0 ተለቋል ([#7](https://github.com/somethingwithproof/plugin_cloudflare/pull/7)) |
-| 4. ትንታኔ እና ማንቂያ | በየዞኑ እቅድን ያገናዘበ GraphQL ትንታኔ፣ የመቋረጥ መከልከያ ያላቸው የThold ገደቦች | የታቀደ |
+| 4. ትንታኔ እና ማንቂያ | እቅድን ያገናዘበ GraphQL ትንታኔ (`GraphqlAnalyticsClient`)፣ የThold ማጠቃለያ እና አብነቶች (`AnalyticsSummary`)፣ CasC CLI (`cli/cloudflare.php`)፣ የሥነ-ምህዳር መንጠቆዎች እና የርቀት ማባዛት | በ0.4.0-dev ተተግብሯል፤ የቀጥታ መለያ ብቁነት በመጠባበቅ ላይ |
 | 5. ማጠናከር | የስህተት መርፌ፣ የግኝት እና የመሰብሰብ TLA+ ሞዴሎች፣ ሙሉ ሰነድ | የታቀደ |
 
 ## ልማት

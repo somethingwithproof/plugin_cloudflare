@@ -27,18 +27,18 @@ Katika Cacti hunakili faili za XML za hoja ya data kwenda `resource/script_serve
 kuunda vifaa, grafu na violezo kupitia API za Cacti yenyewe, bila mabadiliko yoyote ya
 faili msingi.
 
-**Hali: 0.4.0-dev, haijatolewa bado.** Toleo la mwisho lililotolewa ni 0.3.0. Toleo la usanidi linaongeza uhamishaji wa orodha ya CSV, uondoaji dhahiri wa mahandaki yaliyofutwa, uchanganuzi wa kanda uliowekwa kwenye kache na violezo vya hiari vya Thold. Uthibitishaji wa mtoa huduma wa moja kwa moja na uwekaji kazini bado unasubiri.
+**Hali: 0.4.0-dev, haijatolewa bado.** Toleo la mwisho lililotolewa ni 0.3.0. Toleo la usanidi linaongeza uhamishaji wa orodha ya CSV, uondoaji dhahiri wa mahandaki yaliyofutwa, uchanganuzi wa kanda uliowekwa kwenye kache, mteja wa GraphQL Analytics wa kusoma pekee uliowekwa kwenye orodha ya ruhusa (`GraphqlAnalyticsClient`) pamoja na visaidizi vya muhtasari vilivyo tayari kwa Thold (`AnalyticsSummary`), CLI ya Configuration-as-Code (`cli/cloudflare.php`), ndoano za mfumo ikolojia (`abilities_register`, `doctor_register_checks`, `casc_register_providers`), na usaidizi wa mkusanyaji wa mbali unaozingatia poller (`replicate_out`). Uthibitishaji wa mtoa huduma wa moja kwa moja na uwekaji kazini bado unasubiri.
 
-Jedwali lililo hapa chini linaelezea toleo thabiti la 0.3.0. Nyongeza za usanidi zinaelezewa chini ya mtiririko wa kazi wa Opereta na uchanganuzi wa kanda hapa chini.
+Jedwali lililo hapa chini linaelezea toleo thabiti la 0.3.0. Nyongeza za usanidi katika 0.4.0-dev zinaelezewa chini ya mitiririko ya kazi ya Opereta na uchanganuzi wa kanda hapa chini.
 
 | Inapatikana sasa | Inapangwa |
 |---|---|
-| Sakinisha, sasisha, zima na uondoe kupitia kidhibiti cha programu-jalizi cha Cacti | Uchanganuzi wa GraphQL na arifa za Thold (Hatua ya 4) |
+| Sakinisha, sasisha, zima na uondoe kupitia kidhibiti cha programu-jalizi cha Cacti | Uthibitishaji wa GraphQL kwenye akaunti halisi na wa uwekaji kazini (kukamilika kwa Hatua ya 4) |
 | Ruhusa za Cloudflare: View, Operator na Configure | Uingizaji wa hitilafu, miundo ya TLA+ na nyaraka kamili (Hatua ya 5) |
 | Ongeza, hariri, futa, wezesha na zima akaunti za Cloudflare | |
 | Hifadhi tokeni kwenye faili au kwa njia iliyosimbwa katika hifadhidata ya Cacti | |
 | Thibitisha tokeni na uangalie ruhusa zake za kusoma mahandaki na kanda | |
-| Ugunduzi wa mahandaki na viunganishi katika mkusanyaji wa mandharinyuma ulioanzishwa na poller kuu | |
+| Ugunduzi wa mahandaki na viunganishi katika mkusanyaji wa mandharinyuma (`poller_cloudflare.php`) | |
 | Kurasa za Overview, Tunnels na Connectors chini ya Management > Cloudflare Tunnels | |
 | Ufuatiliaji wa mzunguko wa maisha: `active`, `unavailable` na `deleted` | |
 | Kifaa kimoja cha Cacti kwa kila akaunti, kilichoundwa na msimamizi, kikiwa na mahandaki kama faharasa za hoja ya data | |
@@ -289,7 +289,7 @@ hukataliwa. Tazama [docs/security.md](../../security.md#token-file).
 2. Fungua Console > Configuration > Plugins, au Console > Configuration >
    Cloudflare Accounts, mara moja kama msimamizi. Hatua hiyo huendesha uhamishaji wa hifadhidata wa programu-jalizi,
    huingiza violezo vya Cloudflare na kunakili faili ya hoja ya data (tazama
-   [Vipimo na grafu za mahandaki](#tunnel-metrics-and-graphs)), na, katika uboreshaji
+   [Vipimo na grafu za mahandaki](#tunnel-metrics-and-graphs)), husajili ndoano za mfumo ikolojia za `abilities_register`, `doctor_register_checks`, `casc_register_providers`, na `replicate_out` (`includes/ecosystem.php`), na, katika uboreshaji
    kutoka 0.1.0, husajili ndoano ya `poller_bottom`.
 
 `poller.php` haiendeshi uboreshaji wa programu-jalizi, kwa hivyo hadi hatua ya 2 muundo mpya
@@ -318,11 +318,10 @@ Ukurasa wa kuhariri pia huonyesha kama ruhusa za kusoma mahandaki na kusoma kand
 
 ## Ugunduzi wa mahandaki
 
-Baada ya kila mzunguko wa ukaguzi kwenye poller kuu, ndoano ya `poller_bottom` huanzisha
+Baada ya kila mzunguko wa ukaguzi kwenye poller ya mkusanyaji iliyosanidiwa (`cloudflare_poller_id`, chaguo-msingi `1`), ndoano ya `poller_bottom` huanzisha
 mkusanyaji wa chinichini kwa `exec_background` wakati angalau akaunti moja iliyowashwa
 imewezesha Collect Tunnels. Mkusanyaji haendeshwi kamwe ndani ya mchakato wa poller,
-hivyo API ya Cloudflare iliyo polepole haicheleweshi `poller.php`. Poller za mbali
-hazimwanzishi kamwe.
+hivyo API ya Cloudflare iliyo polepole haicheleweshi `poller.php`. `INFO` hutangaza `remote_collect:1`, na ndoano ya `replicate_out` (`RemoteReplication`) husukuma majedwali ya metadata yasiyo ya siri (`plugin_cloudflare_accounts` ikiwa na `token_ciphertext` iliyofutwa kuwa `NULL`, `plugin_cloudflare_tunnels`, `plugin_cloudflare_connectors`, `plugin_cloudflare_zones`, `plugin_cloudflare_metric_mappings`, na `plugin_cloudflare_resources`) kwenda kwa poller za mbali (`poller_id > 1`) huku ikiondoa nyenzo za ufunguo wa hifadhi.
 
 Kwa kila akaunti iliyofikia muda wake, mkusanyaji huorodhesha mahandaki ya akaunti, kisha
 husoma miunganisho ya mahandaki yake yanayofanya kazi, jambo linalotoa viunganishi vya kila handaki,
@@ -487,8 +486,7 @@ kifaa cha zamani katika Cacti pindi historia yake isipohitajika tena.
   muunganisho huonyesha mapengo.
 - Programu-jalizi huandika juu ya mabadiliko ya msimamizi kwenye violezo vilivyoletwa wakati
   uboreshaji unapobadilisha XML ya kiolezo kinachotumwa nayo.
-- Kifaa cha akaunti lazima kibaki kwenye mkusanyaji mkuu (main poller). Majedwali ya programu-jalizi
-  yako kwenye hifadhidata kuu na hati huyasoma humo.
+- Poller za mbali hupokea metadata iliyorudufiwa bila vitambulisho vya siri (`token_ciphertext` hufutwa kuwa `NULL` na funguo za hifadhi hazirudufiwi kamwe). Wakati wa kuendesha mkusanyaji kwenye poller maalum ya mbali (`cloudflare_poller_id`), weka faili za tokeni au ufunguo wa hifadhi moja kwa moja kwenye seva pangishi ya mkusanyaji huyo.
 - Mahandaki yaliyofutwa hubaki katika faharasa ya hoja ya data na huonyesha `U` hadi msimamizi atakapoyastaafisha waziwazi. Ustaafishaji huondoa tu grafu zilizorekodiwa na programu-jalizi na vyanzo vya data visivyoshirikiwa kupitia Cacti; safu mlalo ya orodha hubaki ikionekana. Cacti hudhibiti usafishaji wa RRD.
 - Cacti huzima programu-jalizi ambayo msimbo wake huishia kwenye hitilafu mbaya ya kweli, kama vile
   kuishiwa na kumbukumbu. Tazama [docs/security.md](../../security.md).
@@ -506,13 +504,37 @@ kifaa cha zamani katika Cacti pindi historia yake isipohitajika tena.
   uchunguzi wa awali huhitaji Cloudflare: Operator. Kuunda kifaa cha Cacti
   au kuwasha Create Graphs pia kunahitaji ruhusa ya Sites/Devices/Data ya
   Cacti. Programu-jalizi iliyozimwa hukataa kufungua kurasa zake.
+- Configuration-as-Code (`cli/cloudflare.php` na `casc_register_providers`)
+  hukubali marejeleo ya siri ya `vault:<account_id>` au `file:<absolute_path>` pekee,
+  hukataa tokeni ghafi, matini zilizosimbwa za hifadhi, na matamko ya XML `DOCTYPE`, na
+  huhitaji `--confirm=<PLAN_HASH>` halisi kabla ya kuandika.
+- Registered Abilities (`cloudflare-list-tunnels`, `cloudflare-get-health`) ni
+  za kusoma pekee kabisa, hutathmini eneo la Cloudflare: View moja kwa moja dhidi ya
+  majedwali ya uthibitishaji ya Cacti kwa kitambulisho cha mtumiaji anayepiga (kamwe si hali ya kipindi), na
+  hazirejeshi tokeni wala nyenzo zozote za ufunguo.
+- Configuration-as-Code (`cli/cloudflare.php` na `casc_register_providers`)
+  hukubali marejeleo ya siri ya `vault:<account_id>` au `file:<absolute_path>` pekee,
+  hukataa tokeni ghafi, matini zilizosimbwa za hifadhi, na matamko ya XML `DOCTYPE`, na
+  huhitaji `--confirm=<PLAN_HASH>` halisi kabla ya kuandika.
+- Registered Abilities (`cloudflare-list-tunnels`, `cloudflare-get-health`) ni
+  za kusoma pekee kabisa, hutathmini eneo la Cloudflare: View moja kwa moja dhidi ya
+  majedwali ya uthibitishaji ya Cacti kwa kitambulisho cha mtumiaji anayepiga (kamwe si hali ya kipindi), na
+  hazirejeshi tokeni wala nyenzo zozote za ufunguo.
 
 Maelezo zaidi na mapungufu yanayojulikana yako katika [docs/security.md](../../security.md).
 Ripoti udhaifu wa kiusalama kwa faragha kama ilivyoelezwa katika [SECURITY.md](../../../SECURITY.md).
 
 ## Mitiririko ya kazi ya mwendeshaji na uchanganuzi wa kanda
 
-Nyongeza za maendeleo zinajumuisha ustaafishaji wazi wa mahandaki yaliyofutwa, uchanganuzi wa kanda unaotambua uwezo na violezo vya Thold vinavyoweza kuletwa. Nyongeza hizi bado hazina lebo ya toleo au uthibitishaji kwenye akaunti halisi. Tazama [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) kwa usanidi, maana ya vipimo na mipaka ya uthibitishaji.
+Nyongeza za maendeleo katika `0.4.0-dev` zinajumuisha ustaafishaji wazi wa mahandaki yaliyofutwa, uchanganuzi wa GraphQL wa kanda na mahandaki unaotambua uwezo, visaidizi vya muhtasari vilivyo tayari kwa Thold na violezo vinavyoweza kuletwa, CLI ya CasC na afya, ndoano za mfumo ikolojia, na urudufishaji wa mkusanyaji wa mbali. Nyongeza hizi bado hazina lebo ya toleo au uthibitishaji kwenye akaunti halisi. Tazama [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) kwa usanidi, maana ya vipimo, na mipaka ya uthibitishaji.
+
+- **Mteja wa GraphQL Analytics na muhtasari wa Thold (`src/Api/GraphqlAnalyticsClient.php`, `src/Metrics/AnalyticsSummary.php`)**: `GraphqlAnalyticsClient` huendesha hoja za kusoma pekee zilizoruhusiwa wakati wa kutunga (`zone_settings`, `zone_http_metrics`, `zone_edge_latency`, `tunnel_analytics`) kupitia `CloudflareClient` (TLS imethibitishwa, imefungwa kwa `api.cloudflare.com`, majibu yenye mipaka, na usubiri wa kikomo cha kiwango wa `RetryPolicy`) kukusanya kiasi cha maombi ya kanda na mahandaki, viwango vya hitilafu za HTTP 5xx, baiti za majibu, na ucheleweshaji wa pembeni (wastani na p95). `AnalyticsSummary` hutoa `recommendedThresholds()` iliyopatanishwa na majina ya RRD DS ya programu-jalizi (`health`, `collect_age`, `error_pct`, `age`), `summarizeZones()`, na `evaluateSample()`.
+- **CLI ya Opereta na CasC (`cli/cloudflare.php`)**: inaungwa mkono na `ConfigCodec` (`src/Config/ConfigCodec.php`) na `ConfigService` (`src/Config/ConfigService.php`), ikisaidia `cli/cloudflare.php export [--format=yaml|xml] [--file=PATH]` (ikitoa marejeleo ya siri ya `vault:` / `file:` pekee), `cli/cloudflare.php validate --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php plan --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php apply --file=PATH --confirm=<PLAN_HASH> [--format=yaml|xml]`, na `cli/cloudflare.php health [--format=text|json]`.
+- **Ndoano za muunganisho wa mfumo ikolojia (`includes/ecosystem.php`, `setup.php`)**:
+  - `abilities_register` (`AbilitiesProvider`): husajili `cloudflare-list-tunnels` na `cloudflare-get-health` za kusoma pekee zilizodhibitiwa kwenye eneo la Cloudflare: View (ruhusa za moja kwa moja na za kikundi) bila tokeni au siri zozote kwenye matokeo.
+  - `doctor_register_checks` (`DoctorChecks`): huonyesha `cloudflare_vault_key` (uhalalishaji wa hali, kiungo cha ishara, na urefu), `cloudflare_token_dir` (ukaguzi wa njia kamili, kiungo cha ishara, na uwezo wa kuandikwa na kila mtu), `cloudflare_tunnel_freshness`, na `cloudflare_api_failure_rate`.
+  - `casc_register_providers` (`CascProvider`): huonyesha mtoa huduma wa CasC wa `cloudflare` (`export`, `validate`, `plan`, `apply`) kwa akaunti (marejeleo ya siri pekee), kanda, mahandaki, na uoanishaji wa vipimo.
+  - `replicate_out` (`RemoteReplication`): hurudufu majedwali ya metadata yasiyo ya siri kwenda kwa poller za mbali (`poller_id > 1`) huku `token_ciphertext` ikifutwa kuwa `NULL` na nyenzo za ufunguo wa hifadhi zikiondolewa.
 
 ### Uhamishaji wa orodha
 
@@ -530,7 +552,7 @@ kila hatua muhimu hapa chini.
 | 1. Msingi | Mzunguko wa maisha wa programu-jalizi, ruhusa, usanidi wa akaunti, jaribio la muunganisho | Imetolewa katika 0.3.0 ([#2](https://github.com/somethingwithproof/plugin_cloudflare/pull/2) hadi [#5](https://github.com/somethingwithproof/plugin_cloudflare/pull/5)) |
 | 2. Ugunduzi | Ugunduzi wa mahandaki na viunganishi katika mkusanyaji wa chinichini, kurasa za Overview, Tunnels na Connectors | Imetolewa katika 0.3.0 ([#6](https://github.com/somethingwithproof/plugin_cloudflare/pull/6)) |
 | 3. Vipimo | Vyanzo vya data vya afya ya handaki, violezo vya grafu, ushughulikiaji wa kukatika kwa huduma ambao kamwe haurekodi sifuri ya kubuni | Imetolewa katika 0.3.0 ([#7](https://github.com/somethingwithproof/plugin_cloudflare/pull/7)) |
-| 4. Uchanganuzi na arifa | Uchanganuzi wa GraphQL unaotambua mpango kwa kila kanda, viwango vya Thold vyenye uzuiaji wakati wa kukatika kwa huduma | Imepangwa |
+| 4. Uchanganuzi na arifa | Uchanganuzi wa GraphQL unaotambua mpango (`GraphqlAnalyticsClient`), muhtasari wa Thold na violezo (`AnalyticsSummary`), CLI ya CasC (`cli/cloudflare.php`), ndoano za mfumo ikolojia, na urudufishaji wa mbali | Imetekelezwa katika 0.4.0-dev; uthibitishaji wa akaunti halisi unasubiri |
 | 5. Uimarishaji | Uingizaji wa hitilafu, miundo ya TLA+ ya ugunduzi na ukusanyaji, nyaraka kamili | Imepangwa |
 
 ## Uendelezaji

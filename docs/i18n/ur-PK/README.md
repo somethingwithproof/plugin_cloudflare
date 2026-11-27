@@ -22,18 +22,18 @@
 
 یہ ایک Cacti 1.2 پلگ ان ہے جو Cloudflare Tunnels اور زون اینالیٹکس کی نگرانی کے لیے تیار کیا جا رہا ہے۔ یہ محدود دائرۂ اختیار والے API ٹوکنز کے ذریعے Cloudflare API سے صرف معلومات پڑھتا ہے، Cloudflare میں کبھی کوئی تبدیلی نہیں کرتا، اور اپنا ڈیٹا اپنے علیحدہ جدولوں میں محفوظ رکھتا ہے۔ Cacti میں یہ ڈیٹا استفسار (data query) کی XML فائلیں `resource/script_server/` میں کاپی کرتا ہے اور Cacti کی اپنی APIs کے ذریعے بغیر کسی بنیادی فائل کو تبدیل کیے ڈیوائسز، گرافس اور ٹیمپلیٹس بناتا ہے۔
 
-**حیثیت: 0.4.0-dev، غیر جاری شدہ۔** آخری جاری کردہ ورژن 0.3.0 ہے۔ ترقیاتی ورژن میں CSV انوینٹری ایکسپورٹس، حذف شدہ ٹنلز کی صریح برطرفی، کیشڈ زون اینالیٹکس اور اختیاری Thold ٹیمپلیٹس شامل کیے گئے ہیں۔ لائیو فراہم کنندہ اور تعیناتی کی تصدیق ابھی باقی ہے۔
+**حیثیت: 0.4.0-dev، غیر جاری شدہ۔** آخری جاری کردہ ورژن 0.3.0 ہے۔ ترقیاتی ورژن میں CSV انوینٹری ایکسپورٹس، حذف شدہ ٹنلز کی صریح برطرفی، کیشڈ زون اینالیٹکس، Thold کے لیے تیار خلاصہ معاونین (`AnalyticsSummary`) کے ساتھ ایک اجازت یافتہ فہرست والا صرف پڑھنے کے لیے GraphQL Analytics کلائنٹ (`GraphqlAnalyticsClient`)، Configuration-as-Code CLI (`cli/cloudflare.php`)، ماحولیاتی نظام کے ہکس (`abilities_register`، `doctor_register_checks`، `casc_register_providers`)، اور پولر کے دائرہ کار میں ریموٹ کلیکٹر کی معاونت (`replicate_out`) شامل کیے گئے ہیں۔ لائیو فراہم کنندہ اور تعیناتی کی تصدیق ابھی باقی ہے۔
 
-ذیل کا جدول 0.3.0 مستحکم ورژن کی وضاحت کرتا ہے۔ ترقیاتی اضافے ذیل میں آپریٹر ورک فلو اور زون اینالیٹکس کے تحت بیان کیے گئے ہیں۔
+ذیل کا جدول 0.3.0 مستحکم ورژن کی وضاحت کرتا ہے۔ 0.4.0-dev میں ترقیاتی اضافے ذیل میں آپریٹر ورک فلو اور زون اینالیٹکس کے تحت بیان کیے گئے ہیں۔
 
 | اب دستیاب ہے | منصوبہ بند |
 |---|---|
-| Cacti کے پلگ ان مینیجر کے ذریعے تنصیب، اپ گریڈ، غیر فعال اور غیر نصب کرنا | GraphQL اینالیٹکس اور Thold الرٹس (سنگِ میل 4) |
+| Cacti کے پلگ ان مینیجر کے ذریعے تنصیب، اپ گریڈ، غیر فعال اور غیر نصب کرنا | لائیو اکاؤنٹ GraphQL اور تعیناتی کی تصدیق (سنگِ میل 4 کا اختتام) |
 | Cloudflare: View، Operator اور Configure اجازتیں | فالٹ انجیکشن، TLA+ ماڈلز اور مکمل دستاویزات (سنگِ میل 5) |
 | Cloudflare اکاؤنٹس شامل کرنا، ترمیم کرنا، حذف کرنا، فعال اور غیر فعال کرنا | |
 | ٹوکن کو کسی فائل میں یا Cacti ڈیٹا بیس میں انکرپٹ شدہ حالت میں محفوظ کرنا | |
 | ٹوکن کی تصدیق کرنا اور اس کے ٹنل اور زون پڑھنے کی اجازتیں جانچنا | |
-| مرکزی پولر کے ذریعے شروع کیے گئے بیک گراؤنڈ کلکٹر میں ٹنل اور کنیکٹر کی دریافت | |
+| پس منظر کلیکٹر (`poller_cloudflare.php`) میں ٹنل اور کنیکٹر کی دریافت | |
 | Management > Cloudflare Tunnels کے تحت Overview، Tunnels اور Connectors صفحات | |
 | لائف سائیکل ٹریکنگ: `active`، `unavailable` اور `deleted` | |
 | فی اکاؤنٹ ایک Cacti ڈیوائس، جو منتظم کی طرف سے بنائی جاتی ہے، جس میں ٹنلز ڈیٹا استفسار کے اشاریے ہوتے ہیں | |
@@ -233,7 +233,7 @@ Token File Directory سیٹ کریں، مثال کے طور پر `/etc/cacti` پ
 2. ایڈمن کے طور پر ایک بار کنسول > کنفیگریشن > پلگ انز، یا کنسول > کنفیگریشن >
    Cloudflare Accounts کھولیں۔ اس سے پلگ ان کی مائیگریشنز چلتی ہیں،
    Cloudflare ٹیمپلیٹس درآمد ہوتے ہیں اور ڈیٹا کوئری فائل کاپی ہوتی ہے (دیکھیں
-   [ٹنل میٹرکس اور گرافس](#tunnel-metrics-and-graphs))، اور 0.1.0 سے اپ گریڈ پر
+   [ٹنل میٹرکس اور گرافس](#tunnel-metrics-and-graphs))، `abilities_register`، `doctor_register_checks`، `casc_register_providers`، اور `replicate_out` ماحولیاتی نظام کے ہکس (`includes/ecosystem.php`) رجسٹر ہوتے ہیں، اور 0.1.0 سے اپ گریڈ پر
    `poller_bottom` ہک رجسٹر ہوتا ہے۔
 
 `poller.php` پلگ ان کا اپ گریڈ نہیں چلاتا، اس لیے مرحلہ 2 تک نیا
@@ -261,10 +261,10 @@ Verify اکاؤنٹ کی حیثیت سیٹ کرتا ہے:
 
 ## ٹنل کی دریافت
 
-مرکزی پولر پر ہر پولنگ سائیکل کے بعد، `poller_bottom` ہک `exec_background` کے ساتھ
+کنفیگر کردہ کلیکٹر پولر (`cloudflare_poller_id`، طے شدہ `1`) پر ہر پولنگ سائیکل کے بعد، `poller_bottom` ہک `exec_background` کے ساتھ
 ایک پس منظری کلکٹر شروع کرتا ہے جب کم از کم ایک فعال اکاؤنٹ میں Collect Tunnels آن ہو۔
 کلکٹر کبھی بھی پولر کے عمل میں نہیں چلتا، اس لیے سست Cloudflare API `poller.php` میں تاخیر نہیں کرتا۔
-ریموٹ پولرز اسے کبھی شروع نہیں کرتے۔
+`INFO` میں `remote_collect:1` کا اعلان کیا جاتا ہے، اور `replicate_out` ہک (`RemoteReplication`) والٹ کلیدی مواد کو خارج کرتے ہوئے غیر خفیہ میٹا ڈیٹا ٹیبلز (`plugin_cloudflare_accounts` جس میں `token_ciphertext` کو `NULL` پر صاف کر دیا جاتا ہے، `plugin_cloudflare_tunnels`، `plugin_cloudflare_connectors`، `plugin_cloudflare_zones`، `plugin_cloudflare_metric_mappings`، اور `plugin_cloudflare_resources`) کو ریموٹ پولرز (`poller_id > 1`) پر بھیجتا ہے۔
 
 ہر اس اکاؤنٹ کے لیے جس کی باری ہو، کلکٹر اکاؤنٹ کی ٹنلز کی فہرست بناتا ہے، پھر
 اس کی فعال ٹنلز کے کنکشنز پڑھتا ہے، جس سے ہر ٹنل کے کنیکٹرز، ان کے ورژنز،
@@ -421,8 +421,7 @@ Cacti ڈیوائسز، گرافس، ڈیٹا سورسز، RRD فائلز یا ٹ
   گرافس میں وقفے نظر آتے ہیں۔
 - جب کوئی اپ گریڈ شپ کیے گئے ٹیمپلیٹ XML کو تبدیل کرتا ہے تو پلگ ان امپورٹ شدہ
   ٹیمپلیٹس میں ایڈمنسٹریٹر کی ترامیم کو اوور رائٹ کر دیتا ہے۔
-- اکاؤنٹ کی ڈیوائس کو مین پولر پر ہی رہنا ضروری ہے۔ پلگ ان کی ٹیبلز
-  مین ڈیٹا بیس میں ہوتی ہیں اور اسکرپٹ انہیں وہیں سے پڑھتا ہے۔
+- ریموٹ پولرز بغیر اسناد کے نقل شدہ میٹا ڈیٹا وصول کرتے ہیں (`token_ciphertext` کو `NULL` پر صاف کر دیا جاتا ہے اور والٹ کلیدیں کبھی نقل نہیں کی جاتیں)۔ نامزد ریموٹ پولر (`cloudflare_poller_id`) پر کلیکٹر چلاتے وقت، ٹوکن فائلیں یا والٹ کلید براہِ راست اس کلیکٹر ہوسٹ پر فراہم کریں۔
 - حذف شدہ ٹنلز ڈیٹا کوئری انڈیکس میں رہتے ہیں اور تب تک `U` پرنٹ کرتے ہیں جب تک ایڈمنسٹریٹر انہیں واضح طور پر ریٹائر نہ کر دے۔ ریٹائرمنٹ Cacti کے ذریعے صرف پلگ ان کے ریکارڈ کردہ گرافس اور غیر مشترکہ ڈیٹا سورسز کو ہٹاتی ہے؛ انوینٹری کی قطار نظر آتی رہتی ہے۔ RRD کلین اپ کو Cacti کنٹرول کرتا ہے۔
 - Cacti اس پلگ ان کو غیر فعال کر دیتا ہے جس کا کوڈ کسی حقیقی مہلک خرابی (fatal error) پر ختم ہو، جیسے
   میموری ختم ہو جانا۔ دیکھیں [docs/security.md](../../security.md)۔
@@ -440,13 +439,29 @@ Cacti ڈیوائسز، گرافس، ڈیٹا سورسز، RRD فائلز یا ٹ
   ٹرائیاج کی تصدیقوں کے لیے Cloudflare: Operator درکار ہوتا ہے۔ Cacti ڈیوائس بنانے
   یا Create Graphs کو آن کرنے کے لیے Cacti کی Sites/Devices/Data اجازت بھی درکار
   ہوتی ہے۔ غیر فعال پلگ ان اپنے صفحات کو مسترد کر دیتا ہے۔
+- Configuration-as-Code (`cli/cloudflare.php` اور `casc_register_providers`)
+  صرف `vault:<account_id>` یا `file:<absolute_path>` خفیہ حوالہ جات قبول کرتا ہے،
+  خام ٹوکنز، والٹ سائفر ٹیکسٹس، اور XML `DOCTYPE` اعلانات کو مسترد کرتا ہے، اور
+  لکھنے سے پہلے عین `--confirm=<PLAN_HASH>` کا تقاضا کرتا ہے۔
+- رجسٹرڈ صلاحیتیں (`cloudflare-list-tunnels`، `cloudflare-get-health`) خالصتاً
+  صرف پڑھنے کے لیے ہیں، کالر کی یوزر ID کے لیے براہِ راست Cacti آتھ ٹیبلز کے خلاف
+  Cloudflare: View دائرہ کار کی جانچ کرتی ہیں (کبھی سیشن اسٹیٹ پر نہیں)، اور
+  کوئی ٹوکن یا کلیدی مواد واپس نہیں کرتیں۔
 
 تفصیلات اور معلوم حدود [docs/security.md](../../security.md) میں موجود ہیں۔
 سیکیورٹی کمزوریوں کی نجی طور پر اطلاع دینے کا طریقہ [SECURITY.md](../../../SECURITY.md) میں بیان کیا گیا ہے۔
 
 ## آپریٹر ورک فلو اور زون اینالیٹکس
 
-ڈیولپمنٹ کے اضافوں میں حذف شدہ ٹنلز کی واضح ریٹائرمنٹ، صلاحیت سے آگاہ زون اینالیٹکس اور امپورٹ کے قابل Thold ٹیمپلیٹس شامل ہیں۔ ان اضافوں کے پاس ابھی کوئی ریلیز ٹیگ یا لائیو اکاؤنٹ کی توثیق نہیں ہے۔ سیٹ اپ، میٹرک کے معانی اور تصدیق کی حدود کے لیے [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) دیکھیں۔
+`0.4.0-dev` میں ڈیولپمنٹ کے اضافوں میں حذف شدہ ٹنلز کی واضح ریٹائرمنٹ، صلاحیت سے آگاہ GraphQL زون اور ٹنل اینالیٹکس، Thold کے لیے تیار خلاصہ معاونین اور امپورٹ کے قابل ٹیمپلیٹس، CasC اور ہیلتھ CLI، ماحولیاتی نظام کے ہکس، اور ریموٹ کلیکٹر ریپلیکیشن شامل ہیں۔ ان اضافوں کے پاس ابھی کوئی ریلیز ٹیگ یا لائیو اکاؤنٹ کی توثیق نہیں ہے۔ سیٹ اپ، میٹرک کے معانی، اور تصدیق کی حدود کے لیے [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) دیکھیں۔
+
+- **GraphQL Analytics کلائنٹ اور Thold خلاصہ (`src/Api/GraphqlAnalyticsClient.php`، `src/Metrics/AnalyticsSummary.php`)**: `GraphqlAnalyticsClient` زون اور ٹنل کی درخواستوں کا حجم، HTTP 5xx خرابی کی شرح، جوابی بائٹس، اور ایج لیٹینسی (اوسط اور p95) جمع کرنے کے لیے `CloudflareClient` کے ذریعے (TLS تصدیق شدہ، `api.cloudflare.com` پر مقید، محدود جوابات، اور `RetryPolicy` شرح کی حد کا وقفہ) صرف کمپائل ٹائم اجازت یافتہ صرف پڑھنے کے لیے استفسارات (`zone_settings`، `zone_http_metrics`، `zone_edge_latency`، `tunnel_analytics`) چلاتا ہے۔ `AnalyticsSummary` پلگ ان کے RRD DS ناموں (`health`، `collect_age`، `error_pct`، `age`) سے ہم آہنگ `recommendedThresholds()`، `summarizeZones()`، اور `evaluateSample()` فراہم کرتا ہے۔
+- **آپریٹر اور CasC CLI (`cli/cloudflare.php`)**: `ConfigCodec` (`src/Config/ConfigCodec.php`) اور `ConfigService` (`src/Config/ConfigService.php`) پر مبنی ہے، اور `cli/cloudflare.php export [--format=yaml|xml] [--file=PATH]` (صرف `vault:` / `file:` خفیہ حوالہ جات خارج کرتا ہے)، `cli/cloudflare.php validate --file=PATH [--format=yaml|xml]`، `cli/cloudflare.php plan --file=PATH [--format=yaml|xml]`، `cli/cloudflare.php apply --file=PATH --confirm=<PLAN_HASH> [--format=yaml|xml]`، اور `cli/cloudflare.php health [--format=text|json]` کی معاونت کرتا ہے۔
+- **ماحولیاتی نظام کے انضمام کے ہکس (`includes/ecosystem.php`، `setup.php`)**:
+  - `abilities_register` (`AbilitiesProvider`): آؤٹ پٹ میں صفر ٹوکنز یا خفیہ معلومات کے ساتھ Cloudflare: View دائرہ کار (براہِ راست اور گروپ گرانٹس) پر پابند صرف پڑھنے کے لیے `cloudflare-list-tunnels` اور `cloudflare-get-health` رجسٹر کرتا ہے۔
+  - `doctor_register_checks` (`DoctorChecks`): `cloudflare_vault_key` (موڈ، سم لنک، اور لمبائی کی توثیق)، `cloudflare_token_dir` (مکمل راستہ، سم لنک، اور سب کے لیے قابلِ تحریر ہونے کی جانچ)، `cloudflare_tunnel_freshness`، اور `cloudflare_api_failure_rate` فراہم کرتا ہے۔
+  - `casc_register_providers` (`CascProvider`): اکاؤنٹس (صرف خفیہ حوالہ جات)، زونز، ٹنلز، اور میٹرک میپنگز کے لیے `cloudflare` CasC فراہم کنندہ (`export`، `validate`، `plan`، `apply`) مہیا کرتا ہے۔
+  - `replicate_out` (`RemoteReplication`): `token_ciphertext` کو `NULL` پر صاف کرتے ہوئے اور والٹ کلیدی مواد کو خارج کرتے ہوئے غیر خفیہ میٹا ڈیٹا ٹیبلز کو ریموٹ پولرز (`poller_id > 1`) پر نقل کرتا ہے۔
 
 ### انوینٹری ایکسپورٹس
 
@@ -464,7 +479,7 @@ Tunnels اور Connectors کے صفحات Cloudflare: View دائرہ کار ک�
 | 1. Foundation | پلگ ان لائف سائیکل، اجازتیں، اکاؤنٹ کنفیگریشن، کنکشن ٹیسٹ | 0.3.0 میں جاری ([#2](https://github.com/somethingwithproof/plugin_cloudflare/pull/2) تا [#5](https://github.com/somethingwithproof/plugin_cloudflare/pull/5)) |
 | 2. Discovery | پس منظر کلیکٹر میں ٹنل اور کنیکٹر کی دریافت، Overview، Tunnels اور Connectors کے صفحات | 0.3.0 میں جاری ([#6](https://github.com/somethingwithproof/plugin_cloudflare/pull/6)) |
 | 3. Metrics | ٹنل ہیلتھ ڈیٹا سورسز، گراف ٹیمپلیٹس، آؤٹیج ہینڈلنگ جو کبھی من گھڑت صفر ریکارڈ نہیں کرتی | 0.3.0 میں جاری ([#7](https://github.com/somethingwithproof/plugin_cloudflare/pull/7)) |
-| 4. Analytics and alerting | فی زون پلان سے آگاہ GraphQL اینالیٹکس، آؤٹیج سپریشن کے ساتھ Thold تھریشولڈز | منصوبہ بند |
+| 4. Analytics and alerting | پلان سے آگاہ GraphQL اینالیٹکس (`GraphqlAnalyticsClient`)، Thold خلاصہ اور ٹیمپلیٹس (`AnalyticsSummary`)، CasC CLI (`cli/cloudflare.php`)، ماحولیاتی نظام کے ہکس، اور ریموٹ ریپلیکیشن | 0.4.0-dev میں نافذ شدہ؛ لائیو اکاؤنٹ کی توثیق باقی ہے |
 | 5. Hardening | فالٹ انجیکشن، دریافت اور کلیکشن کے TLA+ ماڈلز، مکمل دستاویزات | منصوبہ بند |
 
 ## ڈیولپمنٹ

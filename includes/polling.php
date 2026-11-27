@@ -35,8 +35,7 @@ if (!defined('CLOUDFLARE_COLLECTOR_LOCK')) {
 /**
  * Runs inside poller.php after every cycle, so it only decides whether to
  * launch the collector and never waits on it or lets a fault escape.
- * Remote pollers fire this hook too (poller.php:956); collection belongs
- * to the main poller alone.
+ * Collection runs on the configured poller (defaults to main poller 1).
  */
 function cloudflare_poller_bottom() : void {
 	global $config;
@@ -45,7 +44,9 @@ function cloudflare_poller_bottom() : void {
 		return;
 	}
 
-	if (isset($config['poller_id']) && (int) $config['poller_id'] !== 1) {
+	$targetPoller = cloudflare_setting_int('cloudflare_poller_id', 1, 1, 65535);
+
+	if (isset($config['poller_id']) && (int) $config['poller_id'] !== $targetPoller) {
 		return;
 	}
 

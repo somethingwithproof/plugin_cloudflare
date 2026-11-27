@@ -247,6 +247,10 @@ PHP;
 			array('cloudflare', 'draw_navigation_text', 'cloudflare_draw_navigation_text', 'includes/settings.php', false),
 			array('cloudflare', 'poller_bottom', 'cloudflare_poller_bottom', 'includes/polling.php', false),
 			array('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', true),
+			array('cloudflare', 'abilities_register', 'cloudflare_abilities_register', 'includes/ecosystem.php', true),
+			array('cloudflare', 'doctor_register_checks', 'cloudflare_doctor_register_checks', 'includes/ecosystem.php', true),
+			array('cloudflare', 'casc_register_providers', 'cloudflare_casc_register_providers', 'includes/ecosystem.php', true),
+			array('cloudflare', 'replicate_out', 'cloudflare_replicate_out', 'includes/ecosystem.php', true),
 		), cloudflare_glue_calls('api_plugin_register_hook'));
 
 		$this->assertSame(array(
@@ -303,7 +307,7 @@ PHP;
 		$this->assertSame('0.4.0-dev', $info['version']);
 		$this->assertSame('Cloudflare', $info['longname']);
 		$this->assertSame('1.2.25', $info['compat']);
-		$this->assertSame('online_view:1, online_mgmt:1, offline_view:0, offline_mgmt:0, remote_collect:0', $info['capabilities']);
+		$this->assertSame('online_view:1, online_mgmt:1, offline_view:0, offline_mgmt:0, remote_collect:1', $info['capabilities']);
 		$this->assertSame('', $info['requires']);
 		/* api_plugin_install() reads author unguarded (lib/plugins.php:741). */
 		$this->assertSame('Thomas Vincent', $info['author']);

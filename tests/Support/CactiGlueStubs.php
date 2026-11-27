@@ -1402,3 +1402,18 @@ if (!function_exists('is_graph_allowed')) {
 		return cloudflare_glue_state('graph_access') !== false;
 	}
 }
+
+if (!function_exists('replicate_out_table')) {
+	/**
+	 * @param mixed               $db_conn
+	 * @param array<int, mixed>   $data
+	 * @param string              $table
+	 * @param int                 $remote_poller_id
+	 * @param bool                $truncate
+	 * @param mixed               $exclude
+	 * @param int                 $level
+	 */
+	function replicate_out_table($db_conn, array &$data, $table, $remote_poller_id, $truncate = true, $exclude = false, $level = POLLER_VERBOSITY_NONE): void {
+		cloudflare_glue_record(__FUNCTION__, array($table, $remote_poller_id, count($data)));
+	}
+}

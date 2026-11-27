@@ -13,5 +13,6 @@ parameters:
 		- poller_cloudflare.php
 		- ss_cloudflare.php
 		- ss_cloudflare_zones.php
+		- cli/cloudflare.php
 	bootstrapFiles:
 		- tests/Support/CactiGlueStubs.php

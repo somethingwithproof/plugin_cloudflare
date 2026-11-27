@@ -20,6 +20,7 @@
 require_once __DIR__ . '/includes/bootstrap.php';
 require_once __DIR__ . '/includes/accounts.php';
 require_once __DIR__ . '/includes/templates.php';
+require_once __DIR__ . '/includes/ecosystem.php';
 
 use Somethingwithproof\Cloudflare\Storage\DatabaseException;
 use Somethingwithproof\Cloudflare\Storage\Migrator;
@@ -41,6 +42,7 @@ function plugin_cloudflare_install() : void {
 	api_plugin_register_hook('cloudflare', 'poller_bottom', 'cloudflare_poller_bottom', 'includes/polling.php');
 
 	cloudflare_setup_operator();
+	cloudflare_setup_ecosystem();
 	api_plugin_register_realm('cloudflare', 'cloudflare.php', 'Cloudflare: View', false);
 	api_plugin_register_realm('cloudflare', 'cloudflare_accounts.php', 'Cloudflare: Configure', true);
 
@@ -116,6 +118,7 @@ function plugin_cloudflare_upgrade(int $lock_timeout = 10) : bool {
 	$current = isset($info['version']) ? (string) $info['version'] : '';
 	$changed = $current !== '' && $current !== (string) $installed;
 	cloudflare_setup_operator($changed);
+	cloudflare_setup_ecosystem($changed);
 
 	try {
 		$migrator = new Migrator(cloudflare_db(), Migrator::defaultMigrations(), $lock_timeout);
@@ -242,6 +245,27 @@ function cloudflare_setup_operator(bool $force = true) : void {
 
 	if ($registerHook) {
 		api_plugin_register_hook('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', cloudflare_plugin_enabled());
+	}
+}
+
+/** Register ecosystem integration and remote replication hooks when installing, upgrading, or repairing missing rows. */
+function cloudflare_setup_ecosystem(bool $force = true) : void {
+	$hooks = array(
+		'abilities_register'      => 'cloudflare_abilities_register',
+		'doctor_register_checks'  => 'cloudflare_doctor_register_checks',
+		'casc_register_providers' => 'cloudflare_casc_register_providers',
+		'replicate_out'           => 'cloudflare_replicate_out',
+	);
+
+	foreach ($hooks as $hook => $function) {
+		$register = $force || (int) db_fetch_cell_prepared(
+			'SELECT COUNT(*) FROM plugin_hooks WHERE name = ? AND hook = ?',
+			array('cloudflare', $hook)
+		) === 0;
+
+		if ($register) {
+			api_plugin_register_hook('cloudflare', $hook, $function, 'includes/ecosystem.php', cloudflare_plugin_enabled());
+		}
 	}
 }
 

@@ -34,6 +34,11 @@ use Somethingwithproof\Cloudflare\Support\SystemClock;
  * View realm has nothing to change, so there is no POST path to protect.
  */
 
+/**
+ * Viewer unreadable text.
+ *
+ * @return string
+ */
 function cloudflare_viewer_unreadable_text() : string {
 	return __('The Cloudflare tunnels could not be read. See the Cacti log for details.', 'cloudflare');
 }
@@ -44,6 +49,13 @@ function cloudflare_viewer_unreadable_text() : string {
  * DatabaseException's message is known to carry no bound values or driver
  * text; anything else is logged by class.
  */
+/**
+ * Viewer unreadable.
+ *
+ * @param string $context
+ * @param Throwable $e
+ * @return void
+ */
 function cloudflare_viewer_unreadable(string $context, Throwable $e) : void {
 	$detail = $e instanceof DatabaseException ? $e->getMessage() : get_class($e);
 
@@ -52,11 +64,24 @@ function cloudflare_viewer_unreadable(string $context, Throwable $e) : void {
 	raise_message('cloudflare_unreadable', html_escape(cloudflare_viewer_unreadable_text()), MESSAGE_LEVEL_ERROR);
 }
 
+/**
+ * Viewer time.
+ *
+ * @param ?int $timestamp
+ * @return string
+ */
 function cloudflare_viewer_time(?int $timestamp) : string {
 	return $timestamp === null ? __('Never', 'cloudflare') : date('Y-m-d H:i:s', $timestamp);
 }
 
 // A one-line box, for the cases where there is no table to draw.
+/**
+ * Viewer notice.
+ *
+ * @param string $title
+ * @param string $text
+ * @return void
+ */
 function cloudflare_viewer_notice(string $title, string $text) : void {
 	html_start_box(html_escape($title), '100%', '', '3', 'center', '');
 
@@ -66,6 +91,12 @@ function cloudflare_viewer_notice(string $title, string $text) : void {
 }
 
 // Same markup as thold_tabs() in thold_functions.php.
+/**
+ * Viewer tabs.
+ *
+ * @param string $current
+ * @return void
+ */
 function cloudflare_viewer_tabs(string $current) : void {
 	global $config;
 
@@ -136,6 +167,11 @@ function cloudflare_viewer_health(Account $account, ?array $job, ?array $summary
 	}
 }
 
+/**
+ * Viewer overview.
+ *
+ * @return void
+ */
 function cloudflare_viewer_overview() : void {
 	$accounts   = array();
 	$summaries  = array();
@@ -455,6 +491,11 @@ function cloudflare_viewer_tunnel_filter(array $accounts, array $query) : void {
 	html_end_box();
 }
 
+/**
+ * Viewer tunnels.
+ *
+ * @return void
+ */
 function cloudflare_viewer_tunnels() : void {
 	$query      = cloudflare_viewer_tunnel_request();
 	$accounts   = array();
@@ -590,6 +631,11 @@ function cloudflare_viewer_tunnel_table(array $tunnels, array $accounts, bool $a
 	}
 }
 
+/**
+ * Viewer connectors.
+ *
+ * @return void
+ */
 function cloudflare_viewer_connectors() : void {
 	// ================= input validation =================
 	get_filter_request_var('tunnel_id');
@@ -681,6 +727,11 @@ function cloudflare_viewer_connector_table(array $connectors) : void {
 /*
  * Behaviour lives in a static file rather than inline script, so it runs
  * under every CSP mode; the nonce is added where Cacti provides one.
+ */
+/**
+ * Viewer script.
+ *
+ * @return void
  */
 function cloudflare_viewer_script() : void {
 	global $config;
@@ -778,6 +829,12 @@ function cloudflare_viewer_export_file(string $view, ?Database $db = null) {
 	}
 }
 
+/**
+ * Viewer export.
+ *
+ * @param string $view
+ * @return void
+ */
 function cloudflare_viewer_export(string $view) : void {
 	$stream = cloudflare_viewer_export_file($view);
 
@@ -792,6 +849,11 @@ function cloudflare_viewer_export(string $view) : void {
 	}
 }
 
+/**
+ * Viewer analytics.
+ *
+ * @return void
+ */
 function cloudflare_viewer_analytics() : void {
 	$rows   = cloudflare_db()->fetchAll("SELECT z.*, a.name AS account_name, r.host_id FROM plugin_cloudflare_zones z JOIN plugin_cloudflare_accounts a ON a.id = z.account_id LEFT JOIN plugin_cloudflare_resources r ON r.account_id = a.id AND r.kind = 'device' WHERE z.listed = 1 ORDER BY a.name, z.name LIMIT 200");
 	$reader = new \Somethingwithproof\Cloudflare\Metrics\ZoneReader(cloudflare_db(), new SystemClock());

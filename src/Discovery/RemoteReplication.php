@@ -33,6 +33,11 @@ final class RemoteReplication {
 	/** @var Database */
 	private $db;
 
+	/**
+	 * Initialize RemoteReplication.
+	 *
+	 * @param Database $db
+	 */
 	public function __construct(Database $db) {
 		$this->db = $db;
 	}

@@ -31,11 +31,21 @@ use InvalidArgumentException;
  * secret references (vault:<account_id> or file:<path>) are allowed.
  */
 final class ConfigCodec {
+	/** @var string Format YAML. */
 	public const FORMAT_YAML    = 'yaml';
+	/** @var string Format XML. */
 	public const FORMAT_XML     = 'xml';
+	/** @var int Schema version. */
 	public const SCHEMA_VERSION = 1;
+	/** @var int Max bytes. */
 	public const MAX_BYTES      = 2097152;
 
+	/**
+	 * Is format.
+	 *
+	 * @param string $format
+	 * @return bool
+	 */
 	public static function isFormat(string $format): bool {
 		return $format === self::FORMAT_YAML || $format === self::FORMAT_XML;
 	}
@@ -169,6 +179,12 @@ final class ConfigCodec {
 		return $str;
 	}
 
+	/**
+	 * YAML key.
+	 *
+	 * @param string $key
+	 * @return string
+	 */
 	private static function yamlKey(string $key): string {
 		return preg_match('/^[A-Za-z0-9_-]+$/', $key) === 1 ? $key : json_encode($key);
 	}
@@ -361,6 +377,12 @@ final class ConfigCodec {
 		return false;
 	}
 
+	/**
+	 * Unquote scalar.
+	 *
+	 * @param string $raw
+	 * @return string
+	 */
 	private static function unquoteScalar(string $raw): string {
 		$len = strlen($raw);
 		if ($len >= 2 && $raw[0] === '"' && $raw[$len - 1] === '"') {

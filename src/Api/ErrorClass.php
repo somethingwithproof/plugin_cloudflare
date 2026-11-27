@@ -19,15 +19,24 @@
 
 namespace Somethingwithproof\Cloudflare\Api;
 
+/** Error class component for plugin_cloudflare. */
 final class ErrorClass {
+	/** @var string Auth. */
 	public const AUTH         = 'auth';
+	/** @var string Permission. */
 	public const PERMISSION   = 'permission';
+	/** @var string Not found. */
 	public const NOT_FOUND    = 'not_found';
+	/** @var string Rate limited. */
 	public const RATE_LIMITED = 'rate_limited';
+	/** @var string Transient. */
 	public const TRANSIENT    = 'transient';
+	/** @var string Malformed. */
 	public const MALFORMED    = 'malformed';
+	/** @var string Config. */
 	public const CONFIG       = 'config';
 
+	/** Initialize ErrorClass. */
 	private function __construct() {
 	}
 }

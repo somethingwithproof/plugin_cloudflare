@@ -28,15 +28,24 @@ use RuntimeException;
  * pastes a token into the path field does not get it echoed back.
  */
 final class SecretException extends RuntimeException {
+	/** @var int Global key. */
 	public const GLOBAL_KEY       = 1;
+	/** @var int Invalid. */
 	public const INVALID          = 2;
+	/** @var int Key unavailable. */
 	public const KEY_UNAVAILABLE  = 3;
+	/** @var int Decrypt failed. */
 	public const DECRYPT_FAILED   = 4;
+	/** @var int File unavailable. */
 	public const FILE_UNAVAILABLE = 5;
+	/** @var int File insecure. */
 	public const FILE_INSECURE    = 6;
+	/** @var int Encrypt failed. */
 	public const ENCRYPT_FAILED   = 7;
+	/** @var int File outside. */
 	public const FILE_OUTSIDE    = 8;
 
+	/** Reasons. */
 	private const REASONS = array(
 		self::GLOBAL_KEY       => 'global_key',
 		self::INVALID          => 'invalid',
@@ -48,6 +57,7 @@ final class SecretException extends RuntimeException {
 		self::FILE_OUTSIDE     => 'file_outside_directory',
 	);
 
+	/** Messages. */
 	private const MESSAGES = array(
 		self::GLOBAL_KEY       => 'Global API Keys are not accepted; use a scoped API token',
 		self::INVALID          => 'API token format is invalid',
@@ -60,6 +70,12 @@ final class SecretException extends RuntimeException {
 		self::FILE_OUTSIDE     => 'Token file is not inside the Token File Directory',
 	);
 
+	/**
+	 * Initialize SecretException.
+	 *
+	 * @param int $code
+	 * @param string $path
+	 */
 	public function __construct(int $code, string $path = '') {
 		$message = self::MESSAGES[$code] ?? 'Credential error';
 
@@ -70,6 +86,11 @@ final class SecretException extends RuntimeException {
 		parent::__construct($message, $code);
 	}
 
+	/**
+	 * Get reason.
+	 *
+	 * @return string
+	 */
 	public function getReason(): string {
 		return self::REASONS[$this->getCode()] ?? 'unknown';
 	}

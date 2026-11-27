@@ -85,6 +85,8 @@ jobs:
         run: composer install --no-interaction --no-progress --prefer-dist
       - name: Unit and integration tests with coverage
         run: make coverage
+      - name: Enforce minimum line coverage threshold
+        run: make coverage-check
       # workflow_dispatch does not automatically infer the selected branch.
       # Validate context before passing it to the scanner argument parser.
       - name: Select branch or pull request context

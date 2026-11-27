@@ -22,11 +22,22 @@ namespace Somethingwithproof\Cloudflare\Storage\Migrations;
 use Somethingwithproof\Cloudflare\Storage\Database;
 use Somethingwithproof\Cloudflare\Storage\Migration;
 
+/** M001 foundation component for plugin_cloudflare. */
 final class M001Foundation implements Migration {
+	/**
+	 * Version.
+	 *
+	 * @return int
+	 */
 	public function version(): int {
 		return 1;
 	}
 
+	/**
+	 * Statements.
+	 *
+	 * @param Database $db
+	 */
 	public function statements(Database $db): array {
 		$statements = array(
 			'CREATE TABLE IF NOT EXISTS plugin_cloudflare_accounts (
@@ -77,6 +88,14 @@ final class M001Foundation implements Migration {
 		return $statements;
 	}
 
+	/**
+	 * Foreign key exists.
+	 *
+	 * @param Database $db
+	 * @param string $table
+	 * @param string $name
+	 * @return bool
+	 */
 	private function foreignKeyExists(Database $db, string $table, string $name): bool {
 		return (int) $db->fetchCell(
 			'SELECT COUNT(*) FROM information_schema.table_constraints

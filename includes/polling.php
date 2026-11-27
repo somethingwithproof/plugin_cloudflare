@@ -145,6 +145,12 @@ function cloudflare_collector_sync(array $outcomes) : void {
 }
 
 // Nothing else creates discovery jobs, so an account added since the last run gets one here.
+/**
+ * Collector ensure jobs.
+ *
+ * @param Database $db
+ * @return void
+ */
 function cloudflare_collector_ensure_jobs(Database $db) : void {
 	$jobs = new JobRepository($db, new SystemClock());
 	$rows = $db->fetchAll(

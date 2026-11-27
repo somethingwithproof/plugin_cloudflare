@@ -47,6 +47,15 @@ final class ConfigService {
 	/** @var Clock */
 	private $clock;
 
+	/**
+	 * Initialize ConfigService.
+	 *
+	 * @param Database $db
+	 * @param AccountRepository $accounts
+	 * @param TunnelRepository $tunnels
+	 * @param MetricMappingRepository $mappings
+	 * @param Clock $clock
+	 */
 	public function __construct(
 		Database $db,
 		AccountRepository $accounts,
@@ -127,6 +136,12 @@ final class ConfigService {
 		);
 	}
 
+	/**
+	 * Export.
+	 *
+	 * @param string $format
+	 * @return string
+	 */
 	public function export(string $format = ConfigCodec::FORMAT_YAML): string {
 		return ConfigCodec::encode($format, $this->exportData());
 	}
@@ -391,6 +406,12 @@ final class ConfigService {
 		return $errors;
 	}
 
+	/**
+	 * Is valid secret ref.
+	 *
+	 * @param string $ref
+	 * @return bool
+	 */
 	private static function isValidSecretRef(string $ref): bool {
 		if (strpos($ref, 'vault:') === 0) {
 			return Ids::isAccountId(substr($ref, 6));

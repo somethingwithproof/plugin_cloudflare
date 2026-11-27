@@ -19,6 +19,7 @@
 
 namespace Somethingwithproof\Cloudflare\Metrics;
 
+/** Zone catalog component for plugin_cloudflare. */
 final class ZoneCatalog {
 	/** @return array<int, Metric> */
 	public static function all(): array {

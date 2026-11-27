@@ -30,11 +30,17 @@ use Somethingwithproof\Cloudflare\Config\ConfigService;
  * and apply cleanly without ever exposing raw tokens.
  */
 final class CascProvider {
+	/** @var string Slug. */
 	public const SLUG = 'cloudflare';
 
 	/** @var ConfigService */
 	private $service;
 
+	/**
+	 * Initialize CascProvider.
+	 *
+	 * @param ConfigService $service
+	 */
 	public function __construct(ConfigService $service) {
 		$this->service = $service;
 	}

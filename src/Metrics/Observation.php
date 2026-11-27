@@ -41,6 +41,15 @@ final class Observation {
 	/** @var int */
 	private $schemaVersion;
 
+	/**
+	 * Initialize Observation.
+	 *
+	 * @param string $metric
+	 * @param ?int $value
+	 * @param ?int $observedAt
+	 * @param ?string $reason
+	 * @param int $schemaVersion
+	 */
 	public function __construct(string $metric, ?int $value, ?int $observedAt, ?string $reason, int $schemaVersion) {
 		if (($value === null) === ($reason === null)) {
 			throw new InvalidArgumentException('an observation has a value or a reason, not both');
@@ -53,26 +62,56 @@ final class Observation {
 		$this->schemaVersion = $schemaVersion;
 	}
 
+	/**
+	 * Metric.
+	 *
+	 * @return string
+	 */
 	public function metric(): string {
 		return $this->metric;
 	}
 
+	/**
+	 * Value.
+	 *
+	 * @return ?int
+	 */
 	public function value(): ?int {
 		return $this->value;
 	}
 
+	/**
+	 * Observed at.
+	 *
+	 * @return ?int
+	 */
 	public function observedAt(): ?int {
 		return $this->observedAt;
 	}
 
+	/**
+	 * Reason.
+	 *
+	 * @return ?string
+	 */
 	public function reason(): ?string {
 		return $this->reason;
 	}
 
+	/**
+	 * Schema version.
+	 *
+	 * @return int
+	 */
 	public function schemaVersion(): int {
 		return $this->schemaVersion;
 	}
 
+	/**
+	 * RRD value.
+	 *
+	 * @return string
+	 */
 	public function rrdValue(): string {
 		return $this->value === null ? 'U' : (string) $this->value;
 	}

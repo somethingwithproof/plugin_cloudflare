@@ -24,23 +24,32 @@ use Somethingwithproof\Cloudflare\Storage\Database;
 use Somethingwithproof\Cloudflare\Support\Clock;
 use InvalidArgumentException;
 
+/** Job repository component for plugin_cloudflare. */
 final class JobRepository {
+	/** @var string Type discovery. */
 	public const TYPE_DISCOVERY = 'discovery';
 
+	/** @var string Table. */
 	private const TABLE = 'plugin_cloudflare_jobs';
 
+	/** @var int Owner max. */
 	private const OWNER_MAX = 64;
 
 	/* job_type is VARCHAR(32); a longer value would be truncated in a non-strict session. */
+	/** @var string Type pattern. */
 	private const TYPE_PATTERN = '/^[a-z_]{1,32}$/';
 
+	/** @var int Min retry. */
 	private const MIN_RETRY = 60;
 
+	/** @var int Max backoff. */
 	private const MAX_BACKOFF = 3600;
 
+	/** @var int Auth delay. */
 	private const AUTH_DELAY = 3600;
 
 	/* Matches only while the lease is unchanged, so a holder whose lease was taken over writes nothing. */
+	/** @var string Held. */
 	private const HELD = ' WHERE id = ? AND lease_owner = ? AND lease_until = ?';
 
 	/** @var Database */
@@ -49,6 +58,12 @@ final class JobRepository {
 	/** @var Clock */
 	private $clock;
 
+	/**
+	 * Initialize JobRepository.
+	 *
+	 * @param Database $db
+	 * @param Clock $clock
+	 */
 	public function __construct(Database $db, Clock $clock) {
 		$this->db    = $db;
 		$this->clock = $clock;
@@ -159,6 +174,13 @@ final class JobRepository {
 		return $matched === 1 ? new Lease($jobId, $owner, $until) : null;
 	}
 
+	/**
+	 * Succeed.
+	 *
+	 * @param Lease $lease
+	 * @param int $nextRunAt
+	 * @return void
+	 */
 	public function succeed(Lease $lease, int $nextRunAt): void {
 		$now = $this->clock->now();
 
@@ -220,6 +242,12 @@ final class JobRepository {
 		$this->writeHeld($lease, 'UPDATE ' . self::TABLE . ' SET outage_failures = 0' . self::HELD, array());
 	}
 
+	/**
+	 * Outage streak.
+	 *
+	 * @param Lease $lease
+	 * @return int
+	 */
 	public function outageStreak(Lease $lease): int {
 		return (int) $this->db->fetchCell(
 			'SELECT outage_failures FROM ' . self::TABLE . ' WHERE id = ?',
@@ -236,6 +264,12 @@ final class JobRepository {
 		$this->writeHeld($lease, 'UPDATE ' . self::TABLE . ' SET lease_owner = lease_owner' . self::HELD, array());
 	}
 
+	/**
+	 * Release.
+	 *
+	 * @param Lease $lease
+	 * @return void
+	 */
 	public function release(Lease $lease): void {
 		$this->writeHeld(
 			$lease,
@@ -268,6 +302,13 @@ final class JobRepository {
 	}
 
 	/* Doubles step by step so a long failure streak cannot overflow 2 ** $failures. */
+	/**
+	 * Backoff.
+	 *
+	 * @param int $interval
+	 * @param int $failures
+	 * @return int
+	 */
 	private static function backoff(int $interval, int $failures): int {
 		$delay = $interval;
 

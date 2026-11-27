@@ -26,8 +26,11 @@ use Somethingwithproof\Cloudflare\Storage\Migrations\M004Retirement;
 use Somethingwithproof\Cloudflare\Storage\Migrations\M005Analytics;
 use InvalidArgumentException;
 
+/** Migrator component for plugin_cloudflare. */
 final class Migrator {
+	/** @var string Lock name. */
 	const LOCK_NAME = 'plugin_cloudflare_migrate';
+	/** @var string Table. */
 	const TABLE = 'plugin_cloudflare_migrations';
 
 	/** @var Database */
@@ -71,6 +74,11 @@ final class Migrator {
 		return array_values(array_diff(array_keys($this->migrations), $this->appliedVersions()));
 	}
 
+	/**
+	 * Current version.
+	 *
+	 * @return int
+	 */
 	public function currentVersion(): int {
 		$applied = $this->appliedVersions();
 

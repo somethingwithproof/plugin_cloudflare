@@ -22,11 +22,22 @@ namespace Somethingwithproof\Cloudflare\Storage\Migrations;
 use Somethingwithproof\Cloudflare\Storage\Database;
 use Somethingwithproof\Cloudflare\Storage\Migration;
 
+/** M003 metrics component for plugin_cloudflare. */
 final class M003Metrics implements Migration {
+	/**
+	 * Version.
+	 *
+	 * @return int
+	 */
 	public function version(): int {
 		return 3;
 	}
 
+	/**
+	 * Statements.
+	 *
+	 * @param Database $db
+	 */
 	public function statements(Database $db): array {
 		/*
 		 * tunnel_id has no foreign key: tunnel rows are never deleted, only
@@ -82,6 +93,14 @@ final class M003Metrics implements Migration {
 		return $statements;
 	}
 
+	/**
+	 * Column exists.
+	 *
+	 * @param Database $db
+	 * @param string $table
+	 * @param string $column
+	 * @return bool
+	 */
 	private function columnExists(Database $db, string $table, string $column): bool {
 		return (int) $db->fetchCell(
 			'SELECT COUNT(*) FROM information_schema.columns

@@ -19,6 +19,7 @@
 
 namespace Somethingwithproof\Cloudflare\Http;
 
+/** HTTP transport contract for plugin_cloudflare. */
 interface HttpTransport {
 	/**
 	 * HTTP error statuses come back as a Response. Only failures below HTTP,

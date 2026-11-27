@@ -19,6 +19,7 @@
 
 namespace Somethingwithproof\Cloudflare\Api;
 
+/** Token status component for plugin_cloudflare. */
 final class TokenStatus {
 	/** @var string */
 	private $id;
@@ -29,16 +30,33 @@ final class TokenStatus {
 	/** @var int|null */
 	private $expiresOn;
 
+	/**
+	 * Initialize TokenStatus.
+	 *
+	 * @param string $id
+	 * @param string $status
+	 * @param ?int $expiresOn
+	 */
 	public function __construct(string $id, string $status, ?int $expiresOn) {
 		$this->id        = $id;
 		$this->status    = $status;
 		$this->expiresOn = $expiresOn;
 	}
 
+	/**
+	 * ID.
+	 *
+	 * @return string
+	 */
 	public function id(): string {
 		return $this->id;
 	}
 
+	/**
+	 * Status.
+	 *
+	 * @return string
+	 */
 	public function status(): string {
 		return $this->status;
 	}
@@ -48,6 +66,11 @@ final class TokenStatus {
 		return $this->expiresOn;
 	}
 
+	/**
+	 * Is active.
+	 *
+	 * @return bool
+	 */
 	public function isActive(): bool {
 		return $this->status === 'active';
 	}

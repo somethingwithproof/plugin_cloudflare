@@ -105,33 +105,69 @@ final class Account {
 		return $account;
 	}
 
+	/** Initialize Account. */
 	private function __construct() {
 	}
 
+	/**
+	 * ID.
+	 *
+	 * @return int
+	 */
 	public function id(): int {
 		return $this->id;
 	}
 
+	/**
+	 * CF account ID.
+	 *
+	 * @return string
+	 */
 	public function cfAccountId(): string {
 		return $this->cfAccountId;
 	}
 
+	/**
+	 * Name.
+	 *
+	 * @return string
+	 */
 	public function name(): string {
 		return $this->name;
 	}
 
+	/**
+	 * Has token.
+	 *
+	 * @return bool
+	 */
 	public function hasToken(): bool {
 		return $this->hasToken;
 	}
 
+	/**
+	 * Is enabled.
+	 *
+	 * @return bool
+	 */
 	public function isEnabled(): bool {
 		return $this->enabled;
 	}
 
+	/**
+	 * Status.
+	 *
+	 * @return string
+	 */
 	public function status(): string {
 		return $this->status;
 	}
 
+	/**
+	 * Status message.
+	 *
+	 * @return string
+	 */
 	public function statusMessage(): string {
 		return $this->statusMessage;
 	}
@@ -143,34 +179,74 @@ final class Account {
 		return $this->permissions;
 	}
 
+	/**
+	 * Last checked at.
+	 *
+	 * @return ?int
+	 */
 	public function lastCheckedAt(): ?int {
 		return $this->lastCheckedAt;
 	}
 
+	/**
+	 * Last verified at.
+	 *
+	 * @return ?int
+	 */
 	public function lastVerifiedAt(): ?int {
 		return $this->lastVerifiedAt;
 	}
 
+	/**
+	 * Collects tunnels.
+	 *
+	 * @return bool
+	 */
 	public function collectsTunnels(): bool {
 		return $this->collectTunnels;
 	}
 
+	/**
+	 * Collects analytics.
+	 *
+	 * @return bool
+	 */
 	public function collectsAnalytics(): bool {
 		return $this->collectAnalytics;
 	}
 
+	/**
+	 * Creates graphs.
+	 *
+	 * @return bool
+	 */
 	public function createsGraphs(): bool {
 		return $this->createGraphs;
 	}
 
+	/**
+	 * Discovery interval.
+	 *
+	 * @return int
+	 */
 	public function discoveryInterval(): int {
 		return $this->discoveryInterval;
 	}
 
+	/**
+	 * Created at.
+	 *
+	 * @return int
+	 */
 	public function createdAt(): int {
 		return $this->createdAt;
 	}
 
+	/**
+	 * Updated at.
+	 *
+	 * @return int
+	 */
 	public function updatedAt(): int {
 		return $this->updatedAt;
 	}

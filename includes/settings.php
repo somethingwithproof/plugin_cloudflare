@@ -19,6 +19,11 @@
 
 require_once __DIR__ . '/accounts.php';
 
+/**
+ * Config arrays.
+ *
+ * @return void
+ */
 function cloudflare_config_arrays() : void {
 	global $menu;
 
@@ -99,6 +104,11 @@ function cloudflare_draw_navigation_text($nav) {
 	return $nav;
 }
 
+/**
+ * Config settings.
+ *
+ * @return void
+ */
 function cloudflare_config_settings() : void {
 	global $tabs, $settings, $logfile_verbosity;
 

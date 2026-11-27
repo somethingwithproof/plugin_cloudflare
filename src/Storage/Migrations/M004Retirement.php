@@ -22,11 +22,22 @@ namespace Somethingwithproof\Cloudflare\Storage\Migrations;
 use Somethingwithproof\Cloudflare\Storage\Database;
 use Somethingwithproof\Cloudflare\Storage\Migration;
 
+/** M004 retirement component for plugin_cloudflare. */
 final class M004Retirement implements Migration {
+	/**
+	 * Version.
+	 *
+	 * @return int
+	 */
 	public function version(): int {
 		return 4;
 	}
 
+	/**
+	 * Statements.
+	 *
+	 * @param Database $db
+	 */
 	public function statements(Database $db): array {
 		$exists = (int) $db->fetchCell('SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = ? AND column_name = ?', array('plugin_cloudflare_tunnels', 'retired_at'));
 

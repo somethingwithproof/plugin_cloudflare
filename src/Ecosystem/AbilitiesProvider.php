@@ -34,9 +34,13 @@ use stdClass;
  * expose tokens, ciphertexts, or key file paths.
  */
 final class AbilitiesProvider {
+	/** @var string Category. */
 	public const CATEGORY           = 'cloudflare';
+	/** @var string Ability tunnels. */
 	public const ABILITY_TUNNELS    = 'cloudflare-list-tunnels';
+	/** @var string Ability get health. */
 	public const ABILITY_GET_HEALTH = 'cloudflare-get-health';
+	/** @var int Max results. */
 	private const MAX_RESULTS       = 200;
 
 	/** @var Database */
@@ -192,6 +196,12 @@ final class AbilitiesProvider {
 		);
 	}
 
+	/**
+	 * Can view.
+	 *
+	 * @param int $userId
+	 * @return bool
+	 */
 	private function canView(int $userId): bool {
 		return $userId > 0 && ($this->hasViewRealm)($userId) === true;
 	}

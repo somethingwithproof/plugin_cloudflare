@@ -21,7 +21,9 @@ namespace Somethingwithproof\Cloudflare\Auth;
 
 use RuntimeException;
 
+/** Access denied component for plugin_cloudflare. */
 final class AccessDenied extends RuntimeException {
+	/** Initialize AccessDenied. */
 	public function __construct() {
 		parent::__construct('Not authorized to configure Cloudflare accounts');
 	}

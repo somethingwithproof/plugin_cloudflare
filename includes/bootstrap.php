@@ -89,6 +89,11 @@ function cloudflare_token_directory() : string {
 	return trim((string) read_config_option('cloudflare_token_dir'));
 }
 
+/**
+ * Vault.
+ *
+ * @return ?TokenVault
+ */
 function cloudflare_vault() : ?TokenVault {
 	$path = trim((string) read_config_option('cloudflare_key_file'));
 
@@ -131,6 +136,14 @@ function cloudflare_setting_int(string $name, int $default, int $min, int $max) 
 	return $value === false ? $default : $value;
 }
 
+/**
+ * Client.
+ *
+ * @param int $connect
+ * @param int $total
+ * @param RetryPolicy $retry
+ * @return CloudflareClient
+ */
 function cloudflare_client(int $connect, int $total, RetryPolicy $retry) : CloudflareClient {
 	return new CloudflareClient(
 		new CurlTransport(OutboundPolicy::production()),
@@ -150,6 +163,11 @@ function cloudflare_ui_retry_policy(Sleeper $sleeper) : RetryPolicy {
 	return new RetryPolicy(new SystemClock(), $sleeper, 1, 2);
 }
 
+/**
+ * Account service.
+ *
+ * @return AccountService
+ */
 function cloudflare_account_service() : AccountService {
 	$db = cloudflare_db();
 
@@ -207,6 +225,12 @@ function cloudflare_discovery_service() : DiscoveryService {
 }
 
 // A read failure counts as disabled, so the run stops instead of carrying on blind.
+/**
+ * Plugin status enabled.
+ *
+ * @param Database $db
+ * @return bool
+ */
 function cloudflare_plugin_status_enabled(Database $db) : bool {
 	try {
 		return (int) $db->fetchCell('SELECT status FROM plugin_config WHERE directory = ?', array('cloudflare')) === 1;
@@ -215,6 +239,11 @@ function cloudflare_plugin_status_enabled(Database $db) : bool {
 	}
 }
 
+/**
+ * Analytics collector.
+ *
+ * @return Somethingwithproof\Cloudflare\Discovery\AnalyticsCollector
+ */
 function cloudflare_analytics_collector() : \Somethingwithproof\Cloudflare\Discovery\AnalyticsCollector {
 	$db       = cloudflare_db();
 	$clock    = new SystemClock();

@@ -23,16 +23,20 @@ use Somethingwithproof\Cloudflare\Storage\Database;
 use InvalidArgumentException;
 use OutOfBoundsException;
 
+/** Account repository component for plugin_cloudflare. */
 final class AccountRepository {
+	/** @var string Table. */
 	private const TABLE = 'plugin_cloudflare_accounts';
 
 	/* token_ciphertext is deliberately absent; only tokenMaterial() reads it. */
+	/** @var string Read columns. */
 	private const READ_COLUMNS = 'id, cf_account_id, name, token_source, token_file,
 		(token_ciphertext IS NOT NULL AND token_ciphertext <> \'\') AS has_ciphertext,
 		enabled, status, status_message, permissions, last_checked_at,
 		last_verified_at, collect_tunnels, collect_analytics, create_graphs, discovery_interval,
 		created_at, updated_at';
 
+	/** Writable. */
 	private const WRITABLE = array(
 		'cf_account_id',
 		'name',
@@ -56,10 +60,21 @@ final class AccountRepository {
 	/** @var Database */
 	private $db;
 
+	/**
+	 * Initialize AccountRepository.
+	 *
+	 * @param Database $db
+	 */
 	public function __construct(Database $db) {
 		$this->db = $db;
 	}
 
+	/**
+	 * Find.
+	 *
+	 * @param int $id
+	 * @return ?Account
+	 */
 	public function find(int $id): ?Account {
 		$row = $this->db->fetchRow('SELECT ' . self::READ_COLUMNS . ' FROM ' . self::TABLE . ' WHERE id = ?', array($id));
 
@@ -116,6 +131,12 @@ final class AccountRepository {
 		$this->db->execute('UPDATE ' . self::TABLE . ' SET ' . implode(', ', $assignments) . ' WHERE id = ?', $params);
 	}
 
+	/**
+	 * Delete.
+	 *
+	 * @param int $id
+	 * @return void
+	 */
 	public function delete(int $id): void {
 		$this->db->execute('DELETE FROM ' . self::TABLE . ' WHERE id = ?', array($id));
 	}

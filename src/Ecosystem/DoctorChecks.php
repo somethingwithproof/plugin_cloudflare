@@ -34,6 +34,7 @@ use Somethingwithproof\Cloudflare\Support\Clock;
  * or API token material.
  */
 final class DoctorChecks {
+	/** @var string Category. */
 	public const CATEGORY = 'cloudflare';
 
 	/** @var Database */
@@ -51,6 +52,15 @@ final class DoctorChecks {
 	/** @var string */
 	private $tokenDir;
 
+	/**
+	 * Initialize DoctorChecks.
+	 *
+	 * @param Database $db
+	 * @param AccountRepository $accounts
+	 * @param Clock $clock
+	 * @param string $keyFile
+	 * @param string $tokenDir
+	 */
 	public function __construct(
 		Database $db,
 		AccountRepository $accounts,

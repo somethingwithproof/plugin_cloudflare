@@ -34,6 +34,12 @@ final class DatabaseException extends RuntimeException {
 	/** @var int */
 	private $driverCode;
 
+	/**
+	 * Initialize DatabaseException.
+	 *
+	 * @param string $sqlState
+	 * @param int $driverCode
+	 */
 	public function __construct(string $sqlState, int $driverCode) {
 		$this->sqlState   = $sqlState;
 		$this->driverCode = $driverCode;
@@ -41,10 +47,20 @@ final class DatabaseException extends RuntimeException {
 		parent::__construct('SQLSTATE[' . $sqlState . '] driver error ' . $driverCode);
 	}
 
+	/**
+	 * Get SQL state.
+	 *
+	 * @return string
+	 */
 	public function getSqlState(): string {
 		return $this->sqlState;
 	}
 
+	/**
+	 * Get driver code.
+	 *
+	 * @return int
+	 */
 	public function getDriverCode(): int {
 		return $this->driverCode;
 	}

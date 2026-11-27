@@ -126,6 +126,11 @@ function cloudflare_retire_tunnel(int $id, ?Database $db = null) : bool {
 	}
 }
 
+/**
+ * Accounts retire.
+ *
+ * @return ?string
+ */
 function cloudflare_accounts_retire() : ?string {
 	if (!cloudflare_device_permitted()) {
 		raise_ajax_permission_denied();

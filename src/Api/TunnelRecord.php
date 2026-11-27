@@ -19,6 +19,7 @@
 
 namespace Somethingwithproof\Cloudflare\Api;
 
+/** Tunnel record component for plugin_cloudflare. */
 final class TunnelRecord {
 	/** @var string */
 	public $id;

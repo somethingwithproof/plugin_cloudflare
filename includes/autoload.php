@@ -22,6 +22,12 @@
  * PSR-4 loader. A development checkout uses Composer's autoloader instead.
  */
 if (!function_exists('cloudflare_autoload')) {
+	/**
+	 * Autoload.
+	 *
+	 * @param string $class
+	 * @return void
+	 */
 	function cloudflare_autoload(string $class) : void {
 		$prefix = 'Somethingwithproof\\Cloudflare\\';
 

@@ -27,10 +27,15 @@ use LogicException;
  * fails authentication instead of decrypting.
  */
 final class TokenVault {
+	/** @var string Cipher. */
 	private const CIPHER = 'aes-256-gcm';
+	/** @var string Prefix. */
 	private const PREFIX = 'v1:';
+	/** @var int Nonce bytes. */
 	private const NONCE_BYTES = 12;
+	/** @var int Tag bytes. */
 	private const TAG_BYTES = 16;
+	/** @var int Key bytes. */
 	private const KEY_BYTES = 32;
 
 	/**
@@ -42,10 +47,16 @@ final class TokenVault {
 	 */
 	private static $keys = array();
 
+	/**
+	 * Initialize TokenVault.
+	 *
+	 * @param string $key
+	 */
 	private function __construct(string $key) {
 		self::$keys[spl_object_id($this)] = $key;
 	}
 
+	/** Release sensitive state on destruction. */
 	public function __destruct() {
 		$id = spl_object_id($this);
 
@@ -57,6 +68,7 @@ final class TokenVault {
 		}
 	}
 
+	/** Prevent cloning sensitive instances. */
 	private function __clone() {
 	}
 
@@ -67,6 +79,11 @@ final class TokenVault {
 		throw new LogicException('TokenVault cannot be serialized');
 	}
 
+	/**
+	 * Prevent unserialization of sensitive instances.
+	 *
+	 * @return void
+	 */
 	public function __wakeup(): void {
 		throw new LogicException('TokenVault cannot be unserialized');
 	}
@@ -153,10 +170,23 @@ final class TokenVault {
 		return self::$keys[$id];
 	}
 
+	/**
+	 * AAD for.
+	 *
+	 * @param string $cfAccountId
+	 * @return string
+	 */
 	public static function aadFor(string $cfAccountId): string {
 		return 'plugin_cloudflare:account:' . $cfAccountId;
 	}
 
+	/**
+	 * Encrypt.
+	 *
+	 * @param string $token
+	 * @param string $aad
+	 * @return string
+	 */
 	public function encrypt(
 		#[\SensitiveParameter]
 		string $token,

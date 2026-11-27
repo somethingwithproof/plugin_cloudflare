@@ -19,11 +19,16 @@
 
 namespace Somethingwithproof\Cloudflare\Metrics;
 
+/** Metric component for plugin_cloudflare. */
 final class Metric {
+	/** @var string Gauge. */
 	public const GAUGE   = 'GAUGE';
+	/** @var string Counter. */
 	public const COUNTER = 'COUNTER';
 
+	/** @var string Kind state. */
 	public const KIND_STATE      = 'state';
+	/** @var string Kind collection. */
 	public const KIND_COLLECTION = 'collection';
 
 	/** @var string */
@@ -73,34 +78,74 @@ final class Metric {
 		$this->kind       = $kind;
 	}
 
+	/**
+	 * Name.
+	 *
+	 * @return string
+	 */
 	public function name(): string {
 		return $this->name;
 	}
 
+	/**
+	 * Query field.
+	 *
+	 * @return string
+	 */
 	public function queryField(): string {
 		return $this->queryField;
 	}
 
+	/**
+	 * DS name.
+	 *
+	 * @return string
+	 */
 	public function dsName(): string {
 		return $this->dsName;
 	}
 
+	/**
+	 * Type.
+	 *
+	 * @return string
+	 */
 	public function type(): string {
 		return $this->type;
 	}
 
+	/**
+	 * Unit.
+	 *
+	 * @return string
+	 */
 	public function unit(): string {
 		return $this->unit;
 	}
 
+	/**
+	 * Min.
+	 *
+	 * @return int
+	 */
 	public function min(): int {
 		return $this->min;
 	}
 
+	/**
+	 * Max.
+	 *
+	 * @return ?int
+	 */
 	public function max(): ?int {
 		return $this->max;
 	}
 
+	/**
+	 * Kind.
+	 *
+	 * @return string
+	 */
 	public function kind(): string {
 		return $this->kind;
 	}

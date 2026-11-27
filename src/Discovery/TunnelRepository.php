@@ -22,11 +22,15 @@ namespace Somethingwithproof\Cloudflare\Discovery;
 use Somethingwithproof\Cloudflare\Storage\Database;
 use InvalidArgumentException;
 
+/** Tunnel repository component for plugin_cloudflare. */
 final class TunnelRepository {
+	/** @var string Table. */
 	private const TABLE = 'plugin_cloudflare_tunnels';
 
+	/** Lifecycles. */
 	public const LIFECYCLES = array('active', 'unavailable', 'deleted');
 
+	/** CF statuses. */
 	public const CF_STATUSES = array('healthy', 'degraded', 'down', 'inactive');
 
 	/**
@@ -45,11 +49,17 @@ final class TunnelRepository {
 
 	/* Worst first. An inactive tunnel has no connector running, which may be
 	 * deliberate, so it ranks below a healthy one rather than above it. */
+	/** Health rank. */
 	private const HEALTH_RANK = array('down' => 0, 'degraded' => 1, 'healthy' => 2, 'inactive' => 3);
 
 	/** @var Database */
 	private $db;
 
+	/**
+	 * Initialize TunnelRepository.
+	 *
+	 * @param Database $db
+	 */
 	public function __construct(Database $db) {
 		$this->db = $db;
 	}

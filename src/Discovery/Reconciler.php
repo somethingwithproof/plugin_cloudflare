@@ -39,6 +39,12 @@ final class Reconciler {
 	/** @var Clock */
 	private $clock;
 
+	/**
+	 * Initialize Reconciler.
+	 *
+	 * @param Database $db
+	 * @param Clock $clock
+	 */
 	public function __construct(Database $db, Clock $clock) {
 		$this->db    = $db;
 		$this->clock = $clock;

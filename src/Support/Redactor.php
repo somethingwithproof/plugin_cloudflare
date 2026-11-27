@@ -19,7 +19,9 @@
 
 namespace Somethingwithproof\Cloudflare\Support;
 
+/** Redactor component for plugin_cloudflare. */
 final class Redactor {
+	/** @var string Mark. */
 	private const MARK = '[REDACTED]';
 
 	/**

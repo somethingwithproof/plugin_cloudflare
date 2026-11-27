@@ -27,7 +27,7 @@ export CF_SMOKE_CACTI_TAG := $(notdir $(CACTI_REF))
 # interleave their resets.
 .NOTPARALLEL:
 
-.PHONY: test test-integration bdd stan cs lint74 i18n i18n-check db-up db-down ci coverage package templates cacti-src smoke smoke-up smoke-down screenshots
+.PHONY: test test-integration bdd stan cs lint74 i18n i18n-check db-up db-down ci coverage coverage-check package templates cacti-src smoke smoke-up smoke-down screenshots
 
 test:
 	$(PHPUNIT) --testsuite unit
@@ -74,6 +74,9 @@ i18n-check:
 # default, which left the glue at zero, so it is pointed at the whole tree.
 coverage:
 	php -d memory_limit=-1 -d opcache.enable_cli=0 -d opcache.jit=0 -d opcache.jit_buffer_size=0 -d pcov.directory=. -d 'pcov.exclude=~/(vendor|tests)/~' $(PHPUNIT) --coverage-clover build/coverage/clover.xml
+
+coverage-check:
+	php tests/build/check_coverage.php build/coverage/clover.xml 88
 
 package:
 	bash tests/build/package.sh

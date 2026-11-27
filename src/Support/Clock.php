@@ -19,6 +19,12 @@
 
 namespace Somethingwithproof\Cloudflare\Support;
 
+/** Clock contract for plugin_cloudflare. */
 interface Clock {
+	/**
+	 * Now.
+	 *
+	 * @return int
+	 */
 	public function now(): int;
 }

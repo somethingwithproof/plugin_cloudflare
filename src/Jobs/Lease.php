@@ -33,20 +33,42 @@ final class Lease {
 	/** @var int */
 	private $leaseUntil;
 
+	/**
+	 * Initialize Lease.
+	 *
+	 * @param int $jobId
+	 * @param string $owner
+	 * @param int $leaseUntil
+	 */
 	public function __construct(int $jobId, string $owner, int $leaseUntil) {
 		$this->jobId      = $jobId;
 		$this->owner      = $owner;
 		$this->leaseUntil = $leaseUntil;
 	}
 
+	/**
+	 * Job ID.
+	 *
+	 * @return int
+	 */
 	public function jobId(): int {
 		return $this->jobId;
 	}
 
+	/**
+	 * Owner.
+	 *
+	 * @return string
+	 */
 	public function owner(): string {
 		return $this->owner;
 	}
 
+	/**
+	 * Lease until.
+	 *
+	 * @return int
+	 */
 	public function leaseUntil(): int {
 		return $this->leaseUntil;
 	}

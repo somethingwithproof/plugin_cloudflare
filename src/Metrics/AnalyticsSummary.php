@@ -29,9 +29,13 @@ use Somethingwithproof\Cloudflare\Support\Clock;
  * with the plugin's RRD data source names (never substituting zero for unknown).
  */
 final class AnalyticsSummary {
+	/** @var string Status ok. */
 	public const STATUS_OK       = 'ok';
+	/** @var string Status degraded. */
 	public const STATUS_DEGRADED = 'degraded';
+	/** @var string Status critical. */
 	public const STATUS_CRITICAL = 'critical';
+	/** @var string Status unknown. */
 	public const STATUS_UNKNOWN  = 'unknown';
 
 	/** @var Database */
@@ -40,6 +44,12 @@ final class AnalyticsSummary {
 	/** @var Clock */
 	private $clock;
 
+	/**
+	 * Initialize AnalyticsSummary.
+	 *
+	 * @param Database $db
+	 * @param Clock $clock
+	 */
 	public function __construct(Database $db, Clock $clock) {
 		$this->db    = $db;
 		$this->clock = $clock;

@@ -22,11 +22,22 @@ namespace Somethingwithproof\Cloudflare\Storage\Migrations;
 use Somethingwithproof\Cloudflare\Storage\Database;
 use Somethingwithproof\Cloudflare\Storage\Migration;
 
+/** M005 analytics component for plugin_cloudflare. */
 final class M005Analytics implements Migration {
+	/**
+	 * Version.
+	 *
+	 * @return int
+	 */
 	public function version(): int {
 		return 5;
 	}
 
+	/**
+	 * Statements.
+	 *
+	 * @param Database $db
+	 */
 	public function statements(Database $db): array {
 		return array("CREATE TABLE IF NOT EXISTS plugin_cloudflare_zones (
 			account_id INT UNSIGNED NOT NULL,

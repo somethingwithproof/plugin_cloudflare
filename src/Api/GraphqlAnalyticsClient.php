@@ -30,11 +30,16 @@ use Somethingwithproof\Cloudflare\Support\Ids;
  * ApiException instead of fabricating zero metrics.
  */
 final class GraphqlAnalyticsClient {
+	/** @var string Query zone settings. */
 	public const QUERY_ZONE_SETTINGS     = 'zone_settings';
+	/** @var string Query zone HTTP metrics. */
 	public const QUERY_ZONE_HTTP_METRICS = 'zone_http_metrics';
+	/** @var string Query zone edge latency. */
 	public const QUERY_ZONE_EDGE_LATENCY = 'zone_edge_latency';
+	/** @var string Query tunnel analytics. */
 	public const QUERY_TUNNEL_ANALYTICS  = 'tunnel_analytics';
 
+	/** Allowlist. */
 	private const ALLOWLIST = array(
 		self::QUERY_ZONE_SETTINGS => 'query($zone: string!) { viewer { zones(filter: {zoneTag: $zone}) { settings { httpRequestsAdaptiveGroups { enabled maxDuration notOlderThan maxPageSize maxNumberOfFields } } } } }',
 		self::QUERY_ZONE_HTTP_METRICS => 'query($zone: string!, $start: Time!, $end: Time!) { viewer { zones(filter: {zoneTag: $zone}) { total: httpRequestsAdaptiveGroups(limit: 1, filter: {datetime_geq: $start, datetime_lt: $end, requestSource: "eyeball"}) { count sum { edgeResponseBytes } avg { sampleInterval edgeTimeToFirstByteMs } quantiles { edgeTimeToFirstByteMsP95 } } errors: httpRequestsAdaptiveGroups(limit: 1, filter: {datetime_geq: $start, datetime_lt: $end, requestSource: "eyeball", edgeResponseStatus_geq: 500, edgeResponseStatus_lt: 600}) { count } } } }',
@@ -45,6 +50,11 @@ final class GraphqlAnalyticsClient {
 	/** @var CloudflareClient */
 	private $client;
 
+	/**
+	 * Initialize GraphqlAnalyticsClient.
+	 *
+	 * @param CloudflareClient $client
+	 */
 	public function __construct(CloudflareClient $client) {
 		$this->client = $client;
 	}

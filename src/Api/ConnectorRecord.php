@@ -19,6 +19,7 @@
 
 namespace Somethingwithproof\Cloudflare\Api;
 
+/** Connector record component for plugin_cloudflare. */
 final class ConnectorRecord {
 	/** @var string */
 	public $id;

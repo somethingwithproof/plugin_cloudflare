@@ -31,6 +31,7 @@ use InvalidArgumentException;
  * behind until the next Create Cacti device replaces it.
  */
 final class ResourceRepository {
+	/** @var string Table. */
 	private const TABLE = 'plugin_cloudflare_resources';
 
 	/** @var Database */
@@ -39,6 +40,12 @@ final class ResourceRepository {
 	/** @var Clock */
 	private $clock;
 
+	/**
+	 * Initialize ResourceRepository.
+	 *
+	 * @param Database $db
+	 * @param Clock $clock
+	 */
 	public function __construct(Database $db, Clock $clock) {
 		$this->db    = $db;
 		$this->clock = $clock;
@@ -119,6 +126,17 @@ final class ResourceRepository {
 		return $graphs;
 	}
 
+	/**
+	 * Record graph.
+	 *
+	 * @param int $accountId
+	 * @param int $tunnelId
+	 * @param string $templateHash
+	 * @param int $hostId
+	 * @param int $localGraphId
+	 * @param int $localDataId
+	 * @return void
+	 */
 	public function recordGraph(
 		int $accountId,
 		int $tunnelId,

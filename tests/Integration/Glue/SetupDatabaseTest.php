@@ -195,6 +195,10 @@ final class SetupDatabaseTest extends IntegrationTestCase {
 		), cloudflare_glue_calls('api_plugin_register_realm'));
 		$this->assertSame(array(
 			array('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', true),
+			array('cloudflare', 'abilities_register', 'cloudflare_abilities_register', 'includes/ecosystem.php', true),
+			array('cloudflare', 'doctor_register_checks', 'cloudflare_doctor_register_checks', 'includes/ecosystem.php', true),
+			array('cloudflare', 'casc_register_providers', 'cloudflare_casc_register_providers', 'includes/ecosystem.php', true),
+			array('cloudflare', 'replicate_out', 'cloudflare_replicate_out', 'includes/ecosystem.php', true),
 		), cloudflare_glue_calls('api_plugin_register_hook'));
 	}
 
@@ -210,6 +214,10 @@ final class SetupDatabaseTest extends IntegrationTestCase {
 		$this->assertSame(
 			array(
 				array('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', true),
+				array('cloudflare', 'abilities_register', 'cloudflare_abilities_register', 'includes/ecosystem.php', true),
+				array('cloudflare', 'doctor_register_checks', 'cloudflare_doctor_register_checks', 'includes/ecosystem.php', true),
+				array('cloudflare', 'casc_register_providers', 'cloudflare_casc_register_providers', 'includes/ecosystem.php', true),
+				array('cloudflare', 'replicate_out', 'cloudflare_replicate_out', 'includes/ecosystem.php', true),
 				array('cloudflare', 'poller_bottom', 'cloudflare_poller_bottom', 'includes/polling.php', true),
 			),
 			cloudflare_glue_calls('api_plugin_register_hook')
@@ -281,9 +289,15 @@ final class SetupDatabaseTest extends IntegrationTestCase {
 		);
 		$this->assertSame(6, $this->mappingCount());
 		$this->assertSame(
-			array(array('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', true)),
+			array(
+				array('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', true),
+				array('cloudflare', 'abilities_register', 'cloudflare_abilities_register', 'includes/ecosystem.php', true),
+				array('cloudflare', 'doctor_register_checks', 'cloudflare_doctor_register_checks', 'includes/ecosystem.php', true),
+				array('cloudflare', 'casc_register_providers', 'cloudflare_casc_register_providers', 'includes/ecosystem.php', true),
+				array('cloudflare', 'replicate_out', 'cloudflare_replicate_out', 'includes/ecosystem.php', true),
+			),
 			cloudflare_glue_calls('api_plugin_register_hook'),
-			'0.2.0 keeps its poller hook and gains role inheritance'
+			'0.2.0 keeps its poller hook and gains role inheritance and ecosystem hooks'
 		);
 		$this->assertSame(array(
 			array('UPDATE plugin_config SET version = ? WHERE directory = ?', array('0.4.0-dev', 'cloudflare')),

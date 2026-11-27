@@ -370,6 +370,10 @@ final class PollingTest extends IntegrationTestCase {
 		$this->assertSame(
 			array(
 				array('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', true),
+				array('cloudflare', 'abilities_register', 'cloudflare_abilities_register', 'includes/ecosystem.php', true),
+				array('cloudflare', 'doctor_register_checks', 'cloudflare_doctor_register_checks', 'includes/ecosystem.php', true),
+				array('cloudflare', 'casc_register_providers', 'cloudflare_casc_register_providers', 'includes/ecosystem.php', true),
+				array('cloudflare', 'replicate_out', 'cloudflare_replicate_out', 'includes/ecosystem.php', true),
 				array('cloudflare', 'poller_bottom', 'cloudflare_poller_bottom', 'includes/polling.php', true),
 			),
 			cloudflare_glue_calls('api_plugin_register_hook')
@@ -382,6 +386,10 @@ final class PollingTest extends IntegrationTestCase {
 		$this->assertSame(
 			array(
 				array('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', false),
+				array('cloudflare', 'abilities_register', 'cloudflare_abilities_register', 'includes/ecosystem.php', false),
+				array('cloudflare', 'doctor_register_checks', 'cloudflare_doctor_register_checks', 'includes/ecosystem.php', false),
+				array('cloudflare', 'casc_register_providers', 'cloudflare_casc_register_providers', 'includes/ecosystem.php', false),
+				array('cloudflare', 'replicate_out', 'cloudflare_replicate_out', 'includes/ecosystem.php', false),
 				array('cloudflare', 'poller_bottom', 'cloudflare_poller_bottom', 'includes/polling.php', false),
 			),
 			cloudflare_glue_calls('api_plugin_register_hook')

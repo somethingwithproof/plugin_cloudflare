@@ -147,7 +147,7 @@ final class EcosystemIntegrationTest extends TestCase {
 			}
 		);
 
-		$registrar = new class() {
+		$registrar = new class () {
 			/** @var array<string, string> */
 			public $categories = array();
 			/** @var array<string, array<string, mixed>> */
@@ -252,7 +252,7 @@ final class EcosystemIntegrationTest extends TestCase {
 		$this->assertTrue(($providers['cloudflare']['validate'])($yaml, ConfigCodec::FORMAT_YAML)['valid']);
 
 		$replication = new RemoteReplication($db);
-		$sink        = new class() {
+		$sink        = new class () {
 			/** @var array<string, array{poller_id: int, rows: array<int, array<string, mixed>>}> */
 			public $tables = array();
 
@@ -284,7 +284,7 @@ final class EcosystemIntegrationTest extends TestCase {
 		$this->assertStringNotContainsString($secret, (string) json_encode($tables));
 
 		// Object registrar coverage on CascProvider and invalid YAML error branches
-		$cascObj = new class() {
+		$cascObj = new class () {
 			/** @var array<string, array<string, mixed>> */
 			public $items = array();
 
@@ -355,7 +355,7 @@ final class EcosystemIntegrationTest extends TestCase {
 		$GLOBALS['database_default']  = 'memory';
 		$GLOBALS['database_sessions'] = array('sqlite:0:memory' => $pdo);
 
-		$registrar = new class() {
+		$registrar = new class () {
 			/** @var array<string, array<string, mixed>> */
 			public $abilities = array();
 

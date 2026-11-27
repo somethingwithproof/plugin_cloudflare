@@ -139,9 +139,9 @@ function cloudflare_setting_int(string $name, int $default, int $min, int $max) 
 /**
  * Client.
  *
- * @param int $connect
- * @param int $total
- * @param RetryPolicy $retry
+ * @param  int              $connect
+ * @param  int              $total
+ * @param  RetryPolicy      $retry
  * @return CloudflareClient
  */
 function cloudflare_client(int $connect, int $total, RetryPolicy $retry) : CloudflareClient {
@@ -228,7 +228,7 @@ function cloudflare_discovery_service() : DiscoveryService {
 /**
  * Plugin status enabled.
  *
- * @param Database $db
+ * @param  Database $db
  * @return bool
  */
 function cloudflare_plugin_status_enabled(Database $db) : bool {

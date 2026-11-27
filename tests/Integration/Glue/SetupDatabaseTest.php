@@ -414,7 +414,7 @@ final class SetupDatabaseTest extends IntegrationTestCase {
 
 		// Second upgrade at 0.4.0-dev (idempotent no-op with all rows preserved).
 		cloudflare_glue_reset();
-		$GLOBALS['cloudflare_glue']['cell'] = static function (string $sql) : string {
+		$GLOBALS['cloudflare_glue']['cell'] = static function (string $sql): string {
 			return strpos($sql, 'FROM plugin_config') !== false ? '0.4.0-dev' : '1';
 		};
 

@@ -25,7 +25,7 @@ if (!function_exists('cloudflare_autoload')) {
 	/**
 	 * Autoload.
 	 *
-	 * @param string $class
+	 * @param  string $class
 	 * @return void
 	 */
 	function cloudflare_autoload(string $class) : void {

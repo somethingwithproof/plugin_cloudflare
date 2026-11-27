@@ -117,8 +117,8 @@ function cloudflare_accounts_unreadable_text() : string {
 /**
  * Accounts unreadable.
  *
- * @param string $context
- * @param DatabaseException $e
+ * @param  string            $context
+ * @param  DatabaseException $e
  * @return void
  */
 function cloudflare_accounts_unreadable(string $context, DatabaseException $e) : void {
@@ -581,7 +581,7 @@ function cloudflare_accounts_edit() : ?string {
 /**
  * Accounts time.
  *
- * @param ?int $timestamp
+ * @param  ?int   $timestamp
  * @return string
  */
 function cloudflare_accounts_time(?int $timestamp) : string {
@@ -591,7 +591,7 @@ function cloudflare_accounts_time(?int $timestamp) : string {
 /**
  * Accounts status.
  *
- * @param Account $account
+ * @param  Account $account
  * @return void
  */
 function cloudflare_accounts_status(Account $account) : void {

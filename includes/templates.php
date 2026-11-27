@@ -35,7 +35,7 @@ if (!defined('CLOUDFLARE_TEMPLATES_LOCK')) {
 /**
  * Template hash.
  *
- * @param string $key
+ * @param  string $key
  * @return string
  */
 function cloudflare_template_hash(string $key) : string {
@@ -109,8 +109,8 @@ function cloudflare_templates_install(int $lock_timeout = 10) : bool {
 /**
  * Templates install locked.
  *
- * @param Database $db
- * @param string $target
+ * @param  Database $db
+ * @param  string   $target
  * @return bool
  */
 function cloudflare_templates_install_locked(Database $db, string $target) : bool {
@@ -317,8 +317,8 @@ function cloudflare_templates_ready() : ?array {
 /**
  * Template ID.
  *
- * @param string $table
- * @param string $key
+ * @param  string $table
+ * @param  string $key
  * @return ?int
  */
 function cloudflare_template_id(string $table, string $key) : ?int {

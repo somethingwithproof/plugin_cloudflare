@@ -25,11 +25,11 @@ use Somethingwithproof\Cloudflare\Support\SystemClock;
 /**
  * Zone SS.
  *
- * @param string $host
- * @param string $cmd
- * @param string $field
- * @param string $zone
- * @param ?ZoneReader $reader
+ * @param  string      $host
+ * @param  string      $cmd
+ * @param  string      $field
+ * @param  string      $zone
+ * @param  ?ZoneReader $reader
  * @return string
  */
 function cloudflare_zone_ss(string $host, string $cmd, string $field, string $zone, ?ZoneReader $reader = null) : string {

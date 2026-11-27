@@ -76,7 +76,7 @@ coverage:
 	php -d memory_limit=-1 -d opcache.enable_cli=0 -d opcache.jit=0 -d opcache.jit_buffer_size=0 -d pcov.directory=. -d 'pcov.exclude=~/(vendor|tests)/~' $(PHPUNIT) --coverage-clover build/coverage/clover.xml
 
 coverage-check:
-	php tests/build/check_coverage.php build/coverage/clover.xml 88
+	php tests/build/check_coverage.php build/coverage/clover.xml 90
 
 package:
 	bash tests/build/package.sh

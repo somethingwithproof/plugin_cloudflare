@@ -148,7 +148,7 @@ function cloudflare_collector_sync(array $outcomes) : void {
 /**
  * Collector ensure jobs.
  *
- * @param Database $db
+ * @param  Database $db
  * @return void
  */
 function cloudflare_collector_ensure_jobs(Database $db) : void {

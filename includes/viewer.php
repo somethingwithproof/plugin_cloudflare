@@ -52,8 +52,8 @@ function cloudflare_viewer_unreadable_text() : string {
 /**
  * Viewer unreadable.
  *
- * @param string $context
- * @param Throwable $e
+ * @param  string    $context
+ * @param  Throwable $e
  * @return void
  */
 function cloudflare_viewer_unreadable(string $context, Throwable $e) : void {
@@ -67,7 +67,7 @@ function cloudflare_viewer_unreadable(string $context, Throwable $e) : void {
 /**
  * Viewer time.
  *
- * @param ?int $timestamp
+ * @param  ?int   $timestamp
  * @return string
  */
 function cloudflare_viewer_time(?int $timestamp) : string {
@@ -78,8 +78,8 @@ function cloudflare_viewer_time(?int $timestamp) : string {
 /**
  * Viewer notice.
  *
- * @param string $title
- * @param string $text
+ * @param  string $title
+ * @param  string $text
  * @return void
  */
 function cloudflare_viewer_notice(string $title, string $text) : void {
@@ -94,7 +94,7 @@ function cloudflare_viewer_notice(string $title, string $text) : void {
 /**
  * Viewer tabs.
  *
- * @param string $current
+ * @param  string $current
  * @return void
  */
 function cloudflare_viewer_tabs(string $current) : void {
@@ -832,7 +832,7 @@ function cloudflare_viewer_export_file(string $view, ?Database $db = null) {
 /**
  * Viewer export.
  *
- * @param string $view
+ * @param  string $view
  * @return void
  */
 function cloudflare_viewer_export(string $view) : void {

@@ -28,9 +28,12 @@ use RuntimeException;
  * through Redactor.
  */
 final class TransportException extends RuntimeException {
+	/** @var string Transient. */
 	public const TRANSIENT = 'transient';
+	/** @var string Config. */
 	public const CONFIG    = 'config';
 
+	/** Messages. */
 	private const MESSAGES = array(
 		self::TRANSIENT => 'Cloudflare API request failed at the network level',
 		self::CONFIG    => 'Cloudflare API request refused before any network I/O',
@@ -42,6 +45,13 @@ final class TransportException extends RuntimeException {
 	/** @var string */
 	private $detail;
 
+	/**
+	 * Initialize TransportException.
+	 *
+	 * @param string $errorClass
+	 * @param string $reason
+	 * @param string $detail
+	 */
 	public function __construct(string $errorClass, string $reason, string $detail = '') {
 		if (!isset(self::MESSAGES[$errorClass])) {
 			$errorClass = self::CONFIG;
@@ -56,10 +66,20 @@ final class TransportException extends RuntimeException {
 		parent::__construct(self::MESSAGES[$errorClass] . ' (' . $reason . ')');
 	}
 
+	/**
+	 * Get error class.
+	 *
+	 * @return string
+	 */
 	public function getErrorClass(): string {
 		return $this->errorClass;
 	}
 
+	/**
+	 * Get detail.
+	 *
+	 * @return string
+	 */
 	public function getDetail(): string {
 		return $this->detail;
 	}

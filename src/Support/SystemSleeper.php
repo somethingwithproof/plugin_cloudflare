@@ -19,7 +19,14 @@
 
 namespace Somethingwithproof\Cloudflare\Support;
 
+/** System sleeper component for plugin_cloudflare. */
 final class SystemSleeper implements Sleeper {
+	/**
+	 * Sleep.
+	 *
+	 * @param int $seconds
+	 * @return void
+	 */
 	public function sleep(int $seconds): void {
 		if ($seconds > 0) {
 			sleep($seconds);

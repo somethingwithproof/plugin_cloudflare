@@ -1,4 +1,4 @@
-<!-- Source: README.md; SHA256: f8de0e02c5904e15bfa4c71edcaab219e5e5d4f6d9dbe589f4ed16351df6bf4d -->
+<!-- Source: README.md; SHA256: 813d1c85c236b426b83e42e63c69496f33f8909b5e435d0d45efa6a4ba2f17ca -->
 
 <!-- translations:start -->
 [English](../../../README.md) | [简体中文](../zh-CN/README.md) | [हिन्दी](../hi-IN/README.md) | [Español (España)](../es-ES/README.md) | [Español (Latinoamérica)](../es-419/README.md) | [العربية (السعودية)](../ar-SA/README.md) | [Afrikaans](../af-ZA/README.md) | [አማርኛ](../am-ET/README.md) | [العربية (مصر)](../ar-EG/README.md) | [العربية (المغرب)](../ar-MA/README.md) | [বাংলা](../bn-BD/README.md) | [Bosanski](../bs-BA/README.md) | [Deutsch](../de-DE/README.md) | [فارسی](../fa-IR/README.md) | [Filipino](../fil-PH/README.md) | [Français](../fr-FR/README.md) | [Français (Maroc)](../fr-MA/README.md) | [Français (Sénégal)](../fr-SN/README.md) | [Hausa](../ha-NG/README.md) | [עברית](../he-IL/README.md) | [Hrvatski](../hr-HR/README.md) | [Bahasa Indonesia](../id-ID/README.md) | [Igbo](../ig-NG/README.md) | [Italiano](../it-IT/README.md) | [日本語](../ja-JP/README.md) | [한국어](../ko-KR/README.md) | [Malagasy](../mg-MG/README.md) | [मराठी](../mr-IN/README.md) | [Bahasa Melayu](../ms-MY/README.md) | [Nederlands](../nl-NL/README.md) | [Polski](../pl-PL/README.md) | [Português (Brasil)](../pt-BR/README.md) | [Русский](../ru-RU/README.md) | [Kinyarwanda](../rw-RW/README.md) | [Soomaali](../so-SO/README.md) | [Српски](../sr-RS/README.md) | [Svenska](../sv-SE/README.md) | [Kiswahili](../sw-KE/README.md) | [தமிழ்](../ta-IN/README.md) | [తెలుగు](../te-IN/README.md) | [ไทย](../th-TH/README.md) | [Türkçe](../tr-TR/README.md) | [Українська](../uk-UA/README.md) | [اردو](../ur-PK/README.md) | [Tiếng Việt](../vi-VN/README.md) | [isiXhosa](../xh-ZA/README.md) | [Yorùbá](README.md) | [繁體中文](../zh-TW/README.md) | [isiZulu](../zu-ZA/README.md)
@@ -27,18 +27,18 @@ Nínú Cacti, ó ń ṣe àdàkọ àwọn fáìlì XML ìbéèrè dátà sínú
 ṣẹ̀dá àwọn ẹ̀rọ, àwọn àwòrán ìṣirò àti àwọn àdàkọ nípasẹ̀ àwọn API Cacti fúnra rẹ̀, láìyí
 fáìlì pàtàkì kankan padà.
 
-**Ipò: 0.4.0-dev, tí a kò tí ì tú sílẹ̀.** Ẹ̀dà tó kẹ́yìn tí a tú sílẹ̀ ni 0.3.0. Ẹ̀dà ìdàgbàsókè yìí fi ìkójáde àkójọpọ̀ CSV, ìyọkúrò ní pàtó fún àwọn tunnel tí a ti pa rẹ́, àtúpalẹ̀ agbègbè tí a tọ́jú sí ìrántí ìgbà díẹ̀ àti àwọn àdàkọ Thold tí kì í ṣe dandan kún un. Ìjẹ́rìísí pẹ̀lú olùpèsè gidi àti ìṣàkóso ìgbékalẹ̀ ṣì ń bẹ lọ́nà.
+**Ipò: 0.4.0-dev, tí a kò tí ì tú sílẹ̀.** Ẹ̀dà tó kẹ́yìn tí a tú sílẹ̀ ni 0.3.0. Ẹ̀dà ìdàgbàsókè yìí fi ìkójáde àkójọpọ̀ CSV, ìyọkúrò ní pàtó fún àwọn tunnel tí a ti pa rẹ́, àtúpalẹ̀ agbègbè tí a tọ́jú sí ìrántí ìgbà díẹ̀, oníbàárà GraphQL Analytics kíkà-nìkan tí a fọwọ́ sí (`GraphqlAnalyticsClient`) pẹ̀lú àwọn olùrànlọ́wọ́ àkópọ̀ tí ó ṣe tán fún Thold (`AnalyticsSummary`), CLI Configuration-as-Code (`cli/cloudflare.php`), àwọn ìsopọ̀ ètò àyíká (`abilities_register`, `doctor_register_checks`, `casc_register_providers`), àti àtìlẹ́yìn olùkójọpọ̀ òkèèrè tí ó dá lórí poller (`replicate_out`) kún un. Ìjẹ́rìísí pẹ̀lú olùpèsè gidi àti ìṣàkóso ìgbékalẹ̀ ṣì ń bẹ lọ́nà.
 
-Tábìlì tó wà ní ìsàlẹ̀ ṣàpèjúwe ìtúsílẹ̀ 0.3.0 tó fẹsẹ̀ múlẹ̀. A ṣàpèjúwe àwọn àfikún ìdàgbàsókè lábẹ́ ìlànà iṣẹ́ Operator àti àtúpalẹ̀ agbègbè ní ìsàlẹ̀.
+Tábìlì tó wà ní ìsàlẹ̀ ṣàpèjúwe ìtúsílẹ̀ 0.3.0 tó fẹsẹ̀ múlẹ̀. A ṣàpèjúwe àwọn àfikún ìdàgbàsókè nínú 0.4.0-dev lábẹ́ àwọn ìṣàn-iṣẹ́ olùṣiṣẹ́ àti àtúpalẹ̀ agbègbè ní ìsàlẹ̀.
 
 | Wà lọ́wọ́lọ́wọ́ | Wà lérò |
 |---|---|
-| Fifi sí i, ìgbéga, ìdádúró àti yíyọ kúrò nípasẹ̀ olùṣàkóso ohun èlò àfikún Cacti | Àtúpalẹ̀ GraphQL àti àwọn ìkìlọ̀ Thold (Ìpele 4) |
+| Fifi sí i, ìgbéga, ìdádúró àti yíyọ kúrò nípasẹ̀ olùṣàkóso ohun èlò àfikún Cacti | Ìjẹ́rìísí GraphQL lórí àkọọ́lẹ̀ alààyè àti ìgbékalẹ̀ (ìparí Ìpele 4) |
 | Àwọn àṣẹ Cloudflare: View, Operator àti Configure | Àyẹ̀wò ìdánwò àṣìṣe (fault injection), àwọn àpẹẹrẹ TLA+ àti ìwé ìtọ́kasí kíkún (Ìpele 5) |
 | Fi kún, ṣàtúnṣe, pa rẹ́, mú ṣiṣẹ́ kí o sì dá àwọn àkọọ́lẹ̀ Cloudflare dúró | |
 | Tọ́jú àmì ìdánimọ̀ sínú fáìlì tàbí ní ìpamọ́ aláṣírí nínú ibi ìpamọ́ dátà Cacti | |
 | Jẹ́rìí sí àmì ìdánimọ̀ kí o sì ṣàyẹ̀wò àṣẹ kíkà tunnel àti agbègbè rẹ̀ | |
-| Ìwárí tunnel àti connector nínú olùkójọpọ̀ abẹ́lẹ̀ tí olùṣàyẹ̀wò àkọ́kọ́ bẹ̀rẹ̀ | |
+| Ìwárí tunnel àti connector nínú olùkójọpọ̀ abẹ́lẹ̀ (`poller_cloudflare.php`) | |
 | Àwọn ojú-ìwé Overview, Tunnels àti Connectors lábẹ́ Management > Cloudflare Tunnels | |
 | Títọpa ìgbésẹ̀ ìṣẹ̀dá àti ìparẹ́: `active`, `unavailable` àti `deleted` | |
 | Ẹ̀rọ Cacti kan fún àkọọ́lẹ̀ kọ̀ọ̀kan, tí olùṣàkóso dá sílẹ̀, pẹ̀lú àwọn tunnel gẹ́gẹ́ bí ìtọ́kasí ìbéèrè dátà kan | |
@@ -288,7 +288,7 @@ Wo [docs/security.md](../../security.md#token-file).
 2. Ṣí Console > Configuration > Plugins, tàbí Console > Configuration >
    Cloudflare Accounts, ní ẹ̀ẹ̀kan gẹ́gẹ́ bí alákòóso. Ìyẹn máa ń ṣe àwọn ìṣíkiri dátà àfikún-ètò náà,
    ó ń kó àwọn àwòkọ Cloudflare wọlé, ó sì ń da fáìlì ìbéèrè dátà kọ (wo
-   [Àwọn òṣùwọ̀n àti àwòrán ọ̀nà-àṣírí](#tunnel-metrics-and-graphs)), àti lórí
+   [Àwọn òṣùwọ̀n àti àwòrán ọ̀nà-àṣírí](#tunnel-metrics-and-graphs)), ó ń forúkọsílẹ̀ àwọn ìsopọ̀ ètò àyíká `abilities_register`, `doctor_register_checks`, `casc_register_providers`, àti `replicate_out` (`includes/ecosystem.php`), àti lórí
    ìgbéga láti 0.1.0, ó ń forúkọsílẹ̀ ìkọ̀kọ̀ `poller_bottom`.
 
 `poller.php` kì í ṣe ìgbéga àfikún-ètò náà, nítorí náà títí di ìgbésẹ̀ 2, ètò dátà tuntun
@@ -317,11 +317,10 @@ Ojú-ewé àtúnṣe tún máa ń fi hàn bóyá a fún un ní àṣẹ kíkà �
 
 ## Ìwárí ọ̀nà-àṣírí
 
-Lẹ́yìn ìyípo ìbéèrè kọ̀ọ̀kan lórí poller àkọ́kọ́, ìkọ̀kọ̀ `poller_bottom` máa ń bẹ̀rẹ̀
+Lẹ́yìn ìyípo ìbéèrè kọ̀ọ̀kan lórí poller olùkójọ tí a ṣètò (`cloudflare_poller_id`, àìyípadà `1`), ìkọ̀kọ̀ `poller_bottom` máa ń bẹ̀rẹ̀
 olùkójọ abẹ́lẹ̀ pẹ̀lú `exec_background` nígbà tí ó kéré tán àkántì kan tí a mú ṣiṣẹ́
 bá ti tan Collect Tunnels. Olùkójọ náà kì í ṣiṣẹ́ nínú ìlànà poller
-rárá, nítorí náà API Cloudflare tí ó bá lọ́ra kò ní fa `poller.php` sẹ́yìn. Àwọn poller ọ̀nà jíjìn
-kì í bẹ̀rẹ̀ rẹ̀ rárá.
+rárá, nítorí náà API Cloudflare tí ó bá lọ́ra kò ní fa `poller.php` sẹ́yìn. `INFO` ń kéde `remote_collect:1`, àti pé ìsopọ̀ `replicate_out` (`RemoteReplication`) ń ti àwọn tábìlì metadata tí kì í ṣe àṣírí (`plugin_cloudflare_accounts` pẹ̀lú `token_ciphertext` tí a bọ́ sí `NULL`, `plugin_cloudflare_tunnels`, `plugin_cloudflare_connectors`, `plugin_cloudflare_zones`, `plugin_cloudflare_metric_mappings`, àti `plugin_cloudflare_resources`) sí àwọn poller òkèèrè (`poller_id > 1`) nígbà tí ó ń yọ ohun èlò kọ́kọ́rọ́ ìpamọ́ kúrò.
 
 Fún àkántì kọ̀ọ̀kan tí àkókò rẹ̀ bá tó, olùkójọ náà máa ń to àwọn ọ̀nà-àṣírí àkántì náà, lẹ́yìn náà
 ó ń ka àwọn ìsopọ̀ ti àwọn ọ̀nà-àṣírí rẹ̀ tó ń ṣiṣẹ́, èyí tí ó ń fúnni ní àwọn olùsopọ̀ ọ̀nà-àṣírí kọ̀ọ̀kan,
@@ -491,8 +490,7 @@ fi kún un máa ń ṣẹ̀dá ẹ̀rọ tuntun; kì í tún ti àtijọ́ lò, 
   wọn máa ń fi àlàfo hàn.
 - Àfikún náà máa ń kọ lé àwọn àtúnṣe olùṣàkóso sí àwọn àdàkọ tí a kó wọlé nígbà tí
   ìgbéga bá yí XML àdàkọ tí a kó wọlé padà.
-- Ẹ̀rọ àkántì náà gbọ́dọ̀ dúró lórí olùṣàyẹ̀wò àkọ́kọ́. Àwọn tábìlì àfikún náà
-  wà nínú àkójọpọ̀ dátà àkọ́kọ́, ìwé-àṣẹ náà sì ń kà wọ́n níbẹ̀.
+- Àwọn poller òkèèrè máa ń gba metadata tí a ṣe àtúnṣe láìsí ìwé-ẹ̀rí ìdánimọ̀ (`token_ciphertext` ni a bọ́ sí `NULL`, a kò sì ṣe àtúnṣe àwọn kọ́kọ́rọ́ ìpamọ́ rárá). Nígbà tí o bá ń ṣiṣẹ́ olùkójọ lórí poller òkèèrè tí a yàn (`cloudflare_poller_id`), pèsè àwọn fáìlì àmì tàbí kọ́kọ́rọ́ ìpamọ́ tààrà lórí olùgbàlejò olùkójọ náà.
 - Àwọn ojú-ọ̀nà àṣírí tí a pa rẹ́ máa ń dúró nínú àtọ́ka ìbéèrè dátà, wọn yóò sì máa tẹ `U` títí tí olùṣàkóso yóò fi fẹ̀yìntì wọ́n ní gbangba. Ìfẹ̀yìntì máa ń yọ kìkì àwọn àwòrán ìṣirò tí àfikún kọ sílẹ̀ àti àwọn orísun dátà tí kò ní àjọpín kúrò nípasẹ̀ Cacti; ìlà àkójọpọ̀ ohun-ìní náà yóò wà ní rírí. Cacti ni ó ń ṣàkóso ìwẹ̀nùmọ́ RRD.
 - Cacti máa ń pa àfikún tí kóòdù rẹ̀ bá parí pẹ̀lú àṣìṣe apaniyan òótọ́, bíi
   kí ìrántí tán. Wo [docs/security.md](../../security.md).
@@ -510,13 +508,29 @@ fi kún un máa ń ṣẹ̀dá ẹ̀rọ tuntun; kì í tún ti àtijọ́ lò, 
   ara-ẹni nílò Cloudflare: Operator. Ṣíṣẹ̀dá ẹ̀rọ Cacti kan
   tàbí títan Ṣẹ̀dá Àwọn Àwòrán Ìṣirò (Create Graphs) tún nílò àṣẹ Sites/Devices/Data
   ti Cacti. Àfikún tí a ti pa máa ń kọ̀ àwọn ojú-ìwé rẹ̀.
+- Configuration-as-Code (`cli/cloudflare.php` àti `casc_register_providers`)
+  gba àwọn ìtọ́kasí àṣírí `vault:<account_id>` tàbí `file:<absolute_path>` nìkan,
+  ń kọ àwọn àmì tútù, àwọn àṣírí ìpamọ́, àti àwọn ìkéde XML `DOCTYPE`, ó sì
+  nílò `--confirm=<PLAN_HASH>` gangan ṣáájú kíkọ.
+- Àwọn Agbára Tí A Forúkọsílẹ̀ (`cloudflare-list-tunnels`, `cloudflare-get-health`) jẹ́
+  kíkà nìkan ní pàtó, wọ́n ń ṣe ìṣàyẹ̀wò agbègbè Cloudflare: View tààrà lòdì sí
+  àwọn tábìlì ìdánimọ̀ Cacti fún ID olùlò olùpè (kì í ṣe ipò ìṣẹ́lẹ̀ rárá), wọn kò sì
+  dá àmì tàbí ohun èlò kọ́kọ́rọ́ kankan padà.
 
 Àwọn àlàyé àti àwọn ààlà tí a mọ̀ wà nínú [docs/security.md](../../security.md).
 Ròyìn àwọn àìlera ààbò ní ìkọ̀kọ̀ bí a ṣe ṣàpèjúwe rẹ̀ nínú [SECURITY.md](../../../SECURITY.md).
 
 ## Àwọn ìṣàn-iṣẹ́ olùṣiṣẹ́ àti àtúpalẹ̀ agbègbè
 
-Àwọn àfikún ìdàgbàsókè ní nínú ìfẹ̀yìntì gbangba ti àwọn ojú-ọ̀nà àṣírí tí a pa rẹ́, àtúpalẹ̀ agbègbè tí ó mọ agbára àti àwọn àdàkọ Thold tí a lè kó wọlé. Àwọn àfikún wọ̀nyí kò tíì ní àmì ìtẹ̀jáde tàbí ìjẹ́rìí àkántì alààyè síbẹ̀. Wo [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) fún ìṣètò, ìtumọ̀ ìwọ̀n àti àwọn ààlà ìdánilójú.
+Àwọn àfikún ìdàgbàsókè nínú `0.4.0-dev` ní nínú ìfẹ̀yìntì gbangba ti àwọn ojú-ọ̀nà àṣírí tí a pa rẹ́, àtúpalẹ̀ GraphQL agbègbè àti tunnel tí ó mọ agbára, àwọn olùrànlọ́wọ́ àkópọ̀ tí ó ṣe tán fún Thold àti àwọn àdàkọ tí a lè kó wọlé, CLI CasC àti ìlera, àwọn ìsopọ̀ ètò àyíká, àti ìṣàtúnṣe olùkójọpọ̀ òkèèrè. Àwọn àfikún wọ̀nyí kò tíì ní àmì ìtẹ̀jáde tàbí ìjẹ́rìísí àkántì alààyè síbẹ̀. Wo [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) fún ìṣètò, ìtumọ̀ ìwọ̀n, àti àwọn ààlà ìdánilójú.
+
+- **Oníbàárà GraphQL Analytics àti àkópọ̀ Thold (`src/Api/GraphqlAnalyticsClient.php`, `src/Metrics/AnalyticsSummary.php`)**: `GraphqlAnalyticsClient` ń ṣiṣẹ́ kìkì àwọn ìbéèrè kíkà-nìkan tí a fọwọ́ sí ní àkókò ìkọ́jọpọ̀ (`zone_settings`, `zone_http_metrics`, `zone_edge_latency`, `tunnel_analytics`) lórí `CloudflareClient` (TLS tí a fìdí múlẹ̀, tí a so mọ́ `api.cloudflare.com`, àwọn ìdáhùn tí ó ní ààlà, àti ìdádúró ààlà ìwọ̀n `RetryPolicy`) láti kó iye ìbéèrè agbègbè àti tunnel, ìwọ̀n àṣìṣe HTTP 5xx, àwọn byte ìdáhùn, àti ìdádúró etí (àpínkárí àti p95) jọ. `AnalyticsSummary` pèsè `recommendedThresholds()` tí a báramu pẹ̀lú àwọn orúkọ RRD DS ti àfikún náà (`health`, `collect_age`, `error_pct`, `age`), `summarizeZones()`, àti `evaluateSample()`.
+- **CLI Olùṣiṣẹ́ àti CasC (`cli/cloudflare.php`)**: tí `ConfigCodec` (`src/Config/ConfigCodec.php`) àti `ConfigService` (`src/Config/ConfigService.php`) ṣe àtìlẹ́yìn fún, ó ń ṣe àtìlẹ́yìn fún `cli/cloudflare.php export [--format=yaml|xml] [--file=PATH]` (ó ń fi àwọn ìtọ́kasí àṣírí `vault:` / `file:` nìkan jáde), `cli/cloudflare.php validate --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php plan --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php apply --file=PATH --confirm=<PLAN_HASH> [--format=yaml|xml]`, àti `cli/cloudflare.php health [--format=text|json]`.
+- **Àwọn ìsopọ̀ ìṣọ̀kan ètò àyíká (`includes/ecosystem.php`, `setup.php`)**:
+  - `abilities_register` (`AbilitiesProvider`): ń forúkọsílẹ̀ `cloudflare-list-tunnels` àti `cloudflare-get-health` kíkà-nìkan tí a ṣàkóso lórí agbègbè Cloudflare: View (àwọn àṣẹ tààrà àti ti ẹgbẹ́) láìsí àmì tàbí àṣírí kankan nínú àbájáde.
+  - `doctor_register_checks` (`DoctorChecks`): ń ṣàfihàn `cloudflare_vault_key` (ìfìdí-múlẹ̀ ipò, symlink, àti gígùn), `cloudflare_token_dir` (àyẹ̀wò ọ̀nà kíkún, symlink, àti kíkọ fún gbogbo ènìyàn), `cloudflare_tunnel_freshness`, àti `cloudflare_api_failure_rate`.
+  - `casc_register_providers` (`CascProvider`): ń ṣàfihàn olùpèsè CasC `cloudflare` (`export`, `validate`, `plan`, `apply`) fún àwọn àkọọ́lẹ̀ (ìtọ́kasí àṣírí nìkan), àwọn agbègbè, àwọn tunnel, àti àwọn ìsopọ̀ òṣùwọ̀n.
+  - `replicate_out` (`RemoteReplication`): ń ṣe àtúnṣe àwọn tábìlì metadata tí kì í ṣe àṣírí sí àwọn poller òkèèrè (`poller_id > 1`) pẹ̀lú `token_ciphertext` tí a bọ́ sí `NULL` àti yíyọ ohun èlò kọ́kọ́rọ́ ìpamọ́ kúrò.
 
 ### Àwọn ìkójáde àkójọpọ̀ ohun-ìní
 
@@ -534,7 +548,7 @@ gbogbo ìgbésẹ̀ pàtàkì tí ó wà ní ìsàlẹ̀.
 | 1. Ìpìlẹ̀ | Ìgbésí-ayé àfikún, àwọn àṣẹ, ìṣètò àkántì, ìdánwò ìsopọ̀ | A tẹ̀ ẹ́ jáde nínú 0.3.0 ([#2](https://github.com/somethingwithproof/plugin_cloudflare/pull/2) sí [#5](https://github.com/somethingwithproof/plugin_cloudflare/pull/5)) |
 | 2. Àwárí | Àwárí ojú-ọ̀nà àṣírí àti olùsopọ̀ nínú olùkójọ abẹ́lẹ̀, Àkópọ̀, Àwọn ojú-ìwé Àwọn Ojú-ọ̀nà Àṣírí àti Àwọn Olùsopọ̀ | A tẹ̀ ẹ́ jáde nínú 0.3.0 ([#6](https://github.com/somethingwithproof/plugin_cloudflare/pull/6)) |
 | 3. Àwọn Ìwọ̀n | Àwọn orísun dátà ìlera ojú-ọ̀nà àṣírí, àwọn àdàkọ àwòrán ìṣirò, ìṣàkóso ìdádúró tí kì í kọ òdo èké sílẹ̀ rárá | A tẹ̀ ẹ́ jáde nínú 0.3.0 ([#7](https://github.com/somethingwithproof/plugin_cloudflare/pull/7)) |
-| 4. Àtúpalẹ̀ àti ìkìlọ̀ | Àtúpalẹ̀ GraphQL tí ó mọ ètò fún agbègbè kọ̀ọ̀kan, àwọn ààlà Thold pẹ̀lú ìdènà ìdádúró | A ti pète rẹ̀ |
+| 4. Àtúpalẹ̀ àti ìkìlọ̀ | Àtúpalẹ̀ GraphQL tí ó mọ ètò (`GraphqlAnalyticsClient`), àkópọ̀ àti àdàkọ Thold (`AnalyticsSummary`), CLI CasC (`cli/cloudflare.php`), àwọn ìsopọ̀ ètò àyíká, àti ìṣàtúnṣe òkèèrè | A ti ṣe àgbékalẹ̀ rẹ̀ nínú 0.4.0-dev; ìjẹ́rìísí àkọọ́lẹ̀ alààyè ṣì ń dúró |
 | 5. Ìmúle | Àbẹ́rẹ́ àṣìṣe, àwọn àwòkọ́ṣe TLA+ ti àwárí àti ìkójọ, ìwé ìtọ́kasí kíkún | A ti pète rẹ̀ |
 
 ## Ìdàgbàsókè

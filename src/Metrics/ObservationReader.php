@@ -32,14 +32,20 @@ use Somethingwithproof\Cloudflare\Version;
  * in an RRD reads as a real outage and cannot be told apart later.
  */
 final class ObservationReader {
+	/** @var string Stale. */
 	public const STALE           = 'stale';
+	/** @var string Clock skew. */
 	public const CLOCK_SKEW      = 'clock_skew';
+	/** @var string Not active. */
 	public const NOT_ACTIVE      = 'not_active';
+	/** @var string Never collected. */
 	public const NEVER_COLLECTED = 'never_collected';
+	/** @var string Unknown tunnel. */
 	public const UNKNOWN_TUNNEL  = 'unknown_tunnel';
 
 	/* A stamp slightly ahead of now is clock drift; further ahead, the
 	 * stamp itself cannot be trusted. */
+	/** @var int Skew tolerance. */
 	private const SKEW_TOLERANCE = 60;
 
 	/** @var Database */
@@ -48,6 +54,12 @@ final class ObservationReader {
 	/** @var Clock */
 	private $clock;
 
+	/**
+	 * Initialize ObservationReader.
+	 *
+	 * @param Database $db
+	 * @param Clock $clock
+	 */
 	public function __construct(Database $db, Clock $clock) {
 		$this->db    = $db;
 		$this->clock = $clock;
@@ -61,6 +73,12 @@ final class ObservationReader {
 		return 2 * $interval + 60;
 	}
 
+	/**
+	 * Account for host.
+	 *
+	 * @param int $hostId
+	 * @return ?int
+	 */
 	public function accountForHost(int $hostId): ?int {
 		$id = $this->db->fetchCell(
 			"SELECT account_id FROM plugin_cloudflare_resources WHERE kind = 'device' AND host_id = ?
@@ -203,6 +221,14 @@ final class ObservationReader {
 		return null;
 	}
 
+	/**
+	 * Time reason.
+	 *
+	 * @param ?int $at
+	 * @param int $now
+	 * @param ?int $window
+	 * @return ?string
+	 */
 	private static function timeReason(?int $at, int $now, ?int $window): ?string {
 		if ($at === null) {
 			return self::NEVER_COLLECTED;
@@ -249,6 +275,13 @@ final class ObservationReader {
 		return $observations;
 	}
 
+	/**
+	 * Unknown.
+	 *
+	 * @param Metric $metric
+	 * @param string $reason
+	 * @return Observation
+	 */
 	private static function unknown(Metric $metric, string $reason): Observation {
 		return new Observation($metric->name(), null, null, $reason, Version::METRIC_SCHEMA);
 	}

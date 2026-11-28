@@ -1,4 +1,4 @@
-<!-- Source: README.md; SHA256: f8de0e02c5904e15bfa4c71edcaab219e5e5d4f6d9dbe589f4ed16351df6bf4d -->
+<!-- Source: README.md; SHA256: 813d1c85c236b426b83e42e63c69496f33f8909b5e435d0d45efa6a4ba2f17ca -->
 
 <!-- translations:start -->
 [English](../../../README.md) | [简体中文](../zh-CN/README.md) | [हिन्दी](../hi-IN/README.md) | [Español (España)](../es-ES/README.md) | [Español (Latinoamérica)](../es-419/README.md) | [العربية (السعودية)](../ar-SA/README.md) | [Afrikaans](../af-ZA/README.md) | [አማርኛ](../am-ET/README.md) | [العربية (مصر)](../ar-EG/README.md) | [العربية (المغرب)](../ar-MA/README.md) | [বাংলা](../bn-BD/README.md) | [Bosanski](../bs-BA/README.md) | [Deutsch](../de-DE/README.md) | [فارسی](../fa-IR/README.md) | [Filipino](../fil-PH/README.md) | [Français](../fr-FR/README.md) | [Français (Maroc)](../fr-MA/README.md) | [Français (Sénégal)](../fr-SN/README.md) | [Hausa](README.md) | [עברית](../he-IL/README.md) | [Hrvatski](../hr-HR/README.md) | [Bahasa Indonesia](../id-ID/README.md) | [Igbo](../ig-NG/README.md) | [Italiano](../it-IT/README.md) | [日本語](../ja-JP/README.md) | [한국어](../ko-KR/README.md) | [Malagasy](../mg-MG/README.md) | [मराठी](../mr-IN/README.md) | [Bahasa Melayu](../ms-MY/README.md) | [Nederlands](../nl-NL/README.md) | [Polski](../pl-PL/README.md) | [Português (Brasil)](../pt-BR/README.md) | [Русский](../ru-RU/README.md) | [Kinyarwanda](../rw-RW/README.md) | [Soomaali](../so-SO/README.md) | [Српски](../sr-RS/README.md) | [Svenska](../sv-SE/README.md) | [Kiswahili](../sw-KE/README.md) | [தமிழ்](../ta-IN/README.md) | [తెలుగు](../te-IN/README.md) | [ไทย](../th-TH/README.md) | [Türkçe](../tr-TR/README.md) | [Українська](../uk-UA/README.md) | [اردو](../ur-PK/README.md) | [Tiếng Việt](../vi-VN/README.md) | [isiXhosa](../xh-ZA/README.md) | [Yorùbá](../yo-NG/README.md) | [繁體中文](../zh-TW/README.md) | [isiZulu](../zu-ZA/README.md)
@@ -27,18 +27,18 @@ A cikin Cacti tana kwafar fayilolin XML na tambayar bayanai zuwa `resource/scrip
 tana ƙirƙirar na'urori, jadawalai da samfura ta hanyar APIs na Cacti da kanta, ba tare da canza
 ainihin fayilolin tsarin ba.
 
-**Matsayi: 0.4.0-dev, ba a sake shi ba tukuna.** Sigar ƙarshe da aka saki ita ce 0.3.0. Sigar haɓakawa tana ƙara fitar da lissafin kaya na CSV, cire tunnels da aka goge kai tsaye, nazarin yankuna da aka adana a cache da kuma samfuran Thold na zaɓi. Tabbatar da aiki da mai samar da sabis na zahiri da tantancewar tura tsari har yanzu suna jiran kammala.
+**Matsayi: 0.4.0-dev, ba a sake shi ba tukuna.** Sigar ƙarshe da aka saki ita ce 0.3.0. Sigar haɓakawa tana ƙara fitar da lissafin kaya na CSV, cire tunnels da aka goge kai tsaye, nazarin yankuna da aka adana a cache, klayint ɗin GraphQL Analytics mai karantawa kawai a cikin jerin izini (`GraphqlAnalyticsClient`) tare da mataimakan taƙaitawa na Thold (`AnalyticsSummary`), CLI na Configuration-as-Code (`cli/cloudflare.php`), ƙugiyoyin tsari (`abilities_register`, `doctor_register_checks`, `casc_register_providers`), da tallafin mai tattarawa na nesa mai iyaka ga poller (`replicate_out`). Tabbatar da aiki da mai samar da sabis na zahiri da tantancewar tura tsari har yanzu suna jiran kammala.
 
-Teburin da ke ƙasa yana bayyana tsayayyiyar sigar 0.3.0 da aka saki. An bayyana ƙarin abubuwan da aka haɓaka a ƙarƙashin ayyukan Operator da nazarin yankuna a ƙasa.
+Teburin da ke ƙasa yana bayyana tsayayyiyar sigar 0.3.0 da aka saki. An bayyana ƙarin abubuwan da aka haɓaka a cikin 0.4.0-dev a ƙarƙashin ayyukan Operator da nazarin yankuna a ƙasa.
 
 | Yana samuwa yanzu | Abubuwan da aka tsara |
 |---|---|
-| Shigarwa, haɓakawa, kashewa da cirewa ta manajan ƙarin manhaja na Cacti | Nazarin GraphQL da faɗakarwar Thold (Mataki na 4) |
+| Shigarwa, haɓakawa, kashewa da cirewa ta manajan ƙarin manhaja na Cacti | GraphQL na asusun zahiri da tantancewar tura tsari (fita daga Mataki na 4) |
 | Izinin Cloudflare: View, Operator da Configure | Gwaji na kuskure, samfuran TLA+ da cikakkun bayanai (Mataki na 5) |
 | Ƙarawa, gyarawa, gogewa, kunnawa da kashe asusun Cloudflare | |
 | Adana token a cikin fayil ko a ɓoye a cikin rumbun adana bayanai na Cacti | |
 | Tabbatar da token da duba izinin karanta tunnel da zone | |
-| Gano tunnel da connector a cikin mai tattarawa na baya da babban poller ke farawa | |
+| Gano tunnel da connector a cikin mai tattarawa na baya (`poller_cloudflare.php`) | |
 | Shafukan Overview, Tunnels da Connectors a ƙarƙashin Management > Cloudflare Tunnels | |
 | Bin diddigin rayuwar aiki: `active`, `unavailable` da `deleted` | |
 | Na'urar Cacti guda ɗaya a kowane asusu, wanda mai gudanarwa ya ƙirƙira, tare da tunnels a matsayin fihirisar tambayar bayanai | |
@@ -289,8 +289,10 @@ Token File Directory, misali zuwa `/etc/cacti`; hanyar da ke wajensa za a
    sunan babban fayil ɗin.
 2. Buɗe Console > Configuration > Plugins, ko Console > Configuration >
    Cloudflare Accounts, sau ɗaya a matsayin admin. Wannan yana gudanar da ƙaura na ƙarin manhajar,
-   yana shigo da samfuran Cloudflare kuma yana kwafin fayil ɗin tambayar bayanai (duba
-   [Auna da zane-zanen tunnel](#tunnel-metrics-and-graphs)), kuma, akan
+   yana shigo da samfuran Cloudflare, yana kwafin fayil ɗin tambayar bayanai (duba
+   [Auna da zane-zanen tunnel](#tunnel-metrics-and-graphs)), yana yin rajistar ƙugiyoyin tsari na
+   `abilities_register`, `doctor_register_checks`, `casc_register_providers`,
+   da `replicate_out` (`includes/ecosystem.php`), kuma, akan
    ɗaukaka daga 0.1.0, yana yin rajistar ƙugiyar `poller_bottom`.
 
 `poller.php` ba ya gudanar da ɗaukaka ƙarin manhajar, don haka har sai mataki na 2 sabon
@@ -319,11 +321,16 @@ Shafin gyara yana kuma nuna ko an ba da izinin karanta tunnel da karanta zone.
 
 ## Gano tunnel
 
-Bayan kowane zagayen polling akan babban poller, ƙugiyar `poller_bottom` tana fara
+Bayan kowane zagayen polling akan poller na tattarawa da aka saita (`cloudflare_poller_id`, asali `1`), ƙugiyar `poller_bottom` tana fara
 mai tattarawa na baya tare da `exec_background` lokacin da aƙalla asusu ɗaya da aka kunna
 yake da Collect Tunnels a kunne. Mai tattarawar ba ya taɓa gudu a cikin tsarin poller,
-saboda haka jinkirin Cloudflare API ba zai jinkirta `poller.php` ba. Masu poller na nesa
-ba sa taɓa fara shi.
+saboda haka jinkirin Cloudflare API ba zai jinkirta `poller.php` ba. `INFO` yana bayyana
+`remote_collect:1`, kuma ƙugiyar `replicate_out` (`RemoteReplication`) tana tura
+teburan metadata marasa sirri (`plugin_cloudflare_accounts` tare da mayar da `token_ciphertext`
+zuwa `NULL`, `plugin_cloudflare_tunnels`, `plugin_cloudflare_connectors`,
+`plugin_cloudflare_zones`, `plugin_cloudflare_metric_mappings`, da
+`plugin_cloudflare_resources`) zuwa masu poller na nesa (`poller_id > 1`) yayin
+banda kayan mabuɗin vault.
 
 Ga kowane asusu da lokacinsa ya yi, mai tattarawar yana jera tunnels na asusun, sannan
 yana karanta haɗin tunnels ɗinsa masu aiki, wanda ke ba da masu haɗawa na kowane tunnel,
@@ -466,7 +473,7 @@ Na'urar da aka bari tana daina karɓar bayanai. Bayan an cirewa, ko bayan an gog
 
 - Zagaye ɗaya yana yin buƙatun haɗi guda 200 a mafi yawa. Ramukan da suka wuce wannan iyaka ana sabunta su ƙasa da lokacin lura, don haka zane-zanen haɗinsu suna nuna giɓi.
 - Plugin ɗin yana maye gurbin gyare-gyaren da mai gudanarwa ya yi wa samfuran da aka shigo da su lokacin da haɓakawa ya canza XML na samfurin da aka aiko.
-- Dole ne na'urar asusun ta kasance a kan babban poller. Teburan plugin ɗin suna cikin babban rumbun bayanai (database) kuma rubutun (script) yana karanta su a can.
+- Masu poller na nesa suna karɓar metadata da aka kwaikwaya ba tare da takardun shaidar sirri ba (ana mayar da `token_ciphertext` zuwa `NULL` kuma ba a taɓa kwaikwayon mabuɗan vault ba). Lokacin gudanar da mai tattarawa a kan wani keɓaɓɓen poller na nesa (`cloudflare_poller_id`), a samar da fayilolin token ko mabuɗin vault kai tsaye a kan wannan uwar garken tattarawa.
 - Ramukan da aka goge suna ci gaba da kasancewa a cikin fihirisar tambayar bayanai (data query index) kuma suna buga `U` har sai mai gudanarwa ya yi ritayar su da gangan. Ritaya tana cire zane-zanen da plugin ɗin ya rubuta da tushen bayanan da ba a raba su ba kaɗai ta hanyar Cacti; layin lissafin kaya (inventory row) yana ci gaba da kasancewa a bayyane. Cacti yana sarrafa tsaftacewar RRD.
 - Cacti yana kashe plugin ɗin da lambar sa ta ƙare da mummunan kuskure na gaske (fatal error), kamar ƙarewar ƙwaƙwalwa (memory). Duba [docs/security.md](../../security.md).
 
@@ -476,12 +483,22 @@ Na'urar da aka bari tana daina karɓar bayanai. Bayan an cirewa, ko bayan an gog
 - Ana adana alamomi (tokens) a cikin fayil ɗin da kuka tanada ko a rufe su da AES-256-GCM ƙarƙashin fayil ɗin maɓalli wanda ba ya taɓa shiga rumbun bayanai. Ba a taɓa nuna su a shafi, ko rubuta su a log, ko haɗa su a cikin saƙon kuskure.
 - Kurakuran rumbun bayanai suna ɗauke da SQLSTATE da lambar kuskuren direba kaɗai, ba ƙimomin umarnin ba.
 - Kowane canji POST ne da aka kare da alamar CSRF ta Cacti. Canje-canjen asusu na gudanarwa da tsari suna buƙatar Cloudflare: Configure; amincewar tacewa ta sirri (personal triage acknowledgments) suna buƙatar Cloudflare: Operator. Ƙirƙirar na'urar Cacti ko kunna Create Graphs shima yana buƙatar izinin Sites/Devices/Data na Cacti. Plugin ɗin da aka kashe yana ƙin shafukansa.
+- Configuration-as-Code (`cli/cloudflare.php` da `casc_register_providers`) yana karɓar abubuwan nuni na sirri na `vault:<account_id>` ko `file:<absolute_path>` kaɗai, yana ƙin ɗanyun token, rufaffun rubutun vault, da sanarwar XML `DOCTYPE`, kuma yana buƙatar takamaiman `--confirm=<PLAN_HASH>` kafin ya rubuta.
+- Ƙwarewar da aka yi wa rajista (`cloudflare-list-tunnels`, `cloudflare-get-health`) na karantawa ne kawai, suna kimanta yankin Cloudflare: View kai tsaye a kan teburan tantancewa na Cacti don ID na mai amfani mai kira (ba yanayin zama ba), kuma ba sa dawo da kowace alama (token) ko kayan mabuɗi.
 
 Cikakkun bayanai da sanannun iyakoki suna cikin [docs/security.md](../../security.md). A ba da rahoton raunin tsaro a asirce kamar yadda aka bayyana a [SECURITY.md](../../../SECURITY.md).
 
 ## Tsarin aikin mai aiki da nazarin yanki
 
-Ƙarin haɓakawa sun haɗa da ritayar ramukan da aka goge a bayyane, nazarin yanki mai lura da iyawa da samfuran Thold da za a iya shigo da su. Waɗannan ƙarin ba su da alamar saki (release tag) ko cancantar asusu na gaske tukuna. Duba [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) don saiti, ma'anar ma'auni da iyakokin tabbatarwa.
+Ƙarin haɓakawa a cikin `0.4.0-dev` sun haɗa da ritayar ramukan da aka goge a bayyane, nazarin GraphQL na yanki da rami mai lura da iyawa, mataimakan taƙaitawa na Thold da samfuran Thold da za a iya shigo da su, CLI na CasC da lafiya, ƙugiyoyin tsari, da kwafin mai tattarawa na nesa. Waɗannan ƙarin ba su da alamar saki (release tag) ko cancantar asusu na gaske tukuna. Duba [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) don saiti, ma'anar ma'auni da iyakokin tabbatarwa.
+
+- **Klayint ɗin GraphQL Analytics da taƙaitawar Thold (`src/Api/GraphqlAnalyticsClient.php`, `src/Metrics/AnalyticsSummary.php`)**: `GraphqlAnalyticsClient` yana gudanar da tambayoyin karantawa kawai da ke cikin jerin izini na lokacin haɗa lamba (`zone_settings`, `zone_http_metrics`, `zone_edge_latency`, `tunnel_analytics`) ta hanyar `CloudflareClient` (an tabbatar da TLS, an liƙa zuwa `api.cloudflare.com`, amsoshi masu iyaka, da jinkirin ƙimar kira na `RetryPolicy`) don tattara adadin buƙatun yanki da rami, ƙimar kurakuran HTTP 5xx, bytes na amsa, da jinkirin gefe (matsakaici da p95). `AnalyticsSummary` yana ba da `recommendedThresholds()` daidai da sunayen RRD DS na plugin (`health`, `collect_age`, `error_pct`, `age`), `summarizeZones()`, da `evaluateSample()`.
+- **CLI na mai aiki da CasC (`cli/cloudflare.php`)**: yana samun goyon bayan `ConfigCodec` (`src/Config/ConfigCodec.php`) da `ConfigService` (`src/Config/ConfigService.php`), yana tallafawa `cli/cloudflare.php export [--format=yaml|xml] [--file=PATH]` (yana fitar da nuni na sirri na `vault:` / `file:` kaɗai), `cli/cloudflare.php validate --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php plan --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php apply --file=PATH --confirm=<PLAN_HASH> [--format=yaml|xml]`, da `cli/cloudflare.php health [--format=text|json]`.
+- **Ƙugiyoyin haɗin tsari (`includes/ecosystem.php`, `setup.php`)**:
+  - `abilities_register` (`AbilitiesProvider`): yana yin rajistar `cloudflare-list-tunnels` da `cloudflare-get-health` na karantawa kawai waɗanda aka killace a yankin Cloudflare: View (izini kai tsaye da na ƙungiya) ba tare da wani token ko sirri a sakamakon ba.
+  - `doctor_register_checks` (`DoctorChecks`): yana fallasa `cloudflare_vault_key` (tantance yanayi, symlink, da tsayi), `cloudflare_token_dir` (binciken cikakkiyar hanya, symlink, da rubutawa ga kowa), `cloudflare_tunnel_freshness`, da `cloudflare_api_failure_rate`.
+  - `casc_register_providers` (`CascProvider`): yana fallasa mai ba da CasC na `cloudflare` (`export`, `validate`, `plan`, `apply`) don asusai (nuni na sirri kaɗai), yankuna, ramuka, da haɗin ma'auni.
+  - `replicate_out` (`RemoteReplication`): yana kwaikwayon teburan metadata marasa sirri zuwa masu poller na nesa (`poller_id > 1`) tare da mayar da `token_ciphertext` zuwa `NULL` da cire kayan mabuɗin vault.
 
 ### Fitar da lissafin kaya
 
@@ -496,7 +513,7 @@ Kowane mataki (milestone) yana fitowa a matsayin sakin 0.x mai lamba bayansa: Ma
 | 1. Tushe (Foundation) | Zagayowar rayuwar plugin, izini, saitin asusu, gwajin haɗi | An sake shi a 0.3.0 ([#2](https://github.com/somethingwithproof/plugin_cloudflare/pull/2) zuwa [#5](https://github.com/somethingwithproof/plugin_cloudflare/pull/5)) |
 | 2. Bincike (Discovery) | Binciken rami da haɗi (connector) a cikin mai tattara bayanan baya, shafukan Overview, Tunnels da Connectors | An sake shi a 0.3.0 ([#6](https://github.com/somethingwithproof/plugin_cloudflare/pull/6)) |
 | 3. Ma'auni (Metrics) | Tushen bayanan lafiyar rami, samfuran zane-zane, sarrafa katsewa wanda ba ya taɓa rubuta sifili na ƙarya | An sake shi a 0.3.0 ([#7](https://github.com/somethingwithproof/plugin_cloudflare/pull/7)) |
-| 4. Nazari da faɗakarwa | Nazarin GraphQL mai lura da tsari ga kowane yanki, iyakokin Thold tare da dakatar da katsewa | An tsara |
+| 4. Nazari da faɗakarwa | Nazarin GraphQL mai lura da tsari (`GraphqlAnalyticsClient`), taƙaitawa da samfuran Thold (`AnalyticsSummary`), CasC CLI (`cli/cloudflare.php`), ƙugiyoyin tsari, da kwafin nesa | An aiwatar a 0.4.0-dev; tantancewar asusun zahiri tana jira |
 | 5. Ƙarfafawa (Hardening) | Saka kuskure (fault injection), samfuran TLA+ na bincike da tattarawa, cikakkun takardu | An tsara |
 
 ## Haɓakawa

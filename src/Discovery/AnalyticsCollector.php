@@ -29,6 +29,7 @@ use Somethingwithproof\Cloudflare\Storage\Database;
 use Somethingwithproof\Cloudflare\Support\Clock;
 use Throwable;
 
+/** Analytics collector component for plugin_cloudflare. */
 final class AnalyticsCollector {
 	/** @var Database */
 	private $db;
@@ -43,6 +44,16 @@ final class AnalyticsCollector {
 	/** @var callable(): bool */
 	private $enabled;
 
+	/**
+	 * Initialize AnalyticsCollector.
+	 *
+	 * @param Database $db
+	 * @param AccountRepository $accounts
+	 * @param CredentialResolver $credentials
+	 * @param ZoneAnalytics $api
+	 * @param Clock $clock
+	 * @param callable $enabled
+	 */
 	public function __construct(Database $db, AccountRepository $accounts, CredentialResolver $credentials, ZoneAnalytics $api, Clock $clock, callable $enabled) {
 		$this->db = $db;
 		$this->accounts = $accounts;

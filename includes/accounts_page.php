@@ -66,10 +66,20 @@ function cloudflare_accounts_offered_actions() : array {
  * bypass it. Both mutating actions send any other method back to the list
  * before reading input.
  */
+/**
+ * Request is post.
+ *
+ * @return bool
+ */
 function cloudflare_request_is_post() : bool {
 	return isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST';
 }
 
+/**
+ * Accounts denied.
+ *
+ * @return void
+ */
 function cloudflare_accounts_denied() : void {
 	raise_message(
 		'cloudflare_denied',
@@ -78,6 +88,11 @@ function cloudflare_accounts_denied() : void {
 	);
 }
 
+/**
+ * Accounts missing.
+ *
+ * @return void
+ */
 function cloudflare_accounts_missing() : void {
 	raise_message(
 		'cloudflare_missing',
@@ -86,6 +101,11 @@ function cloudflare_accounts_missing() : void {
 	);
 }
 
+/**
+ * Accounts unreadable text.
+ *
+ * @return string
+ */
 function cloudflare_accounts_unreadable_text() : string {
 	return __('The Cloudflare accounts could not be read. See the Cacti log for details.', 'cloudflare');
 }
@@ -93,6 +113,13 @@ function cloudflare_accounts_unreadable_text() : string {
 /*
  * A read that throws would reach CactiShutdownHandler, which disables the
  * plugin, so the read paths report a missing or broken schema instead.
+ */
+/**
+ * Accounts unreadable.
+ *
+ * @param  string            $context
+ * @param  DatabaseException $e
+ * @return void
  */
 function cloudflare_accounts_unreadable(string $context, DatabaseException $e) : void {
 	cacti_log('CLOUDFLARE: account ' . $context . ' failed: ' . $e->getMessage(), false, 'CLOUDFLARE');
@@ -551,10 +578,22 @@ function cloudflare_accounts_edit() : ?string {
 	return null;
 }
 
+/**
+ * Accounts time.
+ *
+ * @param  ?int   $timestamp
+ * @return string
+ */
 function cloudflare_accounts_time(?int $timestamp) : string {
 	return $timestamp === null ? __('Never', 'cloudflare') : date('Y-m-d H:i:s', $timestamp);
 }
 
+/**
+ * Accounts status.
+ *
+ * @param  Account $account
+ * @return void
+ */
 function cloudflare_accounts_status(Account $account) : void {
 	$permissions = $account->permissions();
 
@@ -590,6 +629,11 @@ function cloudflare_accounts_status(Account $account) : void {
  * Behaviour lives in a static file rather than inline script, so it runs
  * under every CSP mode; the nonce is added where Cacti provides one.
  */
+/**
+ * Accounts script.
+ *
+ * @return void
+ */
 function cloudflare_accounts_script() : void {
 	global $config;
 
@@ -602,6 +646,11 @@ function cloudflare_accounts_script() : void {
 		"></script>\n";
 }
 
+/**
+ * Accounts list.
+ *
+ * @return void
+ */
 function cloudflare_accounts_list() : void {
 	global $item_rows;
 

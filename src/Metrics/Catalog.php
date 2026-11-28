@@ -25,6 +25,7 @@ namespace Somethingwithproof\Cloudflare\Metrics;
  * or bounds needs a new Version::METRIC_SCHEMA.
  */
 final class Catalog {
+	/** Health. */
 	public const HEALTH = array('inactive' => 0, 'down' => 1, 'degraded' => 2, 'healthy' => 3);
 
 	/** @var array<int, Metric>|null */
@@ -93,6 +94,12 @@ final class Catalog {
 		return self::$all;
 	}
 
+	/**
+	 * By field.
+	 *
+	 * @param string $field
+	 * @return ?Metric
+	 */
 	public static function byField(string $field): ?Metric {
 		foreach (self::all() as $metric) {
 			if ($metric->queryField() === $field) {

@@ -1,4 +1,4 @@
-<!-- Source: README.md; SHA256: f8de0e02c5904e15bfa4c71edcaab219e5e5d4f6d9dbe589f4ed16351df6bf4d -->
+<!-- Source: README.md; SHA256: 813d1c85c236b426b83e42e63c69496f33f8909b5e435d0d45efa6a4ba2f17ca -->
 
 <!-- translations:start -->
 [English](../../../README.md) | [简体中文](../zh-CN/README.md) | [हिन्दी](../hi-IN/README.md) | [Español (España)](../es-ES/README.md) | [Español (Latinoamérica)](../es-419/README.md) | [العربية (السعودية)](../ar-SA/README.md) | [Afrikaans](../af-ZA/README.md) | [አማርኛ](../am-ET/README.md) | [العربية (مصر)](../ar-EG/README.md) | [العربية (المغرب)](../ar-MA/README.md) | [বাংলা](../bn-BD/README.md) | [Bosanski](../bs-BA/README.md) | [Deutsch](../de-DE/README.md) | [فارسی](../fa-IR/README.md) | [Filipino](../fil-PH/README.md) | [Français](../fr-FR/README.md) | [Français (Maroc)](../fr-MA/README.md) | [Français (Sénégal)](../fr-SN/README.md) | [Hausa](../ha-NG/README.md) | [עברית](../he-IL/README.md) | [Hrvatski](../hr-HR/README.md) | [Bahasa Indonesia](../id-ID/README.md) | [Igbo](../ig-NG/README.md) | [Italiano](../it-IT/README.md) | [日本語](../ja-JP/README.md) | [한국어](../ko-KR/README.md) | [Malagasy](../mg-MG/README.md) | [मराठी](../mr-IN/README.md) | [Bahasa Melayu](../ms-MY/README.md) | [Nederlands](../nl-NL/README.md) | [Polski](../pl-PL/README.md) | [Português (Brasil)](../pt-BR/README.md) | [Русский](../ru-RU/README.md) | [Kinyarwanda](../rw-RW/README.md) | [Soomaali](../so-SO/README.md) | [Српски](../sr-RS/README.md) | [Svenska](../sv-SE/README.md) | [Kiswahili](../sw-KE/README.md) | [தமிழ்](../ta-IN/README.md) | [తెలుగు](../te-IN/README.md) | [ไทย](../th-TH/README.md) | [Türkçe](../tr-TR/README.md) | [Українська](../uk-UA/README.md) | [اردو](../ur-PK/README.md) | [Tiếng Việt](../vi-VN/README.md) | [isiXhosa](../xh-ZA/README.md) | [Yorùbá](../yo-NG/README.md) | [繁體中文](../zh-TW/README.md) | [isiZulu](README.md)
@@ -22,18 +22,18 @@
 
 I-plugin ye-Cacti 1.2 eyakhelwa ukuqapha ama-Cloudflare Tunnel kanye nokuhlaziywa kwezoni. Ifunda kusuka ku-Cloudflare API ngamathokheni e-API anesilinganiso esiqondile, ayishintshi lutho ku-Cloudflare, futhi igcina idatha yayo kumathebula ayo. Ku-Cacti ikopisha amafayela e-XML ombuzo wedatha ku-`resource/script_server/` bese idala amadivayisi, amagrafu nezifanekiso ngama-API e-Cacti ngokwawo, ngaphandle kwezinguquko zamafayela ayisisekelo.
 
-**Isimo: 0.4.0-dev, ayikakhishwa.** Inguqulo yokugcina ekhishiwe ngu-0.3.0. Inguqulo yokuthuthukisa yengeza ukukhishwa kwempahla ye-CSV, ukuhoxiswa okucacile kwama-tunnel asusiwe, ukuhlaziywa kwezoni okulondoloziwe kanye nezifanekiso ze-Thold ezingakhethwa. Ukufaneleka komhlinzeki ophilayo nokusetshenziswa kusasele kulindile.
+**Isimo: 0.4.0-dev, ayikakhishwa.** Inguqulo yokugcina ekhishiwe ngu-0.3.0. Inguqulo yokuthuthukisa yengeza ukukhishwa kwempahla ye-CSV, ukuhoxiswa okucacile kwama-tunnel asusiwe, ukuhlaziywa kwezoni okulondoloziwe, iklayenti ye-GraphQL Analytics efundwayo kuphela esohlwini oluvunyelwe (`GraphqlAnalyticsClient`) enabancedisi besifinyezo abalungele i-Thold (`AnalyticsSummary`), i-CLI ye-Configuration-as-Code (`cli/cloudflare.php`), ama-hook ohlelo lwemvelo (`abilities_register`, `doctor_register_checks`, `casc_register_providers`), kanye nokusekelwa komqoqi okude okugxile ku-poller (`replicate_out`). Ukufaneleka komhlinzeki ophilayo nokusetshenziswa kusasele kulindile.
 
-Ithebula elingezansi lichaza ukukhishwa okuzinzile kuka-0.3.0. Okungeziwe kokuthuthukisa kuchazwa ngaphansi kwezokuhamba komsebenzi zomqhubi kanye nokuhlaziywa kwezoni ngezansi.
+Ithebula elingezansi lichaza ukukhishwa okuzinzile kuka-0.3.0. Okungeziwe kokuthuthukisa ku-0.4.0-dev kuchazwa ngaphansi kokuhamba komsebenzi komqhubi kanye nokuhlaziywa kwezoni ngezansi.
 
 | Okutholakalayo manje | Okuhleliwe |
 |---|---|
-| Faka, thuthukisa, khubaza bese ukhipha ngomphathi wama-plugin we-Cacti | Ukuhlaziywa kwe-GraphQL kanye nezexwayiso ze-Thold (Ingqophamlando 4) |
+| Faka, thuthukisa, khubaza bese ukhipha ngomphathi wama-plugin we-Cacti | Ukuqinisekiswa kwe-GraphQL ye-akhawunti ebukhoma nokusetshenziswa (ukuphuma kweNgqophamlando 4) |
 | Izimvume ze-Cloudflare: View, Operator kanye ne-Configure | Ukufakwa kwamaphutha, amamodeli e-TLA+ kanye nemibhalo ephelele (Ingqophamlando 5) |
 | Engeza, hlela, susa, vumela futhi ukhubaze ama-akhawunti e-Cloudflare | |
 | Gcina ithokheni efayeleni noma uyibhale ngemfihlo kudathabheyisi ye-Cacti | |
 | Qinisekisa ithokheni bese uhlola izimvume zayo zokufunda i-tunnel nezoni | |
-| Ukutholwa kwe-tunnel nesixhumi kumqoqi wangemuva oqalwa yi-poller eyinhloko | |
+| Ukutholwa kwe-tunnel nesixhumi kumqoqi wangemuva (`poller_cloudflare.php`) | |
 | Amakhasi e-Overview, Tunnels kanye ne-Connectors ngaphansi kwe-Management > Cloudflare Tunnels | |
 | Ukulandelela umjikelezo wempilo: `active`, `unavailable` kanye ne-`deleted` | |
 | Idivayisi eyodwa ye-Cacti nge-akhawunti ngayinye, edalwe ngumlawuli, nama-tunnel njengezinkomba zombuzo wedatha | |
@@ -249,7 +249,7 @@ i-[docs/security.md](../../security.md#token-file).
    Cloudflare Accounts, kanye njengomphathi. Lokho kuqalisa ukufuduka
    kwe-plugin, kungenise izifanekiso ze-Cloudflare futhi kukopishe ifayela
    lombuzo wedatha (bheka
-   [Amamethrikhi namagrafu ama-tunnel](#tunnel-metrics-and-graphs)), futhi,
+   [Amamethrikhi namagrafu ama-tunnel](#tunnel-metrics-and-graphs)), kubhalise ama-hook ohlelo lwemvelo e-`abilities_register`, `doctor_register_checks`, `casc_register_providers`, ne-`replicate_out` (`includes/ecosystem.php`), futhi,
    ekuthuthukiseni kusuka ku-0.1.0, kubhalise i-hook ye-`poller_bottom`.
 
 I-`poller.php` ayikwazi ukuqalisa ukuthuthukiswa kwe-plugin, ngakho kuze kube
@@ -280,11 +280,11 @@ kunikeziwe yini.
 
 ## Ukutholwa kwama-tunnel
 
-Ngemva komjikelezo ngamunye wokuvota ku-poller eyinhloko, i-hook ye-
+Ngemva komjikelezo ngamunye wokuvota ku-poller yomqoqi elungiselelwe (`cloudflare_poller_id`, okuzenzakalelayo yi-`1`), i-hook ye-
 `poller_bottom` iqala umqoqi wangemuva nge-`exec_background` uma okungenani
 i-akhawunti eyodwa enikwe amandla ine-Collect Tunnels evuliwe. Umqoqi
 akaze asebenze enqubweni ye-poller, ngakho i-API ye-Cloudflare ehamba kancane
-ayibambezeli i-`poller.php`. Ama-poller akude awaze amqale.
+ayibambezeli i-`poller.php`. I-`INFO` imemezela i-`remote_collect:1`, futhi i-hook ye-`replicate_out` (`RemoteReplication`) iphusha amathebula e-metadata angewona ayimfihlo (`plugin_cloudflare_accounts` enenani le-`token_ciphertext` elisusiwe laba ngu-`NULL`, `plugin_cloudflare_tunnels`, `plugin_cloudflare_connectors`, `plugin_cloudflare_zones`, `plugin_cloudflare_metric_mappings`, kanye ne-`plugin_cloudflare_resources`) kuma-poller akude (`poller_id > 1`) kuyilapho ikhiphela ngaphandle impahla yokhiye we-vault.
 
 Ku-akhawunti ngayinye esesikhathini sayo, umqoqi ubala ama-tunnel e-akhawunti,
 bese ufunda ukuxhumana kwama-tunnel ayo asebenzayo, okunikeza izixhumi
@@ -437,7 +437,7 @@ Idivayisi egciniwe iyayeka ukuthola idatha. Ngemva kokukhipha, noma ngemva kokub
 
 - Umgijimo owodwa wenza izicelo zokuxhuma ezingeqi ku-200. Ama-tunnel angaphezu kwalowo mkhawulo avuselelwa ngaphansi kokuvama kunewindi lokubuka, ngakho amagrafu awo okuxhuma abonisa izikhala.
 - I-plugin ibhala phezu kwezinguquko zomlawuli ezifakwe ezifanekisweni ezingenisiwe uma ukuthuthukiswa kushintsha i-XML yesifanekiso ehambisanayo.
-- Idivayisi ye-akhawunti kufanele ihlale ku-poller eyinhloko. Amathebula e-plugin asedathabhesini eyinhloko futhi iskripthi siwafunda lapho.
+- Ama-poller akude athola i-metadata ephindaphindiwe ngaphandle kwemininingwane yokungena (`token_ciphertext` isuswa ibe ngu-`NULL` futhi okhiye be-vault abakaze baphindaphindwe). Uma usebenzisa umqoqi ku-poller ekude eqokiwe (`cloudflare_poller_id`), lungiselela amafayela ama-token noma ukhiye we-vault ngqo kulelo host lomqoqi.
 - Ama-tunnel asusiwe ahlala ku-index yemibuzo yedatha futhi abhala u-`U` kuze kube yilapho umlawuli ewahoxisa ngokusobala. Ukuhoxiswa kususa kuphela amagrafu arekhodwe yi-plugin nemithombo yedatha engabiwe nge-Cacti; umugqa wohlu lwezinto uhlala ubonakala. I-Cacti ilawula ukuhlanzwa kwe-RRD.
 - I-Cacti ikhubaza i-plugin ekhodi yayo iphela ngephutha elibulalayo langempela, njengokuphelelwa yinkumbulo. Bheka [docs/security.md](../../security.md).
 
@@ -447,13 +447,29 @@ Idivayisi egciniwe iyayeka ukuthola idatha. Ngemva kokukhipha, noma ngemva kokub
 - Ama-token agcinwa efayeleni olilungiselelayo noma abethelwe nge-AES-256-GCM ngaphansi kwefayela lokhiye elingalokothi lingene kudathabhesi. Awaze aboniswe ekhasini, abhalwe ku-log, noma afakwe emlayezweni wephutha.
 - Amaphutha edathabhesi aphatha kuphela i-SQLSTATE nekhodi yephutha lomshayeli, hhayi amanani esitatimende.
 - Lonke ushintsho luyi-POST evikelwe nge-token ye-CSRF ye-Cacti. Izinguquko zokuphatha i-akhawunti nokumiswa zidinga i-Cloudflare: Configure; ukuvunywa kokuhlungwa komuntu siqu kudinga i-Cloudflare: Operator. Ukwakha idivayisi ye-Cacti noma ukuvula i-Create Graphs nakho kudinga imvume ye-Cacti ethi Sites/Devices/Data. I-plugin ekhutshaziwe iyenqaba amakhasi ayo.
+- I-Configuration-as-Code (`cli/cloudflare.php` ne-`casc_register_providers`)
+  yamukela kuphela izinkomba eziyimfihlo ze-`vault:<account_id>` noma i-`file:<absolute_path>`,
+  iyenqaba ama-token angavuthiwe, ama-ciphertext e-vault, nezimemezelo ze-XML `DOCTYPE`, futhi
+  idinga i-`--confirm=<PLAN_HASH>` eqondile ngaphambi kokubhala.
+- Ama-Registered Abilities (`cloudflare-list-tunnels`, `cloudflare-get-health`) afundwayo
+  kuphela ngokuqinile, ahlola indawo ye-Cloudflare: View ngqo ngokumelene
+  namathebula okugunyaza e-Cacti e-ID yomsebenzisi obizayo (hhayi isimo seseshini), futhi
+  awabuyisi ama-token noma impahla yokhiye.
 
 Imininingwane nemikhawulo eyaziwayo iku-[docs/security.md](../../security.md).
 Bika ubungozi bokuphepha ngasese njengoba kuchaziwe ku-[SECURITY.md](../../../SECURITY.md).
 
 ## Ukuhamba komsebenzi womqhubi kanye nokuhlaziywa kwezoni
 
-Izengezo zokuthuthukisa zihlanganisa ukuhoxiswa ngokusobala kwama-tunnel asusiwe, ukuhlaziywa kwezoni okwazi amakhono kanye nezifanekiso ze-Thold ezingenisekayo. Lezi zengezo azikabi nalo ilebula lokukhululwa noma ukufaneleka kwe-akhawunti ebukhoma okwamanje. Bheka [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) ukuze uthole ukusetha, incazelo yamamethrikhi kanye nemikhawulo yokuqinisekisa.
+Izengezo zokuthuthukisa ku-`0.4.0-dev` zihlanganisa ukuhoxiswa ngokusobala kwama-tunnel asusiwe, ukuhlaziywa kwe-GraphQL kwezoni ne-tunnel okwazi amakhono, abancedisi besifinyezo abalungele i-Thold nezifanekiso ezingenisekayo, i-CLI ye-CasC neyempilo, ama-hook ohlelo lwemvelo, nokuphindaphinda komqoqi okude. Lezi zengezo azikabi nalo ilebula lokukhululwa noma ukufaneleka kwe-akhawunti ebukhoma okwamanje. Bheka [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) ukuze uthole ukusetha, incazelo yamamethrikhi, nemikhawulo yokuqinisekisa.
+
+- **Iklayenti ye-GraphQL Analytics nesifinyezo se-Thold (`src/Api/GraphqlAnalyticsClient.php`, `src/Metrics/AnalyticsSummary.php`)**: I-`GraphqlAnalyticsClient` isebenzisa kuphela imibuzo efundwayo kuphela evunyelwe ngesikhathi sokuhlanganiswa (`zone_settings`, `zone_http_metrics`, `zone_edge_latency`, `tunnel_analytics`) nge-`CloudflareClient` (i-TLS iqinisekisiwe, ibotshelelwe ku-`api.cloudflare.com`, izimpendulo ezinomkhawulo, nokubambezeleka komkhawulo wesilinganiso kwe-`RetryPolicy`) ukuqoqa umthamo wezicelo zezoni ne-tunnel, amazinga amaphutha e-HTTP 5xx, ama-byte ezimpendulo, nokubambezeleka kwe-edge (isilinganiso ne-p95). I-`AnalyticsSummary` inikeza i-`recommendedThresholds()` eqondaniswe namagama e-RRD DS e-plugin (`health`, `collect_age`, `error_pct`, `age`), `summarizeZones()`, ne-`evaluateSample()`.
+- **I-CLI yomqhubi neye-CasC (`cli/cloudflare.php`)**: isekelwa yi-`ConfigCodec` (`src/Config/ConfigCodec.php`) ne-`ConfigService` (`src/Config/ConfigService.php`), esekela `cli/cloudflare.php export [--format=yaml|xml] [--file=PATH]` (ekhipha kuphela izinkomba eziyimfihlo ze-`vault:` / `file:`), `cli/cloudflare.php validate --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php plan --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php apply --file=PATH --confirm=<PLAN_HASH> [--format=yaml|xml]`, kanye ne-`cli/cloudflare.php health [--format=text|json]`.
+- **Ama-hook okuhlanganiswa kohlelo lwemvelo (`includes/ecosystem.php`, `setup.php`)**:
+  - `abilities_register` (`AbilitiesProvider`): ibhalisa `cloudflare-list-tunnels` ne-`cloudflare-get-health` ezifundwayo kuphela ezilawulwa endaweni ye-Cloudflare: View (izibonelelo eziqondile nezamaqembu) ngaphandle kwama-token noma izimfihlo kumphumela.
+  - `doctor_register_checks` (`DoctorChecks`): iveza `cloudflare_vault_key` (ukuqinisekiswa kwemodi, i-symlink, nobude), `cloudflare_token_dir` (ukuhlolwa kwendlela ephelele, i-symlink, nokubhalwa nguwonke umuntu), `cloudflare_tunnel_freshness`, kanye ne-`cloudflare_api_failure_rate`.
+  - `casc_register_providers` (`CascProvider`): iveza umhlinzeki we-CasC we-`cloudflare` (`export`, `validate`, `plan`, `apply`) wama-akhawunti (izinkomba eziyimfihlo kuphela), izoni, ama-tunnel, nokumepha kwamamethrikhi.
+  - `replicate_out` (`RemoteReplication`): iphindaphinda amathebula e-metadata angewona ayimfihlo kuma-poller akude (`poller_id > 1`) lapho `token_ciphertext` isuswa ibe ngu-`NULL` futhi impahla yokhiye we-vault ikhishelwe ngaphandle.
 
 ### Ukuthunyelwa kohlu lwezinto
 
@@ -468,7 +484,7 @@ Ingqophamlando ngayinye ikhululwa njengenguqulo engu-0.x eqanjwe ngayo: i-Milest
 | 1. Isisekelo | Umjikelezo wokuphila we-plugin, izimvume, ukumiswa kwe-akhawunti, ukuhlolwa kokuxhumana | Ikhululwe ku-0.3.0 ([#2](https://github.com/somethingwithproof/plugin_cloudflare/pull/2) kuya ku-[#5](https://github.com/somethingwithproof/plugin_cloudflare/pull/5)) |
 | 2. Ukutholwa | Ukutholwa kwe-tunnel ne-connector kumqoqi ongemuva, amakhasi e-Overview, Tunnels ne-Connectors | Ikhululwe ku-0.3.0 ([#6](https://github.com/somethingwithproof/plugin_cloudflare/pull/6)) |
 | 3. Amamethrikhi | Imithombo yedatha yempilo ye-tunnel, izifanekiso zamagrafu, ukuphathwa kokuphuma kwenkonzo okungalokothi kurekhode u-zero oqanjiwe | Ikhululwe ku-0.3.0 ([#7](https://github.com/somethingwithproof/plugin_cloudflare/pull/7)) |
-| 4. Ukuhlaziywa kanye nezaziso | Ukuhlaziywa kwe-GraphQL okuhambisana nohlelo ngendawo ngayinye, imikhawulo ye-Thold enokucindezelwa kokuphuma kwenkonzo | Kuhleliwe |
+| 4. Ukuhlaziywa kanye nezaziso | Ukuhlaziywa kwe-GraphQL okuhambisana nohlelo (`GraphqlAnalyticsClient`), isifinyezo nezifanekiso ze-Thold (`AnalyticsSummary`), i-CasC CLI (`cli/cloudflare.php`), ama-hook ohlelo lwemvelo, nokuphindaphinda okude | Isebenzisiwe ku-0.4.0-dev; ukuqinisekiswa kwe-akhawunti ebukhoma kusasele kulindile |
 | 5. Ukuqiniswa | Ukujova amaphutha, amamodeli e-TLA+ okutholwa nokuqoqwa, imibhalo ephelele | Kuhleliwe |
 
 ## Ukuthuthukiswa

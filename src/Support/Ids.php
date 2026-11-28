@@ -19,11 +19,24 @@
 
 namespace Somethingwithproof\Cloudflare\Support;
 
+/** Ids component for plugin_cloudflare. */
 final class Ids {
+	/**
+	 * Is account ID.
+	 *
+	 * @param string $s
+	 * @return bool
+	 */
 	public static function isAccountId(string $s): bool {
 		return preg_match('/^[0-9a-f]{32}\z/', $s) === 1;
 	}
 
+	/**
+	 * Is UUID.
+	 *
+	 * @param string $s
+	 * @return bool
+	 */
 	public static function isUuid(string $s): bool {
 		return preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\z/', $s) === 1;
 	}

@@ -19,7 +19,9 @@
 
 namespace Somethingwithproof\Cloudflare\Secret;
 
+/** Token file component for plugin_cloudflare. */
 final class TokenFile {
+	/** @var int Max bytes. */
 	private const MAX_BYTES = 4096;
 
 	/**

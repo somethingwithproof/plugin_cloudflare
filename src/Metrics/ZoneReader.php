@@ -22,12 +22,19 @@ namespace Somethingwithproof\Cloudflare\Metrics;
 use Somethingwithproof\Cloudflare\Storage\Database;
 use Somethingwithproof\Cloudflare\Support\Clock;
 
+/** Zone reader component for plugin_cloudflare. */
 final class ZoneReader {
 	/** @var Database */
 	private $db;
 	/** @var Clock */
 	private $clock;
 
+	/**
+	 * Initialize ZoneReader.
+	 *
+	 * @param Database $db
+	 * @param Clock $clock
+	 */
 	public function __construct(Database $db, Clock $clock) {
 		$this->db = $db;
 		$this->clock = $clock;
@@ -47,6 +54,14 @@ final class ZoneReader {
 		return $result;
 	}
 
+	/**
+	 * Value.
+	 *
+	 * @param int $host
+	 * @param string $zone
+	 * @param string $field
+	 * @return string
+	 */
 	public function value(int $host, string $zone, string $field): string {
 		if (preg_match('/^[a-f0-9]{32}\z/', $zone) !== 1) {
 			return 'U';

@@ -27,8 +27,10 @@ namespace Somethingwithproof\Cloudflare\Http;
  * bytes and non-ASCII bytes.
  */
 final class OutboundPolicy {
+	/** @var string Production origin. */
 	private const PRODUCTION_ORIGIN = 'https://api.cloudflare.com';
 
+	/** Default ports. */
 	private const DEFAULT_PORTS = array('https' => 443, 'http' => 80);
 
 	/** @var array<int, array{scheme: string, host: string, port: int}> */
@@ -52,6 +54,11 @@ final class OutboundPolicy {
 		}
 	}
 
+	/**
+	 * Production.
+	 *
+	 * @return self
+	 */
 	public static function production(): self {
 		return new self(array(self::PRODUCTION_ORIGIN));
 	}

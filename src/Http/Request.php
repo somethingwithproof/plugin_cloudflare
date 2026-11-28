@@ -21,6 +21,7 @@ namespace Somethingwithproof\Cloudflare\Http;
 
 use LogicException;
 
+/** Request component for plugin_cloudflare. */
 final class Request {
 	/** @var string */
 	private $method;
@@ -67,10 +68,20 @@ final class Request {
 		$this->body    = $body;
 	}
 
+	/**
+	 * Method.
+	 *
+	 * @return string
+	 */
 	public function method(): string {
 		return $this->method;
 	}
 
+	/**
+	 * URL.
+	 *
+	 * @return string
+	 */
 	public function url(): string {
 		return $this->url;
 	}
@@ -82,6 +93,11 @@ final class Request {
 		return $this->headers;
 	}
 
+	/**
+	 * Body.
+	 *
+	 * @return ?string
+	 */
 	public function body(): ?string {
 		return $this->body;
 	}
@@ -105,6 +121,11 @@ final class Request {
 		throw new LogicException('Request cannot be serialized');
 	}
 
+	/**
+	 * Prevent unserialization of sensitive instances.
+	 *
+	 * @return void
+	 */
 	public function __wakeup(): void {
 		throw new LogicException('Request cannot be unserialized');
 	}

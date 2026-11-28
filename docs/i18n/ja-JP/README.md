@@ -1,4 +1,4 @@
-<!-- Source: README.md; SHA256: f8de0e02c5904e15bfa4c71edcaab219e5e5d4f6d9dbe589f4ed16351df6bf4d -->
+<!-- Source: README.md; SHA256: 813d1c85c236b426b83e42e63c69496f33f8909b5e435d0d45efa6a4ba2f17ca -->
 
 <!-- translations:start -->
 [English](../../../README.md) | [简体中文](../zh-CN/README.md) | [हिन्दी](../hi-IN/README.md) | [Español (España)](../es-ES/README.md) | [Español (Latinoamérica)](../es-419/README.md) | [العربية (السعودية)](../ar-SA/README.md) | [Afrikaans](../af-ZA/README.md) | [አማርኛ](../am-ET/README.md) | [العربية (مصر)](../ar-EG/README.md) | [العربية (المغرب)](../ar-MA/README.md) | [বাংলা](../bn-BD/README.md) | [Bosanski](../bs-BA/README.md) | [Deutsch](../de-DE/README.md) | [فارسی](../fa-IR/README.md) | [Filipino](../fil-PH/README.md) | [Français](../fr-FR/README.md) | [Français (Maroc)](../fr-MA/README.md) | [Français (Sénégal)](../fr-SN/README.md) | [Hausa](../ha-NG/README.md) | [עברית](../he-IL/README.md) | [Hrvatski](../hr-HR/README.md) | [Bahasa Indonesia](../id-ID/README.md) | [Igbo](../ig-NG/README.md) | [Italiano](../it-IT/README.md) | [日本語](README.md) | [한국어](../ko-KR/README.md) | [Malagasy](../mg-MG/README.md) | [मराठी](../mr-IN/README.md) | [Bahasa Melayu](../ms-MY/README.md) | [Nederlands](../nl-NL/README.md) | [Polski](../pl-PL/README.md) | [Português (Brasil)](../pt-BR/README.md) | [Русский](../ru-RU/README.md) | [Kinyarwanda](../rw-RW/README.md) | [Soomaali](../so-SO/README.md) | [Српски](../sr-RS/README.md) | [Svenska](../sv-SE/README.md) | [Kiswahili](../sw-KE/README.md) | [தமிழ்](../ta-IN/README.md) | [తెలుగు](../te-IN/README.md) | [ไทย](../th-TH/README.md) | [Türkçe](../tr-TR/README.md) | [Українська](../uk-UA/README.md) | [اردو](../ur-PK/README.md) | [Tiếng Việt](../vi-VN/README.md) | [isiXhosa](../xh-ZA/README.md) | [Yorùbá](../yo-NG/README.md) | [繁體中文](../zh-TW/README.md) | [isiZulu](../zu-ZA/README.md)
@@ -22,18 +22,18 @@
 
 Cloudflare Tunnel とゾーン分析を監視するために構築中の Cacti 1.2 プラグインです。スコープを限定した API トークンを使用して Cloudflare API から読み取りを行い、Cloudflare 側の設定を変更することは一切なく、データはプラグイン独自のテーブルに保持します。Cacti 側ではデータクエリ XML ファイルを `resource/script_server/` にコピーし、Cacti 自身の API を通じてデバイス、グラフ、テンプレートを作成するため、コアファイルを変更する必要はありません。
 
-**ステータス: 0.4.0-dev（未リリース）。** 最新のリリース済みバージョンは 0.3.0 です。開発版では、CSV インベントリ出力、削除されたトンネルの明示的な廃止処理（retirement）、キャッシュされたゾーン分析、およびオプションの Thold テンプレートが追加されています。実プロバイダー環境およびデプロイ検証は未完了です。
+**ステータス: 0.4.0-dev（未リリース）。** 最新のリリース済みバージョンは 0.3.0 です。開発版では、CSV インベントリ出力、削除されたトンネルの明示的な廃止処理（retirement）、キャッシュされたゾーン分析、Thold 対応のサマリーヘルパー（`AnalyticsSummary`）を備えた許可リスト方式の読み取り専用 GraphQL Analytics クライアント（`GraphqlAnalyticsClient`）、Configuration-as-Code CLI（`cli/cloudflare.php`）、エコシステムフック（`abilities_register`、`doctor_register_checks`、`casc_register_providers`）、およびポーラー単位のリモートコレクターサポート（`replicate_out`）が追加されています。実プロバイダー環境およびデプロイ検証は未完了です。
 
-以下の表は 0.3.0 安定版リリースの内容を示しています。開発版の追加機能については、後述の「運用ワークフローとゾーン分析」で説明しています。
+以下の表は 0.3.0 安定版リリースの内容を示しています。0.4.0-dev の開発版追加機能については、後述の「オペレーターワークフローとゾーンアナリティクス」で説明しています。
 
 | 現在利用可能な機能 | 計画中の機能 |
 |---|---|
-| Cacti のプラグインマネージャーを通じたインストール、アップグレード、無効化、アンインストール | GraphQL 分析および Thold アラート（マイルストーン 4） |
+| Cacti のプラグインマネージャーを通じたインストール、アップグレード、無効化、アンインストール | 実アカウントでの GraphQL 検証およびデプロイ検証（マイルストーン 4 完了条件） |
 | Cloudflare: View、Operator、および Configure 権限 | フォールトインジェクション、TLA+ モデル、および完全なドキュメント（マイルストーン 5） |
 | Cloudflare アカウントの追加、編集、削除、有効化、無効化 | |
 | ファイルまたは暗号化した状態で Cacti データベースにトークンを保存 | |
 | トークンの検証およびトンネルとゾーンの読み取り権限の確認 | |
-| メインポーラーから起動されるバックグラウンドコレクターでのトンネルおよびコネクターの検出 | |
+| バックグラウンドコレクター（`poller_cloudflare.php`）でのトンネルおよびコネクターの検出 | |
 | Management > Cloudflare Tunnels 配下の Overview、Tunnels、Connectors ページ | |
 | ライフサイクル追跡: `active`、`unavailable`、`deleted` | |
 | 管理者によって作成されるアカウントごとに 1 つの Cacti デバイス（トンネルをデータクエリのインデックスとして使用） | |
@@ -200,7 +200,7 @@ Cloudflare: Configure 権限を持つユーザーは任意のパスを入力で�
 ## アップグレード
 
 1. ディレクトリ名を維持したまま、`plugins/cloudflare` 内のファイルを新しいリリースに置き換えます。
-2. 管理者として Console > Configuration > Plugins または Console > Configuration > Cloudflare Accounts を 1 回開きます。これによりプラグインのマイグレーションが実行され、Cloudflare テンプレートがインポートされ、データクエリファイルがコピーされます（[トンネルのメトリクスとグラフ](#tunnel-metrics-and-graphs)を参照）。また、0.1.0 からのアップグレード時には `poller_bottom` フックが登録されます。
+2. 管理者として Console > Configuration > Plugins または Console > Configuration > Cloudflare Accounts を 1 回開きます。これによりプラグインのマイグレーションが実行され、Cloudflare テンプレートがインポートされ、データクエリファイルがコピーされます（[トンネルのメトリクスとグラフ](#tunnel-metrics-and-graphs)を参照）。また、`abilities_register`、`doctor_register_checks`、`casc_register_providers`、および `replicate_out` エコシステムフック（`includes/ecosystem.php`）が登録され、0.1.0 からのアップグレード時には `poller_bottom` フックが登録されます。
 
 `poller.php` はプラグインのアップグレードを実行しないため、手順 2 を行うまで新しいスキーマが存在しない状態になります。その間、コレクターの各実行では何も処理が行われず、`CLOUDFLARE: collector skipped; plugin upgrade pending, open Console > Plugins` がログに記録されます。Cloudflare Tunnels ページには Cloudflare: View 権限のみが必要であるためアップグレードは実行されず、手順 2 を完了するまでは "The Cloudflare tunnels could not be read" と表示される場合があります。
 
@@ -223,7 +223,7 @@ Verify によりアカウントのステータスが設定されます。
 
 ## トンネル検出
 
-メインポーラーでの各ポーリングサイクル終了後、Collect Tunnels がオンになっている有効なアカウントが少なくとも 1 つ存在する場合、`poller_bottom` フックが `exec_background` を使用してバックグラウンドコレクターを起動します。コレクターがポーラーのプロセス内で実行されることはないため、Cloudflare API の応答が遅くても `poller.php` が遅延することはありません。リモートポーラーがコレクターを起動することはありません。
+設定されたコレクターポーラー（`cloudflare_poller_id`、デフォルト `1`）での各ポーリングサイクル終了後、Collect Tunnels がオンになっている有効なアカウントが少なくとも 1 つ存在する場合、`poller_bottom` フックが `exec_background` を使用してバックグラウンドコレクターを起動します。コレクターがポーラーのプロセス内で実行されることはないため、Cloudflare API の応答が遅くても `poller.php` が遅延することはありません。`INFO` は `remote_collect:1` を宣言し、`replicate_out` フック（`RemoteReplication`）はボールト鍵マテリアルを除外したうえで、非機密メタデータテーブル（`token_ciphertext` を `NULL` に消去した `plugin_cloudflare_accounts`、`plugin_cloudflare_tunnels`、`plugin_cloudflare_connectors`、`plugin_cloudflare_zones`、`plugin_cloudflare_metric_mappings`、および `plugin_cloudflare_resources`）をリモートポーラー（`poller_id > 1`）へプッシュします。
 
 実行時期に達した各アカウントについて、コレクターはアカウントのトンネル一覧を取得し、次にアクティブなトンネルの接続情報を読み取ります。これにより、各トンネルのコネクタ、そのバージョン、データセンター、およびオリジンアドレスが取得されます。アカウントは Discovery Interval（デフォルト 300 秒）ごとに実行対象になります。1 回の実行では 50 秒経過後は新しいアカウントを開始せず、最大 200 回の接続リクエストを行います。接続情報の読み取り途中でいずれかの制限に達してアカウントの処理が中断されることもあり、その場合はアカウントが `partial` として記録され、次回の実行では最も長い間試行されていないトンネルから処理が再開されます。開始されなかったアカウントは次回の実行でも実行対象のままとなります。
 
@@ -299,7 +299,7 @@ Settings > Cloudflare には以下の項目があります：
 
 - 1 回の実行で行われる接続リクエストは最大 200 件です。この上限を超えるトンネルは観測ウィンドウよりも低い頻度で更新されるため、接続グラフに欠損が生じます。
 - アップグレードによって同梱のテンプレート XML が変更された場合、インポート済みテンプレートに対する管理者の編集内容はプラグインによって上書きされます。
-- アカウントのデバイスはメインポーラー上に配置しておく必要があります。プラグインのテーブルはメインデータベースにあり、スクリプトはそこからデータを読み取ります。
+- リモートポーラーは認証情報を含まないレプリケート済みメタデータを受け取ります（`token_ciphertext` は `NULL` に消去され、ボールト鍵は一切レプリケーションされません）。指定されたリモートポーラー（`cloudflare_poller_id`）上でコレクターを実行する場合は、トークンファイルまたはボールト鍵をそのコレクターホスト上に直接配置してください。
 - 削除されたトンネルは、管理者が明示的に廃止（retire）するまでデータクエリインデックスに残り、`U` を出力し続けます。廃止処理では、Cacti を通じてプラグインが記録したグラフと非共有のデータソースのみが削除され、インベントリ行は表示されたままになります。RRD のクリーンアップは Cacti によって制御されます。
 - メモリ不足などの真の致命的エラー（fatal error）でコードが終了した場合、Cacti はプラグインを無効化します。[docs/security.md](../../security.md) を参照してください。
 
@@ -309,12 +309,22 @@ Settings > Cloudflare には以下の項目があります：
 - トークンはユーザーが用意したファイルに保存されるか、データベースには決して格納されないキーファイルを用いて AES-256-GCM で暗号化されます。トークンがページに表示されたり、ログに書き込まれたり、エラーメッセージに含まれたりすることはありません。
 - データベースエラーには SQLSTATE とドライバーのエラーコードのみが含まれ、ステートメントの値は一切含まれません。
 - すべての変更操作は、Cacti の CSRF トークンで保護された POST リクエストです。管理用アカウントおよび設定の変更には Cloudflare: Configure 権限が必要であり、個人的なトリアージの確認応答（acknowledgment）には Cloudflare: Operator 権限が必要です。Cacti デバイスの作成や Create Graphs の有効化には、Cacti の Sites/Devices/Data 権限も必要です。無効化されたプラグインはページへのアクセスを拒否します。
+- Configuration-as-Code（`cli/cloudflare.php` および `casc_register_providers`）は、`vault:<account_id>` または `file:<absolute_path>` 形式のシークレット参照のみを受け付け、生のトークン、ボールト暗号文、および XML `DOCTYPE` 宣言を拒否し、書き込み前に完全一致する `--confirm=<PLAN_HASH>` を要求します。
+- 登録済み Ability（`cloudflare-list-tunnels`、`cloudflare-get-health`）は厳密に読み取り専用であり、呼び出し元のユーザー ID に対して Cacti 認証テーブル上で Cloudflare: View レルムを直接評価し（セッション状態には依存しません）、トークンや鍵マテリアルを一切返しません。
 
 詳細および既知の制限事項については [docs/security.md](../../security.md) を参照してください。脆弱性の報告は [SECURITY.md](../../../SECURITY.md) に記載されている非公開の方法で行ってください。
 
 ## オペレーターワークフローとゾーンアナリティクス
 
-開発中の追加機能には、削除されたトンネルの明示的な廃止処理、プランや機能に応じた（capability-aware）ゾーンアナリティクス、およびインポート可能な Thold テンプレートが含まれます。これらの追加機能には、まだリリースタグや実アカウントでの検証実績がありません。セットアップ、メトリクスの意味、および検証の制限事項については [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) を参照してください。
+`0.4.0-dev` の開発中追加機能には、削除されたトンネルの明示的な廃止処理、プランや機能に応じた（capability-aware）GraphQL ゾーンおよびトンネルアナリティクス、Thold 対応のサマリーヘルパーとインポート可能なテンプレート、CasC およびヘルス CLI、エコシステムフック、ならびにリモートコレクターレプリケーションが含まれます。これらの追加機能には、まだリリースタグや実アカウントでの検証実績がありません。セットアップ、メトリクスの意味、および検証の制限事項については [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) を参照してください。
+
+- **GraphQL Analytics クライアントおよび Thold サマリー（`src/Api/GraphqlAnalyticsClient.php`、`src/Metrics/AnalyticsSummary.php`）**：`GraphqlAnalyticsClient` は、`CloudflareClient`（TLS 検証済み、`api.cloudflare.com` に固定、応答サイズ上限付き、および `RetryPolicy` によるレート制限バックオフ）経由でコンパイル時許可リストに登録された読み取り専用クエリ（`zone_settings`、`zone_http_metrics`、`zone_edge_latency`、`tunnel_analytics`）のみを実行し、ゾーンおよびトンネルのリクエスト数、HTTP 5xx エラー率、応答バイト数、およびエッジレイテンシ（平均および p95）を収集します。`AnalyticsSummary` はプラグインの RRD DS 名（`health`、`collect_age`、`error_pct`、`age`）に沿った `recommendedThresholds()`、`summarizeZones()`、および `evaluateSample()` を提供します。
+- **オペレーターおよび CasC CLI（`cli/cloudflare.php`）**：`ConfigCodec`（`src/Config/ConfigCodec.php`）および `ConfigService`（`src/Config/ConfigService.php`）を基盤とし、`cli/cloudflare.php export [--format=yaml|xml] [--file=PATH]`（`vault:` / `file:` シークレット参照のみを出力）、`cli/cloudflare.php validate --file=PATH [--format=yaml|xml]`、`cli/cloudflare.php plan --file=PATH [--format=yaml|xml]`、`cli/cloudflare.php apply --file=PATH --confirm=<PLAN_HASH> [--format=yaml|xml]`、および `cli/cloudflare.php health [--format=text|json]` をサポートします。
+- **エコシステム統合フック（`includes/ecosystem.php`、`setup.php`）**：
+  - `abilities_register`（`AbilitiesProvider`）：Cloudflare: View レルム（直接およびグループ付与）で制限され、出力にトークンやシークレットを一切含まない読み取り専用の `cloudflare-list-tunnels` および `cloudflare-get-health` を登録します。
+  - `doctor_register_checks`（`DoctorChecks`）：`cloudflare_vault_key`（パーミッション、シンボリックリンク、長さの検証）、`cloudflare_token_dir`（絶対パス、シンボリックリンク、および誰でも書き込み可能かどうかのチェック）、`cloudflare_tunnel_freshness`、および `cloudflare_api_failure_rate` を公開します。
+  - `casc_register_providers`（`CascProvider`）：アカウント（シークレット参照のみ）、ゾーン、トンネル、およびメトリクスマッピング向けの `cloudflare` CasC プロバイダー（`export`、`validate`、`plan`、`apply`）を公開します。
+  - `replicate_out`（`RemoteReplication`）：`token_ciphertext` を `NULL` に消去し、ボールト鍵マテリアルを除外したうえで、非機密メタデータテーブルをリモートポーラー（`poller_id > 1`）へレプリケーションします。
 
 ### インベントリのエクスポート
 
@@ -329,7 +339,7 @@ Tunnels ページおよび Connectors ページでは、Cloudflare: View 領域�
 | 1. Foundation | プラグインのライフサイクル、権限、アカウント設定、接続テスト | 0.3.0 でリリース済み（[#2](https://github.com/somethingwithproof/plugin_cloudflare/pull/2) ～ [#5](https://github.com/somethingwithproof/plugin_cloudflare/pull/5)） |
 | 2. Discovery | バックグラウンドコレクターでのトンネルおよびコネクターの検出、Overview、Tunnels、Connectors ページ | 0.3.0 でリリース済み（[#6](https://github.com/somethingwithproof/plugin_cloudflare/pull/6)） |
 | 3. Metrics | トンネルヘルスのデータソース、グラフテンプレート、捏造されたゼロを記録しない障害処理 | 0.3.0 でリリース済み（[#7](https://github.com/somethingwithproof/plugin_cloudflare/pull/7)） |
-| 4. Analytics and alerting | ゾーンごとのプラン対応 GraphQL アナリティクス、障害抑制付き Thold しきい値 | 予定 |
+| 4. Analytics and alerting | プラン対応の GraphQL アナリティクス（`GraphqlAnalyticsClient`）、Thold サマリーおよびテンプレート（`AnalyticsSummary`）、CasC CLI（`cli/cloudflare.php`）、エコシステムフック、およびリモートレプリケーション | 0.4.0-dev に実装済み。実アカウントでの検証は未完了 |
 | 5. Hardening | フォールトインジェクション、ディスカバリと収集の TLA+ モデル、完全なドキュメント | 予定 |
 
 ## 開発

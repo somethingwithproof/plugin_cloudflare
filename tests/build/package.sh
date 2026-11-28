@@ -35,7 +35,7 @@ listing="$(tar -tzf "${archive}")"
 status=0
 
 for path in cloudflare/setup.php cloudflare/INFO cloudflare/LICENSE cloudflare/cloudflare.php cloudflare/cloudflare_accounts.php cloudflare/poller_cloudflare.php \
-    cloudflare/ss_cloudflare.php cloudflare/ss_cloudflare_zones.php cloudflare/cloudflare_operator.php cloudflare/templates/ cloudflare/src/ cloudflare/includes/ cloudflare/js/ cloudflare/docs/images/; do
+    cloudflare/ss_cloudflare.php cloudflare/ss_cloudflare_zones.php cloudflare/cloudflare_operator.php cloudflare/templates/ cloudflare/src/ cloudflare/includes/ cloudflare/js/ cloudflare/schema/ cloudflare/schema/cloudflare.schema.yaml cloudflare/docs/images/; do
     if ! grep -qxF -- "${path}" <<<"${listing}"; then
         printf 'FAIL: %s is missing from %s\n' "${path}" "${archive}" >&2
         status=1
@@ -54,7 +54,7 @@ for prefix in cloudflare/tests/ cloudflare/features/ cloudflare/vendor/ cloudfla
 done
 
 # The template, the sources and the compiled catalogs Cacti loads.
-for locale in af-ZA am-ET ar-EG ar-MA ar-SA bn-BD bs-BA de-DE es-419 es-ES fa-IR fil-PH fr-FR fr-MA fr-SN ha-NG he-IL hi-IN hr-HR id-ID ig-NG it-IT ja-JP ko-KR mg-MG mr-IN ms-MY nl-NL pl-PL pt-BR ru-RU rw-RW so-SO sr-RS sv-SE sw-KE ta-IN te-IN th-TH tr-TR uk-UA ur-PK vi-VN xh-ZA yo-NG zh-CN zh-TW zu-ZA; do
+for locale in af-ZA am-ET ar-EG ar-MA ar-SA bg-BG bn-BD bs-BA de-DE el-GR es-419 es-ES fa-IR fil-PH fr-FR fr-MA fr-SN ha-NG he-IL hi-IN hr-HR id-ID ig-NG it-IT ja-JP ka-GE ko-KR lv-LV mg-MG mr-IN ms-MY nl-NL pl-PL pt-BR pt-PT ru-RU rw-RW so-SO sr-RS sv-SE sw-KE ta-IN te-IN th-TH tr-TR uk-UA ur-PK vi-VN xh-ZA yo-NG zh-CN zh-TW zu-ZA; do
     for path in "cloudflare/locales/po/${locale}.po" "cloudflare/locales/LC_MESSAGES/${locale}.mo"; do
         if ! grep -qxF -- "${path}" <<<"${listing}"; then
             printf 'FAIL: %s is missing from %s\n' "${path}" "${archive}" >&2

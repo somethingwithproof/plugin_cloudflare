@@ -190,6 +190,12 @@ function cloudflare_remove_unrecorded_host(Account $account, int $host_id) : voi
 	}
 }
 
+/**
+ * Host exists.
+ *
+ * @param  int  $host_id
+ * @return bool
+ */
 function cloudflare_host_exists(int $host_id) : bool {
 	$id = db_fetch_cell_prepared('SELECT id FROM host WHERE id = ?', array($host_id));
 
@@ -197,6 +203,11 @@ function cloudflare_host_exists(int $host_id) : bool {
 }
 
 // host.php loads these before saving a device (host.php:26-38).
+/**
+ * Device libraries.
+ *
+ * @return void
+ */
 function cloudflare_device_libraries() : void {
 	global $config;
 
@@ -217,6 +228,13 @@ function cloudflare_device_libraries() : void {
 	}
 }
 
+/**
+ * Device log.
+ *
+ * @param  Account $account
+ * @param  string  $what
+ * @return void
+ */
 function cloudflare_device_log(Account $account, string $what) : void {
 	cacti_log('CLOUDFLARE: account ' . $account->id() . ' device ' . $what, false, 'CLOUDFLARE', POLLER_VERBOSITY_LOW);
 }
@@ -496,6 +514,12 @@ function cloudflare_sync_graphs(
 }
 
 // The data source an existing graph draws from, as cli/add_graphs.php:680 reads it.
+/**
+ * Graph data ID.
+ *
+ * @param  int $local_graph_id
+ * @return int
+ */
 function cloudflare_graph_data_id(int $local_graph_id) : int {
 	$id = db_fetch_cell_prepared(
 		'SELECT dtr.local_data_id

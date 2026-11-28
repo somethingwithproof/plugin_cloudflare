@@ -19,6 +19,7 @@
 
 namespace Somethingwithproof\Cloudflare\Secret;
 
+/** Token policy component for plugin_cloudflare. */
 final class TokenPolicy {
 	/**
 	 * Callers trim; surrounding whitespace is rejected here. The Global API

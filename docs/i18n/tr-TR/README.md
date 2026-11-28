@@ -1,4 +1,4 @@
-<!-- Source: README.md; SHA256: f8de0e02c5904e15bfa4c71edcaab219e5e5d4f6d9dbe589f4ed16351df6bf4d -->
+<!-- Source: README.md; SHA256: 813d1c85c236b426b83e42e63c69496f33f8909b5e435d0d45efa6a4ba2f17ca -->
 
 <!-- translations:start -->
 [English](../../../README.md) | [简体中文](../zh-CN/README.md) | [हिन्दी](../hi-IN/README.md) | [Español (España)](../es-ES/README.md) | [Español (Latinoamérica)](../es-419/README.md) | [العربية (السعودية)](../ar-SA/README.md) | [Afrikaans](../af-ZA/README.md) | [አማርኛ](../am-ET/README.md) | [العربية (مصر)](../ar-EG/README.md) | [العربية (المغرب)](../ar-MA/README.md) | [বাংলা](../bn-BD/README.md) | [Bosanski](../bs-BA/README.md) | [Deutsch](../de-DE/README.md) | [فارسی](../fa-IR/README.md) | [Filipino](../fil-PH/README.md) | [Français](../fr-FR/README.md) | [Français (Maroc)](../fr-MA/README.md) | [Français (Sénégal)](../fr-SN/README.md) | [Hausa](../ha-NG/README.md) | [עברית](../he-IL/README.md) | [Hrvatski](../hr-HR/README.md) | [Bahasa Indonesia](../id-ID/README.md) | [Igbo](../ig-NG/README.md) | [Italiano](../it-IT/README.md) | [日本語](../ja-JP/README.md) | [한국어](../ko-KR/README.md) | [Malagasy](../mg-MG/README.md) | [मराठी](../mr-IN/README.md) | [Bahasa Melayu](../ms-MY/README.md) | [Nederlands](../nl-NL/README.md) | [Polski](../pl-PL/README.md) | [Português (Brasil)](../pt-BR/README.md) | [Русский](../ru-RU/README.md) | [Kinyarwanda](../rw-RW/README.md) | [Soomaali](../so-SO/README.md) | [Српски](../sr-RS/README.md) | [Svenska](../sv-SE/README.md) | [Kiswahili](../sw-KE/README.md) | [தமிழ்](../ta-IN/README.md) | [తెలుగు](../te-IN/README.md) | [ไทย](../th-TH/README.md) | [Türkçe](README.md) | [Українська](../uk-UA/README.md) | [اردو](../ur-PK/README.md) | [Tiếng Việt](../vi-VN/README.md) | [isiXhosa](../xh-ZA/README.md) | [Yorùbá](../yo-NG/README.md) | [繁體中文](../zh-TW/README.md) | [isiZulu](../zu-ZA/README.md)
@@ -22,18 +22,18 @@
 
 Cloudflare Tunnels ve bölge (zone) analizlerini izlemek için geliştirilen bir Cacti 1.2 eklentisidir. Kapsamlı API belirteçleriyle Cloudflare API'sinden okuma yapar, Cloudflare'de hiçbir değişiklik yapmaz ve verilerini kendi tablolarında tutar. Cacti'de veri sorgusu XML dosyalarını `resource/script_server/` dizinine kopyalar ve çekirdek dosyalarda hiçbir değişiklik yapmadan Cacti'nin kendi API'leri aracılığıyla cihazlar, grafikler ve şablonlar oluşturur.
 
-**Durum: 0.4.0-dev, yayımlanmamış.** Son yayımlanan sürüm 0.3.0'dır. Geliştirme sürümü; CSV envanter dışa aktarımları, silinen tünellerin açıkça kullanımdan kaldırılması, önbelleğe alınmış bölge analizleri ve isteğe bağlı Thold şablonları ekler. Canlı sağlayıcı ve dağıtım doğrulaması henüz tamamlanmamıştır.
+**Durum: 0.4.0-dev, yayımlanmamış.** Son yayımlanan sürüm 0.3.0'dır. Geliştirme sürümü; CSV envanter dışa aktarımları, silinen tünellerin açıkça kullanımdan kaldırılması, önbelleğe alınmış bölge analizleri, Thold'a hazır özet yardımcılarıyla (`AnalyticsSummary`) izin listeli salt okunur bir GraphQL Analytics istemcisi (`GraphqlAnalyticsClient`), Configuration-as-Code CLI (`cli/cloudflare.php`), ekosistem kancaları (`abilities_register`, `doctor_register_checks`, `casc_register_providers`) ve yoklayıcı kapsamlı uzak toplayıcı desteği (`replicate_out`) ekler. Canlı sağlayıcı ve dağıtım doğrulaması henüz tamamlanmamıştır.
 
-Aşağıdaki tablo 0.3.0 kararlı sürümünü açıklamaktadır. Geliştirme eklemeleri aşağıdaki Operatör iş akışları ve bölge analizleri bölümünde açıklanmıştır.
+Aşağıdaki tablo 0.3.0 kararlı sürümünü açıklamaktadır. 0.4.0-dev sürümündeki geliştirme eklemeleri aşağıdaki Operatör iş akışları ve bölge analitikleri bölümünde açıklanmıştır.
 
 | Şu anda mevcut | Planlanan |
 |---|---|
-| Cacti'nin eklenti yöneticisi aracılığıyla kurulum, yükseltme, devre dışı bırakma ve kaldırma | GraphQL analizleri ve Thold uyarıları (Aşama 4) |
+| Cacti'nin eklenti yöneticisi aracılığıyla kurulum, yükseltme, devre dışı bırakma ve kaldırma | Canlı hesap GraphQL ve dağıtım yeterliliği (Aşama 4 çıkışı) |
 | Cloudflare: View, Operator ve Configure izinleri | Hata enjeksiyonu, TLA+ modelleri ve eksiksiz dokümantasyon (Aşama 5) |
 | Cloudflare hesapları ekleme, düzenleme, silme, etkinleştirme ve devre dışı bırakma | |
 | Belirteci bir dosyada veya Cacti veritabanında şifrelenmiş olarak saklama | |
 | Belirteci doğrulama ve tünel ile bölge okuma izinlerini kontrol etme | |
-| Ana poller tarafından başlatılan bir arka plan toplayıcısında tünel ve bağlayıcı keşfi | |
+| Bir arka plan toplayıcısında (`poller_cloudflare.php`) tünel ve bağlayıcı keşfi | |
 | Management > Cloudflare Tunnels altında Overview, Tunnels ve Connectors sayfaları | |
 | Yaşam döngüsü takibi: `active`, `unavailable` ve `deleted` | |
 | Bir yönetici tarafından oluşturulan, tünellerin bir veri sorgusunun dizinleri olarak yer aldığı hesap başına bir Cacti cihazı | |
@@ -250,7 +250,7 @@ Cloudflare: Configure iznine sahip herkes herhangi bir yol girebilir ve poller k
 ## Yükseltme
 
 1. Dizin adını koruyarak `plugins/cloudflare` içindeki dosyaları yeni sürümle değiştirin.
-2. Yönetici olarak bir kez Console > Configuration > Plugins veya Console > Configuration > Cloudflare Accounts sayfasını açın. Bu işlem eklentinin veritabanı geçişlerini çalıştırır, Cloudflare şablonlarını içe aktarır, veri sorgusu dosyasını kopyalar (bkz. [Tünel metrikleri ve grafikleri](#tunnel-metrics-and-graphs)) ve 0.1.0 sürümünden yapılan bir yükseltmede `poller_bottom` kancasını kaydeder.
+2. Yönetici olarak bir kez Console > Configuration > Plugins veya Console > Configuration > Cloudflare Accounts sayfasını açın. Bu işlem eklentinin veritabanı geçişlerini çalıştırır, Cloudflare şablonlarını içe aktarır, veri sorgusu dosyasını kopyalar (bkz. [Tünel metrikleri ve grafikleri](#tunnel-metrics-and-graphs)), `abilities_register`, `doctor_register_checks`, `casc_register_providers` ve `replicate_out` ekosistem kancalarını (`includes/ecosystem.php`) kaydeder ve 0.1.0 sürümünden yapılan bir yükseltmede `poller_bottom` kancasını kaydeder.
 
 `poller.php` eklenti yükseltmesini çalıştırmaz; bu nedenle 2. adıma kadar yeni şema mevcut değildir. Bu durumda her toplayıcı çalıştırması hiçbir şey yapmaz ve `CLOUDFLARE: collector skipped; plugin upgrade pending, open Console > Plugins` günlüğünü kaydeder. Cloudflare Tunnels sayfaları yalnızca Cloudflare: View iznine ihtiyaç duyar, bu yüzden yükseltmeyi asla çalıştırmazlar ve 2. adıma kadar "The Cloudflare tunnels could not be read" uyarısını gösterebilirler.
 
@@ -273,7 +273,7 @@ Düzenleme sayfası ayrıca tünel okuma ve bölge okuma izinlerinin verilip ver
 
 ## Tünel keşfi
 
-Ana poller üzerindeki her yoklama döngüsünden sonra, Collect Tunnels ayarı açık olan en az bir etkin hesap varsa `poller_bottom` kancası `exec_background` ile bir arka plan toplayıcısı başlatır. Toplayıcı hiçbir zaman poller sürecinin içinde çalışmaz; bu nedenle yavaş bir Cloudflare API'si `poller.php` dosyasını geciktirmez. Uzak poller'lar bunu asla başlatmaz.
+Yapılandırılmış toplayıcı yoklayıcı (`cloudflare_poller_id`, varsayılan `1`) üzerindeki her yoklama döngüsünden sonra, Collect Tunnels ayarı açık olan en az bir etkin hesap varsa `poller_bottom` kancası `exec_background` ile bir arka plan toplayıcısı başlatır. Toplayıcı hiçbir zaman poller sürecinin içinde çalışmaz; bu nedenle yavaş bir Cloudflare API'si `poller.php` dosyasını geciktirmez. `INFO` değeri `remote_collect:1` bildirir ve `replicate_out` kancası (`RemoteReplication`), kasa anahtarı materyallerini hariç tutarak gizli olmayan meta veri tablolarını (`token_ciphertext` alanı `NULL` olarak temizlenmiş `plugin_cloudflare_accounts`, `plugin_cloudflare_tunnels`, `plugin_cloudflare_connectors`, `plugin_cloudflare_zones`, `plugin_cloudflare_metric_mappings` ve `plugin_cloudflare_resources`) uzak yoklayıcılara (`poller_id > 1`) gönderir.
 
 Zamanı gelmiş olan her hesap için toplayıcı önce hesabın tünellerini listeler, ardından etkin tünellerinin bağlantılarını okur; bu da her tünelin bağlayıcılarını, sürümlerini, veri merkezlerini ve kaynak adreslerini verir. Hesapların zamanı her Discovery Interval süresinde bir (varsayılan 300 saniye) gelir. Bir çalıştırma, 50 saniyeden sonra yeni bir hesap başlatmaz ve en fazla 200 bağlantı isteği yapar. Bu sınırlardan herhangi biri, bir hesabın bağlantılarını okuma işlemini yarıda da kesebilir; bu hesap `partial` olarak kaydedilir ve bir sonraki çalıştırma en uzun süredir denenmemiş tünellerle devam eder. Başlatılmayan hesaplar bir sonraki çalıştırma için zamanı gelmiş durumda kalır.
 
@@ -349,7 +349,7 @@ Tutulan cihaz veri almayı durdurur. Bir kaldırma işleminden sonra veya hesab�
 
 - Bir çalıştırmada en fazla 200 bağlantı isteği yapılır. Bu sınırın ötesindeki tüneller gözlem penceresinden daha seyrek yenilenir, bu nedenle bağlantı grafiklerinde boşluklar görülür.
 - Bir yükseltme paketle gelen şablon XML'ini değiştirdiğinde, eklenti içe aktarılan şablonlarda yöneticinin yaptığı düzenlemelerin üzerine yazar.
-- Hesabın cihazı ana yoklayıcıda kalmalıdır. Eklentinin tabloları ana veritabanındadır ve betik bunları oradan okur.
+- Uzak yoklayıcılar kimlik bilgileri olmadan çoğaltılmış meta verileri alır (`token_ciphertext` alanı `NULL` olarak temizlenir ve kasa anahtarları asla çoğaltılmaz). Toplayıcıyı atanmış bir uzak yoklayıcıda (`cloudflare_poller_id`) çalıştırırken, belirteç dosyalarını veya kasa anahtarını doğrudan o toplayıcı ana bilgisayarda sağlayın.
 - Silinen tüneller veri sorgusu dizininde kalır ve bir yönetici onları açıkça kullanımdan kaldırana kadar `U` yazdırır. Kullanımdan kaldırma yalnızca eklenti tarafından kaydedilen grafikleri ve paylaşılmayan veri kaynaklarını Cacti aracılığıyla kaldırır; envanter satırı görünür kalır. RRD temizliğini Cacti yönetir.
 - Cacti, bellek tükenmesi gibi gerçek bir ölümcül hatayla sonlanan koda sahip bir eklentiyi devre dışı bırakır. Bkz. [docs/security.md](../../security.md).
 
@@ -359,13 +359,29 @@ Tutulan cihaz veri almayı durdurur. Bir kaldırma işleminden sonra veya hesab�
 - Belirteçler, sağladığınız bir dosyada saklanır veya veritabanına hiçbir zaman girmeyen bir anahtar dosya altında AES-256-GCM ile şifrelenir. Hiçbir zaman bir sayfada gösterilmez, günlüğe yazılmaz veya bir hata mesajına dahil edilmezler.
 - Veritabanı hataları yalnızca SQLSTATE ve sürücü hata kodunu taşır, hiçbir zaman deyimin değerlerini taşımaz.
 - Her değişiklik, Cacti'nin CSRF belirteci ile korunan bir POST isteğidir. Yönetimsel hesap ve yapılandırma değişiklikleri Cloudflare: Yapılandır yetkisi gerektirir; kişisel önceliklendirme onayları Cloudflare: Operatör yetkisi gerektirir. Bir Cacti cihazı oluşturmak veya Grafikleri Oluştur seçeneğini açmak ayrıca Cacti'nin Siteler/Cihazlar/Veri iznini gerektirir. Devre dışı bırakılmış bir eklenti sayfalarını reddeder.
+- Configuration-as-Code (`cli/cloudflare.php` ve `casc_register_providers`)
+  yalnızca `vault:<account_id>` veya `file:<absolute_path>` gizli başvurularını kabul eder,
+  ham belirteçleri, kasa şifreli metinlerini ve XML `DOCTYPE` bildirimlerini reddeder ve
+  yazmadan önce tam bir `--confirm=<PLAN_HASH>` gerektirir.
+- Kayıtlı Yetenekler (`cloudflare-list-tunnels`, `cloudflare-get-health`) kesinlikle
+  salt okunurdur, çağıranın kullanıcı kimliği için Cloudflare: View yetki alanını doğrudan
+  Cacti kimlik doğrulama tablolarına karşı değerlendirir (asla oturum durumuna göre değil) ve
+  hiçbir belirteç veya anahtar materyali döndürmez.
 
 Ayrıntılar ve bilinen sınırlamalar [docs/security.md](../../security.md) dosyasındadır.
 Güvenlik açıklarını [SECURITY.md](../../../SECURITY.md) dosyasında açıklandığı şekilde gizli olarak bildirin.
 
 ## Operatör iş akışları ve bölge analitikleri
 
-Geliştirme eklemeleri arasında silinen tünellerin açıkça kullanımdan kaldırılması, yetenek farkındalıklı bölge analitikleri ve içe aktarılabilir Thold şablonları yer alır. Bu eklemelerin henüz bir sürüm etiketi veya canlı hesap yeterliliği yoktur. Kurulum, metrik anlamları ve doğrulama sınırları için [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) dosyasına bakın.
+`0.4.0-dev` sürümündeki geliştirme eklemeleri arasında silinen tünellerin açıkça kullanımdan kaldırılması, yetenek farkındalıklı GraphQL bölge ve tünel analitikleri, Thold'a hazır özet yardımcıları ve içe aktarılabilir şablonlar, CasC ve sağlık CLI'ı, ekosistem kancaları ve uzak toplayıcı çoğaltması yer alır. Bu eklemelerin henüz bir sürüm etiketi veya canlı hesap yeterliliği yoktur. Kurulum, metrik anlamları ve doğrulama sınırları için [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) dosyasına bakın.
+
+- **GraphQL Analytics istemcisi ve Thold özeti (`src/Api/GraphqlAnalyticsClient.php`, `src/Metrics/AnalyticsSummary.php`)**: `GraphqlAnalyticsClient`, bölge ve tünel istek hacmini, HTTP 5xx hata oranlarını, yanıt baytlarını ve uç gecikmeyi (ortalama ve p95) toplamak için `CloudflareClient` üzerinden (TLS doğrulamalı, `api.cloudflare.com` adresine sabitlenmiş, sınırlı yanıtlar ve `RetryPolicy` hız sınırı geri çekilmesiyle) yalnızca derleme zamanı izin listesine alınmış salt okunur sorguları (`zone_settings`, `zone_http_metrics`, `zone_edge_latency`, `tunnel_analytics`) çalıştırır. `AnalyticsSummary`, eklentinin RRD DS adlarıyla (`health`, `collect_age`, `error_pct`, `age`) hizalı `recommendedThresholds()`, `summarizeZones()` ve `evaluateSample()` yöntemlerini sağlar.
+- **Operatör ve CasC CLI (`cli/cloudflare.php`)**: `ConfigCodec` (`src/Config/ConfigCodec.php`) ve `ConfigService` (`src/Config/ConfigService.php`) tarafından desteklenir; `cli/cloudflare.php export [--format=yaml|xml] [--file=PATH]` (yalnızca `vault:` / `file:` gizli başvurularını çıkarır), `cli/cloudflare.php validate --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php plan --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php apply --file=PATH --confirm=<PLAN_HASH> [--format=yaml|xml]` ve `cli/cloudflare.php health [--format=text|json]` komutlarını destekler.
+- **Ekosistem tümleştirme kancaları (`includes/ecosystem.php`, `setup.php`)**:
+  - `abilities_register` (`AbilitiesProvider`): çıktıda sıfır belirteç veya gizli bilgiyle Cloudflare: View yetki alanında (doğrudan ve grup izinleri) denetlenen salt okunur `cloudflare-list-tunnels` ve `cloudflare-get-health` yeteneklerini kaydeder.
+  - `doctor_register_checks` (`DoctorChecks`): `cloudflare_vault_key` (kip, sembolik bağlantı ve uzunluk doğrulaması), `cloudflare_token_dir` (mutlak yol, sembolik bağlantı ve herkes tarafından yazılabilirlik denetimleri), `cloudflare_tunnel_freshness` ve `cloudflare_api_failure_rate` denetimlerini sunar.
+  - `casc_register_providers` (`CascProvider`): hesaplar (yalnızca gizli başvurular), bölgeler, tüneller ve metrik eşlemeleri için `cloudflare` CasC sağlayıcısını (`export`, `validate`, `plan`, `apply`) sunar.
+  - `replicate_out` (`RemoteReplication`): `token_ciphertext` alanı `NULL` olarak temizlenmiş ve kasa anahtarı materyalleri hariç tutulmuş şekilde gizli olmayan meta veri tablolarını uzak yoklayıcılara (`poller_id > 1`) çoğaltır.
 
 ### Envanter dışa aktarımları
 
@@ -380,7 +396,7 @@ Her kilometre taşı kendi numarasını taşıyan bir 0.x sürümü olarak yayı
 | 1. Temel | Eklenti yaşam döngüsü, izinler, hesap yapılandırması, bağlantı testi | 0.3.0'da yayınlandı ([#2](https://github.com/somethingwithproof/plugin_cloudflare/pull/2) - [#5](https://github.com/somethingwithproof/plugin_cloudflare/pull/5)) |
 | 2. Keşif | Arka plan toplayıcısında tünel ve bağlayıcı keşfi, Genel Bakış, Tüneller ve Bağlayıcılar sayfaları | 0.3.0'da yayınlandı ([#6](https://github.com/somethingwithproof/plugin_cloudflare/pull/6)) |
 | 3. Metrikler | Tünel sağlığı veri kaynakları, grafik şablonları, asla uydurulmuş bir sıfır kaydetmeyen kesinti yönetimi | 0.3.0'da yayınlandı ([#7](https://github.com/somethingwithproof/plugin_cloudflare/pull/7)) |
-| 4. Analitik ve uyarı | Bölge başına plana duyarlı GraphQL analitikleri, kesinti bastırmalı Thold eşikleri | Planlandı |
+| 4. Analitik ve uyarı | Plana duyarlı GraphQL analitikleri (`GraphqlAnalyticsClient`), Thold özeti ve şablonları (`AnalyticsSummary`), CasC CLI (`cli/cloudflare.php`), ekosistem kancaları ve uzak çoğaltma | 0.4.0-dev sürümünde uygulandı; canlı hesap yeterliliği bekleniyor |
 | 5. Sağlamlaştırma | Hata enjeksiyonu, keşif ve toplama TLA+ modelleri, eksiksiz dokümantasyon | Planlandı |
 
 ## Geliştirme

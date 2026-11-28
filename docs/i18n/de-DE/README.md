@@ -1,4 +1,4 @@
-<!-- Source: README.md; SHA256: f8de0e02c5904e15bfa4c71edcaab219e5e5d4f6d9dbe589f4ed16351df6bf4d -->
+<!-- Source: README.md; SHA256: 813d1c85c236b426b83e42e63c69496f33f8909b5e435d0d45efa6a4ba2f17ca -->
 
 <!-- translations:start -->
 [English](../../../README.md) | [简体中文](../zh-CN/README.md) | [हिन्दी](../hi-IN/README.md) | [Español (España)](../es-ES/README.md) | [Español (Latinoamérica)](../es-419/README.md) | [العربية (السعودية)](../ar-SA/README.md) | [Afrikaans](../af-ZA/README.md) | [አማርኛ](../am-ET/README.md) | [العربية (مصر)](../ar-EG/README.md) | [العربية (المغرب)](../ar-MA/README.md) | [বাংলা](../bn-BD/README.md) | [Bosanski](../bs-BA/README.md) | [Deutsch](README.md) | [فارسی](../fa-IR/README.md) | [Filipino](../fil-PH/README.md) | [Français](../fr-FR/README.md) | [Français (Maroc)](../fr-MA/README.md) | [Français (Sénégal)](../fr-SN/README.md) | [Hausa](../ha-NG/README.md) | [עברית](../he-IL/README.md) | [Hrvatski](../hr-HR/README.md) | [Bahasa Indonesia](../id-ID/README.md) | [Igbo](../ig-NG/README.md) | [Italiano](../it-IT/README.md) | [日本語](../ja-JP/README.md) | [한국어](../ko-KR/README.md) | [Malagasy](../mg-MG/README.md) | [मराठी](../mr-IN/README.md) | [Bahasa Melayu](../ms-MY/README.md) | [Nederlands](../nl-NL/README.md) | [Polski](../pl-PL/README.md) | [Português (Brasil)](../pt-BR/README.md) | [Русский](../ru-RU/README.md) | [Kinyarwanda](../rw-RW/README.md) | [Soomaali](../so-SO/README.md) | [Српски](../sr-RS/README.md) | [Svenska](../sv-SE/README.md) | [Kiswahili](../sw-KE/README.md) | [தமிழ்](../ta-IN/README.md) | [తెలుగు](../te-IN/README.md) | [ไทย](../th-TH/README.md) | [Türkçe](../tr-TR/README.md) | [Українська](../uk-UA/README.md) | [اردو](../ur-PK/README.md) | [Tiếng Việt](../vi-VN/README.md) | [isiXhosa](../xh-ZA/README.md) | [Yorùbá](../yo-NG/README.md) | [繁體中文](../zh-TW/README.md) | [isiZulu](../zu-ZA/README.md)
@@ -27,18 +27,18 @@ seine Daten in eigenen Tabellen. In Cacti kopiert es XML-Dateien für Data
 Queries nach `resource/script_server/` und erstellt Geräte, Graphen und Vorlagen
 über die Cacti-eigenen APIs, ohne Kerndateien zu verändern.
 
-**Status: 0.4.0-dev, unveröffentlicht.** Die letzte veröffentlichte Version ist 0.3.0. Die Entwicklungsversion ergänzt CSV-Inventarexporte, die explizite Ausmusterung gelöschter Tunnel, zwischengespeicherte Zone Analytics sowie optionale Thold-Vorlagen. Die Qualifizierung gegen einen Live-Anbieter und für den Produktiveinsatz steht noch aus.
+**Status: 0.4.0-dev, unveröffentlicht.** Die letzte veröffentlichte Version ist 0.3.0. Die Entwicklungsversion ergänzt CSV-Inventarexporte, die explizite Ausmusterung gelöschter Tunnel, zwischengespeicherte Zone Analytics, einen nur lesenden GraphQL-Analytics-Client auf Allowlist-Basis (`GraphqlAnalyticsClient`) mit Thold-fähigen Zusammenfassungshelfern (`AnalyticsSummary`), eine Configuration-as-Code-CLI (`cli/cloudflare.php`), Ökosystem-Hooks (`abilities_register`, `doctor_register_checks`, `casc_register_providers`) sowie pollerbezogene Unterstützung für Remote-Kollektoren (`replicate_out`). Die Qualifizierung gegen einen Live-Anbieter und für den Produktiveinsatz steht noch aus.
 
-Die folgende Tabelle beschreibt das stabile Release 0.3.0. Ergänzungen aus der Entwicklung sind weiter unten im Abschnitt zu Operator-Workflows und Zone Analytics beschrieben.
+Die folgende Tabelle beschreibt das stabile Release 0.3.0. Ergänzungen aus der Entwicklung in 0.4.0-dev sind weiter unten im Abschnitt zu Operator-Workflows und Zonen-Analysen beschrieben.
 
 | Jetzt verfügbar | Geplant |
 |---|---|
-| Installation, Aktualisierung, Deaktivierung und Deinstallation über den Plugin-Manager von Cacti | GraphQL-Analytics und Thold-Alarme (Meilenstein 4) |
+| Installation, Aktualisierung, Deaktivierung und Deinstallation über den Plugin-Manager von Cacti | Live-Konto-GraphQL- und Deployment-Qualifizierung (Meilenstein-4-Abschluss) |
 | Berechtigungen „Cloudflare: View“, „Operator“ und „Configure“ | Fehlerinjektion, TLA+-Modelle und vollständige Dokumentation (Meilenstein 5) |
 | Cloudflare-Konten hinzufügen, bearbeiten, löschen, aktivieren und deaktivieren | |
 | Token in einer Datei oder verschlüsselt in der Cacti-Datenbank speichern | |
 | Token verifizieren und dessen Leseberechtigungen für Tunnel und Zonen prüfen | |
-| Tunnel- und Connector-Erkennung in einem vom Haupt-Poller gestarteten Hintergrund-Collector | |
+| Tunnel- und Connector-Erkennung in einem Hintergrund-Collector (`poller_cloudflare.php`) | |
 | Seiten „Overview“, „Tunnels“ und „Connectors“ unter Management > Cloudflare Tunnels | |
 | Lebenszyklus-Nachverfolgung: `active`, `unavailable` und `deleted` | |
 | Ein Cacti-Gerät pro Konto, erstellt durch einen Administrator, mit den Tunneln als Indizes einer Data Query | |
@@ -316,8 +316,11 @@ Verzeichnisses wird dann abgelehnt. Siehe
    Console > Configuration > Cloudflare Accounts. Dadurch werden die Migrationen
    des Plugins ausgeführt, die Cloudflare-Vorlagen importiert, die
    Data-Query-Datei kopiert (siehe
-   [Tunnel-Metriken und -Graphen](#tunnel-metrics-and-graphs)) sowie bei einem
-   Upgrade von 0.1.0 der `poller_bottom`-Hook registriert.
+   [Tunnel-Metriken und -Graphen](#tunnel-metrics-and-graphs)), die
+   Ökosystem-Hooks `abilities_register`, `doctor_register_checks`,
+   `casc_register_providers` und `replicate_out` (`includes/ecosystem.php`)
+   registriert sowie bei einem Upgrade von 0.1.0 der `poller_bottom`-Hook
+   registriert.
 
 `poller.php` führt das Upgrade des Plugins nicht aus, sodass bis zu Schritt 2
 das neue Schema fehlt. Jeder Collector-Lauf tut bis dahin nichts und
@@ -347,11 +350,17 @@ erteilt wurden.
 
 ## Tunnel-Erkennung
 
-Nach jedem Polling-Zyklus auf dem Haupt-Poller startet der `poller_bottom`-Hook
+Nach jedem Polling-Zyklus auf dem konfigurierten Collector-Poller (`cloudflare_poller_id`, Standard `1`) startet der `poller_bottom`-Hook
 über `exec_background` einen Hintergrund-Collector, sofern bei mindestens einem
 aktivierten Konto „Collect Tunnels“ eingeschaltet ist. Der Collector läuft
 niemals im Prozess des Pollers, sodass eine langsame Cloudflare-API
-`poller.php` nicht verzögert. Remote-Poller starten ihn nie.
+`poller.php` nicht verzögert. `INFO` deklariert `remote_collect:1`, und der
+`replicate_out`-Hook (`RemoteReplication`) überträgt nicht-geheime
+Metadatentabellen (`plugin_cloudflare_accounts` mit auf `NULL` gesetztem
+`token_ciphertext`, `plugin_cloudflare_tunnels`, `plugin_cloudflare_connectors`,
+`plugin_cloudflare_zones`, `plugin_cloudflare_metric_mappings` und
+`plugin_cloudflare_resources`) an Remote-Poller (`poller_id > 1`) unter
+Ausschluss des Vault-Schlüsselmaterials.
 
 Für jedes fällige Konto listet der Collector die Tunnel des Kontos auf und
 liest anschließend die Verbindungen seiner aktiven Tunnel aus, was die
@@ -550,8 +559,7 @@ sobald dessen Historie nicht mehr benötigt wird.
 - Wenn ein Upgrade die mitgelieferte Vorlagen-XML ändert, überschreibt das
   Plugin Änderungen, die Administratoren an den importierten Vorlagen
   vorgenommen haben.
-- Das Gerät des Kontos muss auf dem Haupt-Poller verbleiben. Die Tabellen des
-  Plugins liegen in der Hauptdatenbank, aus der das Skript sie liest.
+- Remote-Poller erhalten replizierte Metadaten ohne Zugangsdaten (`token_ciphertext` wird auf `NULL` gesetzt und Vault-Schlüssel werden niemals repliziert). Wenn der Collector auf einem designierten Remote-Poller (`cloudflare_poller_id`) läuft, stellen Sie Token-Dateien oder einen Vault-Schlüssel direkt auf diesem Collector-Host bereit.
 - Gelöschte Tunnel verbleiben im Data-Query-Index und geben `U` aus, bis ein
   Administrator sie ausdrücklich ausmustert (retire). Bei der Ausmusterung
   werden über Cacti nur die vom Plugin erfassten Graphen und nicht gemeinsam
@@ -578,6 +586,8 @@ sobald dessen Historie nicht mehr benötigt wird.
   Cacti-Geräts oder das Aktivieren von „Graphen erstellen“ (Create Graphs)
   erfordert zusätzlich die Cacti-Berechtigung „Sites/Devices/Data“. Ein
   deaktiviertes Plugin verweigert den Zugriff auf seine Seiten.
+- Configuration-as-Code (`cli/cloudflare.php` und `casc_register_providers`) akzeptiert ausschließlich `vault:<account_id>`- oder `file:<absolute_path>`-Geheimnisreferenzen, lehnt Klartext-Tokens, Vault-Chiffretexte und XML-`DOCTYPE`-Deklarationen ab und erfordert vor Schreibvorgängen einen exakten `--confirm=<PLAN_HASH>`.
+- Registrierte Abilities (`cloudflare-list-tunnels`, `cloudflare-get-health`) sind strikt schreibgeschützt, werten das Realm „Cloudflare: View“ direkt gegen Cacti-Auth-Tabellen für die Benutzer-ID des Aufrufers aus (niemals gegen den Sitzungszustand) und geben weder Tokens noch Schlüsselmaterial zurück.
 
 Einzelheiten und bekannte Einschränkungen finden Sie unter
 [docs/security.md](../../security.md). Melden Sie Sicherheitslücken vertraulich
@@ -585,12 +595,15 @@ wie in [SECURITY.md](../../../SECURITY.md) beschrieben.
 
 ## Operator-Workflows und Zonen-Analysen
 
-Zu den Erweiterungen aus der Entwicklung gehören die explizite Ausmusterung
-gelöschter Tunnel, funktionsbewusste Zonen-Analysen (Capability-aware Zone
-Analytics) sowie importierbare Thold-Vorlagen. Für diese Ergänzungen liegen
-noch kein Release-Tag und keine Qualifizierung gegen ein Produktivkonto vor.
-Siehe [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) für
-Einrichtung, Metrik-Semantik und Verifizierungsgrenzen.
+Zu den Erweiterungen aus der Entwicklung in `0.4.0-dev` gehören die explizite Ausmusterung gelöschter Tunnel, funktionsbewusste GraphQL-Zonen- und Tunnel-Analysen, Thold-fähige Zusammenfassungshelfer und importierbare Vorlagen, eine CasC- und Status-CLI, Ökosystem-Hooks sowie die Replikation für Remote-Kollektoren. Für diese Ergänzungen liegen noch kein Release-Tag und keine Qualifizierung gegen ein Produktivkonto vor. Siehe [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) für Einrichtung, Metrik-Semantik und Verifizierungsgrenzen.
+
+- **GraphQL-Analytics-Client und Thold-Zusammenfassung (`src/Api/GraphqlAnalyticsClient.php`, `src/Metrics/AnalyticsSummary.php`)**: `GraphqlAnalyticsClient` führt über `CloudflareClient` (TLS-verifiziert, auf `api.cloudflare.com` festgelegt, begrenzte Antworten und `RetryPolicy`-Rate-Limit-Backoff) ausschließlich zur Kompilierzeit freigegebene schreibgeschützte Abfragen (`zone_settings`, `zone_http_metrics`, `zone_edge_latency`, `tunnel_analytics`) aus, um Anfragevolumen, HTTP-5xx-Fehlerraten, Antwortbytes und Edge-Latenz (Durchschnitt und p95) für Zonen und Tunnel zu erfassen. `AnalyticsSummary` stellt auf die RRD-DS-Namen des Plugins (`health`, `collect_age`, `error_pct`, `age`) abgestimmte `recommendedThresholds()`, `summarizeZones()` und `evaluateSample()` bereit.
+- **Operator- und CasC-CLI (`cli/cloudflare.php`)**: basiert auf `ConfigCodec` (`src/Config/ConfigCodec.php`) und `ConfigService` (`src/Config/ConfigService.php`) und unterstützt `cli/cloudflare.php export [--format=yaml|xml] [--file=PATH]` (gibt ausschließlich `vault:`- / `file:`-Geheimnisreferenzen aus), `cli/cloudflare.php validate --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php plan --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php apply --file=PATH --confirm=<PLAN_HASH> [--format=yaml|xml]` sowie `cli/cloudflare.php health [--format=text|json]`.
+- **Ökosystem-Integrations-Hooks (`includes/ecosystem.php`, `setup.php`)**:
+  - `abilities_register` (`AbilitiesProvider`): registriert die schreibgeschützten Abilities `cloudflare-list-tunnels` und `cloudflare-get-health`, beschränkt auf das Realm „Cloudflare: View“ (direkte und Gruppenberechtigungen), ohne Tokens oder Geheimnisse in der Ausgabe.
+  - `doctor_register_checks` (`DoctorChecks`): stellt `cloudflare_vault_key` (Modus-, Symlink- und Längenvalidierung), `cloudflare_token_dir` (Prüfungen auf absoluten Pfad, Symlink und Welt-Schreibbarkeit), `cloudflare_tunnel_freshness` und `cloudflare_api_failure_rate` bereit.
+  - `casc_register_providers` (`CascProvider`): stellt den CasC-Provider `cloudflare` (`export`, `validate`, `plan`, `apply`) für Konten (nur Geheimnisreferenzen), Zonen, Tunnel und Metrikzuordnungen bereit.
+  - `replicate_out` (`RemoteReplication`): repliziert nicht-geheime Metadatentabellen an Remote-Poller (`poller_id > 1`), wobei `token_ciphertext` auf `NULL` gesetzt und Vault-Schlüsselmaterial ausgeschlossen wird.
 
 ### Bestandsexporte
 
@@ -616,7 +629,7 @@ abschließt.
 | 1. Grundlagen | Plugin-Lebenszyklus, Berechtigungen, Kontokonfiguration, Verbindungstest | Veröffentlicht in 0.3.0 ([#2](https://github.com/somethingwithproof/plugin_cloudflare/pull/2) bis [#5](https://github.com/somethingwithproof/plugin_cloudflare/pull/5)) |
 | 2. Erkennung | Tunnel- und Connector-Erkennung in einem Hintergrund-Collector, Seiten „Overview“, „Tunnels“ und „Connectors“ | Veröffentlicht in 0.3.0 ([#6](https://github.com/somethingwithproof/plugin_cloudflare/pull/6)) |
 | 3. Metriken | Datenquellen für den Tunnelzustand, Graphenvorlagen, Ausfallbehandlung ohne erfundene Nullwerte | Veröffentlicht in 0.3.0 ([#7](https://github.com/somethingwithproof/plugin_cloudflare/pull/7)) |
-| 4. Analysen und Alarmierung | Tarifabhängige GraphQL-Analysen pro Zone, Thold-Schwellenwerte mit Ausfallunterdrückung | Geplant |
+| 4. Analysen und Alarmierung | Tarifabhängige GraphQL-Analysen (`GraphqlAnalyticsClient`), Thold-Zusammenfassung und -Vorlagen (`AnalyticsSummary`), CasC-CLI (`cli/cloudflare.php`), Ökosystem-Hooks und Remote-Replikation | Implementiert in 0.4.0-dev; Live-Konto-Qualifizierung ausstehend |
 | 5. Härtung | Fault Injection, TLA+-Modelle für Erkennung und Datenerfassung, vollständige Dokumentation | Geplant |
 
 ## Entwicklung

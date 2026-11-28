@@ -1,4 +1,4 @@
-<!-- Source: README.md; SHA256: f8de0e02c5904e15bfa4c71edcaab219e5e5d4f6d9dbe589f4ed16351df6bf4d -->
+<!-- Source: README.md; SHA256: 813d1c85c236b426b83e42e63c69496f33f8909b5e435d0d45efa6a4ba2f17ca -->
 
 <!-- translations:start -->
 [English](../../../README.md) | [简体中文](../zh-CN/README.md) | [हिन्दी](../hi-IN/README.md) | [Español (España)](../es-ES/README.md) | [Español (Latinoamérica)](../es-419/README.md) | [العربية (السعودية)](../ar-SA/README.md) | [Afrikaans](../af-ZA/README.md) | [አማርኛ](../am-ET/README.md) | [العربية (مصر)](../ar-EG/README.md) | [العربية (المغرب)](../ar-MA/README.md) | [বাংলা](../bn-BD/README.md) | [Bosanski](../bs-BA/README.md) | [Deutsch](../de-DE/README.md) | [فارسی](../fa-IR/README.md) | [Filipino](../fil-PH/README.md) | [Français](../fr-FR/README.md) | [Français (Maroc)](../fr-MA/README.md) | [Français (Sénégal)](../fr-SN/README.md) | [Hausa](../ha-NG/README.md) | [עברית](../he-IL/README.md) | [Hrvatski](../hr-HR/README.md) | [Bahasa Indonesia](../id-ID/README.md) | [Igbo](../ig-NG/README.md) | [Italiano](../it-IT/README.md) | [日本語](../ja-JP/README.md) | [한국어](../ko-KR/README.md) | [Malagasy](../mg-MG/README.md) | [मराठी](../mr-IN/README.md) | [Bahasa Melayu](../ms-MY/README.md) | [Nederlands](../nl-NL/README.md) | [Polski](../pl-PL/README.md) | [Português (Brasil)](../pt-BR/README.md) | [Русский](../ru-RU/README.md) | [Kinyarwanda](README.md) | [Soomaali](../so-SO/README.md) | [Српски](../sr-RS/README.md) | [Svenska](../sv-SE/README.md) | [Kiswahili](../sw-KE/README.md) | [தமிழ்](../ta-IN/README.md) | [తెలుగు](../te-IN/README.md) | [ไทย](../th-TH/README.md) | [Türkçe](../tr-TR/README.md) | [Українська](../uk-UA/README.md) | [اردو](../ur-PK/README.md) | [Tiếng Việt](../vi-VN/README.md) | [isiXhosa](../xh-ZA/README.md) | [Yorùbá](../yo-NG/README.md) | [繁體中文](../zh-TW/README.md) | [isiZulu](../zu-ZA/README.md)
@@ -28,18 +28,18 @@ Muri Cacti ukoporora amadosiye ya XML y'ibibazo by'amakuru muri `resource/script
 kandi ugakora ibikoresho, ibishushanyo n'inyandikorugero binyuze muri za API za
 Cacti ubwayo, nta guhindura amadosiye y'ibanze.
 
-**Imiterere: 0.4.0-dev, ntabwo irasohoka.** Verisiyo iheruka gusohoka ni 0.3.0. Verisiyo irimo gukorwa yongeraho uburyo bwo gusohora urutonde rw'ibikoresho muri CSV, guhagarika ku mugaragaro za tunnel zasibwe, isesengura ry'imbuga ribitswe by'agateganyo (cached zone analytics) n'inyandikorugero za Thold zitari itegeko. Isuzuma ku mutangaserivisi w'ukuri no ku ishyirwa mu bikorwa riracyategerejwe.
+**Imiterere: 0.4.0-dev, ntabwo irasohoka.** Verisiyo iheruka gusohoka ni 0.3.0. Verisiyo irimo gukorwa yongeraho uburyo bwo gusohora urutonde rw'ibikoresho muri CSV, guhagarika ku mugaragaro za tunnel zasibwe, isesengura ry'imbuga ribitswe by'agateganyo (cached zone analytics), umukoresha wa GraphQL Analytics wo gusoma gusa ukoresha urutonde rwemewe (`GraphqlAnalyticsClient`) hamwe n'ibifasha incamake byiteguye Thold (`AnalyticsSummary`), CLI ya Configuration-as-Code (`cli/cloudflare.php`), hooks z'urusobe rw'imikorere (`abilities_register`, `doctor_register_checks`, `casc_register_providers`), n'ubufasha bw'ibikusanya makuru bya kure bigengwa na poller (`replicate_out`). Isuzuma ku mutangaserivisi w'ukuri no ku ishyirwa mu bikorwa riracyategerejwe.
 
-Imbonerahamwe ikurikira isobanura verisiyo ihamye ya 0.3.0. Ibyongewe mu iterambere bisobanurwa munsi y'ibikorwa by'abakoresha n'isesengura ry'imbuga hasi aha.
+Imbonerahamwe ikurikira isobanura verisiyo ihamye ya 0.3.0. Ibyongewe mu iterambere muri 0.4.0-dev bisobanurwa munsi y'ibikorwa by'abakoresha n'isesengura ry'imbuga hasi aha.
 
 | Biboneka ubu | Biteganyijwe |
 |---|---|
-| Kwinjiza, kuvugurura, guhagarika no gukuramo binyuze mu mucungamigereka wa Cacti | Isesengura rya GraphQL n'intabaza za Thold (Icyiciro cya 4) |
+| Kwinjiza, kuvugurura, guhagarika no gukuramo binyuze mu mucungamigereka wa Cacti | Isuzuma rya GraphQL ku makonti nyayo no gushyira mu bikorwa (isoza ry'icyiciro cya 4) |
 | Uburenganzira bwa Cloudflare: View, Operator na Configure | Igerageza ry'amakosa, imiterere ya TLA+ n'inyandiko zuzuye (Icyiciro cya 5) |
 | Kongeramo, guhindura, gusiba, kwemerera no guhagarika konti za Cloudflare | |
 | Kubika akarangamubare mu dosiye cyangwa mu bubiko bwa Cacti mu buryo bushifitse | |
 | Kugenzura akarangamubare no gusuzuma uburenganzira bwo gusoma tunnel na zone | |
-| Kuvumbura za tunnel na connector mu mukusanyamakuru wo mu nyuma utangizwa na poller nkuru | |
+| Kuvumbura za tunnel na connector mu mukusanyamakuru wo mu nyuma (`poller_cloudflare.php`) | |
 | Amapaji ya Overview, Tunnels na Connectors munsi ya Management > Cloudflare Tunnels | |
 | Gukurikirana ibyiciro by'ubuzima: `active`, `unavailable` na `deleted` | |
 | Igikoresho kimwe cya Cacti kuri buri konti, gikorwa n'umuyobozi, gifite za tunnel nk'urutonde rw'ikibazo cy'amakuru | |
@@ -304,7 +304,9 @@ yangwa. Reba [docs/security.md](../../security.md#token-file).
 2. Fungura Console > Configuration > Plugins, cyangwa Console > Configuration >
    Cloudflare Accounts, rimwe nk'umuyobozi (admin). Ibyo bitangiza impinduka z'imiterere y'ububiko bw'umugereka,
    bikinjiza inyandiko-ndangamiterere za Cloudflare kandi bigakoporora dosiye y'isabamakuru (reba
-   [Ibipimo n'ibishushanyo bya Tunnel](#tunnel-metrics-and-graphs)), ndetse, mu gihe cyo
+   [Ibipimo n'ibishushanyo bya Tunnel](#tunnel-metrics-and-graphs)), byandikisha hooks z'urusobe rw'imikorere
+   `abilities_register`, `doctor_register_checks`, `casc_register_providers`,
+   na `replicate_out` (`includes/ecosystem.php`), ndetse, mu gihe cyo
    kuvugurura uvuye kuri 0.1.0, byandikisha ingobyi ya `poller_bottom`.
 
 `poller.php` ntabwo ikora ivugurura ry'umugereka, bityo kugeza ku ntambwe ya 2 imiterere mishya
@@ -333,11 +335,16 @@ Urupapuro rwo guhindura rwerekaniraho niba gusoma tunnel no gusoma zone byemewe.
 
 ## Itahura rya Tunnel
 
-Nyuma ya buri rugendo rwo gukusanya amakuru kuri poller nkuru, ingobyi ya `poller_bottom` itangiza
+Nyuma ya buri rugendo rwo gukusanya amakuru kuri poller y'ikusanyamakuru yagenwe (`cloudflare_poller_id`, mburabuzi `1`), ingobyi ya `poller_bottom` itangiza
 ikusanyamakuru ryo mu nyuma hakoreshejwe `exec_background` igihe byibura konti imwe ikora
 ifite Collect Tunnels ifunguye. Ikusanyamakuru ntirikorera mu gikorwa cya poller na rimwe,
-bityo API ya Cloudflare igenda gahoro ntikerereza `poller.php`. Za poller za kure
-ntiziritangiza na rimwe.
+bityo API ya Cloudflare igenda gahoro ntikerereza `poller.php`. `INFO` itangaza
+`remote_collect:1`, naho ingobyi ya `replicate_out` (`RemoteReplication`) yohereza
+imbonerahamwe za metadata zitari iz'ibanga (`plugin_cloudflare_accounts` ifite `token_ciphertext`
+yasibwe ikagirwa `NULL`, `plugin_cloudflare_tunnels`, `plugin_cloudflare_connectors`,
+`plugin_cloudflare_zones`, `plugin_cloudflare_metric_mappings`, na
+`plugin_cloudflare_resources`) kuri za poller za kure (`poller_id > 1`) mu gihe
+ikuramo ibikoresho by'urufunguzo rwa vault.
 
 Kuri buri konti igihe cyayo cyageze, ikusanyamakuru rishyira ku rutonde ama-tunnel ya konti, hanyuma
 rikasoma imiyoboro y'ama-tunnel yayo akora, ibyo bigatanga ibihuza bya buri tunnel,
@@ -480,7 +487,7 @@ Igikoresho gisigaye gihagarika kwakira amakuru. Nyuma yo gukuramo, cyangwa nyuma
 
 - Icyiciro kimwe gikora ibyifuzo byo guhuza bitarenze 200. Za tunnel zirenze uwo mupaka zivugururwa gake ugereranyije n'igihe cyo kwitegereza, bityo ibishushanyo byazo by'imikoranire bigaragaza ibyuho.
 - Umugereka usimbura impinduka z'umuyobozi ku nyandikorugero zinjijwe igihe ivugurura rihinduye XML y'inyandikorugero yazanywe.
-- Igikoresho cya konti kigomba kuguma kuri poller nyamukuru. Imbonerahamwe z'umugereka ziri muri database nyamukuru kandi porogaramu nto izisomera aho.
+- Za poller za kure zakira metadata yiganwe nta myirondoro yo kwinjira (`token_ciphertext` isibwa ikagirwa `NULL` kandi imfunguzo za vault ntizigana na rimwe). Igihe ukoresha ikusanyamakuru kuri poller ya kure yagenwe (`cloudflare_poller_id`), tanga amadosiye ya token cyangwa urufunguzo rwa vault ku mudasobwa w'iryo kusanyamakuru ubwawo.
 - Za tunnel zasibwe ziguma mu rutonde rw'ibibazo by'amakuru kandi zikerekana `U` kugeza igihe umuyobozi azikuriye ku buryo bweruye. Kuzikura mu mikoreshereze bikuraho gusa ibishushanyo byanditswe n'umugereka n'amasoko y'amakuru adasangirwa binyuze muri Cacti; umurongo wo mu rutonde rw'ibikoresho uguma ugaragara. Cacti ni yo igenga isukurwa rya RRD.
 - Cacti ihagarika umugereka iyo kode yawo irangiriye mu ikosa rikomeye ry'ukuri, nk'igihe ububiko bushize. Reba [docs/security.md](../../security.md).
 
@@ -490,12 +497,28 @@ Igikoresho gisigaye gihagarika kwakira amakuru. Nyuma yo gukuramo, cyangwa nyuma
 - Ama-token abikwa muri dosiye utanga cyangwa agashyirwa mu ibanga hakoreshejwe AES-256-GCM mu rufunguzo rwa dosiye rutinjira na rimwe muri database. Ntiyigera yerekanwa ku rupapuro, yandikwa mu nyandiko y'ibikorwa, cyangwa ngo ashyirwe mu butumwa bw'ikosa.
 - Amakosa ya database atwara gusa SQLSTATE na kode y'ikosa rya driver, ntiyigera atwara uduciro tw'inyandiko y'ikibazo.
 - Buri mpinduka ni POST irinzwe na token ya CSRF ya Cacti. Impinduka z'ubuyobozi za konti n'igenamiterere bisaba Cloudflare: Configure; kwemeza isesengura ku giti cy'umuntu bisaba Cloudflare: Operator. Gukora igikoresho cya Cacti cyangwa gufungura Create Graphs na byo bisaba uburenganzira bwa Sites/Devices/Data bwa Cacti. Umugereka uhagaritswe wanga ko impapuro zawo zifungurwa.
+- Configuration-as-Code (`cli/cloudflare.php` na `casc_register_providers`)
+  yemera gusa indangamabanga za `vault:<account_id>` cyangwa `file:<absolute_path>`,
+  yanga ama-token mabi, inyandiko zishifitse za vault, n'inyandiko za XML `DOCTYPE`, kandi
+  isaba `--confirm=<PLAN_HASH>` nyayo mbere yo kwandika.
+- Ubushobozi bwanditswe (`cloudflare-list-tunnels`, `cloudflare-get-health`) ni
+  ubwo gusoma gusa rwose, busuzuma uruhushya rwa Cloudflare: View mu buryo butaziguye mu
+  mbonerahamwe zo kugenzura za Cacti ku ndangamubare y'ukoresha wasabye (ntabwo ari ku miterere ya session), kandi ntibusubiza
+  ama-token cyangwa ibikoresho by'urufunguzo.
 
 Ibisobanuro birambuye n'imbogamizi zizwi biri muri [docs/security.md](../../security.md). Tangaza ibibazo by'umutekano mu ibanga nk'uko bisobanurwa muri [SECURITY.md](../../../SECURITY.md).
 
 ## Imikorere y'abashinzwe gukurikirana n'isesengura ry'uturere
 
-Ibikorwa byongereweho mu iterambere birimo gukura mu mikoreshereze ku buryo bweruye za tunnel zasibwe, isesengura ry'uturere rishingiye ku bushobozi n'inyandikorugero za Thold zishobora kwinjizwa. Ibi byongereweho ntibirabona nimero ya verisiyo cyangwa igenzura kuri konti ikora koko. Reba [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) kugira ngo umenye ishyirwaho, ibisobanuro by'ibipimo n'imipaka y'igenzura.
+Ibikorwa byongereweho muri `0.4.0-dev` birimo gukura mu mikoreshereze ku mugaragaro za tunnel zasibwe, isesengura rya GraphQL ku karere na tunnel rishingiye ku bushobozi, ibifasha incamake byiteguye Thold n'inyandikorugero zishobora kwinjizwa, CLI ya CasC n'ubuzima, hooks z'urusobe rw'imikorere, no kwigana kuri ba mukusanya makuru bari kure. Ibi byongereweho ntibirabona nimero ya verisiyo cyangwa igenzura kuri konti ikora koko. Reba [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) kugira ngo umenye ishyirwaho, ibisobanuro by'ibipimo, n'imipaka y'igenzura.
+
+- **Umukoresha wa GraphQL Analytics n'incamake ya Thold (`src/Api/GraphqlAnalyticsClient.php`, `src/Metrics/AnalyticsSummary.php`)**: `GraphqlAnalyticsClient` ikora gusa ibibazo byo gusoma gusa byemewe mu gihe cyo guteranya (`zone_settings`, `zone_http_metrics`, `zone_edge_latency`, `tunnel_analytics`) binyuze kuri `CloudflareClient` (TLS igenzuwe, ifashe kuri `api.cloudflare.com`, ibisubizo bifite imipaka, no gusubira inyuma ku mupaka w'umuvuduko wa `RetryPolicy`) kugira ngo ikusanye umubare w'ibisabwa ku karere na tunnel, igipimo cy'amakosa ya HTTP 5xx, ama-byte y'ibisubizo, n'igihe cyo gutinda ku mpera (impuzandengo na p95). `AnalyticsSummary` itanga `recommendedThresholds()` ihuye n'amazina ya RRD DS y'umugereka (`health`, `collect_age`, `error_pct`, `age`), `summarizeZones()`, na `evaluateSample()`.
+- **CLI y'abashinzwe gukurikirana na CasC (`cli/cloudflare.php`)**: ishyigikiwe na `ConfigCodec` (`src/Config/ConfigCodec.php`) na `ConfigService` (`src/Config/ConfigService.php`), ishyigikira `cli/cloudflare.php export [--format=yaml|xml] [--file=PATH]` (isohora indangamabanga za `vault:` / `file:` gusa), `cli/cloudflare.php validate --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php plan --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php apply --file=PATH --confirm=<PLAN_HASH> [--format=yaml|xml]`, na `cli/cloudflare.php health [--format=text|json]`.
+- **Hooks zihuza n'urusobe rw'imikorere (`includes/ecosystem.php`, `setup.php`)**:
+  - `abilities_register` (`AbilitiesProvider`): yandikisha `cloudflare-list-tunnels` na `cloudflare-get-health` zo gusoma gusa zigenzurwa n'uruhushya rwa Cloudflare: View (ibyatangiwe mu buryo butaziguye no mu matsinda) nta ma-token cyangwa amabanga mu bisohoka.
+  - `doctor_register_checks` (`DoctorChecks`): igaragaza `cloudflare_vault_key` (igenzura ry'uburyo bw'impushya, symlink, n'uburebure), `cloudflare_token_dir` (igenzura ry'inzira yuzuye, symlink, no kuba buri wese ashobora kwandikamo), `cloudflare_tunnel_freshness`, na `cloudflare_api_failure_rate`.
+  - `casc_register_providers` (`CascProvider`): igaragaza umutangaserivisi wa CasC `cloudflare` (`export`, `validate`, `plan`, `apply`) ku makonti (indangamabanga gusa), uturere, za tunnel, n'imihuzabipimo.
+  - `replicate_out` (`RemoteReplication`): yigana imbonerahamwe za metadata zitari iz'ibanga kuri za poller za kure (`poller_id > 1`) hamwe na `token_ciphertext` isibwa ikagirwa `NULL` kandi ibikoresho by'urufunguzo rwa vault bikavanwamo.
 
 ### Gusohora urutonde rw'ibikoresho
 
@@ -510,7 +533,7 @@ Buri cyiciro gikuru gisohoka nka verisiyo ya 0.x ifite nomero ikurikira: Icyicir
 | 1. Urufatiro | Imibereho y'umugereka, uburenganzira, igenamiterere rya konti, isuzuma ryo guhuza | Yasohotse muri 0.3.0 ([#2](https://github.com/somethingwithproof/plugin_cloudflare/pull/2) kugeza kuri [#5](https://github.com/somethingwithproof/plugin_cloudflare/pull/5)) |
 | 2. Iboneka | Iboneka rya tunnel na connector mu ikusanya ryo mu nyuma, impapuro za Overview, Tunnels na Connectors | Yasohotse muri 0.3.0 ([#6](https://github.com/somethingwithproof/plugin_cloudflare/pull/6)) |
 | 3. Ibipimo | Amasoko y'amakuru y'ubuzima bwa tunnel, inyandikorugero z'ibishushanyo, imicungire y'ihagarara itigera yandika zeru yahimbwe | Yasohotse muri 0.3.0 ([#7](https://github.com/somethingwithproof/plugin_cloudflare/pull/7)) |
-| 4. Isesengura n'impuruza | Isesengura rya GraphQL rishingiye kuri gahunda kuri buri karere, imipaka ya Thold hamwe no guhagarika impuruza mu gihe cy'ihagarara | Birateganyijwe |
+| 4. Isesengura n'impuruza | Isesengura rya GraphQL rishingiye kuri gahunda (`GraphqlAnalyticsClient`), incamake n'inyandikorugero za Thold (`AnalyticsSummary`), CLI ya CasC (`cli/cloudflare.php`), hooks z'urusobe rw'imikorere, no kwigana kure | Byashyizwe mu bikorwa muri 0.4.0-dev; igenzura kuri konti ikora koko riracyategerejwe |
 | 5. Gushimangira ubudahangarwa | Kwinjiza amakosa mu isuzuma, imiterere ya TLA+ y'iboneka n'ikusanya, inyandiko zisobanura zuzuye | Birateganyijwe |
 
 ## Iterambere

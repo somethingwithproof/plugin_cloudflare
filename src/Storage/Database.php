@@ -36,6 +36,11 @@ final class Database {
 	/** @var int */
 	private $depth = 0;
 
+	/**
+	 * Initialize Database.
+	 *
+	 * @param PDO $pdo
+	 */
 	public function __construct(PDO $pdo) {
 		$this->pdo = $pdo;
 	}
@@ -80,6 +85,11 @@ final class Database {
 		return $value === false ? null : $value;
 	}
 
+	/**
+	 * Last insert ID.
+	 *
+	 * @return int
+	 */
 	public function lastInsertId(): int {
 		return (int) $this->pdo->lastInsertId();
 	}
@@ -159,6 +169,13 @@ final class Database {
 		return $result;
 	}
 
+	/**
+	 * Acquire lock.
+	 *
+	 * @param string $name
+	 * @param int $timeoutSeconds
+	 * @return bool
+	 */
 	public function acquireLock(string $name, int $timeoutSeconds): bool {
 		$result = $this->fetchCell('SELECT GET_LOCK(?, ?)', [$name, $timeoutSeconds]);
 
@@ -169,6 +186,12 @@ final class Database {
 		return (int) $result === 1;
 	}
 
+	/**
+	 * Release lock.
+	 *
+	 * @param string $name
+	 * @return void
+	 */
 	public function releaseLock(string $name): void {
 		$this->fetchCell('SELECT RELEASE_LOCK(?)', [$name]);
 	}
@@ -205,6 +228,12 @@ final class Database {
 	}
 
 	/* The PDOException is not chained: its message carries the same driver text. */
+	/**
+	 * From PDO exception.
+	 *
+	 * @param PDOException $e
+	 * @return DatabaseException
+	 */
 	private function fromPdoException(PDOException $e): DatabaseException {
 		$info = $e->errorInfo;
 

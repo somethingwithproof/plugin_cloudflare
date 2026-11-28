@@ -19,6 +19,7 @@
 
 namespace Somethingwithproof\Cloudflare\Http;
 
+/** Response component for plugin_cloudflare. */
 final class Response {
 	/** @var int */
 	private $status;
@@ -41,14 +42,30 @@ final class Response {
 		}
 	}
 
+	/**
+	 * Status.
+	 *
+	 * @return int
+	 */
 	public function status(): int {
 		return $this->status;
 	}
 
+	/**
+	 * Header.
+	 *
+	 * @param string $name
+	 * @return ?string
+	 */
 	public function header(string $name): ?string {
 		return $this->headers[strtolower($name)] ?? null;
 	}
 
+	/**
+	 * Body.
+	 *
+	 * @return string
+	 */
 	public function body(): string {
 		return $this->body;
 	}

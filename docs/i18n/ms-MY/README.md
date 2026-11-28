@@ -1,4 +1,4 @@
-<!-- Source: README.md; SHA256: f8de0e02c5904e15bfa4c71edcaab219e5e5d4f6d9dbe589f4ed16351df6bf4d -->
+<!-- Source: README.md; SHA256: 813d1c85c236b426b83e42e63c69496f33f8909b5e435d0d45efa6a4ba2f17ca -->
 
 <!-- translations:start -->
 [English](../../../README.md) | [简体中文](../zh-CN/README.md) | [हिन्दी](../hi-IN/README.md) | [Español (España)](../es-ES/README.md) | [Español (Latinoamérica)](../es-419/README.md) | [العربية (السعودية)](../ar-SA/README.md) | [Afrikaans](../af-ZA/README.md) | [አማርኛ](../am-ET/README.md) | [العربية (مصر)](../ar-EG/README.md) | [العربية (المغرب)](../ar-MA/README.md) | [বাংলা](../bn-BD/README.md) | [Bosanski](../bs-BA/README.md) | [Deutsch](../de-DE/README.md) | [فارسی](../fa-IR/README.md) | [Filipino](../fil-PH/README.md) | [Français](../fr-FR/README.md) | [Français (Maroc)](../fr-MA/README.md) | [Français (Sénégal)](../fr-SN/README.md) | [Hausa](../ha-NG/README.md) | [עברית](../he-IL/README.md) | [Hrvatski](../hr-HR/README.md) | [Bahasa Indonesia](../id-ID/README.md) | [Igbo](../ig-NG/README.md) | [Italiano](../it-IT/README.md) | [日本語](../ja-JP/README.md) | [한국어](../ko-KR/README.md) | [Malagasy](../mg-MG/README.md) | [मराठी](../mr-IN/README.md) | [Bahasa Melayu](README.md) | [Nederlands](../nl-NL/README.md) | [Polski](../pl-PL/README.md) | [Português (Brasil)](../pt-BR/README.md) | [Русский](../ru-RU/README.md) | [Kinyarwanda](../rw-RW/README.md) | [Soomaali](../so-SO/README.md) | [Српски](../sr-RS/README.md) | [Svenska](../sv-SE/README.md) | [Kiswahili](../sw-KE/README.md) | [தமிழ்](../ta-IN/README.md) | [తెలుగు](../te-IN/README.md) | [ไทย](../th-TH/README.md) | [Türkçe](../tr-TR/README.md) | [Українська](../uk-UA/README.md) | [اردو](../ur-PK/README.md) | [Tiếng Việt](../vi-VN/README.md) | [isiXhosa](../xh-ZA/README.md) | [Yorùbá](../yo-NG/README.md) | [繁體中文](../zh-TW/README.md) | [isiZulu](../zu-ZA/README.md)
@@ -27,18 +27,18 @@ dalam jadualnya sendiri. Dalam Cacti, ia menyalin fail XML pertanyaan data ke
 dalam `resource/script_server/` serta mencipta peranti, graf dan templat melalui
 API Cacti sendiri, tanpa sebarang perubahan pada fail teras.
 
-**Status: 0.4.0-dev, belum dikeluarkan.** Versi terakhir yang dikeluarkan ialah 0.3.0. Versi pembangunan menambah eksport inventori CSV, penamatan eksplisit bagi terowong yang dipadamkan, analitik zon tercache dan templat Thold pilihan. Pengesahan penyedia langsung dan penggunaan masih belum selesai.
+**Status: 0.4.0-dev, belum dikeluarkan.** Versi terakhir yang dikeluarkan ialah 0.3.0. Versi pembangunan menambah eksport inventori CSV, penamatan eksplisit bagi terowong yang dipadamkan, analitik zon tercache, klien GraphQL Analytics baca sahaja bersenarai dibenarkan (`GraphqlAnalyticsClient`) dengan pembantu ringkasan sedia Thold (`AnalyticsSummary`), CLI Configuration-as-Code (`cli/cloudflare.php`), cangkuk ekosistem (`abilities_register`, `doctor_register_checks`, `casc_register_providers`), serta sokongan pengumpul jauh berskop peninjau (`replicate_out`). Pengesahan penyedia langsung dan penggunaan masih belum selesai.
 
-Jadual di bawah menerangkan keluaran stabil 0.3.0. Penambahan pembangunan diterangkan di bawah aliran kerja Pengendali dan analitik zon di bawah.
+Jadual di bawah menerangkan keluaran stabil 0.3.0. Penambahan pembangunan dalam 0.4.0-dev diterangkan di bawah aliran kerja Pengendali dan analitik zon di bawah.
 
 | Tersedia sekarang | Dirancang |
 |---|---|
-| Pasang, naik taraf, nyahdayakan dan nyahpasang melalui pengurus pemalam Cacti | Analitik GraphQL dan amaran Thold (Pencapaian 4) |
+| Pasang, naik taraf, nyahdayakan dan nyahpasang melalui pengurus pemalam Cacti | GraphQL akaun langsung dan kelayakan penggunaan (penamat Pencapaian 4) |
 | Kebenaran Cloudflare: View, Operator dan Configure | Suntikan kerosakan, model TLA+ dan dokumentasi penuh (Pencapaian 5) |
 | Tambah, sunting, padam, dayakan dan nyahdayakan akaun Cloudflare | |
 | Simpan token dalam fail atau disulitkan dalam pangkalan data Cacti | |
 | Sahkan token dan semak kebenaran bacaan terowong dan zonnya | |
-| Penemuan terowong dan penyambung dalam pengumpul latar belakang yang dimulakan oleh peninjau utama | |
+| Penemuan terowong dan penyambung dalam pengumpul latar belakang (`poller_cloudflare.php`) | |
 | Halaman Overview, Tunnels dan Connectors di bawah Management > Cloudflare Tunnels | |
 | Penjejakan kitaran hayat: `active`, `unavailable` dan `deleted` | |
 | Satu peranti Cacti bagi setiap akaun, dicipta oleh pentadbir, dengan terowong sebagai indeks bagi pertanyaan data | |
@@ -290,7 +290,9 @@ ditolak. Lihat [docs/security.md](../../security.md#token-file).
 2. Buka Console > Configuration > Plugins, atau Console > Configuration >
    Cloudflare Accounts, sekali sebagai pentadbir. Tindakan itu menjalankan migrasi pemalam,
    mengimport templat Cloudflare dan menyalin fail pertanyaan data (lihat
-   [Metrik dan graf terowong](#tunnel-metrics-and-graphs)), serta, apabila menaiknya taraf
+   [Metrik dan graf terowong](#tunnel-metrics-and-graphs)), mendaftarkan cangkuk
+   ekosistem `abilities_register`, `doctor_register_checks`, `casc_register_providers`,
+   dan `replicate_out` (`includes/ecosystem.php`), serta, apabila menaiknya taraf
    daripada versi 0.1.0, mendaftarkan cangkuk `poller_bottom`.
 
 `poller.php` tidak menjalankan naik taraf pemalam, jadi sehingga langkah 2 dilakukan, skema baharu
@@ -319,11 +321,16 @@ Halaman suntingan turut memaparkan sama ada kebenaran membaca terowong dan memba
 
 ## Penemuan terowong
 
-Selepas setiap kitaran pengumpulan pada pengumpul utama, cangkuk `poller_bottom` memulakan
+Selepas setiap kitaran pengumpulan pada peninjau pengumpul yang dikonfigurasikan (`cloudflare_poller_id`, lalai `1`), cangkuk `poller_bottom` memulakan
 pengumpul latar belakang dengan `exec_background` apabila sekurang-kurangnya satu akaun yang diaktifkan
 menghidupkan Collect Tunnels. Pengumpul tersebut tidak pernah berjalan dalam proses
-pengumpul utama, jadi API Cloudflare yang perlahan tidak melambatkan `poller.php`. Pengumpul jauh
-tidak pernah memulakannya.
+pengumpul utama, jadi API Cloudflare yang perlahan tidak melambatkan `poller.php`. `INFO` mengisytiharkan
+`remote_collect:1`, dan cangkuk `replicate_out` (`RemoteReplication`) menolak
+jadual metadata bukan rahsia (`plugin_cloudflare_accounts` dengan `token_ciphertext`
+dibuang menjadi `NULL`, `plugin_cloudflare_tunnels`, `plugin_cloudflare_connectors`,
+`plugin_cloudflare_zones`, `plugin_cloudflare_metric_mappings`, dan
+`plugin_cloudflare_resources`) ke peninjau jauh (`poller_id > 1`) sambil
+mengecualikan bahan kunci peti.
 
 Bagi setiap akaun yang tiba masanya, pengumpul akan menyenaraikan terowong akaun tersebut, kemudian
 membaca sambungan bagi terowong aktifnya, yang memberikan maklumat penyambung setiap terowong,
@@ -492,8 +499,7 @@ peranti lama dalam Cacti apabila sejarahnya tidak lagi diperlukan.
   menunjukkan jurang.
 - Pemalam menulis ganti suntingan pentadbir pada templat yang diimport apabila
   naik taraf mengubah XML templat yang disertakan.
-- Peranti akaun mesti kekal pada poller utama. Jadual pemalam berada
-  dalam pangkalan data utama dan skrip membacanya di sana.
+- Peninjau jauh menerima metadata yang direplikasikan tanpa kelayakan (`token_ciphertext` dibuang menjadi `NULL` dan kunci peti tidak pernah direplikasikan). Apabila menjalankan pengumpul pada peninjau jauh yang ditetapkan (`cloudflare_poller_id`), peruntukkan fail token atau kunci peti secara terus pada hos pengumpul tersebut.
 - Terowong yang dipadamkan kekal dalam indeks pertanyaan data dan mencetak `U` sehingga pentadbir menamatkannya secara eksplisit. Penamatan hanya mengalih keluar graf yang direkodkan oleh pemalam dan sumber data yang tidak dikongsi melalui Cacti; baris inventori kekal kelihatan. Cacti mengawal pembersihan RRD.
 - Cacti melumpuhkan pemalam yang kodnya berakhir dengan ralat maut sebenar, seperti
   kehabisan memori. Lihat [docs/security.md](../../security.md).
@@ -511,13 +517,29 @@ peranti lama dalam Cacti apabila sejarahnya tidak lagi diperlukan.
   triaj peribadi memerlukan Cloudflare: Operator. Mencipta peranti Cacti
   atau mengaktifkan Create Graphs juga memerlukan kebenaran Sites/Devices/Data
   Cacti. Pemalam yang dilumpuhkan menolak halamannya.
+- Configuration-as-Code (`cli/cloudflare.php` dan `casc_register_providers`)
+  hanya menerima rujukan rahsia `vault:<account_id>` atau `file:<absolute_path>`,
+  menolak token mentah, teks sifir peti, dan pengisytiharan XML `DOCTYPE`, serta
+  memerlukan `--confirm=<PLAN_HASH>` yang tepat sebelum menulis.
+- Keupayaan Berdaftar (`cloudflare-list-tunnels`, `cloudflare-get-health`) adalah
+  baca sahaja secara ketat, menilai alam Cloudflare: View secara langsung terhadap
+  jadual pengesahan Cacti untuk ID pengguna pemanggil (tidak sesekali keadaan sesi), dan tidak memulangkan
+  token atau bahan kunci.
 
 Butiran dan had yang diketahui terdapat dalam [docs/security.md](../../security.md).
 Laporkan kerentanan secara peribadi seperti yang diterangkan dalam [SECURITY.md](../../../SECURITY.md).
 
 ## Aliran kerja pengendali dan analitik zon
 
-Penambahan pembangunan merangkumi penamatan eksplisit bagi terowong yang dipadamkan, analitik zon sedar keupayaan dan templat Thold yang boleh diimport. Penambahan ini belum mempunyai tag keluaran atau kelayakan akaun langsung. Lihat [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) untuk persediaan, semantik metrik dan had pengesahan.
+Penambahan pembangunan dalam `0.4.0-dev` merangkumi penamatan eksplisit bagi terowong yang dipadamkan, analitik zon dan terowong GraphQL sedar keupayaan, pembantu ringkasan sedia Thold dan templat yang boleh diimport, CLI CasC dan kesihatan, cangkuk ekosistem, serta replikasi pengumpul jauh. Penambahan ini belum mempunyai tag keluaran atau kelayakan akaun langsung. Lihat [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) untuk persediaan, semantik metrik, dan had pengesahan.
+
+- **Klien GraphQL Analytics dan ringkasan Thold (`src/Api/GraphqlAnalyticsClient.php`, `src/Metrics/AnalyticsSummary.php`)**: `GraphqlAnalyticsClient` hanya melaksanakan pertanyaan baca sahaja yang dibenarkan pada masa kompilasi (`zone_settings`, `zone_http_metrics`, `zone_edge_latency`, `tunnel_analytics`) melalui `CloudflareClient` (TLS disahkan, dipinkan kepada `api.cloudflare.com`, respons terhad, dan penangguhan had kadar `RetryPolicy`) untuk mengumpul volum permintaan zon dan terowong, kadar ralat HTTP 5xx, bait respons, dan kependaman pinggir (purata dan p95). `AnalyticsSummary` menyediakan `recommendedThresholds()` yang dijajarkan dengan nama DS RRD pemalam (`health`, `collect_age`, `error_pct`, `age`), `summarizeZones()`, dan `evaluateSample()`.
+- **CLI Pengendali dan CasC (`cli/cloudflare.php`)**: disokong oleh `ConfigCodec` (`src/Config/ConfigCodec.php`) dan `ConfigService` (`src/Config/ConfigService.php`), menyokong `cli/cloudflare.php export [--format=yaml|xml] [--file=PATH]` (mengeluarkan rujukan rahsia `vault:` / `file:` sahaja), `cli/cloudflare.php validate --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php plan --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php apply --file=PATH --confirm=<PLAN_HASH> [--format=yaml|xml]`, dan `cli/cloudflare.php health [--format=text|json]`.
+- **Cangkuk integrasi ekosistem (`includes/ecosystem.php`, `setup.php`)**:
+  - `abilities_register` (`AbilitiesProvider`): mendaftarkan `cloudflare-list-tunnels` dan `cloudflare-get-health` baca sahaja yang dikawal oleh alam Cloudflare: View (pemberian langsung dan kumpulan) dengan sifar token atau rahsia dalam output.
+  - `doctor_register_checks` (`DoctorChecks`): mendedahkan `cloudflare_vault_key` (pengesahan mod, pautan simbolik, dan panjang), `cloudflare_token_dir` (semakan laluan mutlak, pautan simbolik, dan kebolehtulisan sejagat), `cloudflare_tunnel_freshness`, dan `cloudflare_api_failure_rate`.
+  - `casc_register_providers` (`CascProvider`): mendedahkan penyedia CasC `cloudflare` (`export`, `validate`, `plan`, `apply`) untuk akaun (rujukan rahsia sahaja), zon, terowong, dan pemetaan metrik.
+  - `replicate_out` (`RemoteReplication`): mereplikasikan jadual metadata bukan rahsia ke peninjau jauh (`poller_id > 1`) dengan `token_ciphertext` dibuang menjadi `NULL` dan bahan kunci peti dikecualikan.
 
 ### Eksport inventori
 
@@ -535,7 +557,7 @@ setiap pencapaian di bawah.
 | 1. Asas | Kitaran hayat pemalam, kebenaran, konfigurasi akaun, ujian sambungan | Dikeluarkan dalam 0.3.0 ([#2](https://github.com/somethingwithproof/plugin_cloudflare/pull/2) hingga [#5](https://github.com/somethingwithproof/plugin_cloudflare/pull/5)) |
 | 2. Penemuan | Penemuan terowong dan penyambung dalam pengumpul latar belakang, halaman Overview, Tunnels dan Connectors | Dikeluarkan dalam 0.3.0 ([#6](https://github.com/somethingwithproof/plugin_cloudflare/pull/6)) |
 | 3. Metrik | Sumber data kesihatan terowong, templat graf, pengendalian gangguan yang tidak pernah merekodkan sifar rekaan | Dikeluarkan dalam 0.3.0 ([#7](https://github.com/somethingwithproof/plugin_cloudflare/pull/7)) |
-| 4. Analitik dan pemakluman | Analitik GraphQL sedar pelan bagi setiap zon, ambang Thold dengan penyekatan gangguan | Dirancang |
+| 4. Analitik dan pemakluman | Analitik GraphQL sedar pelan (`GraphqlAnalyticsClient`), ringkasan dan templat Thold (`AnalyticsSummary`), CLI CasC (`cli/cloudflare.php`), cangkuk ekosistem, dan replikasi jauh | Dilaksanakan dalam 0.4.0-dev; kelayakan akaun langsung belum selesai |
 | 5. Pengukuhan | Suntikan kerosakan, model TLA+ bagi penemuan dan pengumpulan, dokumentasi penuh | Dirancang |
 
 ## Pembangunan

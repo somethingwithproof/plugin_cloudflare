@@ -14,7 +14,8 @@ from urllib.parse import unquote, urlsplit
 
 
 LOCALES = ("zh-CN", "hi-IN", "es-ES", "es-419", "ar-SA")
-ALL_LOCALES = ("zh-CN", "hi-IN", "es-ES", "es-419", "ar-SA", "af-ZA", "am-ET", "ar-EG", "ar-MA", "bn-BD", "bs-BA", "de-DE", "fa-IR", "fil-PH", "fr-FR", "fr-MA", "fr-SN", "ha-NG", "he-IL", "hr-HR", "id-ID", "ig-NG", "it-IT", "ja-JP", "ko-KR", "mg-MG", "mr-IN", "ms-MY", "nl-NL", "pl-PL", "pt-BR", "ru-RU", "rw-RW", "so-SO", "sr-RS", "sv-SE", "sw-KE", "ta-IN", "te-IN", "th-TH", "tr-TR", "uk-UA", "ur-PK", "vi-VN", "xh-ZA", "yo-NG", "zh-TW", "zu-ZA")
+README_LOCALES = ("zh-CN", "hi-IN", "es-ES", "es-419", "ar-SA", "af-ZA", "am-ET", "ar-EG", "ar-MA", "bn-BD", "bs-BA", "de-DE", "fa-IR", "fil-PH", "fr-FR", "fr-MA", "fr-SN", "ha-NG", "he-IL", "hr-HR", "id-ID", "ig-NG", "it-IT", "ja-JP", "ko-KR", "mg-MG", "mr-IN", "ms-MY", "nl-NL", "pl-PL", "pt-BR", "ru-RU", "rw-RW", "so-SO", "sr-RS", "sv-SE", "sw-KE", "ta-IN", "te-IN", "th-TH", "tr-TR", "uk-UA", "ur-PK", "vi-VN", "xh-ZA", "yo-NG", "zh-TW", "zu-ZA")
+ALL_LOCALES = ("zh-CN", "hi-IN", "es-ES", "es-419", "ar-SA", "af-ZA", "am-ET", "ar-EG", "ar-MA", "bg-BG", "bn-BD", "bs-BA", "de-DE", "el-GR", "fa-IR", "fil-PH", "fr-FR", "fr-MA", "fr-SN", "ha-NG", "he-IL", "hr-HR", "id-ID", "ig-NG", "it-IT", "ja-JP", "ka-GE", "ko-KR", "lv-LV", "mg-MG", "mr-IN", "ms-MY", "nl-NL", "pl-PL", "pt-BR", "pt-PT", "ru-RU", "rw-RW", "so-SO", "sr-RS", "sv-SE", "sw-KE", "ta-IN", "te-IN", "th-TH", "tr-TR", "uk-UA", "ur-PK", "vi-VN", "xh-ZA", "yo-NG", "zh-TW", "zu-ZA")
 NAVIGATION = re.compile(r"<!-- translations:start -->\n.*?<!-- translations:end -->\n\n?", re.S)
 HEADER = re.compile(r"<!-- Source: ([^;]+); SHA256: ([a-f0-9]{64}) -->")
 TOKENS = re.compile(r"%(?:\d+\$)?[-+ 0#]*\d*(?:\.\d+)?[sdfuxXcoeEgGi]|%%|<[^>]*>")
@@ -131,8 +132,8 @@ def validate(root):
     sources = manifest["sources"]
     if manifest["locales"] != list(LOCALES):
         failures.append("manifest locales must include both Spanish variants")
-    if manifest.get("readme_locales") != list(ALL_LOCALES):
-        failures.append("manifest readme_locales must match ALL_LOCALES")
+    if manifest.get("readme_locales") != list(README_LOCALES):
+        failures.append("manifest readme_locales must match README_LOCALES")
     if "README.md" not in sources or len(sources) != len(set(sources)):
         failures.append("manifest needs README.md and unique source paths")
     template = messages(root / "locales/po/cacti.pot")
@@ -155,10 +156,11 @@ def validate(root):
                 for value in values:
                     if sorted(TOKENS.findall(original)) != sorted(TOKENS.findall(value)) or edges(original) != edges(value):
                         failures.append("placeholder, markup or whitespace mismatch: " + locale + ": " + original)
-        locale_sources = sources if locale in LOCALES else ["README.md"]
-        for source in locale_sources:
-            validate_doc(root, locale, source, failures)
-            doc_count += 1
+        if locale in README_LOCALES:
+            locale_sources = sources if locale in LOCALES else ["README.md"]
+            for source in locale_sources:
+                validate_doc(root, locale, source, failures)
+                doc_count += 1
     if failures:
         print("\n".join(failures), file=sys.stderr)
         return 1

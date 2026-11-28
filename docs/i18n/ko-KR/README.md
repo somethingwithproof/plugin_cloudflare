@@ -1,4 +1,4 @@
-<!-- Source: README.md; SHA256: f8de0e02c5904e15bfa4c71edcaab219e5e5d4f6d9dbe589f4ed16351df6bf4d -->
+<!-- Source: README.md; SHA256: 813d1c85c236b426b83e42e63c69496f33f8909b5e435d0d45efa6a4ba2f17ca -->
 
 <!-- translations:start -->
 [English](../../../README.md) | [简体中文](../zh-CN/README.md) | [हिन्दी](../hi-IN/README.md) | [Español (España)](../es-ES/README.md) | [Español (Latinoamérica)](../es-419/README.md) | [العربية (السعودية)](../ar-SA/README.md) | [Afrikaans](../af-ZA/README.md) | [አማርኛ](../am-ET/README.md) | [العربية (مصر)](../ar-EG/README.md) | [العربية (المغرب)](../ar-MA/README.md) | [বাংলা](../bn-BD/README.md) | [Bosanski](../bs-BA/README.md) | [Deutsch](../de-DE/README.md) | [فارسی](../fa-IR/README.md) | [Filipino](../fil-PH/README.md) | [Français](../fr-FR/README.md) | [Français (Maroc)](../fr-MA/README.md) | [Français (Sénégal)](../fr-SN/README.md) | [Hausa](../ha-NG/README.md) | [עברית](../he-IL/README.md) | [Hrvatski](../hr-HR/README.md) | [Bahasa Indonesia](../id-ID/README.md) | [Igbo](../ig-NG/README.md) | [Italiano](../it-IT/README.md) | [日本語](../ja-JP/README.md) | [한국어](README.md) | [Malagasy](../mg-MG/README.md) | [मराठी](../mr-IN/README.md) | [Bahasa Melayu](../ms-MY/README.md) | [Nederlands](../nl-NL/README.md) | [Polski](../pl-PL/README.md) | [Português (Brasil)](../pt-BR/README.md) | [Русский](../ru-RU/README.md) | [Kinyarwanda](../rw-RW/README.md) | [Soomaali](../so-SO/README.md) | [Српски](../sr-RS/README.md) | [Svenska](../sv-SE/README.md) | [Kiswahili](../sw-KE/README.md) | [தமிழ்](../ta-IN/README.md) | [తెలుగు](../te-IN/README.md) | [ไทย](../th-TH/README.md) | [Türkçe](../tr-TR/README.md) | [Українська](../uk-UA/README.md) | [اردو](../ur-PK/README.md) | [Tiếng Việt](../vi-VN/README.md) | [isiXhosa](../xh-ZA/README.md) | [Yorùbá](../yo-NG/README.md) | [繁體中文](../zh-TW/README.md) | [isiZulu](../zu-ZA/README.md)
@@ -22,18 +22,18 @@
 
 Cloudflare Tunnel과 영역(zone) 분석을 모니터링하기 위해 개발 중인 Cacti 1.2 플러그인입니다. 범위가 지정된 API 토큰으로 Cloudflare API를 읽기 전용으로 조회하며, Cloudflare의 설정은 절대 변경하지 않고 데이터는 자체 테이블에 저장합니다. Cacti에서는 데이터 쿼리 XML 파일을 `resource/script_server/`에 복사하고 Cacti 자체 API를 통해 디바이스, 그래프 및 템플릿을 생성하므로 코어 파일을 수정하지 않습니다.
 
-**상태: 0.4.0-dev, 미출시.** 마지막으로 릴리스된 버전은 0.3.0입니다. 개발 버전에는 CSV 인벤토리 내보내기, 삭제된 터널의 명시적 만료(retirement) 처리, 캐시된 영역 분석 및 선택적 Thold 템플릿이 추가되었습니다. 실제 공급자 연동 및 배포 검증은 아직 진행 중입니다.
+**상태: 0.4.0-dev, 미출시.** 마지막으로 릴리스된 버전은 0.3.0입니다. 개발 버전에는 CSV 인벤토리 내보내기, 삭제된 터널의 명시적 만료(retirement) 처리, 캐시된 영역 분석, 허용 목록 기반의 읽기 전용 GraphQL Analytics 클라이언트(`GraphqlAnalyticsClient`) 및 Thold용 요약 도우미(`AnalyticsSummary`), Configuration-as-Code CLI(`cli/cloudflare.php`), 에코시스템 훅(`abilities_register`, `doctor_register_checks`, `casc_register_providers`), 그리고 폴러 범위 원격 수집기 지원(`replicate_out`)이 추가되었습니다. 실제 공급자 연동 및 배포 검증은 아직 진행 중입니다.
 
-아래 표는 0.3.0 안정 버전을 기준으로 설명합니다. 개발 중인 추가 기능은 아래의 운영자 워크플로 및 영역 분석 섹션에 설명되어 있습니다.
+아래 표는 0.3.0 안정 버전을 기준으로 설명합니다. 0.4.0-dev의 개발 중인 추가 기능은 아래의 운영자 워크플로 및 영역 분석 섹션에 설명되어 있습니다.
 
 | 현재 사용 가능 | 예정 |
 |---|---|
-| Cacti 플러그인 관리자를 통한 설치, 업그레이드, 비활성화 및 제거 | GraphQL 분석 및 Thold 알림(마일스톤 4) |
+| Cacti 플러그인 관리자를 통한 설치, 업그레이드, 비활성화 및 제거 | 실제 계정 GraphQL 및 배포 검증(마일스톤 4 종료) |
 | Cloudflare: View, Operator 및 Configure 권한 | 장애 주입(Fault injection), TLA+ 모델 및 전체 문서화(마일스톤 5) |
 | Cloudflare 계정 추가, 편집, 삭제, 활성화 및 비활성화 | |
 | 파일 또는 Cacti 데이터베이스에 암호화하여 토큰 저장 | |
 | 토큰 검증 및 터널·영역 읽기 권한 확인 | |
-| 메인 폴러가 시작하는 백그라운드 수집기에서의 터널 및 커넥터 검색 | |
+| 메인 폴러가 시작하는 백그라운드 수집기(`poller_cloudflare.php`)에서의 터널 및 커넥터 검색 | |
 | Management > Cloudflare Tunnels 아래의 Overview, Tunnels 및 Connectors 페이지 | |
 | 수명 주기 추적: `active`, `unavailable` 및 `deleted` | |
 | 관리자가 계정당 하나의 Cacti 디바이스를 생성하며, 터널을 데이터 쿼리의 인덱스로 사용 | |
@@ -233,6 +233,7 @@ Token File Directory를 예를 들어 `/etc/cacti`로 설정하세요. 그러면
 2. 관리자로 Console > Configuration > Plugins 또는 Console > Configuration >
    Cloudflare Accounts를 한 번 여세요. 그러면 플러그인 마이그레이션이 실행되고,
    Cloudflare 템플릿을 가져오며, 데이터 쿼리 파일을 복사하고([터널 메트릭 및 그래프](#tunnel-metrics-and-graphs) 참조),
+   `abilities_register`, `doctor_register_checks`, `casc_register_providers` 및 `replicate_out` 에코시스템 훅(`includes/ecosystem.php`)을 등록하며,
    0.1.0에서 업그레이드하는 경우 `poller_bottom` 훅을 등록합니다.
 
 `poller.php`는 플러그인 업그레이드를 실행하지 않으므로 2단계 전까지는 새 스키마가
@@ -261,11 +262,11 @@ Verify는 계정의 상태를 설정합니다:
 
 ## 터널 검색
 
-메인 poller에서 각 폴링 주기가 끝난 후, Collect Tunnels가 켜진 활성화된 계정이
+구성된 수집기 폴러(`cloudflare_poller_id`, 기본값 `1`)에서 각 폴링 주기가 끝난 후, Collect Tunnels가 켜진 활성화된 계정이
 하나 이상 있으면 `poller_bottom` 훅이 `exec_background`로 백그라운드 수집기를
 시작합니다. 수집기는 poller 프로세스 내에서 실행되지 않으므로 Cloudflare API가
-느리더라도 `poller.php`를 지연시키지 않습니다. 원격 poller는 수집기를 시작하지
-않습니다.
+느리더라도 `poller.php`를 지연시키지 않습니다. `INFO`는 `remote_collect:1`을 선언하며,
+`replicate_out` 훅(`RemoteReplication`)은 볼트 키 자료를 제외한 채 비밀이 아닌 메타데이터 테이블(`token_ciphertext`가 `NULL`로 제거된 `plugin_cloudflare_accounts`, `plugin_cloudflare_tunnels`, `plugin_cloudflare_connectors`, `plugin_cloudflare_zones`, `plugin_cloudflare_metric_mappings` 및 `plugin_cloudflare_resources`)을 원격 폴러(`poller_id > 1`)로 푸시합니다.
 
 실행 주기가 도래한 각 계정에 대해 수집기는 계정의 터널 목록을 조회한 다음, 활성
 터널의 연결 정보를 읽어 각 터널의 커넥터, 버전, 데이터 센터 및 오리진 주소를
@@ -403,7 +404,7 @@ Settings > Cloudflare에는 다음 항목이 있습니다:
 
 - 한 번의 실행에서 최대 200개의 연결 요청을 수행합니다. 이 한도를 초과하는 터널은 관찰 창보다 덜 자주 갱신되므로 연결 그래프에 공백이 표시될 수 있습니다.
 - 업그레이드 시 포함된 템플릿 XML이 변경되면, 플러그인이 가져온 템플릿에 대해 관리자가 수정한 내용을 덮어씁니다.
-- 계정의 장치는 기본 폴러에 유지되어야 합니다. 플러그인의 테이블은 기본 데이터베이스에 있으며 스크립트도 그곳에서 테이블을 읽습니다.
+- 원격 폴러는 자격 증명 없이 복제된 메타데이터를 수신합니다(`token_ciphertext`는 `NULL`로 제거되며 볼트 키는 절대 복제되지 않습니다). 지정된 원격 폴러(`cloudflare_poller_id`)에서 수집기를 실행할 때는 해당 수집기 호스트에 직접 토큰 파일이나 볼트 키를 프로비저닝하세요.
 - 삭제된 터널은 관리자가 명시적으로 사용 중지(retire) 처리할 때까지 데이터 쿼리 인덱스에 남아 `U`를 출력합니다. 사용 중지 처리는 Cacti를 통해 플러그인에 기록된 그래프와 공유되지 않은 데이터 소스만 제거하며, 인벤토리 행은 계속 표시됩니다. RRD 정리는 Cacti가 제어합니다.
 - 메모리 부족과 같은 치명적 오류로 코드가 종료되면 Cacti가 해당 플러그인을 비활성화합니다. [docs/security.md](../../security.md)를 참고하세요.
 
@@ -413,13 +414,23 @@ Settings > Cloudflare에는 다음 항목이 있습니다:
 - 토큰은 직접 프로비저닝한 파일에 저장되거나, 데이터베이스에 절대 저장되지 않는 키 파일을 사용해 AES-256-GCM으로 암호화됩니다. 토큰은 페이지에 표시되거나 로그에 기록되거나 오류 메시지에 포함되지 않습니다.
 - 데이터베이스 오류에는 SQLSTATE와 드라이버 오류 코드만 포함되며, 구문의 값은 절대 포함되지 않습니다.
 - 모든 변경 작업은 Cacti의 CSRF 토큰으로 보호되는 POST 요청입니다. 관리 계정 및 구성 변경에는 Cloudflare: Configure 권한이 필요하며, 개인 분류 확인에는 Cloudflare: Operator 권한이 필요합니다. Cacti 장치를 생성하거나 Create Graphs를 켜려면 Cacti의 Sites/Devices/Data 권한도 필요합니다. 비활성화된 플러그인은 해당 페이지 접근을 거부합니다.
+- Configuration-as-Code(`cli/cloudflare.php` 및 `casc_register_providers`)는 `vault:<account_id>` 또는 `file:<absolute_path>` 비밀 참조만 허용하고, 원시 토큰, 볼트 암호문 및 XML `DOCTYPE` 선언을 거부하며, 쓰기 전에 정확한 `--confirm=<PLAN_HASH>`를 요구합니다.
+- 등록된 기능(`cloudflare-list-tunnels`, `cloudflare-get-health`)은 엄격하게 읽기 전용이며, 호출자의 사용자 ID에 대해 Cacti 인증 테이블에서 직접 Cloudflare: View 영역을 평가하고(세션 상태를 사용하지 않음), 토큰이나 키 자료를 반환하지 않습니다.
 
 자세한 내용과 알려진 제한 사항은 [docs/security.md](../../security.md)에 있습니다.
 취약점은 [SECURITY.md](../../../SECURITY.md)에 안내된 대로 비공개로 제보해 주세요.
 
 ## 운영자 워크플로 및 영역 분석
 
-개발 중인 추가 기능에는 삭제된 터널의 명시적 사용 중지 처리, 기능 인식 영역(zone) 분석 및 가져올 수 있는 Thold 템플릿이 포함됩니다. 이러한 추가 기능은 아직 릴리스 태그나 실제 계정 검증이 완료되지 않았습니다. 설정, 메트릭 의미 및 검증 제한 사항은 [docs/analytics-and-alerting.md](../../analytics-and-alerting.md)를 참고하세요.
+`0.4.0-dev`의 개발 추가 기능에는 삭제된 터널의 명시적 사용 중지 처리, 기능 인식 GraphQL 영역 및 터널 분석, Thold용 요약 도우미 및 가져올 수 있는 템플릿, CasC 및 상태(health) CLI, 에코시스템 훅, 원격 수집기 복제가 포함됩니다. 이러한 추가 기능은 아직 릴리스 태그나 실제 계정 검증이 완료되지 않았습니다. 설정, 메트릭 의미 및 검증 제한 사항은 [docs/analytics-and-alerting.md](../../analytics-and-alerting.md)를 참고하세요.
+
+- **GraphQL Analytics 클라이언트 및 Thold 요약 (`src/Api/GraphqlAnalyticsClient.php`, `src/Metrics/AnalyticsSummary.php`)**: `GraphqlAnalyticsClient`는 `CloudflareClient`(TLS 검증, `api.cloudflare.com` 고정, 응답 크기 제한 및 `RetryPolicy` 속도 제한 백오프)를 통해 컴파일 타임에 허용 목록에 등록된 읽기 전용 쿼리(`zone_settings`, `zone_http_metrics`, `zone_edge_latency`, `tunnel_analytics`)만 실행하여 영역 및 터널 요청 볼륨, HTTP 5xx 오류율, 응답 바이트 및 엣지 지연 시간(평균 및 p95)을 수집합니다. `AnalyticsSummary`는 플러그인의 RRD DS 이름(`health`, `collect_age`, `error_pct`, `age`)에 맞춘 `recommendedThresholds()`, `summarizeZones()` 및 `evaluateSample()`을 제공합니다.
+- **운영자 및 CasC CLI (`cli/cloudflare.php`)**: `ConfigCodec`(`src/Config/ConfigCodec.php`) 및 `ConfigService`(`src/Config/ConfigService.php`)를 기반으로 하며, `cli/cloudflare.php export [--format=yaml|xml] [--file=PATH]`(`vault:` / `file:` 비밀 참조만 출력), `cli/cloudflare.php validate --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php plan --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php apply --file=PATH --confirm=<PLAN_HASH> [--format=yaml|xml]` 및 `cli/cloudflare.php health [--format=text|json]`를 지원합니다.
+- **에코시스템 통합 훅 (`includes/ecosystem.php`, `setup.php`)**:
+  - `abilities_register` (`AbilitiesProvider`): 출력에 토큰이나 비밀 없이 Cloudflare: View 영역(직접 및 그룹 부여)으로 제한되는 읽기 전용 `cloudflare-list-tunnels` 및 `cloudflare-get-health`를 등록합니다.
+  - `doctor_register_checks` (`DoctorChecks`): `cloudflare_vault_key`(모드, 심볼릭 링크 및 길이 검증), `cloudflare_token_dir`(절대 경로, 심볼릭 링크 및 전체 쓰기 가능 여부 검사), `cloudflare_tunnel_freshness` 및 `cloudflare_api_failure_rate`를 제공합니다.
+  - `casc_register_providers` (`CascProvider`): 계정(비밀 참조만), 영역, 터널 및 메트릭 매핑을 위한 `cloudflare` CasC 공급자(`export`, `validate`, `plan`, `apply`)를 제공합니다.
+  - `replicate_out` (`RemoteReplication`): `token_ciphertext`를 `NULL`로 제거하고 볼트 키 자료를 제외한 채 비밀이 아닌 메타데이터 테이블을 원격 폴러(`poller_id > 1`)에 복제합니다.
 
 ### 인벤토리 내보내기
 
@@ -434,7 +445,7 @@ Tunnels 및 Connectors 페이지에서는 Cloudflare: View 영역에 대해 내�
 | 1. 기반 구축 | 플러그인 수명 주기, 권한, 계정 구성, 연결 테스트 | 0.3.0에서 릴리스됨 ([#2](https://github.com/somethingwithproof/plugin_cloudflare/pull/2) ~ [#5](https://github.com/somethingwithproof/plugin_cloudflare/pull/5)) |
 | 2. 검색 | 백그라운드 수집기의 터널 및 커넥터 검색, Overview, Tunnels 및 Connectors 페이지 | 0.3.0에서 릴리스됨 ([#6](https://github.com/somethingwithproof/plugin_cloudflare/pull/6)) |
 | 3. 메트릭 | 터널 상태 데이터 소스, 그래프 템플릿, 인위적인 0을 기록하지 않는 장애 처리 | 0.3.0에서 릴리스됨 ([#7](https://github.com/somethingwithproof/plugin_cloudflare/pull/7)) |
-| 4. 분석 및 알림 | 영역(zone)별 요금제 인식 GraphQL 분석, 장애 억제가 포함된 Thold 임계값 | 계획됨 |
+| 4. 분석 및 알림 | 요금제 인식 GraphQL 분석(`GraphqlAnalyticsClient`), Thold 요약 및 템플릿(`AnalyticsSummary`), CasC CLI(`cli/cloudflare.php`), 에코시스템 훅 및 원격 복제 | 0.4.0-dev에 구현됨; 실제 계정 검증 대기 중 |
 | 5. 강화 | 결함 주입, 검색 및 수집에 대한 TLA+ 모델, 전체 문서화 | 계획됨 |
 
 ## 개발

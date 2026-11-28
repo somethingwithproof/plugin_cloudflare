@@ -26,6 +26,7 @@ use Somethingwithproof\Cloudflare\Support\Redactor;
  * so a refused URL never opens a socket or resolves a name.
  */
 final class CurlTransport implements HttpTransport {
+	/** Errno names. */
 	private const ERRNO_NAMES = array(
 		1  => 'CURLE_UNSUPPORTED_PROTOCOL',
 		3  => 'CURLE_URL_MALFORMAT',
@@ -55,11 +56,25 @@ final class CurlTransport implements HttpTransport {
 	/** @var int */
 	private $maxBytes;
 
+	/**
+	 * Initialize CurlTransport.
+	 *
+	 * @param OutboundPolicy $p
+	 * @param int $maxBytes
+	 */
 	public function __construct(OutboundPolicy $p, int $maxBytes = 5242880) {
 		$this->policy   = $p;
 		$this->maxBytes = $maxBytes;
 	}
 
+	/**
+	 * Send.
+	 *
+	 * @param Request $r
+	 * @param int $connectTimeout
+	 * @param int $totalTimeout
+	 * @return Response
+	 */
 	public function send(Request $r, int $connectTimeout, int $totalTimeout): Response {
 		$this->policy->assertAllowed($r->url());
 

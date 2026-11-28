@@ -26,6 +26,7 @@ use RuntimeException;
  * own messages. The caller passes those messages through Redactor first.
  */
 final class ApiException extends RuntimeException {
+	/** @var int Max detail. */
 	private const MAX_DETAIL = 240;
 
 	/** @var string */
@@ -71,10 +72,20 @@ final class ApiException extends RuntimeException {
 		parent::__construct($message);
 	}
 
+	/**
+	 * Get error class.
+	 *
+	 * @return string
+	 */
 	public function getErrorClass(): string {
 		return $this->errorClass;
 	}
 
+	/**
+	 * Get HTTP status.
+	 *
+	 * @return ?int
+	 */
 	public function getHttpStatus(): ?int {
 		return $this->httpStatus;
 	}

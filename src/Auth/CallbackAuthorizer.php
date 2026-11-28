@@ -34,6 +34,11 @@ final class CallbackAuthorizer implements Authorizer {
 		$this->check = $check;
 	}
 
+	/**
+	 * Can configure.
+	 *
+	 * @return bool
+	 */
 	public function canConfigure(): bool {
 		return ($this->check)() === true;
 	}

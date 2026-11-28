@@ -1,0 +1,774 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-FileCopyrightText: 2026 Thomas Vincent <thomasvincent@gmail.com>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cloudflare 0.4.0-dev\n"
+"Report-Msgid-Bugs-To: https://github.com/somethingwithproof/plugin_cloudflare/issues\n"
+"PO-Revision-Date: 2026-11-27 00:00+0000\n"
+"Last-Translator: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language-Team: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language: el-GR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#: cloudflare_operator.php
+msgid "Monitoring view"
+msgstr "Προβολή παρακολούθησης"
+
+#: cloudflare_operator.php
+msgid "Observations could not be read. Ask an administrator to check the plugin log."
+msgstr "Δεν ήταν δυνατή η ανάγνωση των παρατηρήσεων. Ζητήστε από έναν διαχειριστή να ελέγξει το αρχείο καταγραφής του πρόσθετου."
+
+#: includes/accounts.php
+msgid "Connection verified"
+msgstr "Η σύνδεση επαληθεύτηκε"
+
+#: includes/accounts.php
+msgid "Token is not active; it may be expired or disabled"
+msgstr "Το διακριτικό δεν είναι ενεργό. Ενδέχεται να έχει λήξει ή να έχει απενεργοποιηθεί"
+
+#: includes/accounts.php
+msgid "Token is invalid or expired"
+msgstr "Το διακριτικό δεν είναι έγκυρο ή έχει λήξει"
+
+#: includes/accounts.php
+msgid "Token lacks the Account Cloudflare Tunnel Read permission"
+msgstr "Το διακριτικό δεν διαθέτει το δικαίωμα Account Cloudflare Tunnel Read"
+
+#: includes/accounts.php
+msgid "Cloudflare API is unreachable; try again later"
+msgstr "Το Cloudflare API δεν είναι προσβάσιμο. Δοκιμάστε ξανά αργότερα"
+
+#: includes/accounts.php
+msgid "Cloudflare API rate limit reached; try again later"
+msgstr "Συμπληρώθηκε το όριο ρυθμού του Cloudflare API. Δοκιμάστε ξανά αργότερα"
+
+#: includes/accounts.php
+msgid "Cloudflare API request failed unexpectedly"
+msgstr "Το αίτημα προς το Cloudflare API απέτυχε απροσδόκητα"
+
+#: includes/accounts.php
+msgid "Token lacks the permissions needed to verify it"
+msgstr "Το διακριτικό δεν διαθέτει τα απαραίτητα δικαιώματα για την επαλήθευσή του"
+
+#: includes/accounts.php
+msgid "Stored token cannot be decrypted"
+msgstr "Δεν είναι δυνατή η αποκρυπτογράφηση του αποθηκευμένου διακριτικού"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing or unusable"
+msgstr "Το αρχείο κλειδιού θησαυροφυλακίου διακριτικών λείπει ή δεν μπορεί να χρησιμοποιηθεί"
+
+#: includes/accounts.php
+msgid "Token file is missing or insecure"
+msgstr "Το αρχείο διακριτικού λείπει ή δεν είναι ασφαλές"
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable; configure the key file or use a token file"
+msgstr "Η κρυπτογραφημένη αποθήκευση δεν είναι διαθέσιμη. Ρυθμίστε το αρχείο κλειδιού ή χρησιμοποιήστε αρχείο διακριτικού"
+
+#: includes/accounts.php
+msgid "Enter the 32-character hexadecimal Cloudflare account ID"
+msgstr "Εισαγάγετε το δεκαεξαδικό αναγνωριστικό λογαριασμού Cloudflare των 32 χαρακτήρων"
+
+#: includes/accounts.php
+msgid "Enter a name of 1 to 100 characters without control characters"
+msgstr "Εισαγάγετε ένα όνομα από 1 έως 100 χαρακτήρες χωρίς χαρακτήρες ελέγχου"
+
+#: includes/accounts.php
+msgid "Choose an encrypted token or a token file"
+msgstr "Επιλέξτε κρυπτογραφημένο διακριτικό ή αρχείο διακριτικού"
+
+#: includes/accounts.php
+msgid "Enter an API token"
+msgstr "Εισαγάγετε ένα διακριτικό API"
+
+#: includes/accounts.php
+msgid "Re-enter the token when changing the account ID"
+msgstr "Εισαγάγετε ξανά το διακριτικό όταν αλλάζετε το αναγνωριστικό λογαριασμού"
+
+#: includes/accounts.php
+msgid "Enter an absolute path of at most 255 characters"
+msgstr "Εισαγάγετε μια απόλυτη διαδρομή έως 255 χαρακτήρων"
+
+#: includes/accounts.php
+msgid "Must be 0 or 1"
+msgstr "Πρέπει να είναι 0 ή 1"
+
+#: includes/accounts.php
+msgid "Enter a whole number of seconds from 60 to 86400"
+msgstr "Εισαγάγετε έναν ακέραιο αριθμό δευτερολέπτων από 60 έως 86400"
+
+#: includes/accounts.php
+msgid "This Cloudflare account ID is already configured"
+msgstr "Αυτό το αναγνωριστικό λογαριασμού Cloudflare έχει ήδη ρυθμιστεί"
+
+#: includes/accounts.php
+msgid "Global API Keys are not accepted; use a scoped API token"
+msgstr "Τα Καθολικά κλειδιά API (Global API Keys) δεν γίνονται δεκτά. Χρησιμοποιήστε ένα διακριτικό API περιορισμένου εύρους"
+
+#: includes/accounts.php
+msgid "API token format is invalid"
+msgstr "Η μορφή του διακριτικού API δεν είναι έγκυρη"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing, unreadable, insecure or malformed"
+msgstr "Το αρχείο κλειδιού θησαυροφυλακίου διακριτικών λείπει, δεν είναι αναγνώσιμο, δεν είναι ασφαλές ή έχει κακή μορφή"
+
+#: includes/accounts.php
+msgid "Stored API token could not be decrypted"
+msgstr "Δεν ήταν δυνατή η αποκρυπτογράφηση του αποθηκευμένου διακριτικού API"
+
+#: includes/accounts.php
+msgid "Token file is missing, unreadable, not a regular file or too large"
+msgstr "Το αρχείο διακριτικού λείπει, δεν είναι αναγνώσιμο, δεν είναι κανονικό αρχείο ή είναι πολύ μεγάλο"
+
+#: includes/accounts.php
+msgid "Token file path is not absolute, is a symlink, or the file is world-readable or world-writable"
+msgstr "Η διαδρομή του αρχείου διακριτικού δεν είναι απόλυτη, είναι συμβολικός σύνδεσμος ή το αρχείο είναι αναγνώσιμο ή εγγράψιμο από όλους"
+
+#: includes/accounts.php
+msgid "Token file is not inside the Token File Directory"
+msgstr "Το αρχείο διακριτικού δεν βρίσκεται μέσα στον Κατάλογο αρχείων διακριτικών"
+
+#: includes/accounts.php
+msgid "API token could not be encrypted"
+msgstr "Δεν ήταν δυνατή η κρυπτογράφηση του διακριτικού API"
+
+#: includes/accounts.php
+msgid "Credential error"
+msgstr "Σφάλμα διαπιστευτηρίων"
+
+#: includes/accounts.php includes/settings.php
+msgid "Cloudflare"
+msgstr "Cloudflare"
+
+#: includes/accounts.php
+msgid "Encrypted in the Cacti database"
+msgstr "Κρυπτογραφημένο στη βάση δεδομένων του Cacti"
+
+#: includes/accounts.php
+msgid "Token file on this server"
+msgstr "Αρχείο διακριτικού σε αυτόν τον διακομιστή"
+
+#: includes/accounts.php includes/viewer.php
+msgid "Account"
+msgstr "Λογαριασμός"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Name"
+msgstr "Όνομα"
+
+#: includes/accounts.php
+msgid "A label for this account in Cacti."
+msgstr "Μια ετικέτα για αυτόν τον λογαριασμό στο Cacti."
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Account ID"
+msgstr "Αναγνωριστικό λογαριασμού"
+
+#: includes/accounts.php
+msgid "The 32-character Cloudflare account ID, shown in the dashboard URL and on the account overview page."
+msgstr "Το αναγνωριστικό λογαριασμού Cloudflare των 32 χαρακτήρων, που εμφανίζεται στη διεύθυνση URL του πίνακα ελέγχου και στη σελίδα επισκόπησης λογαριασμού."
+
+#: includes/accounts.php
+msgid "API Token"
+msgstr "Διακριτικό API"
+
+#: includes/accounts.php
+msgid "Token Storage"
+msgstr "Αποθήκευση διακριτικού"
+
+#: includes/accounts.php
+msgid "Where the scoped API token is kept. Global API Keys are not accepted."
+msgstr "Πού φυλάσσεται το διακριτικό API περιορισμένου εύρους. Τα Καθολικά κλειδιά API (Global API Keys) δεν γίνονται δεκτά."
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable because the key file in Settings is missing or unusable; only token files can be used."
+msgstr "Η κρυπτογραφημένη αποθήκευση δεν είναι διαθέσιμη επειδή το αρχείο κλειδιού στις Ρυθμίσεις λείπει ή δεν μπορεί να χρησιμοποιηθεί. Μπορούν να χρησιμοποιηθούν μόνο αρχεία διακριτικών."
+
+#: includes/accounts.php
+msgid "Leave blank to keep the current token"
+msgstr "Αφήστε το κενό για να διατηρήσετε το τρέχον διακριτικό"
+
+#: includes/accounts.php
+msgid "A scoped API token with Account Cloudflare Tunnel Read permission."
+msgstr "Ένα διακριτικό API περιορισμένου εύρους με το δικαίωμα Account Cloudflare Tunnel Read."
+
+#: includes/accounts.php
+msgid "Token File"
+msgstr "Αρχείο διακριτικού"
+
+#: includes/accounts.php
+msgid "Absolute path to a file that contains only the token. It must be readable by the web server and poller users and must not be world-readable."
+msgstr "Απόλυτη διαδρομή προς ένα αρχείο που περιέχει μόνο το διακριτικό. Πρέπει να είναι αναγνώσιμο από τους χρήστες του διακομιστή ιστού και του poller και να μην είναι αναγνώσιμο από όλους."
+
+#: includes/accounts.php
+msgid "Collection"
+msgstr "Συλλογή"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Enabled"
+msgstr "Ενεργοποιημένο"
+
+#: includes/accounts.php
+msgid "Disabled accounts are not polled."
+msgstr "Οι απενεργοποιημένοι λογαριασμοί δεν συλλέγονται."
+
+#: includes/accounts.php
+msgid "Collect Tunnels"
+msgstr "Συλλογή σηράγγων"
+
+#: includes/accounts.php
+msgid "Discover Cloudflare Tunnels and their connectors."
+msgstr "Ανακάλυψη σηράγγων Cloudflare και των συνδετών τους."
+
+#: includes/accounts.php
+msgid "Collect Analytics"
+msgstr "Συλλογή αναλυτικών στοιχείων"
+
+#: includes/accounts.php
+msgid "Collect zone traffic analytics. This needs the Account Analytics Read and Analytics Read (Zone) permissions."
+msgstr "Συλλογή αναλυτικών στοιχείων κίνησης ζώνης. Απαιτεί τα δικαιώματα Account Analytics Read και Analytics Read (Zone)."
+
+#: includes/accounts.php
+msgid "Create Graphs"
+msgstr "Δημιουργία γραφημάτων"
+
+#: includes/accounts.php
+msgid "Create graphs for each tunnel on the account's Cacti device. Turning this on needs the permission to edit Cacti devices."
+msgstr "Δημιουργία γραφημάτων για κάθε σήραγγα στη συσκευή Cacti του λογαριασμού. Η ενεργοποίηση αυτής της επιλογής απαιτεί δικαίωμα επεξεργασίας συσκευών Cacti."
+
+#: includes/accounts.php
+msgid "Discovery Interval"
+msgstr "Διάστημα ανακάλυψης"
+
+#: includes/accounts.php
+msgid "Seconds between inventory refreshes, from 60 to 86400."
+msgstr "Δευτερόλεπτα μεταξύ ανανεώσεων απογραφής, από 60 έως 86400."
+
+#: includes/accounts.php
+msgid "The token and its confirmation do not match"
+msgstr "Το διακριτικό και η επιβεβαίωσή του δεν ταιριάζουν"
+
+#: includes/accounts_page.php
+msgid "Delete"
+msgstr "Διαγραφή"
+
+#: includes/accounts_page.php
+msgid "Verify"
+msgstr "Επαλήθευση"
+
+#: includes/accounts_page.php
+msgid "Enable"
+msgstr "Ενεργοποίηση"
+
+#: includes/accounts_page.php
+msgid "Disable"
+msgstr "Απενεργοποίηση"
+
+#: includes/accounts_page.php
+msgid "Create Cacti Device"
+msgstr "Δημιουργία συσκευής Cacti"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to change Cloudflare accounts."
+msgstr "Δεν έχετε δικαίωμα τροποποίησης λογαριασμών Cloudflare."
+
+#: includes/accounts_page.php
+msgid "The Cloudflare account no longer exists."
+msgstr "Ο λογαριασμός Cloudflare δεν υπάρχει πλέον."
+
+#: includes/accounts_page.php
+msgid "The Cloudflare accounts could not be read. See the Cacti log for details."
+msgstr "Δεν ήταν δυνατή η ανάγνωση των λογαριασμών Cloudflare. Δείτε το αρχείο καταγραφής του Cacti για λεπτομέρειες."
+
+#: includes/accounts_page.php
+msgid "Create Graphs was left off: turning it on needs the permission to edit Cacti devices."
+msgstr "Η επιλογή «Δημιουργία γραφημάτων» παρέμεινε απενεργοποιημένη: η ενεργοποίησή της απαιτεί δικαίωμα επεξεργασίας συσκευών Cacti."
+
+#: includes/accounts_page.php
+msgid "Cacti device created"
+msgstr "Η συσκευή Cacti δημιουργήθηκε"
+
+#: includes/accounts_page.php
+msgid "A Cacti device already exists for this account"
+msgstr "Υπάρχει ήδη συσκευή Cacti για αυτόν τον λογαριασμό"
+
+#: includes/accounts_page.php
+msgid "The Cloudflare templates are not installed; see the Cacti log"
+msgstr "Τα πρότυπα Cloudflare δεν είναι εγκατεστημένα. Δείτε το αρχείο καταγραφής του Cacti"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices"
+msgstr "Δεν έχετε δικαίωμα δημιουργίας συσκευών Cacti"
+
+#: includes/accounts_page.php
+msgid "The Cacti device could not be created; see the Cacti log"
+msgstr "Δεν ήταν δυνατή η δημιουργία της συσκευής Cacti. Δείτε το αρχείο καταγραφής του Cacti"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices."
+msgstr "Δεν έχετε δικαίωμα δημιουργίας συσκευών Cacti."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Delete the following Cloudflare Account. Its discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgid_plural "Click 'Continue' to Delete the following Cloudflare Accounts. Their discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgstr[0] "Κάντε κλικ στο «Συνέχεια» για να διαγράψετε τον ακόλουθο λογαριασμό Cloudflare. Η ανακαλυφθείσα απογραφή και η κατάσταση εργασιών του αφαιρούνται, ενώ οι συσκευές Cacti και τα γραφήματα διατηρούνται."
+msgstr[1] "Κάντε κλικ στο «Συνέχεια» για να διαγράψετε τους ακόλουθους λογαριασμούς Cloudflare. Η ανακαλυφθείσα απογραφή και η κατάσταση εργασιών τους αφαιρούνται, ενώ οι συσκευές Cacti και τα γραφήματα διατηρούνται."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Verify the following Cloudflare Account against the Cloudflare API."
+msgid_plural "Click 'Continue' to Verify the following Cloudflare Accounts against the Cloudflare API."
+msgstr[0] "Κάντε κλικ στο «Συνέχεια» για να επαληθεύσετε τον ακόλουθο λογαριασμό Cloudflare μέσω του Cloudflare API."
+msgstr[1] "Κάντε κλικ στο «Συνέχεια» για να επαληθεύσετε τους ακόλουθους λογαριασμούς Cloudflare μέσω του Cloudflare API."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Enable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Enable the following Cloudflare Accounts."
+msgstr[0] "Κάντε κλικ στο «Συνέχεια» για να ενεργοποιήσετε τον ακόλουθο λογαριασμό Cloudflare."
+msgstr[1] "Κάντε κλικ στο «Συνέχεια» για να ενεργοποιήσετε τους ακόλουθους λογαριασμούς Cloudflare."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Disable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Disable the following Cloudflare Accounts."
+msgstr[0] "Κάντε κλικ στο «Συνέχεια» για να απενεργοποιήσετε τον ακόλουθο λογαριασμό Cloudflare."
+msgstr[1] "Κάντε κλικ στο «Συνέχεια» για να απενεργοποιήσετε τους ακόλουθους λογαριασμούς Cloudflare."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to create a Cacti device for the following Cloudflare Account. An account that already has one is left as it is."
+msgid_plural "Click 'Continue' to create a Cacti device for each of the following Cloudflare Accounts. An account that already has one is left as it is."
+msgstr[0] "Κάντε κλικ στο «Συνέχεια» για να δημιουργήσετε μια συσκευή Cacti για τον ακόλουθο λογαριασμό Cloudflare. Ένας λογαριασμός που διαθέτει ήδη συσκευή παραμένει ως έχει."
+msgstr[1] "Κάντε κλικ στο «Συνέχεια» για να δημιουργήσετε μια συσκευή Cacti για καθέναν από τους ακόλουθους λογαριασμούς Cloudflare. Ένας λογαριασμός που διαθέτει ήδη συσκευή παραμένει ως έχει."
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Cancel"
+msgstr "Ακύρωση"
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Continue"
+msgstr "Συνέχεια"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Cloudflare Account [edit: %s]"
+msgstr "Λογαριασμός Cloudflare [επεξεργασία: %s]"
+
+#: includes/accounts_page.php
+msgid "Cloudflare Account [new]"
+msgstr "Λογαριασμός Cloudflare [νέος]"
+
+#: includes/accounts_page.php includes/viewer.php src/OperatorPage.php
+msgid "Never"
+msgstr "Ποτέ"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Status"
+msgstr "Κατάσταση"
+
+#: includes/accounts_page.php
+msgid "Message"
+msgstr "Μήνυμα"
+
+#: includes/accounts_page.php
+msgid "No"
+msgstr "Όχι"
+
+#: includes/accounts_page.php
+msgid "Token Stored"
+msgstr "Αποθηκευμένο διακριτικό"
+
+#: includes/accounts_page.php
+msgid "Yes"
+msgstr "Ναι"
+
+#: includes/accounts_page.php
+msgid "Last Checked"
+msgstr "Τελευταίος έλεγχος"
+
+#: includes/accounts_page.php
+msgid "Last Verified"
+msgstr "Τελευταία επαλήθευση"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Permission: %s"
+msgstr "Δικαίωμα: %s"
+
+#: includes/accounts_page.php
+msgid "Granted"
+msgstr "Παραχωρήθηκε"
+
+#: includes/accounts_page.php
+msgid "Missing"
+msgstr "Απουσιάζει"
+
+#: includes/accounts_page.php
+msgid "Connection Status"
+msgstr "Κατάσταση σύνδεσης"
+
+#: includes/accounts_page.php includes/settings.php includes/viewer.php
+msgid "Cloudflare Accounts"
+msgstr "Λογαριασμοί Cloudflare"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Search"
+msgstr "Αναζήτηση"
+
+#: includes/accounts_page.php
+msgid "Accounts"
+msgstr "Λογαριασμοί"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Default"
+msgstr "Προεπιλογή"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Go"
+msgstr "Εφαρμογή"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Set/Refresh Filters"
+msgstr "Ορισμός/Ανανέωση φίλτρων"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear"
+msgstr "Εκκαθάριση"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear Filters"
+msgstr "Εκκαθάριση φίλτρων"
+
+#: includes/accounts_page.php
+msgid "The name of this account in Cacti."
+msgstr "Το όνομα αυτού του λογαριασμού στο Cacti."
+
+#: includes/accounts_page.php
+msgid "Whether an API token is configured. The edit page shows where it is kept."
+msgstr "Εάν έχει ρυθμιστεί διακριτικό API. Η σελίδα επεξεργασίας δείχνει πού φυλάσσεται."
+
+#: includes/accounts_page.php
+msgid "The result of the last Verify."
+msgstr "Το αποτέλεσμα της τελευταίας επαλήθευσης."
+
+#: includes/accounts_page.php
+msgid "ID"
+msgstr "Αναγνωριστικό"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "No Cloudflare Accounts Found"
+msgstr "Δεν βρέθηκαν λογαριασμοί Cloudflare"
+
+#: includes/operator.php
+msgid "Inspect tunnels and connector counts. Escalate token changes, account configuration and graph creation to an administrator."
+msgstr "Ελέγξτε τις σήραγγες και το πλήθος συνδετών. Κλιμακώστε αλλαγές διακριτικών, ρυθμίσεις λογαριασμών και δημιουργία γραφημάτων σε έναν διαχειριστή."
+
+#: includes/settings.php
+msgid "Configuration"
+msgstr "Ρύθμιση"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Cloudflare Operations"
+msgstr "Λειτουργίες Cloudflare"
+
+#: includes/settings.php
+msgid "Management"
+msgstr "Διαχείριση"
+
+#: includes/settings.php includes/viewer.php
+msgid "Cloudflare Tunnels"
+msgstr "Σήραγγες Cloudflare"
+
+#: includes/settings.php
+msgid "(edit)"
+msgstr "(επεξεργασία)"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Actions"
+msgstr "Ενέργειες"
+
+#: includes/settings.php includes/viewer.php
+msgid "Overview"
+msgstr "Επισκόπηση"
+
+#: includes/settings.php includes/viewer.php
+msgid "Tunnels"
+msgstr "Σήραγγες"
+
+#: includes/settings.php includes/viewer.php
+msgid "Connectors"
+msgstr "Συνδέτες"
+
+#: includes/settings.php
+msgid "Token Vault Key File"
+msgstr "Αρχείο κλειδιού θησαυροφυλακίου διακριτικών"
+
+#: includes/settings.php
+msgid "Absolute path to the 32-byte key used to encrypt stored API tokens. It must be readable by the web server and poller users and not world-readable. When the file is missing, only token files can be used."
+msgstr "Απόλυτη διαδρομή προς το κλειδί 32 byte που χρησιμοποιείται για την κρυπτογράφηση των αποθηκευμένων διακριτικών API. Πρέπει να είναι αναγνώσιμο από τους χρήστες του διακομιστή ιστού και του poller και να μην είναι αναγνώσιμο από όλους. Όταν το αρχείο λείπει, μπορούν να χρησιμοποιηθούν μόνο αρχεία διακριτικών."
+
+#: includes/settings.php
+msgid "Token File Directory"
+msgstr "Κατάλογος αρχείων διακριτικών"
+
+#: includes/settings.php
+msgid "Absolute path of the directory that every account token file must be in. When empty, a token file may be anywhere the web server and poller users can read."
+msgstr "Απόλυτη διαδρομή του καταλόγου στον οποίο πρέπει να βρίσκεται κάθε αρχείο διακριτικού λογαριασμού. Όταν είναι κενό, ένα αρχείο διακριτικού μπορεί να βρίσκεται οπουδήποτε μπορούν να διαβάσουν οι χρήστες του διακομιστή ιστού και του poller."
+
+#: includes/settings.php
+msgid "Interactive Request Timeout"
+msgstr "Χρονικό όριο διαδραστικού αιτήματος"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made from the web interface, such as Verify."
+msgstr "Συνολικός χρόνος σε δευτερόλεπτα που επιτρέπεται για ένα αίτημα Cloudflare API από τη διεπαφή ιστού, όπως η Επαλήθευση."
+
+#: includes/settings.php
+msgid "Collector Request Timeout"
+msgstr "Χρονικό όριο αιτήματος συλλέκτη"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made by the background collector."
+msgstr "Συνολικός χρόνος σε δευτερόλεπτα που επιτρέπεται για ένα αίτημα Cloudflare API από τον συλλέκτη παρασκηνίου."
+
+#: includes/settings.php
+msgid "Log Level"
+msgstr "Επίπεδο καταγραφής"
+
+#: includes/settings.php
+msgid "The amount of detail the plugin writes to the Cacti log."
+msgstr "Ο βαθμός λεπτομέρειας που καταγράφει το πρόσθετο στο αρχείο καταγραφής του Cacti."
+
+#: includes/tunnel_retirement.php
+msgid "The tunnel could not be retired. Check permissions and retry after collection finishes."
+msgstr "Δεν ήταν δυνατή η απόσυρση της σήραγγας. Ελέγξτε τα δικαιώματα και δοκιμάστε ξανά αφού ολοκληρωθεί η συλλογή."
+
+#: includes/tunnel_retirement.php includes/viewer.php
+msgid "Retire tunnel"
+msgstr "Απόσυρση σήραγγας"
+
+#: includes/tunnel_retirement.php
+msgid "Retiring removes the graphs and unshared data sources created for this deleted tunnel. Cacti controls RRD cleanup. The inventory record is kept."
+msgstr "Η απόσυρση αφαιρεί τα γραφήματα και τις μη κοινόχρηστες πηγές δεδομένων που δημιουργήθηκαν για αυτή τη διαγραμμένη σήραγγα. Το Cacti ελέγχει την εκκαθάριση των RRD. Η εγγραφή απογραφής διατηρείται."
+
+#: includes/viewer.php
+msgid "The Cloudflare tunnels could not be read. See the Cacti log for details."
+msgstr "Δεν ήταν δυνατή η ανάγνωση των σηράγγων Cloudflare. Δείτε το αρχείο καταγραφής του Cacti για λεπτομέρειες."
+
+#: includes/viewer.php
+msgid "Zone Analytics"
+msgstr "Αναλυτικά στοιχεία ζώνης"
+
+#: includes/viewer.php
+msgid "Disabled"
+msgstr "Απενεργοποιημένο"
+
+#: includes/viewer.php
+msgid "Not collected"
+msgstr "Δεν συλλέγεται"
+
+#: includes/viewer.php
+msgid "Collection failing"
+msgstr "Αποτυχία συλλογής"
+
+#: includes/viewer.php
+msgid "Not yet collected"
+msgstr "Δεν έχει συλλεχθεί ακόμη"
+
+#: includes/viewer.php
+msgid "Down"
+msgstr "Εκτός λειτουργίας"
+
+#: includes/viewer.php
+msgid "Degraded"
+msgstr "Υποβαθμισμένο"
+
+#: includes/viewer.php
+msgid "Healthy"
+msgstr "Υγιές"
+
+#: includes/viewer.php
+msgid "Inactive"
+msgstr "Ανενεργό"
+
+#: includes/viewer.php
+msgid "No active tunnels"
+msgstr "Δεν υπάρχουν ενεργές σήραγγες"
+
+#: includes/viewer.php
+msgid "The worst status among active tunnels, or Collection failing while discovery fails."
+msgstr "Η χειρότερη κατάσταση μεταξύ των ενεργών σηράγγων ή «Αποτυχία συλλογής» όσο αποτυγχάνει η ανακάλυψη."
+
+#: includes/viewer.php
+msgid "Active"
+msgstr "Ενεργό"
+
+#: includes/viewer.php
+msgid "Unavailable"
+msgstr "Μη διαθέσιμο"
+
+#: includes/viewer.php
+msgid "Deleted"
+msgstr "Διαγραμμένο"
+
+#: includes/viewer.php
+msgid "Last Successful Discovery"
+msgstr "Τελευταία επιτυχής ανακάλυψη"
+
+#: includes/viewer.php
+msgid "Consecutive Failures"
+msgstr "Συνεχόμενες αποτυχίες"
+
+#: includes/viewer.php
+#, php-format
+msgid "Last error: %s"
+msgstr "Τελευταίο σφάλμα: %s"
+
+#: includes/viewer.php
+msgid "Tunnel"
+msgstr "Σήραγγα"
+
+#: includes/viewer.php
+msgid "Cloudflare Status"
+msgstr "Κατάσταση Cloudflare"
+
+#: includes/viewer.php
+msgid "The status Cloudflare reported at the last discovery."
+msgstr "Η κατάσταση που ανέφερε το Cloudflare κατά την τελευταία ανακάλυψη."
+
+#: includes/viewer.php
+msgid "Lifecycle"
+msgstr "Κύκλος ζωής"
+
+#: includes/viewer.php
+msgid "Whether the last discoveries still found this tunnel."
+msgstr "Εάν οι τελευταίες ανακαλύψεις εντόπισαν ακόμη αυτή τη σήραγγα."
+
+#: includes/viewer.php
+msgid "Type"
+msgstr "Τύπος"
+
+#: includes/viewer.php
+msgid "Connections"
+msgstr "Συνδέσεις"
+
+#: includes/viewer.php
+msgid "Last Seen"
+msgstr "Τελευταία εμφάνιση"
+
+#: includes/viewer.php
+msgid "Any"
+msgstr "Οποιοδήποτε"
+
+#: includes/viewer.php
+msgid "All"
+msgstr "Όλα"
+
+#: includes/viewer.php
+msgid "No Cloudflare Tunnels Found"
+msgstr "Δεν βρέθηκαν σήραγγες Cloudflare"
+
+#: includes/viewer.php
+msgid "Choose a tunnel on the Tunnels tab."
+msgstr "Επιλέξτε μια σήραγγα στην καρτέλα «Σήραγγες»."
+
+#: includes/viewer.php
+msgid "The tunnel no longer exists."
+msgstr "Η σήραγγα δεν υπάρχει πλέον."
+
+#: includes/viewer.php
+#, php-format
+msgid "Connectors for %s"
+msgstr "Συνδέτες για %s"
+
+#: includes/viewer.php
+msgid "Connector ID"
+msgstr "Αναγνωριστικό συνδέτη"
+
+#: includes/viewer.php
+msgid "Version"
+msgstr "Έκδοση"
+
+#: includes/viewer.php
+msgid "Architecture"
+msgstr "Αρχιτεκτονική"
+
+#: includes/viewer.php
+msgid "Running Since"
+msgstr "Εκτελείται από"
+
+#: includes/viewer.php
+msgid "Data Centers"
+msgstr "Κέντρα δεδομένων"
+
+#: includes/viewer.php
+msgid "Origin IPs"
+msgstr "IP προέλευσης"
+
+#: includes/viewer.php
+#, php-format
+msgid "This tunnel is %s. These connectors were last seen while the tunnel was active."
+msgstr "Αυτή η σήραγγα είναι %s. Αυτοί οι συνδέτες εντοπίστηκαν τελευταία φορά όσο η σήραγγα ήταν ενεργή."
+
+#: includes/viewer.php
+msgid "No connectors are running for this tunnel."
+msgstr "Δεν εκτελούνται συνδέτες για αυτή τη σήραγγα."
+
+#: includes/viewer.php
+msgid "Export"
+msgstr "Εξαγωγή"
+
+#: includes/viewer.php
+msgid "Bytes/s"
+msgstr "Bytes/s"
+
+#: includes/viewer.php
+msgid "HTTP 5xx (%)"
+msgstr "HTTP 5xx (%)"
+
+#: includes/viewer.php
+msgid "Requests/s"
+msgstr "Αιτήματα/s"
+
+#: includes/viewer.php
+msgid "Zone"
+msgstr "Ζώνη"
+
+#: src/OperatorPage.php
+msgid "Review the recorded observations below. Acknowledgments are personal to this session, expire when observations change, and never suppress alerts or change health."
+msgstr "Ελέγξτε τις καταγεγραμμένες παρατηρήσεις παρακάτω. Οι αναγνωρίσεις είναι προσωπικές για αυτή τη συνεδρία, λήγουν όταν αλλάζουν οι παρατηρήσεις και δεν καταστέλλουν ποτέ ειδοποιήσεις ούτε αλλάζουν την κατάσταση υγείας."
+
+#: src/OperatorPage.php
+msgid "Investigation"
+msgstr "Διερεύνηση"
+
+#: src/OperatorPage.php
+msgid "Object"
+msgstr "Αντικείμενο"
+
+#: src/OperatorPage.php
+msgid "Observed (UTC)"
+msgstr "Παρατηρήθηκε (UTC)"
+
+#: src/OperatorPage.php
+msgid "State"
+msgstr "Κατάσταση"
+
+#: src/OperatorPage.php
+msgid "Unknown or stale"
+msgstr "Άγνωστο ή παρωχημένο"
+
+#: src/OperatorPage.php
+msgid "Acknowledged; health unchanged."
+msgstr "Αναγνωρίστηκε, η κατάσταση υγείας δεν άλλαξε."
+
+#: src/OperatorPage.php
+msgid "Acknowledge"
+msgstr "Αναγνώριση"
+
+#: src/OperatorPage.php
+msgid "No observations are available."
+msgstr "Δεν υπάρχουν διαθέσιμες παρατηρήσεις."

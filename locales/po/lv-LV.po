@@ -1,0 +1,779 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-FileCopyrightText: 2026 Thomas Vincent <thomasvincent@gmail.com>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cloudflare 0.4.0-dev\n"
+"Report-Msgid-Bugs-To: https://github.com/somethingwithproof/plugin_cloudflare/issues\n"
+"PO-Revision-Date: 2026-11-27 00:00+0000\n"
+"Last-Translator: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language-Team: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language: lv-LV\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n % 10 == 0 || n % 100 >= 11 && n % 100 <= 19) ? 0 : ((n % 10 == 1 && n % 100 != 11) ? 1 : 2);\n"
+
+#: cloudflare_operator.php
+msgid "Monitoring view"
+msgstr "Uzraudzības skats"
+
+#: cloudflare_operator.php
+msgid "Observations could not be read. Ask an administrator to check the plugin log."
+msgstr "Novērojumus nevarēja nolasīt. Lūdziet administratoram pārbaudīt spraudņa žurnālu."
+
+#: includes/accounts.php
+msgid "Connection verified"
+msgstr "Savienojums pārbaudīts"
+
+#: includes/accounts.php
+msgid "Token is not active; it may be expired or disabled"
+msgstr "Marķieris nav aktīvs; tā termiņš var būt beidzies vai tas var būt atspējots"
+
+#: includes/accounts.php
+msgid "Token is invalid or expired"
+msgstr "Marķieris nav derīgs vai tā termiņš ir beidzies"
+
+#: includes/accounts.php
+msgid "Token lacks the Account Cloudflare Tunnel Read permission"
+msgstr "Marķierim trūkst atļaujas \"Account Cloudflare Tunnel Read\""
+
+#: includes/accounts.php
+msgid "Cloudflare API is unreachable; try again later"
+msgstr "Cloudflare API nav sasniedzams; mēģiniet vēlreiz vēlāk"
+
+#: includes/accounts.php
+msgid "Cloudflare API rate limit reached; try again later"
+msgstr "Sasniegts Cloudflare API pieprasījumu ierobežojums; mēģiniet vēlreiz vēlāk"
+
+#: includes/accounts.php
+msgid "Cloudflare API request failed unexpectedly"
+msgstr "Cloudflare API pieprasījums negaidīti neizdevās"
+
+#: includes/accounts.php
+msgid "Token lacks the permissions needed to verify it"
+msgstr "Marķierim trūkst tā pārbaudei nepieciešamo atļauju"
+
+#: includes/accounts.php
+msgid "Stored token cannot be decrypted"
+msgstr "Saglabāto marķieri nevar atšifrēt"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing or unusable"
+msgstr "Marķieru glabātuves atslēgas fails trūkst vai nav lietojams"
+
+#: includes/accounts.php
+msgid "Token file is missing or insecure"
+msgstr "Marķiera fails trūkst vai nav drošs"
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable; configure the key file or use a token file"
+msgstr "Šifrētā krātuve nav pieejama; konfigurējiet atslēgas failu vai izmantojiet marķiera failu"
+
+#: includes/accounts.php
+msgid "Enter the 32-character hexadecimal Cloudflare account ID"
+msgstr "Ievadiet 32 rakstzīmju heksadecimālo Cloudflare konta ID"
+
+#: includes/accounts.php
+msgid "Enter a name of 1 to 100 characters without control characters"
+msgstr "Ievadiet nosaukumu no 1 līdz 100 rakstzīmēm bez vadības rakstzīmēm"
+
+#: includes/accounts.php
+msgid "Choose an encrypted token or a token file"
+msgstr "Izvēlieties šifrētu marķieri vai marķiera failu"
+
+#: includes/accounts.php
+msgid "Enter an API token"
+msgstr "Ievadiet API marķieri"
+
+#: includes/accounts.php
+msgid "Re-enter the token when changing the account ID"
+msgstr "Mainot konta ID, ievadiet marķieri atkārtoti"
+
+#: includes/accounts.php
+msgid "Enter an absolute path of at most 255 characters"
+msgstr "Ievadiet absolūtu ceļu, ne garāku par 255 rakstzīmēm"
+
+#: includes/accounts.php
+msgid "Must be 0 or 1"
+msgstr "Jābūt 0 vai 1"
+
+#: includes/accounts.php
+msgid "Enter a whole number of seconds from 60 to 86400"
+msgstr "Ievadiet veselu sekunžu skaitu no 60 līdz 86400"
+
+#: includes/accounts.php
+msgid "This Cloudflare account ID is already configured"
+msgstr "Šis Cloudflare konta ID jau ir konfigurēts"
+
+#: includes/accounts.php
+msgid "Global API Keys are not accepted; use a scoped API token"
+msgstr "Globālās API atslēgas netiek pieņemtas; izmantojiet ierobežotas darbības API marķieri"
+
+#: includes/accounts.php
+msgid "API token format is invalid"
+msgstr "API marķiera formāts nav derīgs"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing, unreadable, insecure or malformed"
+msgstr "Marķieru glabātuves atslēgas fails trūkst, nav lasāms, nav drošs vai ir nepareizi formatēts"
+
+#: includes/accounts.php
+msgid "Stored API token could not be decrypted"
+msgstr "Saglabāto API marķieri nevarēja atšifrēt"
+
+#: includes/accounts.php
+msgid "Token file is missing, unreadable, not a regular file or too large"
+msgstr "Marķiera fails trūkst, nav lasāms, nav parasts fails vai ir pārāk liels"
+
+#: includes/accounts.php
+msgid "Token file path is not absolute, is a symlink, or the file is world-readable or world-writable"
+msgstr "Marķiera faila ceļš nav absolūts, ir simboliskā saite vai fails ir lasāms vai rakstāms visiem lietotājiem"
+
+#: includes/accounts.php
+msgid "Token file is not inside the Token File Directory"
+msgstr "Marķiera fails neatrodas marķiera failu direktorijā"
+
+#: includes/accounts.php
+msgid "API token could not be encrypted"
+msgstr "API marķieri nevarēja šifrēt"
+
+#: includes/accounts.php
+msgid "Credential error"
+msgstr "Akreditācijas datu kļūda"
+
+#: includes/accounts.php includes/settings.php
+msgid "Cloudflare"
+msgstr "Cloudflare"
+
+#: includes/accounts.php
+msgid "Encrypted in the Cacti database"
+msgstr "Šifrēts Cacti datubāzē"
+
+#: includes/accounts.php
+msgid "Token file on this server"
+msgstr "Marķiera fails šajā serverī"
+
+#: includes/accounts.php includes/viewer.php
+msgid "Account"
+msgstr "Konts"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Name"
+msgstr "Nosaukums"
+
+#: includes/accounts.php
+msgid "A label for this account in Cacti."
+msgstr "Šī konta nosaukums sistēmā Cacti."
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Account ID"
+msgstr "Konta ID"
+
+#: includes/accounts.php
+msgid "The 32-character Cloudflare account ID, shown in the dashboard URL and on the account overview page."
+msgstr "32 rakstzīmju Cloudflare konta ID, kas redzams vadības paneļa URL un konta pārskata lapā."
+
+#: includes/accounts.php
+msgid "API Token"
+msgstr "API marķieris"
+
+#: includes/accounts.php
+msgid "Token Storage"
+msgstr "Marķiera glabātuve"
+
+#: includes/accounts.php
+msgid "Where the scoped API token is kept. Global API Keys are not accepted."
+msgstr "Kur tiek glabāts ierobežotas darbības API marķieris. Globālās API atslēgas netiek pieņemtas."
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable because the key file in Settings is missing or unusable; only token files can be used."
+msgstr "Šifrētā krātuve nav pieejama, jo iestatījumos norādītais atslēgas fails trūkst vai nav lietojams; var izmantot tikai marķiera failus."
+
+#: includes/accounts.php
+msgid "Leave blank to keep the current token"
+msgstr "Atstājiet tukšu, lai saglabātu pašreizējo marķieri"
+
+#: includes/accounts.php
+msgid "A scoped API token with Account Cloudflare Tunnel Read permission."
+msgstr "Ierobežotas darbības API marķieris ar atļauju \"Account Cloudflare Tunnel Read\"."
+
+#: includes/accounts.php
+msgid "Token File"
+msgstr "Marķiera fails"
+
+#: includes/accounts.php
+msgid "Absolute path to a file that contains only the token. It must be readable by the web server and poller users and must not be world-readable."
+msgstr "Absolūts ceļš uz failu, kas satur tikai marķieri. Tam jābūt lasāmam tīmekļa servera un aptaujātāja lietotājiem, un tas nedrīkst būt lasāms visiem lietotājiem."
+
+#: includes/accounts.php
+msgid "Collection"
+msgstr "Datu vākšana"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Enabled"
+msgstr "Iespējots"
+
+#: includes/accounts.php
+msgid "Disabled accounts are not polled."
+msgstr "Atspējotie konti netiek aptaujāti."
+
+#: includes/accounts.php
+msgid "Collect Tunnels"
+msgstr "Vākt tuneļu datus"
+
+#: includes/accounts.php
+msgid "Discover Cloudflare Tunnels and their connectors."
+msgstr "Atklāt Cloudflare tuneļus un to savienotājus."
+
+#: includes/accounts.php
+msgid "Collect Analytics"
+msgstr "Vākt analītikas datus"
+
+#: includes/accounts.php
+msgid "Collect zone traffic analytics. This needs the Account Analytics Read and Analytics Read (Zone) permissions."
+msgstr "Vākt zonu trafika analītiku. Tam nepieciešamas atļaujas \"Account Analytics Read\" un \"Analytics Read (Zone)\"."
+
+#: includes/accounts.php
+msgid "Create Graphs"
+msgstr "Izveidot grafikus"
+
+#: includes/accounts.php
+msgid "Create graphs for each tunnel on the account's Cacti device. Turning this on needs the permission to edit Cacti devices."
+msgstr "Izveidot grafikus katram tunelim konta Cacti ierīcē. Lai šo ieslēgtu, nepieciešama atļauja rediģēt Cacti ierīces."
+
+#: includes/accounts.php
+msgid "Discovery Interval"
+msgstr "Atklāšanas intervāls"
+
+#: includes/accounts.php
+msgid "Seconds between inventory refreshes, from 60 to 86400."
+msgstr "Sekundes starp inventāra atsvaidzināšanas reizēm, no 60 līdz 86400."
+
+#: includes/accounts.php
+msgid "The token and its confirmation do not match"
+msgstr "Marķieris un tā apstiprinājums nesakrīt"
+
+#: includes/accounts_page.php
+msgid "Delete"
+msgstr "Dzēst"
+
+#: includes/accounts_page.php
+msgid "Verify"
+msgstr "Pārbaudīt"
+
+#: includes/accounts_page.php
+msgid "Enable"
+msgstr "Iespējot"
+
+#: includes/accounts_page.php
+msgid "Disable"
+msgstr "Atspējot"
+
+#: includes/accounts_page.php
+msgid "Create Cacti Device"
+msgstr "Izveidot Cacti ierīci"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to change Cloudflare accounts."
+msgstr "Jums nav atļaujas mainīt Cloudflare kontus."
+
+#: includes/accounts_page.php
+msgid "The Cloudflare account no longer exists."
+msgstr "Cloudflare konts vairs nepastāv."
+
+#: includes/accounts_page.php
+msgid "The Cloudflare accounts could not be read. See the Cacti log for details."
+msgstr "Cloudflare kontus nevarēja nolasīt. Skatiet Cacti žurnālu, lai uzzinātu vairāk."
+
+#: includes/accounts_page.php
+msgid "Create Graphs was left off: turning it on needs the permission to edit Cacti devices."
+msgstr "Iestatījums \"Izveidot grafikus\" palika izslēgts: tā ieslēgšanai nepieciešama atļauja rediģēt Cacti ierīces."
+
+#: includes/accounts_page.php
+msgid "Cacti device created"
+msgstr "Cacti ierīce izveidota"
+
+#: includes/accounts_page.php
+msgid "A Cacti device already exists for this account"
+msgstr "Šim kontam jau pastāv Cacti ierīce"
+
+#: includes/accounts_page.php
+msgid "The Cloudflare templates are not installed; see the Cacti log"
+msgstr "Cloudflare veidnes nav instalētas; skatiet Cacti žurnālu"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices"
+msgstr "Jums nav atļaujas izveidot Cacti ierīces"
+
+#: includes/accounts_page.php
+msgid "The Cacti device could not be created; see the Cacti log"
+msgstr "Cacti ierīci nevarēja izveidot; skatiet Cacti žurnālu"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices."
+msgstr "Jums nav atļaujas izveidot Cacti ierīces."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Delete the following Cloudflare Account. Its discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgid_plural "Click 'Continue' to Delete the following Cloudflare Accounts. Their discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgstr[0] "Noklikšķiniet uz \"Turpināt\", lai dzēstu tālāk norādītos Cloudflare kontus. To atklātais inventārs un uzdevumu stāvoklis tiks noņemts; Cacti ierīces un grafiki tiks saglabāti."
+msgstr[1] "Noklikšķiniet uz \"Turpināt\", lai dzēstu tālāk norādīto Cloudflare kontu. Tā atklātais inventārs un uzdevumu stāvoklis tiks noņemts; Cacti ierīces un grafiki tiks saglabāti."
+msgstr[2] "Noklikšķiniet uz \"Turpināt\", lai dzēstu tālāk norādītos Cloudflare kontus. To atklātais inventārs un uzdevumu stāvoklis tiks noņemts; Cacti ierīces un grafiki tiks saglabāti."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Verify the following Cloudflare Account against the Cloudflare API."
+msgid_plural "Click 'Continue' to Verify the following Cloudflare Accounts against the Cloudflare API."
+msgstr[0] "Noklikšķiniet uz \"Turpināt\", lai pārbaudītu tālāk norādītos Cloudflare kontus, izmantojot Cloudflare API."
+msgstr[1] "Noklikšķiniet uz \"Turpināt\", lai pārbaudītu tālāk norādīto Cloudflare kontu, izmantojot Cloudflare API."
+msgstr[2] "Noklikšķiniet uz \"Turpināt\", lai pārbaudītu tālāk norādītos Cloudflare kontus, izmantojot Cloudflare API."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Enable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Enable the following Cloudflare Accounts."
+msgstr[0] "Noklikšķiniet uz \"Turpināt\", lai iespējotu tālāk norādītos Cloudflare kontus."
+msgstr[1] "Noklikšķiniet uz \"Turpināt\", lai iespējotu tālāk norādīto Cloudflare kontu."
+msgstr[2] "Noklikšķiniet uz \"Turpināt\", lai iespējotu tālāk norādītos Cloudflare kontus."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Disable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Disable the following Cloudflare Accounts."
+msgstr[0] "Noklikšķiniet uz \"Turpināt\", lai atspējotu tālāk norādītos Cloudflare kontus."
+msgstr[1] "Noklikšķiniet uz \"Turpināt\", lai atspējotu tālāk norādīto Cloudflare kontu."
+msgstr[2] "Noklikšķiniet uz \"Turpināt\", lai atspējotu tālāk norādītos Cloudflare kontus."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to create a Cacti device for the following Cloudflare Account. An account that already has one is left as it is."
+msgid_plural "Click 'Continue' to create a Cacti device for each of the following Cloudflare Accounts. An account that already has one is left as it is."
+msgstr[0] "Noklikšķiniet uz \"Turpināt\", lai izveidotu Cacti ierīci katram no tālāk norādītajiem Cloudflare kontiem. Konts, kuram ierīce jau ir, netiks mainīts."
+msgstr[1] "Noklikšķiniet uz \"Turpināt\", lai izveidotu Cacti ierīci tālāk norādītajam Cloudflare kontam. Konts, kuram ierīce jau ir, netiks mainīts."
+msgstr[2] "Noklikšķiniet uz \"Turpināt\", lai izveidotu Cacti ierīci katram no tālāk norādītajiem Cloudflare kontiem. Konts, kuram ierīce jau ir, netiks mainīts."
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Cancel"
+msgstr "Atcelt"
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Continue"
+msgstr "Turpināt"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Cloudflare Account [edit: %s]"
+msgstr "Cloudflare konts [rediģēt: %s]"
+
+#: includes/accounts_page.php
+msgid "Cloudflare Account [new]"
+msgstr "Cloudflare konts [jauns]"
+
+#: includes/accounts_page.php includes/viewer.php src/OperatorPage.php
+msgid "Never"
+msgstr "Nekad"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Status"
+msgstr "Statuss"
+
+#: includes/accounts_page.php
+msgid "Message"
+msgstr "Ziņojums"
+
+#: includes/accounts_page.php
+msgid "No"
+msgstr "Nē"
+
+#: includes/accounts_page.php
+msgid "Token Stored"
+msgstr "Marķieris saglabāts"
+
+#: includes/accounts_page.php
+msgid "Yes"
+msgstr "Jā"
+
+#: includes/accounts_page.php
+msgid "Last Checked"
+msgstr "Pēdējo reizi pārbaudīts"
+
+#: includes/accounts_page.php
+msgid "Last Verified"
+msgstr "Pēdējo reizi verificēts"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Permission: %s"
+msgstr "Atļauja: %s"
+
+#: includes/accounts_page.php
+msgid "Granted"
+msgstr "Piešķirta"
+
+#: includes/accounts_page.php
+msgid "Missing"
+msgstr "Trūkst"
+
+#: includes/accounts_page.php
+msgid "Connection Status"
+msgstr "Savienojuma statuss"
+
+#: includes/accounts_page.php includes/settings.php includes/viewer.php
+msgid "Cloudflare Accounts"
+msgstr "Cloudflare konti"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Search"
+msgstr "Meklēt"
+
+#: includes/accounts_page.php
+msgid "Accounts"
+msgstr "Konti"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Default"
+msgstr "Noklusējums"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Go"
+msgstr "Atlasīt"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Set/Refresh Filters"
+msgstr "Iestatīt/atsvaidzināt filtrus"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear"
+msgstr "Notīrīt"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear Filters"
+msgstr "Notīrīt filtrus"
+
+#: includes/accounts_page.php
+msgid "The name of this account in Cacti."
+msgstr "Šī konta nosaukums sistēmā Cacti."
+
+#: includes/accounts_page.php
+msgid "Whether an API token is configured. The edit page shows where it is kept."
+msgstr "Vai ir konfigurēts API marķieris. Rediģēšanas lapā redzams, kur tas tiek glabāts."
+
+#: includes/accounts_page.php
+msgid "The result of the last Verify."
+msgstr "Pēdējās pārbaudes rezultāts."
+
+#: includes/accounts_page.php
+msgid "ID"
+msgstr "ID"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "No Cloudflare Accounts Found"
+msgstr "Nav atrasts neviens Cloudflare konts"
+
+#: includes/operator.php
+msgid "Inspect tunnels and connector counts. Escalate token changes, account configuration and graph creation to an administrator."
+msgstr "Pārbaudiet tuneļus un savienotāju skaitu. Par marķieru maiņu, kontu konfigurāciju un grafiku izveidi ziņojiet administratoram."
+
+#: includes/settings.php
+msgid "Configuration"
+msgstr "Konfigurācija"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Cloudflare Operations"
+msgstr "Cloudflare operācijas"
+
+#: includes/settings.php
+msgid "Management"
+msgstr "Pārvaldība"
+
+#: includes/settings.php includes/viewer.php
+msgid "Cloudflare Tunnels"
+msgstr "Cloudflare tuneļi"
+
+#: includes/settings.php
+msgid "(edit)"
+msgstr "(rediģēt)"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Actions"
+msgstr "Darbības"
+
+#: includes/settings.php includes/viewer.php
+msgid "Overview"
+msgstr "Pārskats"
+
+#: includes/settings.php includes/viewer.php
+msgid "Tunnels"
+msgstr "Tuneļi"
+
+#: includes/settings.php includes/viewer.php
+msgid "Connectors"
+msgstr "Savienotāji"
+
+#: includes/settings.php
+msgid "Token Vault Key File"
+msgstr "Marķieru glabātuves atslēgas fails"
+
+#: includes/settings.php
+msgid "Absolute path to the 32-byte key used to encrypt stored API tokens. It must be readable by the web server and poller users and not world-readable. When the file is missing, only token files can be used."
+msgstr "Absolūts ceļš uz 32 baitu atslēgu, ko izmanto saglabāto API marķieru šifrēšanai. Tam jābūt lasāmam tīmekļa servera un aptaujātāja lietotājiem, un tas nedrīkst būt lasāms visiem lietotājiem. Ja fails trūkst, var izmantot tikai marķiera failus."
+
+#: includes/settings.php
+msgid "Token File Directory"
+msgstr "Marķiera failu direktorijs"
+
+#: includes/settings.php
+msgid "Absolute path of the directory that every account token file must be in. When empty, a token file may be anywhere the web server and poller users can read."
+msgstr "Absolūts ceļš uz direktoriju, kurā jāatrodas katram konta marķiera failam. Ja lauks ir tukšs, marķiera fails var atrasties jebkurā vietā, ko var nolasīt tīmekļa servera un aptaujātāja lietotāji."
+
+#: includes/settings.php
+msgid "Interactive Request Timeout"
+msgstr "Interaktīvā pieprasījuma noildze"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made from the web interface, such as Verify."
+msgstr "Kopējais sekundēs atļautais laiks Cloudflare API pieprasījumam no tīmekļa saskarnes, piemēram, \"Pārbaudīt\"."
+
+#: includes/settings.php
+msgid "Collector Request Timeout"
+msgstr "Datu vācēja pieprasījuma noildze"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made by the background collector."
+msgstr "Kopējais sekundēs atļautais laiks Cloudflare API pieprasījumam, ko veic fona datu vācējs."
+
+#: includes/settings.php
+msgid "Log Level"
+msgstr "Žurnalēšanas līmenis"
+
+#: includes/settings.php
+msgid "The amount of detail the plugin writes to the Cacti log."
+msgstr "Informācijas detalizācijas pakāpe, ko spraudnis ieraksta Cacti žurnālā."
+
+#: includes/tunnel_retirement.php
+msgid "The tunnel could not be retired. Check permissions and retry after collection finishes."
+msgstr "Tuneli nevarēja izņemt no ekspluatācijas. Pārbaudiet atļaujas un mēģiniet vēlreiz pēc datu vākšanas pabeigšanas."
+
+#: includes/tunnel_retirement.php includes/viewer.php
+msgid "Retire tunnel"
+msgstr "Izņemt tuneli no ekspluatācijas"
+
+#: includes/tunnel_retirement.php
+msgid "Retiring removes the graphs and unshared data sources created for this deleted tunnel. Cacti controls RRD cleanup. The inventory record is kept."
+msgstr "Izņemšana no ekspluatācijas noņem grafikus un nekoplietotos datu avotus, kas izveidoti šim dzēstajam tunelim. RRD tīrīšanu kontrolē Cacti. Inventāra ieraksts tiek saglabāts."
+
+#: includes/viewer.php
+msgid "The Cloudflare tunnels could not be read. See the Cacti log for details."
+msgstr "Cloudflare tuneļus nevarēja nolasīt. Skatiet Cacti žurnālu, lai uzzinātu vairāk."
+
+#: includes/viewer.php
+msgid "Zone Analytics"
+msgstr "Zonu analītika"
+
+#: includes/viewer.php
+msgid "Disabled"
+msgstr "Atspējots"
+
+#: includes/viewer.php
+msgid "Not collected"
+msgstr "Netiek vākts"
+
+#: includes/viewer.php
+msgid "Collection failing"
+msgstr "Datu vākšanas kļūme"
+
+#: includes/viewer.php
+msgid "Not yet collected"
+msgstr "Vēl nav savākts"
+
+#: includes/viewer.php
+msgid "Down"
+msgstr "Nedarbojas"
+
+#: includes/viewer.php
+msgid "Degraded"
+msgstr "Pasliktināts"
+
+#: includes/viewer.php
+msgid "Healthy"
+msgstr "Darbspējīgs"
+
+#: includes/viewer.php
+msgid "Inactive"
+msgstr "Neaktīvs"
+
+#: includes/viewer.php
+msgid "No active tunnels"
+msgstr "Nav aktīvu tuneļu"
+
+#: includes/viewer.php
+msgid "The worst status among active tunnels, or Collection failing while discovery fails."
+msgstr "Sliktākais statuss starp aktīvajiem tuneļiem vai \"Datu vākšanas kļūme\", kamēr neizdodas atklāšana."
+
+#: includes/viewer.php
+msgid "Active"
+msgstr "Aktīvs"
+
+#: includes/viewer.php
+msgid "Unavailable"
+msgstr "Nepieejams"
+
+#: includes/viewer.php
+msgid "Deleted"
+msgstr "Dzēsts"
+
+#: includes/viewer.php
+msgid "Last Successful Discovery"
+msgstr "Pēdējā veiksmīgā atklāšana"
+
+#: includes/viewer.php
+msgid "Consecutive Failures"
+msgstr "Secīgas kļūmes"
+
+#: includes/viewer.php
+#, php-format
+msgid "Last error: %s"
+msgstr "Pēdējā kļūda: %s"
+
+#: includes/viewer.php
+msgid "Tunnel"
+msgstr "Tunelis"
+
+#: includes/viewer.php
+msgid "Cloudflare Status"
+msgstr "Cloudflare statuss"
+
+#: includes/viewer.php
+msgid "The status Cloudflare reported at the last discovery."
+msgstr "Statuss, ko Cloudflare ziņoja pēdējā atklāšanā."
+
+#: includes/viewer.php
+msgid "Lifecycle"
+msgstr "Dzīves cikls"
+
+#: includes/viewer.php
+msgid "Whether the last discoveries still found this tunnel."
+msgstr "Vai pēdējās atklāšanas reizēs šis tunelis joprojām tika atrasts."
+
+#: includes/viewer.php
+msgid "Type"
+msgstr "Tips"
+
+#: includes/viewer.php
+msgid "Connections"
+msgstr "Savienojumi"
+
+#: includes/viewer.php
+msgid "Last Seen"
+msgstr "Pēdējo reizi redzēts"
+
+#: includes/viewer.php
+msgid "Any"
+msgstr "Jebkurš"
+
+#: includes/viewer.php
+msgid "All"
+msgstr "Visi"
+
+#: includes/viewer.php
+msgid "No Cloudflare Tunnels Found"
+msgstr "Nav atrasts neviens Cloudflare tunelis"
+
+#: includes/viewer.php
+msgid "Choose a tunnel on the Tunnels tab."
+msgstr "Izvēlieties tuneli cilnē \"Tuneļi\"."
+
+#: includes/viewer.php
+msgid "The tunnel no longer exists."
+msgstr "Tunelis vairs nepastāv."
+
+#: includes/viewer.php
+#, php-format
+msgid "Connectors for %s"
+msgstr "Savienotāji tunelim %s"
+
+#: includes/viewer.php
+msgid "Connector ID"
+msgstr "Savienotāja ID"
+
+#: includes/viewer.php
+msgid "Version"
+msgstr "Versija"
+
+#: includes/viewer.php
+msgid "Architecture"
+msgstr "Arhitektūra"
+
+#: includes/viewer.php
+msgid "Running Since"
+msgstr "Darbojas kopš"
+
+#: includes/viewer.php
+msgid "Data Centers"
+msgstr "Datu centri"
+
+#: includes/viewer.php
+msgid "Origin IPs"
+msgstr "Izcelsmes IP adreses"
+
+#: includes/viewer.php
+#, php-format
+msgid "This tunnel is %s. These connectors were last seen while the tunnel was active."
+msgstr "Šī tuneļa stāvoklis ir %s. Šie savienotāji pēdējo reizi tika redzēti, kamēr tunelis bija aktīvs."
+
+#: includes/viewer.php
+msgid "No connectors are running for this tunnel."
+msgstr "Šim tunelim nedarbojas neviens savienotājs."
+
+#: includes/viewer.php
+msgid "Export"
+msgstr "Eksportēt"
+
+#: includes/viewer.php
+msgid "Bytes/s"
+msgstr "Baiti/s"
+
+#: includes/viewer.php
+msgid "HTTP 5xx (%)"
+msgstr "HTTP 5xx (%)"
+
+#: includes/viewer.php
+msgid "Requests/s"
+msgstr "Pieprasījumi/s"
+
+#: includes/viewer.php
+msgid "Zone"
+msgstr "Zona"
+
+#: src/OperatorPage.php
+msgid "Review the recorded observations below. Acknowledgments are personal to this session, expire when observations change, and never suppress alerts or change health."
+msgstr "Pārskatiet tālāk reģistrētos novērojumus. Pieņemšana zināšanai attiecas tikai uz šo sesiju, zaudē spēku, mainoties novērojumiem, un nekad neapslāpē trauksmes vai nemaina darbspēju."
+
+#: src/OperatorPage.php
+msgid "Investigation"
+msgstr "Izmeklēšana"
+
+#: src/OperatorPage.php
+msgid "Object"
+msgstr "Objekts"
+
+#: src/OperatorPage.php
+msgid "Observed (UTC)"
+msgstr "Novērots (UTC)"
+
+#: src/OperatorPage.php
+msgid "State"
+msgstr "Stāvoklis"
+
+#: src/OperatorPage.php
+msgid "Unknown or stale"
+msgstr "Nezināms vai novecojis"
+
+#: src/OperatorPage.php
+msgid "Acknowledged; health unchanged."
+msgstr "Pieņemts zināšanai; darbspēja nemainījās."
+
+#: src/OperatorPage.php
+msgid "Acknowledge"
+msgstr "Pieņemt zināšanai"
+
+#: src/OperatorPage.php
+msgid "No observations are available."
+msgstr "Nav pieejamu novērojumu."

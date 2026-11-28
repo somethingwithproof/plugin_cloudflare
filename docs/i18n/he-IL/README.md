@@ -1,4 +1,4 @@
-<!-- Source: README.md; SHA256: f8de0e02c5904e15bfa4c71edcaab219e5e5d4f6d9dbe589f4ed16351df6bf4d -->
+<!-- Source: README.md; SHA256: 813d1c85c236b426b83e42e63c69496f33f8909b5e435d0d45efa6a4ba2f17ca -->
 
 <!-- translations:start -->
 [English](../../../README.md) | [简体中文](../zh-CN/README.md) | [हिन्दी](../hi-IN/README.md) | [Español (España)](../es-ES/README.md) | [Español (Latinoamérica)](../es-419/README.md) | [العربية (السعودية)](../ar-SA/README.md) | [Afrikaans](../af-ZA/README.md) | [አማርኛ](../am-ET/README.md) | [العربية (مصر)](../ar-EG/README.md) | [العربية (المغرب)](../ar-MA/README.md) | [বাংলা](../bn-BD/README.md) | [Bosanski](../bs-BA/README.md) | [Deutsch](../de-DE/README.md) | [فارسی](../fa-IR/README.md) | [Filipino](../fil-PH/README.md) | [Français](../fr-FR/README.md) | [Français (Maroc)](../fr-MA/README.md) | [Français (Sénégal)](../fr-SN/README.md) | [Hausa](../ha-NG/README.md) | [עברית](README.md) | [Hrvatski](../hr-HR/README.md) | [Bahasa Indonesia](../id-ID/README.md) | [Igbo](../ig-NG/README.md) | [Italiano](../it-IT/README.md) | [日本語](../ja-JP/README.md) | [한국어](../ko-KR/README.md) | [Malagasy](../mg-MG/README.md) | [मराठी](../mr-IN/README.md) | [Bahasa Melayu](../ms-MY/README.md) | [Nederlands](../nl-NL/README.md) | [Polski](../pl-PL/README.md) | [Português (Brasil)](../pt-BR/README.md) | [Русский](../ru-RU/README.md) | [Kinyarwanda](../rw-RW/README.md) | [Soomaali](../so-SO/README.md) | [Српски](../sr-RS/README.md) | [Svenska](../sv-SE/README.md) | [Kiswahili](../sw-KE/README.md) | [தமிழ்](../ta-IN/README.md) | [తెలుగు](../te-IN/README.md) | [ไทย](../th-TH/README.md) | [Türkçe](../tr-TR/README.md) | [Українська](../uk-UA/README.md) | [اردو](../ur-PK/README.md) | [Tiếng Việt](../vi-VN/README.md) | [isiXhosa](../xh-ZA/README.md) | [Yorùbá](../yo-NG/README.md) | [繁體中文](../zh-TW/README.md) | [isiZulu](../zu-ZA/README.md)
@@ -22,18 +22,18 @@
 
 תוסף Cacti 1.2 הנבנה לניטור Cloudflare Tunnels וניתוח נתוני אזורים. התוסף קורא מ-Cloudflare API באמצעות אסימוני API מוגדרי היקף, לעולם אינו משנה דבר ב-Cloudflare, ושומר את נתוניו בטבלאות משלו. ב-Cacti הוא מעתיק קובצי XML של שאילתות נתונים אל `resource/script_server/` ויוצר התקנים, גרפים ותבניות דרך ממשקי ה-API של Cacti עצמה, ללא שינויים בקובצי הליבה.
 
-**סטטוס: 0.4.0-dev, טרם שוחררה.** הגרסה האחרונה ששוחררה היא 0.3.0. גרסת הפיתוח מוסיפה ייצוא מלאי ל-CSV, הוצאה מפורשת משימוש של מנהרות שנמחקו, נתוני ניתוח אזורים השמורים במטמון ותבניות Thold אופציונליות. הכשירות מול ספק חי ובסביבת פריסה עדיין ממתינה לביצוע.
+**סטטוס: 0.4.0-dev, טרם שוחררה.** הגרסה האחרונה ששוחררה היא 0.3.0. גרסת הפיתוח מוסיפה ייצוא מלאי ל-CSV, הוצאה מפורשת משימוש של מנהרות שנמחקו, נתוני ניתוח אזורים השמורים במטמון, לקוח GraphQL Analytics לקריאה בלבד מבוסס רשימת היתרים (`GraphqlAnalyticsClient`) עם פונקציות עזר לסיכום מוכנות עבור Thold (`AnalyticsSummary`), ממשק שורת פקודה מסוג Configuration-as-Code (`cli/cloudflare.php`), וויי אקוסיסטם (`abilities_register`, `doctor_register_checks`, `casc_register_providers`) ותמיכה באספן מרוחק מוגבל-poller (`replicate_out`). הכשירות מול ספק חי ובסביבת פריסה עדיין ממתינה לביצוע.
 
-הטבלה שלהלן מתארת את הגרסה היציבה 0.3.0. תוספות הפיתוח מתוארות להלן תחת תהליכי עבודה של מפעיל וניתוח נתוני אזורים.
+הטבלה שלהלן מתארת את הגרסה היציבה 0.3.0. תוספות הפיתוח בגרסה 0.4.0-dev מתוארות להלן תחת תהליכי עבודה של מפעיל וניתוח נתוני אזורים.
 
 | זמין כעת | מתוכנן |
 |---|---|
-| התקנה, שדרוג, השבתה והסרה דרך מנהל התוספים של Cacti | ניתוח נתוני GraphQL והתראות Thold (אבן דרך 4) |
+| התקנה, שדרוג, השבתה והסרה דרך מנהל התוספים של Cacti | הסמכת GraphQL מול חשבון חי והסמכת פריסה (יציאה מאבן דרך 4) |
 | הרשאות Cloudflare: View, Operator ו-Configure | הזרקת תקלות, מודלים של TLA+ ותיעוד מלא (אבן דרך 5) |
 | הוספה, עריכה, מחיקה, הפעלה והשבתה של חשבונות Cloudflare | |
 | אחסון אסימון בקובץ או באופן מוצפן במסד הנתונים של Cacti | |
 | אימות אסימון ובדיקת הרשאות הקריאה שלו למנהרות ולאזורים | |
-| גילוי מנהרות ומחברים באוסף רקע המופעל על ידי ה-poller הראשי | |
+| גילוי מנהרות ומחברים באספן רקע (`poller_cloudflare.php`) | |
 | דפי Overview, Tunnels ו-Connectors תחת Management > Cloudflare Tunnels | |
 | מעקב מחזור חיים: `active`, `unavailable` ו-`deleted` | |
 | התקן Cacti אחד לכל חשבון, הנוצר על ידי מנהל מערכת, כאשר המנהרות משמשות כאינדקסים של שאילתת נתונים | |
@@ -204,7 +204,7 @@ sudo chmod 0440 /etc/cacti/cloudflare-account.token
 ## שדרוג
 
 1. החליפו את הקבצים בתיקייה `plugins/cloudflare` בגרסה החדשה, תוך שמירה על שם התיקייה.
-2. פתחו פעם אחת את Console > Configuration > Plugins, או את Console > Configuration > Cloudflare Accounts, כמשתמש מנהל (admin). פעולה זו מריצה את המיגרציות של התוסף, מייבאת את תבניות Cloudflare ומעתיקה את קובץ שאילתת הנתונים (ראו [מדדי מנהרות ותרשימים](#tunnel-metrics-and-graphs)), ובשדרוג מגרסה 0.1.0, רושמת את ה-hook מסוג `poller_bottom`.
+2. פתחו פעם אחת את Console > Configuration > Plugins, או את Console > Configuration > Cloudflare Accounts, כמשתמש מנהל (admin). פעולה זו מריצה את המיגרציות של התוסף, מייבאת את תבניות Cloudflare, מעתיקה את קובץ שאילתת הנתונים (ראו [מדדי מנהרות ותרשימים](#tunnel-metrics-and-graphs)), רושמת את וויי האקוסיסטם `abilities_register`, `doctor_register_checks`, `casc_register_providers` ו-`replicate_out` (`includes/ecosystem.php`), ובשדרוג מגרסה 0.1.0, רושמת את ה-hook מסוג `poller_bottom`.
 
 `poller.php` אינו מריץ את השדרוג של התוסף, ולכן עד ביצוע שלב 2 הסכמה החדשה חסרה. כל ריצה של האספן אינה עושה דבר ורושמת ביומן `CLOUDFLARE: collector skipped; plugin upgrade pending, open Console > Plugins`. דפי Cloudflare Tunnels דורשים רק את ההרשאה Cloudflare: View, ולכן הם לעולם אינם מריצים את השדרוג, ועד שלב 2 הם עשויים להציג "The Cloudflare tunnels could not be read".
 
@@ -227,7 +227,7 @@ sudo chmod 0440 /etc/cacti/cloudflare-account.token
 
 ## גילוי מנהרות
 
-לאחר כל מחזור דגימה (polling) ב-poller הראשי, ה-hook מסוג `poller_bottom` מפעיל אספן (collector) ברקע באמצעות `exec_background` כאשר לפחות בחשבון מופעל אחד האפשרות Collect Tunnels דלוקה. האספן לעולם אינו רץ בתהליך של ה-poller, כך ש-Cloudflare API איטי אינו מעכב את `poller.php`. שרתי poller מרוחקים לעולם אינם מפעילים אותו.
+לאחר כל מחזור דגימה (polling) ב-poller האספן המוגדר (`cloudflare_poller_id`, ברירת מחדל `1`), ה-hook מסוג `poller_bottom` מפעיל אספן (collector) ברקע באמצעות `exec_background` כאשר לפחות בחשבון מופעל אחד האפשרות Collect Tunnels דלוקה. האספן לעולם אינו רץ בתהליך של ה-poller, כך ש-Cloudflare API איטי אינו מעכב את `poller.php`. `INFO` מצהיר על `remote_collect:1`, וה-hook מסוג `replicate_out` (`RemoteReplication`) דוחף טבלאות מטא-נתונים לא סודיות (`plugin_cloudflare_accounts` עם איפוס `token_ciphertext` ל-`NULL`, `plugin_cloudflare_tunnels`, `plugin_cloudflare_connectors`, `plugin_cloudflare_zones`, `plugin_cloudflare_metric_mappings` ו-`plugin_cloudflare_resources`) אל שרתי poller מרוחקים (`poller_id > 1`) תוך החרגת חומר מפתח הכספת.
 
 עבור כל חשבון שהגיע זמנו, האספן מפרט את מנהרות החשבון, ולאחר מכן קורא את החיבורים של המנהרות הפעילות שלו, מה שמספק עבור כל מנהרה את המחברים (connectors) שלה, גרסאותיהם, מרכזי הנתונים וכתובות המקור (origin). חשבונות נבדקים מדי Discovery Interval (ברירת מחדל: 300 שניות). ריצה אינה מתחילה חשבון חדש לאחר 50 שניות ומבצעת לכל היותר 200 בקשות חיבורים. כל אחת משתי המגבלות עשויה גם לעצור חשבון באמצע קריאת החיבורים שלו; חשבון זה נרשם כ-`partial`, והריצה הבאה ממשיכה עם המנהרות שנוסו לפני הזמן הרב ביותר. חשבונות שלא הוחל בטיפול בהם נשארים בתור לריצה הבאה.
 
@@ -303,7 +303,7 @@ Cacti 1.2.31 קוראת קובץ XML של שאילתת נתונים רק מתו�
 
 - ריצה אחת מבצעת לכל היותר 200 בקשות חיבור. מנהרות מעבר למכסה זו מתרעננות בתדירות נמוכה יותר מחלון התצפית, ולכן גרפי החיבורים שלהן מציגים פערים.
 - התוסף דורס עריכות של מנהל המערכת בתבניות המיובאות כאשר שדרוג משנה את קובץ ה-XML של התבנית המופצת.
-- ההתקן של החשבון חייב להישאר על הדוגם הראשי. הטבלאות של התוסף נמצאות במסד הנתונים הראשי והסקריפט קורא אותן משם.
+- שרתי poller מרוחקים מקבלים מטא-נתונים משוכפלים ללא פרטי הזדהות (`token_ciphertext` מוחלף ב-`NULL` ומפתחות כספת לעולם אינם משוכפלים). בעת הרצת האספן על גבי poller מרוחק ייעודי (`cloudflare_poller_id`), ספקו קובצי אסימון או מפתח כספת ישירות על מארח האספן הזה.
 - מנהרות שנמחקו נשארות באינדקס של שאילתת הנתונים ומדפיסות `U` עד שמנהל מערכת מוציא אותן משימוש במפורש. הוצאה משימוש מסירה רק את הגרפים המתועדים של התוסף ואת מקורות הנתונים שאינם משותפים דרך Cacti; שורת המלאי נשארת גלויה. Cacti שולט בניקוי קובצי RRD.
 - Cacti משבית תוסף שהקוד שלו מסתיים בשגיאה קריטית אמיתית, כגון אזילת זיכרון. ראו [docs/security.md](../../security.md).
 
@@ -313,13 +313,23 @@ Cacti 1.2.31 קוראת קובץ XML של שאילתת נתונים רק מתו�
 - אסימונים נשמרים בקובץ שאתם מספקים או מוצפנים באמצעות AES-256-GCM תחת קובץ מפתח שלעולם אינו נכנס למסד הנתונים. הם לעולם אינם מוצגים בדף, נכתבים ליומן או נכללים בהודעת שגיאה.
 - שגיאות מסד נתונים מכילות רק את ה-SQLSTATE ואת קוד השגיאה של מנהל ההתקן, ולעולם לא את ערכי השאילתה.
 - כל שינוי הוא בקשת POST המוגנת על ידי אסימון ה-CSRF של Cacti. שינויי חשבון ותצורה ניהוליים דורשים את ההרשאה Cloudflare: Configure; אישורי מיון אישיים דורשים את ההרשאה Cloudflare: Operator. יצירת התקן Cacti או הפעלת Create Graphs דורשות גם את ההרשאה Sites/Devices/Data של Cacti. תוסף מושבת מסרב להגיש את הדפים שלו.
+- Configuration-as-Code (`cli/cloudflare.php` ו-`casc_register_providers`) מקבל רק הפניות סודות מסוג `vault:<account_id>` או `file:<absolute_path>`, דוחה אסימונים גולמיים, טקסטים מוצפנים של הכספת והצהרות XML `DOCTYPE`, ודורש `--confirm=<PLAN_HASH>` מדויק לפני כתיבה.
+- היכולות הרשומות (`cloudflare-list-tunnels`, `cloudflare-get-health`) הן לקריאה בלבד בקפדנות, מעריכות את תחום Cloudflare: View ישירות מול טבלאות האימות של Cacti עבור מזהה המשתמש הקורא (לעולם לא מצב הפעלה), ואינן מחזירות אסימונים או חומר מפתח.
 
 פרטים ומגבלות ידועות נמצאים ב-[docs/security.md](../../security.md).
 דווחו על פגיעויות באופן פרטי כמתואר ב-[SECURITY.md](../../../SECURITY.md).
 
 ## תהליכי עבודה של מפעילים וניתוח אזורים
 
-תוספות בפיתוח כוללות הוצאה מפורשת משימוש של מנהרות שנמחקו, ניתוח אזורים מודע-יכולות ותבניות Thold הניתנות לייבוא. לתוספות אלו אין עדיין תג גרסה או אימות מול חשבון חי. ראו [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) להוראות הגדרה, סמנטיקה של מדדים ומגבלות אימות.
+תוספות בפיתוח בגרסה `0.4.0-dev` כוללות הוצאה מפורשת משימוש של מנהרות שנמחקו, ניתוח GraphQL של אזורים ומנהרות מודע-יכולות, פונקציות עזר לסיכום מוכנות עבור Thold ותבניות הניתנות לייבוא, CLI של CasC ובריאות, וויי אקוסיסטם ושכפול לאספנים מרוחקים. לתוספות אלו אין עדיין תג גרסה או אימות מול חשבון חי. ראו [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) להוראות הגדרה, סמנטיקה של מדדים ומגבלות אימות.
+
+- **לקוח GraphQL Analytics וסיכום Thold (`src/Api/GraphqlAnalyticsClient.php`, `src/Metrics/AnalyticsSummary.php`)**: `GraphqlAnalyticsClient` מריץ רק שאילתות לקריאה בלבד הכלולות ברשימת היתרים בזמן הידור (`zone_settings`, `zone_http_metrics`, `zone_edge_latency`, `tunnel_analytics`) דרך `CloudflareClient` (אימות TLS, נעילה ל-`api.cloudflare.com`, תגובות תחומוות והשהיית מגבלת קצב `RetryPolicy`) כדי לאסוף נפח בקשות של אזורים ומנהרות, שיעורי שגיאות HTTP 5xx, בתי תגובה והשהיית קצה (ממוצע ו-p95). `AnalyticsSummary` מספק את `recommendedThresholds()` המותאם לשמות ה-DS ב-RRD של התוסף (`health`, `collect_age`, `error_pct`, `age`), את `summarizeZones()` ואת `evaluateSample()`.
+- **ממשק שורת פקודה למפעיל ו-CasC (`cli/cloudflare.php`)**: מגובה ב-`ConfigCodec` (`src/Config/ConfigCodec.php`) וב-`ConfigService` (`src/Config/ConfigService.php`), ותומך ב-`cli/cloudflare.php export [--format=yaml|xml] [--file=PATH]` (הפולט הפניות סודות `vault:` / `file:` בלבד), `cli/cloudflare.php validate --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php plan --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php apply --file=PATH --confirm=<PLAN_HASH> [--format=yaml|xml]` ו-`cli/cloudflare.php health [--format=text|json]`.
+- **וויי שילוב אקוסיסטם (`includes/ecosystem.php`, `setup.php`)**:
+  - `abilities_register` (`AbilitiesProvider`): רושם את היכולות לקריאה בלבד `cloudflare-list-tunnels` ו-`cloudflare-get-health` המוגבלות לתחום Cloudflare: View (הרשאות ישירות וקבוצתיות) ללא שום אסימונים או סודות בפלט.
+  - `doctor_register_checks` (`DoctorChecks`): חושף את `cloudflare_vault_key` (אימות הרשאות, קישור סימבולי ואורך), `cloudflare_token_dir` (בדיקות נתיב מוחלט, קישור סימבולי והרשאת כתיבה לכולם), `cloudflare_tunnel_freshness` ו-`cloudflare_api_failure_rate`.
+  - `casc_register_providers` (`CascProvider`): חושף את ספק ה-CasC `cloudflare` (`export`, `validate`, `plan`, `apply`) עבור חשבונות (הפניות סודות בלבד), אזורים, מנהרות ומיפויי מדדים.
+  - `replicate_out` (`RemoteReplication`): משכפל טבלאות מטא-נתונים לא סודיות אל שרתי poller מרוחקים (`poller_id > 1`) עם איפוס `token_ciphertext` ל-`NULL` והחרגת חומר מפתח הכספת.
 
 ### ייצוא מלאי
 
@@ -334,7 +344,7 @@ Cacti 1.2.31 קוראת קובץ XML של שאילתת נתונים רק מתו�
 | 1. תשתית | מחזור חיי התוסף, הרשאות, הגדרת חשבון, בדיקת חיבור | שוחרר ב-0.3.0 ([#2](https://github.com/somethingwithproof/plugin_cloudflare/pull/2) עד [#5](https://github.com/somethingwithproof/plugin_cloudflare/pull/5)) |
 | 2. גילוי | גילוי מנהרות ומחברים באוסף רקע, דפי Overview, Tunnels ו-Connectors | שוחרר ב-0.3.0 ([#6](https://github.com/somethingwithproof/plugin_cloudflare/pull/6)) |
 | 3. מדדים | מקורות נתונים לתקינות מנהרות, תבניות גרפים, טיפול בהשבתות שלעולם אינו רושם אפס מפוברק | שוחרר ב-0.3.0 ([#7](https://github.com/somethingwithproof/plugin_cloudflare/pull/7)) |
-| 4. ניתוח והתראות | ניתוח GraphQL מותאם-תוכנית לכל אזור, ספי Thold עם השתקת השבתות | מתוכנן |
+| 4. ניתוח והתראות | ניתוח GraphQL מותאם-תוכנית (`GraphqlAnalyticsClient`), סיכום ותבניות Thold (`AnalyticsSummary`), CLI של CasC (`cli/cloudflare.php`), וויי אקוסיסטם ושכפול מרוחק | ממומש ב-0.4.0-dev; אימות מול חשבון חי ממתין |
 | 5. הקשחה | הזרקת תקלות, מודלי TLA+ של גילוי ואיסוף, תיעוד מלא | מתוכנן |
 
 ## פיתוח

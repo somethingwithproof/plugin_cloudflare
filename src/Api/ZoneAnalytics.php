@@ -24,6 +24,11 @@ final class ZoneAnalytics {
 	/** @var CloudflareClient */
 	private $client;
 
+	/**
+	 * Initialize ZoneAnalytics.
+	 *
+	 * @param CloudflareClient $client
+	 */
 	public function __construct(CloudflareClient $client) {
 		$this->client = $client;
 	}

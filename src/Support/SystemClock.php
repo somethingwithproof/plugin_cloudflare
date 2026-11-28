@@ -19,7 +19,13 @@
 
 namespace Somethingwithproof\Cloudflare\Support;
 
+/** System clock component for plugin_cloudflare. */
 final class SystemClock implements Clock {
+	/**
+	 * Now.
+	 *
+	 * @return int
+	 */
 	public function now(): int {
 		return time();
 	}

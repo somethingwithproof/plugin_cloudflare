@@ -50,19 +50,26 @@ final class DiscoveryService {
 	 * drops any line above the configured level, so failures and lifecycle
 	 * changes go out at LOW and routine outcomes at MEDIUM.
 	 */
+	/** @var int Log low. */
 	public const LOG_LOW    = 2;
+	/** @var int Log medium. */
 	public const LOG_MEDIUM = 3;
 
+	/** @var int Due limit. */
 	private const DUE_LIMIT = 500;
 
+	/** @var int Mark unavailable after. */
 	private const MARK_UNAVAILABLE_AFTER = 3;
 
+	/** No changes. */
 	private const NO_CHANGES = array('added' => 0, 'updated' => 0, 'deleted' => 0);
 
 	/* The schema default; after a fault the account's own interval may be unreadable. */
+	/** @var int Fault interval. */
 	private const FAULT_INTERVAL = 300;
 
 	/* Failures that say Cloudflare could not be read. A config or malformed failure does not. */
+	/** Outage classes. */
 	private const OUTAGE_CLASSES = array(
 		ErrorClass::TRANSIENT,
 		ErrorClass::RATE_LIMITED,
@@ -71,6 +78,7 @@ final class DiscoveryService {
 	);
 
 	/* Retrying the other tunnels would only spend more of the same quota or credential. */
+	/** Stop classes. */
 	private const STOP_CLASSES = array(ErrorClass::AUTH, ErrorClass::RATE_LIMITED);
 
 	/** @var AccountRepository */
@@ -501,6 +509,13 @@ final class DiscoveryService {
 		}
 	}
 
+	/**
+	 * Say.
+	 *
+	 * @param string $line
+	 * @param int $level
+	 * @return void
+	 */
 	private function say(string $line, int $level): void {
 		if ($this->log !== null) {
 			($this->log)($line, $level);

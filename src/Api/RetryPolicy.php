@@ -22,6 +22,7 @@ namespace Somethingwithproof\Cloudflare\Api;
 use Somethingwithproof\Cloudflare\Support\Clock;
 use Somethingwithproof\Cloudflare\Support\Sleeper;
 
+/** Retry policy component for plugin_cloudflare. */
 final class RetryPolicy {
 	/** @var Sleeper */
 	private $sleeper;

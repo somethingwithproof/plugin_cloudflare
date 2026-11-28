@@ -1,4 +1,4 @@
-<!-- Source: README.md; SHA256: f8de0e02c5904e15bfa4c71edcaab219e5e5d4f6d9dbe589f4ed16351df6bf4d -->
+<!-- Source: README.md; SHA256: 813d1c85c236b426b83e42e63c69496f33f8909b5e435d0d45efa6a4ba2f17ca -->
 
 <!-- translations:start -->
 [English](../../../README.md) | [简体中文](README.md) | [हिन्दी](../hi-IN/README.md) | [Español (España)](../es-ES/README.md) | [Español (Latinoamérica)](../es-419/README.md) | [العربية (السعودية)](../ar-SA/README.md) | [Afrikaans](../af-ZA/README.md) | [አማርኛ](../am-ET/README.md) | [العربية (مصر)](../ar-EG/README.md) | [العربية (المغرب)](../ar-MA/README.md) | [বাংলা](../bn-BD/README.md) | [Bosanski](../bs-BA/README.md) | [Deutsch](../de-DE/README.md) | [فارسی](../fa-IR/README.md) | [Filipino](../fil-PH/README.md) | [Français](../fr-FR/README.md) | [Français (Maroc)](../fr-MA/README.md) | [Français (Sénégal)](../fr-SN/README.md) | [Hausa](../ha-NG/README.md) | [עברית](../he-IL/README.md) | [Hrvatski](../hr-HR/README.md) | [Bahasa Indonesia](../id-ID/README.md) | [Igbo](../ig-NG/README.md) | [Italiano](../it-IT/README.md) | [日本語](../ja-JP/README.md) | [한국어](../ko-KR/README.md) | [Malagasy](../mg-MG/README.md) | [मराठी](../mr-IN/README.md) | [Bahasa Melayu](../ms-MY/README.md) | [Nederlands](../nl-NL/README.md) | [Polski](../pl-PL/README.md) | [Português (Brasil)](../pt-BR/README.md) | [Русский](../ru-RU/README.md) | [Kinyarwanda](../rw-RW/README.md) | [Soomaali](../so-SO/README.md) | [Српски](../sr-RS/README.md) | [Svenska](../sv-SE/README.md) | [Kiswahili](../sw-KE/README.md) | [தமிழ்](../ta-IN/README.md) | [తెలుగు](../te-IN/README.md) | [ไทย](../th-TH/README.md) | [Türkçe](../tr-TR/README.md) | [Українська](../uk-UA/README.md) | [اردو](../ur-PK/README.md) | [Tiếng Việt](../vi-VN/README.md) | [isiXhosa](../xh-ZA/README.md) | [Yorùbá](../yo-NG/README.md) | [繁體中文](../zh-TW/README.md) | [isiZulu](../zu-ZA/README.md)
@@ -24,18 +24,18 @@
 
 这是一个正在开发的 Cacti 1.2 插件，用于监控 Cloudflare Tunnels 和区域分析数据。它使用限定作用域的 API 令牌读取 Cloudflare API，从不更改 Cloudflare，并将数据保存在自己的表中。在 Cacti 内，它将一个数据查询 XML 复制到 `resource/script_server/`，并通过 Cacti 自身的 API 创建设备、图表和模板，不修改核心文件。
 
-**状态：0.4.0-dev，尚未发布。** 最新稳定版本为 0.3.0。开发版本新增 CSV 清单导出、显式退役已删除的隧道、缓存的区域分析和可选 Thold 模板。真实云账户和部署环境的验证仍待完成。
+**状态：0.4.0-dev，尚未发布。** 最新稳定版本为 0.3.0。开发版本新增 CSV 清单导出、显式退役已删除的隧道、缓存的区域分析、基于允许列表的只读 GraphQL 分析客户端（`GraphqlAnalyticsClient`）及其支持 Thold 的摘要辅助类（`AnalyticsSummary`）、配置即代码 CLI（`cli/cloudflare.php`）、生态钩子（`abilities_register`、`doctor_register_checks`、`casc_register_providers`）以及按轮询器作用域的远程采集器支持（`replicate_out`）。真实云账户和部署环境的验证仍待完成。
 
-下表描述 0.3.0 稳定版本。开发版本的新增功能见后面的操作工作流与区域分析。
+下表描述 0.3.0 稳定版本。0.4.0-dev 的新增功能见后面的操作工作流与区域分析。
 
 | 现已提供 | 计划中 |
 |---|---|
-| 通过 Cacti 插件管理器安装、升级、禁用和卸载 | GraphQL 分析和 Thold 告警（里程碑 4） |
+| 通过 Cacti 插件管理器安装、升级、禁用和卸载 | 真实账户的 GraphQL 与部署验证（里程碑 4 完成条件） |
 | Cloudflare: View、Operator 和 Configure 权限 | 故障注入、TLA+ 模型及完整文档（里程碑 5） |
 | 添加、编辑、删除、启用和禁用 Cloudflare 账户 | |
 | 将令牌存储在文件中，或加密存储在 Cacti 数据库中 | |
 | 验证令牌，检查隧道和区域读取权限 | |
-| 由主轮询器启动的后台采集器发现隧道和连接器 | |
+| 在后台采集器（`poller_cloudflare.php`）中发现隧道和连接器 | |
 | Management > Cloudflare Tunnels 下的 Overview、Tunnels 和 Connectors 页面 | |
 | 生命周期跟踪：`active`、`unavailable` 和 `deleted` | |
 | 每个账户由管理员创建一个 Cacti 设备，隧道作为数据查询的索引 | |
@@ -209,7 +209,7 @@ sudo chmod 0440 /etc/cacti/cloudflare-account.token
 ## 升级
 
 1. 用新版本替换 `plugins/cloudflare` 中的文件，保留目录名。
-2. 以管理员身份打开一次 Console > Configuration > Plugins 或 Console > Configuration > Cloudflare Accounts。这会运行插件迁移、导入 Cloudflare 模板、复制数据查询文件（见[隧道指标与图表](#tunnel-metrics-and-graphs)）；从 0.1.0 升级时还会注册 `poller_bottom` 钩子。
+2. 以管理员身份打开一次 Console > Configuration > Plugins 或 Console > Configuration > Cloudflare Accounts。这会运行插件迁移、导入 Cloudflare 模板、复制数据查询文件（见[隧道指标与图表](#tunnel-metrics-and-graphs)），注册 `abilities_register`、`doctor_register_checks`、`casc_register_providers` 和 `replicate_out` 生态钩子（`includes/ecosystem.php`），从 0.1.0 升级时还会注册 `poller_bottom` 钩子。
 
 `poller.php` 不执行插件升级，因此完成步骤 2 前缺少新模式。此时每次采集运行均不执行操作，并记录 `CLOUDFLARE: collector skipped; plugin upgrade pending, open Console > Plugins`。Cloudflare Tunnels 页面仅要求 Cloudflare: View，因此从不执行升级；完成步骤 2 前可能显示“The Cloudflare tunnels could not be read”。
 
@@ -234,7 +234,7 @@ Verify 设置账户状态：
 <a id="tunnel-discovery"></a>
 ## 隧道发现
 
-主轮询器每个轮询周期结束后，只要至少一个启用账户开启 Collect Tunnels，`poller_bottom` 钩子便使用 `exec_background` 启动后台采集器。采集器从不在轮询器进程内运行，因此缓慢的 Cloudflare API 不会延迟 `poller.php`。远程轮询器从不启动它。
+在所配置的采集轮询器（`cloudflare_poller_id`，默认为 `1`）每个轮询周期结束后，只要至少一个启用账户开启 Collect Tunnels，`poller_bottom` 钩子便使用 `exec_background` 启动后台采集器。采集器从不在轮询器进程内运行，因此缓慢的 Cloudflare API 不会延迟 `poller.php`。`INFO` 声明了 `remote_collect:1`，`replicate_out` 钩子（`RemoteReplication`）将不含机密的元数据表（`plugin_cloudflare_accounts`（将 `token_ciphertext` 清除为 `NULL`）、`plugin_cloudflare_tunnels`、`plugin_cloudflare_connectors`、`plugin_cloudflare_zones`、`plugin_cloudflare_metric_mappings` 和 `plugin_cloudflare_resources`）推送到远程轮询器（`poller_id > 1`），同时排除保险库密钥材料。
 
 对于每个到期账户，采集器先列出账户隧道，再读取活动隧道的连接，获得各隧道的连接器、版本、数据中心和源站地址。账户按 Discovery Interval 到期，默认 300 秒。一次运行在 50 秒后不再开始新账户，且最多发出 200 次连接请求。任一限制也可能在读取连接中途停止账户处理；该账户记录为 `partial`，下次从最久未尝试的隧道继续。未开始的账户仍保持到期，等待下次运行。
 
@@ -315,7 +315,7 @@ Settings > Cloudflare 包含：
 
 - 每次运行最多发出 200 次连接请求。超出上限的隧道刷新频率可能低于观测窗口要求，其连接图表会出现缺口。
 - 升级改变随附模板 XML 时，插件会覆盖管理员对已导入模板的编辑。
-- 账户设备必须留在主轮询器。插件表位于主数据库，脚本在那里读取。
+- 远程轮询器接收不含凭据的复制元数据（`token_ciphertext` 被清除为 `NULL`，且绝不复制保险库密钥）。在指定的远程轮询器（`cloudflare_poller_id`）上运行采集器时，请直接在该采集器主机上部署令牌文件或保险库密钥。
 - 已删除隧道保留在数据查询索引中，同时保留图表和 RRD 文件，输出 `U`。
 - 插件代码发生真正的致命错误（如内存耗尽）时，Cacti 会禁用插件。见 [docs/security.md](docs/security.md)。
 
@@ -326,13 +326,23 @@ Settings > Cloudflare 包含：
 - 令牌存储于您准备的文件中，或通过从不进入数据库的密钥文件以 AES-256-GCM 加密。令牌绝不显示在页面、写入日志或包含在错误消息中。
 - 数据库错误仅携带 SQLSTATE 和驱动错误代码，绝不包含语句值。
 - 每项变更均使用受 Cacti CSRF 令牌保护的 POST。账户管理和配置变更需要 Cloudflare: Configure；个人排查确认需要 Cloudflare: Operator。创建 Cacti 设备或开启 Create Graphs 还需 Cacti 的 Sites/Devices/Data 权限。已禁用的插件拒绝其页面请求。
+- 配置即代码（`cli/cloudflare.php` 和 `casc_register_providers`）仅接受 `vault:<account_id>` 或 `file:<absolute_path>` 机密引用，拒绝原始令牌、保险库密文和 XML `DOCTYPE` 声明，并在写入前要求提供精确的 `--confirm=<PLAN_HASH>`。
+- 已注册的 Abilities（`cloudflare-list-tunnels`、`cloudflare-get-health`）严格只读，直接针对调用方用户 ID 的 Cacti 认证表评估 Cloudflare: View 权限域（绝不依赖会话状态），且不返回任何令牌或密钥材料。
 
 详情和已知限制见 [docs/security.md](docs/security.md)。请按照 [SECURITY.md](../../../SECURITY.md) 私下报告漏洞。
 
 <a id="roadmap"></a>
 ## 操作工作流与区域分析
 
-开发版本可显式退役已删除的隧道，按区域能力采集并缓存分析数据，并提供 Cacti 和 Thold 模板。这些新增功能尚未发布，也未完成真实账户验证。设置方法、指标含义和验证范围见[英文说明](../../analytics-and-alerting.md)。
+`0.4.0-dev` 的开发新增功能包括显式退役已删除的隧道、能力感知的 GraphQL 区域与隧道分析、支持 Thold 的摘要辅助工具及可导入模板、CasC 与健康检查 CLI、生态钩子以及远程采集器复制。这些新增功能尚未打上发布标签，也未完成真实账户验证。设置方法、指标含义和验证范围见 [docs/analytics-and-alerting.md](../../analytics-and-alerting.md)。
+
+- **GraphQL 分析客户端与 Thold 摘要（`src/Api/GraphqlAnalyticsClient.php`、`src/Metrics/AnalyticsSummary.php`）**：`GraphqlAnalyticsClient` 通过 `CloudflareClient`（验证 TLS、固定连接 `api.cloudflare.com`、有界响应以及 `RetryPolicy` 速率限制退避）仅执行编译期允许列表中的只读查询（`zone_settings`、`zone_http_metrics`、`zone_edge_latency`、`tunnel_analytics`），以收集区域和隧道的请求量、HTTP 5xx 错误率、响应字节数以及边缘延迟（平均值和 p95）。`AnalyticsSummary` 提供与插件 RRD DS 名称（`health`、`collect_age`、`error_pct`、`age`）对齐的 `recommendedThresholds()`、`summarizeZones()` 和 `evaluateSample()`。
+- **操作员与 CasC CLI（`cli/cloudflare.php`）**：由 `ConfigCodec`（`src/Config/ConfigCodec.php`）和 `ConfigService`（`src/Config/ConfigService.php`）驱动，支持 `cli/cloudflare.php export [--format=yaml|xml] [--file=PATH]`（仅输出 `vault:` / `file:` 机密引用）、`cli/cloudflare.php validate --file=PATH [--format=yaml|xml]`、`cli/cloudflare.php plan --file=PATH [--format=yaml|xml]`、`cli/cloudflare.php apply --file=PATH --confirm=<PLAN_HASH> [--format=yaml|xml]` 以及 `cli/cloudflare.php health [--format=text|json]`。
+- **生态集成钩子（`includes/ecosystem.php`、`setup.php`）**：
+  - `abilities_register`（`AbilitiesProvider`）：注册只读的 `cloudflare-list-tunnels` 和 `cloudflare-get-health`，受 Cloudflare: View 权限域（直接授权和组授权）门控，输出中不含任何令牌或机密。
+  - `doctor_register_checks`（`DoctorChecks`）：暴露 `cloudflare_vault_key`（权限模式、符号链接和长度验证）、`cloudflare_token_dir`（绝对路径、符号链接和全局可写检查）、`cloudflare_tunnel_freshness` 和 `cloudflare_api_failure_rate`。
+  - `casc_register_providers`（`CascProvider`）：为账户（仅限机密引用）、区域、隧道和指标映射提供 `cloudflare` CasC 提供程序（`export`、`validate`、`plan`、`apply`）。
+  - `replicate_out`（`RemoteReplication`）：将不含机密的元数据表复制到远程轮询器（`poller_id > 1`），其中 `token_ciphertext` 清除为 `NULL`，且排除保险库密钥材料。
 
 ### 清单导出
 
@@ -347,7 +357,7 @@ Settings > Cloudflare 包含：
 | 1. 基础 | 插件生命周期、权限、账户配置、连接测试 | 已在 0.3.0 发布（[#2](https://github.com/somethingwithproof/plugin_cloudflare/pull/2) 至 [#5](https://github.com/somethingwithproof/plugin_cloudflare/pull/5)） |
 | 2. 发现 | 后台采集器发现隧道和连接器，Overview、Tunnels、Connectors 页面 | 已在 0.3.0 发布（[#6](https://github.com/somethingwithproof/plugin_cloudflare/pull/6)） |
 | 3. 指标 | 隧道健康数据源、图表模板，以及绝不记录虚构零值的故障处理 | 已在 0.3.0 发布（[#7](https://github.com/somethingwithproof/plugin_cloudflare/pull/7)） |
-| 4. 分析和告警 | 根据套餐能力的逐区域 GraphQL 分析、故障抑制下的 Thold 阈值 | 计划中 |
+| 4. 分析和告警 | 按套餐能力的逐区域 GraphQL 分析（`GraphqlAnalyticsClient`）、Thold 摘要与模板（`AnalyticsSummary`）、CasC CLI（`cli/cloudflare.php`）、生态钩子和远程复制 | 已在 0.4.0-dev 实现；真实账户验证待完成 |
 | 5. 加固 | 故障注入、发现和采集的 TLA+ 模型、完整文档 | 计划中 |
 
 <a id="development"></a>

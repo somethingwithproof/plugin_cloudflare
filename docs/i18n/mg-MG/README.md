@@ -1,4 +1,4 @@
-<!-- Source: README.md; SHA256: f8de0e02c5904e15bfa4c71edcaab219e5e5d4f6d9dbe589f4ed16351df6bf4d -->
+<!-- Source: README.md; SHA256: 813d1c85c236b426b83e42e63c69496f33f8909b5e435d0d45efa6a4ba2f17ca -->
 
 <!-- translations:start -->
 [English](../../../README.md) | [简体中文](../zh-CN/README.md) | [हिन्दी](../hi-IN/README.md) | [Español (España)](../es-ES/README.md) | [Español (Latinoamérica)](../es-419/README.md) | [العربية (السعودية)](../ar-SA/README.md) | [Afrikaans](../af-ZA/README.md) | [አማርኛ](../am-ET/README.md) | [العربية (مصر)](../ar-EG/README.md) | [العربية (المغرب)](../ar-MA/README.md) | [বাংলা](../bn-BD/README.md) | [Bosanski](../bs-BA/README.md) | [Deutsch](../de-DE/README.md) | [فارسی](../fa-IR/README.md) | [Filipino](../fil-PH/README.md) | [Français](../fr-FR/README.md) | [Français (Maroc)](../fr-MA/README.md) | [Français (Sénégal)](../fr-SN/README.md) | [Hausa](../ha-NG/README.md) | [עברית](../he-IL/README.md) | [Hrvatski](../hr-HR/README.md) | [Bahasa Indonesia](../id-ID/README.md) | [Igbo](../ig-NG/README.md) | [Italiano](../it-IT/README.md) | [日本語](../ja-JP/README.md) | [한국어](../ko-KR/README.md) | [Malagasy](README.md) | [मराठी](../mr-IN/README.md) | [Bahasa Melayu](../ms-MY/README.md) | [Nederlands](../nl-NL/README.md) | [Polski](../pl-PL/README.md) | [Português (Brasil)](../pt-BR/README.md) | [Русский](../ru-RU/README.md) | [Kinyarwanda](../rw-RW/README.md) | [Soomaali](../so-SO/README.md) | [Српски](../sr-RS/README.md) | [Svenska](../sv-SE/README.md) | [Kiswahili](../sw-KE/README.md) | [தமிழ்](../ta-IN/README.md) | [తెలుగు](../te-IN/README.md) | [ไทย](../th-TH/README.md) | [Türkçe](../tr-TR/README.md) | [Українська](../uk-UA/README.md) | [اردو](../ur-PK/README.md) | [Tiếng Việt](../vi-VN/README.md) | [isiXhosa](../xh-ZA/README.md) | [Yorùbá](../yo-NG/README.md) | [繁體中文](../zh-TW/README.md) | [isiZulu](../zu-ZA/README.md)
@@ -22,18 +22,18 @@
 
 Plugin ho an'ny Cacti 1.2 izay amboarina hanaraha-maso ny Cloudflare Tunnels sy ny fanadihadiana ny faritra (zone analytics). Mamaky avy amin'ny API Cloudflare izy amin'ny alalan'ny mari-pamantarana API voafetra fahefana (scoped API tokens), tsy manova na inona na inona ao amin'ny Cloudflare mihitsy, ary mitahiry ny angon-drakitra ao amin'ny tabilao azy manokana. Ao amin'ny Cacti dia mandika rakitra XML fanontaniana angona (data query) ho ao amin'ny `resource/script_server/` izy ary mamorona fitaovana, kisarisary ary môdely amin'ny alalan'ny API an'ny Cacti ihany, tsy misy fanovana rakitra fototra.
 
-**Sata: 0.4.0-dev, mbola tsy navoaka.** Ny dikan-teny farany navoaka dia 0.3.0. Ny dikan-teny eo am-panamboarana dia manampy fanondranana lisitry ny fitaovana amin'ny endrika CSV, fanesorana mazava ireo tonelina voafafa, fanadihadiana faritra voatahiry an-tsidina (cached zone analytics), ary môdely Thold azo isafidianana. Mbola miandry ny fanamarinana amin'ny mpamatsy tena izy sy ny fametrahana amin'ny tontolo tena izy.
+**Sata: 0.4.0-dev, mbola tsy navoaka.** Ny dikan-teny farany navoaka dia 0.3.0. Ny dikan-teny eo am-panamboarana dia manampy fanondranana lisitry ny fitaovana amin'ny endrika CSV, fanesorana mazava ireo tonelina voafafa, fanadihadiana faritra voatahiry an-tsidina (cached zone analytics), mpanjifa GraphQL Analytics vakiana ihany mampiasa lisitra ekena (`GraphqlAnalyticsClient`) miaraka amin'ny mpanampy famintinana vonona ho an'ny Thold (`AnalyticsSummary`), CLI Configuration-as-Code (`cli/cloudflare.php`), hooks tontolo manodidina (`abilities_register`, `doctor_register_checks`, `casc_register_providers`), ary fanohanana mpangonina lavitra voafetra amin'ny poller (`replicate_out`). Mbola miandry ny fanamarinana amin'ny mpamatsy tena izy sy ny fametrahana amin'ny tontolo tena izy.
 
-Ity tabilao manaraka ity dia mamaritra ny dikan-teny marin-toerana 0.3.0. Ny fanampiny eo am-panamboarana dia voafaritra ao amin'ny fizarana momba ny fizotry ny asan'ny mpandraharaha sy ny fanadihadiana ny faritra etsy ambany.
+Ity tabilao manaraka ity dia mamaritra ny dikan-teny marin-toerana 0.3.0. Ny fanampiny ao amin'ny 0.4.0-dev dia voafaritra ao amin'ny fizarana momba ny fizotry ny asan'ny mpandraharaha sy ny fanadihadiana ny faritra etsy ambany.
 
 | Azo ampiasaina ankehitriny | Vinavinaina |
 |---|---|
-| Fametrahana, fanavaozana, fanafoanana vonjimaika ary fanesorana amin'ny alalan'ny mpitantana plugin an'ny Cacti | Fanadihadiana GraphQL sy fampandrenesana Thold (Milestone 4) |
+| Fametrahana, fanavaozana, fanafoanana vonjimaika ary fanesorana amin'ny alalan'ny mpitantana plugin an'ny Cacti | GraphQL amin'ny kaonty mivantana sy fanamarinana ny fametrahana (famaranana Milestone 4) |
 | Alàlana Cloudflare: View, Operator ary Configure | Fampidirana hadisoana niniana natao (fault injection), môdely TLA+ ary antontan-taratasy feno (Milestone 5) |
 | Manampy, manova, mamafa, mampandeha ary manafoana vonjimaika ny kaonty Cloudflare | |
 | Mitahiry mari-pamantarana ao anaty rakitra na voasoritra miafina (encrypted) ao amin'ny tahiry angon'ny Cacti | |
 | Manamarina ny mari-pamantarana ary mijery ny alàlana famakiana tonelina sy faritra ananany | |
-| Fikarohana tonelina sy mpampitohy ao amin'ny mpanangona ao ambadika izay atomboky ny poller fototra | |
+| Fikarohana tonelina sy mpampitohy ao amin'ny mpanangona ao ambadika (`poller_cloudflare.php`) | |
 | Pejy Overview, Tunnels ary Connectors eo ambanin'ny Management > Cloudflare Tunnels | |
 | Fanaraha-maso ny tsingerin'aina: `active`, `unavailable` ary `deleted` | |
 | Fitaovana Cacti iray isaky ny kaonty, noforonin'ny mpitantana, miaraka amin'ny tonelina ho fanondroana (indexes) amin'ny fanontaniana angona | |
@@ -236,7 +236,9 @@ lavina avy eo. Jereo ny [docs/security.md](../../security.md#token-file).
 2. Sokafy indray mandeha amin'ny maha-mpitantana ny Console > Configuration > Plugins, na Console > Configuration >
    Cloudflare Accounts. Izany dia mampandeha ny fifindran'ny angon-drakitra an'ny plugin,
    manafatra ireo môdely Cloudflare ary mandika ny rakitra fangatahana angon-drakitra (jereo ny
-   [Metrika sy tabilaon'ny tonelina](#tunnel-metrics-and-graphs)), ary, amin'ny
+   [Metrika sy tabilaon'ny tonelina](#tunnel-metrics-and-graphs)), misoratra ireo hooks tontolo manodidina
+   `abilities_register`, `doctor_register_checks`, `casc_register_providers`,
+   ary `replicate_out` (`includes/ecosystem.php`), ary, amin'ny
    fanavaozana avy amin'ny 0.1.0, dia misoratra ny hook `poller_bottom`.
 
 Tsy mampandeha ny fanavaozana ny plugin ny `poller.php`, ka mandra-pahatongan'ny dingana 2 dia
@@ -265,11 +267,16 @@ Ny pejy fanovana koa dia mampiseho raha nomena ny fahazoan-dalana mamaky tonelin
 
 ## Fikarohana tonelina
 
-Aorian'ny tsingerin'ny fanadihadiana tsirairay ao amin'ny poller fototra, ny hook `poller_bottom` dia manomboka
+Aorian'ny tsingerin'ny fanadihadiana tsirairay ao amin'ny poller mpanangona voaamboatra (`cloudflare_poller_id`, mahazatra `1`), ny hook `poller_bottom` dia manomboka
 mpanangona ao ambadika amin'ny alalan'ny `exec_background` rehefa misy kaonty iray farafahakeliny mandeha
 izay manana Collect Tunnels mihodina. Tsy mandeha ao anatin'ny dingan'ny poller mihitsy ny mpanangona,
-koa ny API Cloudflare miadana dia tsy mampitarazoka ny `poller.php`. Ny poller lavitra
-dia tsy manomboka azy mihitsy.
+koa ny API Cloudflare miadana dia tsy mampitarazoka ny `poller.php`. Ny `INFO` dia manambara
+`remote_collect:1`, ary ny hook `replicate_out` (`RemoteReplication`) dia mandefa
+tabilao metadata tsy misy tsiambaratelo (`plugin_cloudflare_accounts` miaraka amin'ny `token_ciphertext`
+voafafa ho `NULL`, `plugin_cloudflare_tunnels`, `plugin_cloudflare_connectors`,
+`plugin_cloudflare_zones`, `plugin_cloudflare_metric_mappings`, ary
+`plugin_cloudflare_resources`) mankany amin'ny poller lavitra (`poller_id > 1`) sady
+manilika ireo fanalahidin'ny fitehirizana (vault key).
 
 Ho an'ny kaonty tsirairay tonga fotoana, ny mpanangona dia mitanisa ny tonelina an'ny kaonty, avy eo
 mamaky ny fifandraisan'ireo tonelina mavitrika ao aminy, izay manome ny mpampifandray an'ny
@@ -410,7 +417,7 @@ Ny fitaovana voatahiry dia mitsahatra tsy mahazo angona intsony. Aorian'ny fanes
 
 - Ny fampandehanana iray dia manao fangatahana fifandraisana 200 farafahabetsany. Ny tonelina mihoatra izany fetra izany dia havaozina mahalana kokoa noho ny fe-potoana fijerena, ka mampiseho banga ny kisarin'ny fifandraisany.
 - Manolo ny fanovana nataon'ny mpitantana tamin'ireo modely nafarana ny plugin rehefa manova ny XML modely nampiarahina ny fanavaozana.
-- Ny fitaovan'ny kaonty dia tsy maintsy mijanona ao amin'ny poller fototra. Ao amin'ny angon-drakitra fototra ny tabilaon'ny plugin ary mamaky azy ireo ao ny script.
+- Ny poller lavitra dia mahazo metadata naverina nadika tsy misy mombamomba ny fidirana (`token_ciphertext` dia esorina ho `NULL` ary tsy averina adika mihitsy ny fanalahidin'ny vault). Rehefa mandefa ny mpanangona eo amin'ny poller lavitra voatondro (`cloudflare_poller_id`), dia omeo mivantana eo amin'io mpampiantrano mpanangona io ny rakitra token na fanalahidin'ny vault.
 - Ny tonelina voafafa dia mijanona ao amin'ny tondron'ny fangatahana angona ary manoratra `U` mandra-panajanona azy ireo manokana ataon'ny mpitantana. Ny fanajanona dia tsy manala afa-tsy ny kisary noraketin'ny plugin sy ny loharanon-drakitra tsy iombonana amin'ny alalan'ny Cacti; mijanona ho hita ny andalana ao amin'ny lisitra. Ny Cacti no mifehy ny fanadiovana RRD.
 - Ny Cacti dia manafoana ny plugin iray izay miafara amin'ny hadisoana mahafaty ny kaodiny, toy ny fahataperan'ny fitadidiana. Jereo ny [docs/security.md](../../security.md).
 
@@ -420,13 +427,29 @@ Ny fitaovana voatahiry dia mitsahatra tsy mahazo angona intsony. Aorian'ny fanes
 - Tehirizina ao anaty rakitra omaninao ny famantarana na soritana miafina amin'ny AES-256-GCM ambanin'ny rakitra fanalahidy izay tsy miditra ao amin'ny angon-drakitra mihitsy. Tsy aseho amin'ny pejy mihitsy izy ireo, tsy soratana ao amin'ny tatitra, ary tsy ampidirina amin'ny hafatra hadisoana.
 - Ny hadisoan'ny angon-drakitra dia tsy mitondra afa-tsy ny SQLSTATE sy ny kaody hadisoan'ny driver, fa tsy ny sandan'ny fanambarana mihitsy.
 - Ny fanovana rehetra dia POST voaaron'ny famantarana CSRF an'ny Cacti. Ny fanovana kaonty sy fikirana fitantanana dia mitaky ny Cloudflare: Configure; ny fanekena fanasokajiana manokana dia mitaky ny Cloudflare: Operator. Ny famoronana fitaovana Cacti na ny fampandehanana ny Create Graphs dia mila ihany koa ny alalana Sites/Devices/Data an'ny Cacti. Ny plugin voafoana dia mandà ny pejiny.
+- Ny Configuration-as-Code (`cli/cloudflare.php` sy `casc_register_providers`)
+  dia tsy manaiky afa-tsy tondro tsiambaratelo `vault:<account_id>` na `file:<absolute_path>`,
+  mandà ny token manta, ny lahatsoratra voafina ao amin'ny vault, ary ny fanambarana XML `DOCTYPE`, ary
+  mitaky `--confirm=<PLAN_HASH>` mazava alohan'ny hanoratana.
+- Ny Abilities voasoratra (`cloudflare-list-tunnels`, `cloudflare-get-health`) dia
+  vakiana ihany tanteraka, manombana ny sehatra Cloudflare: View mivantana amin'ny
+  tabilao fanamarinana Cacti ho an'ny ID mpampiasan'ny mpangataka (tsy mampiasa ny toetry ny session mihitsy), ary tsy mamerina
+  token na fitaovan'ny fanalahidy.
 
 Ny antsipiriany sy ny fetrany fantatra dia ao amin'ny [docs/security.md](../../security.md).
 Ampitao manokana ny lesoka ara-piarovana araka ny voalaza ao amin'ny [SECURITY.md](../../../SECURITY.md).
 
 ## Fomba fiasan'ny mpandraharaha sy fanadihadiana faritra
 
-Ny fanampiana eo amin'ny fampandrosoana dia ahitana ny fanajanona manokana ny tonelina voafafa, ny fanadihadiana faritra mahatsapa ny fahafahana (capability-aware zone analytics) ary ny modely Thold azo afarana. Mbola tsy manana marika famoahana na fanamarinana amin'ny kaonty mivantana ireo fanampiana ireo. Jereo ny [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) ho an'ny fametrahana, ny dikan'ny fandrefesana ary ny fetran'ny fanamarinana.
+Ny fanampiana ao amin'ny `0.4.0-dev` dia ahitana ny fanajanona manokana ny tonelina voafafa, ny fanadihadiana GraphQL mahatsapa ny fahafahana ho an'ny faritra sy tonelina, ny mpanampy famintinana vonona ho an'ny Thold sy ny modely azo afarana, ny CLI CasC sy fahasalamana, ny hooks tontolo manodidina, ary ny famerimberenan'ny mpangonina lavitra. Mbola tsy manana marika famoahana na fanamarinana amin'ny kaonty mivantana ireo fanampiana ireo. Jereo ny [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) ho an'ny fametrahana, ny dikan'ny fandrefesana, ary ny fetran'ny fanamarinana.
+
+- **Mpanjifa GraphQL Analytics sy famintinana Thold (`src/Api/GraphqlAnalyticsClient.php`, `src/Metrics/AnalyticsSummary.php`)**: ny `GraphqlAnalyticsClient` dia tsy mandefa afa-tsy fangatahana vakiana ihany ao amin'ny lisitra ekena amin'ny fotoana fanambarana (`zone_settings`, `zone_http_metrics`, `zone_edge_latency`, `tunnel_analytics`) amin'ny alalan'ny `CloudflareClient` (TLS voamarina, mifatotra amin'ny `api.cloudflare.com`, valiny voafetra, ary fiandrasana fetran'ny tahan'ny fangatahana `RetryPolicy`) mba hanangonana ny habetsahan'ny fangatahana ao amin'ny faritra sy tonelina, ny tahan'ny hadisoana HTTP 5xx, ny bytes valiny, ary ny fahatarana eny amin'ny sisiny (salan'isa sy p95). Ny `AnalyticsSummary` dia manome `recommendedThresholds()` mifanaraka amin'ny anaran'ny RRD DS an'ny plugin (`health`, `collect_age`, `error_pct`, `age`), `summarizeZones()`, ary `evaluateSample()`.
+- **CLI mpandraharaha sy CasC (`cli/cloudflare.php`)**: tohanan'ny `ConfigCodec` (`src/Config/ConfigCodec.php`) sy ny `ConfigService` (`src/Config/ConfigService.php`), manohana ny `cli/cloudflare.php export [--format=yaml|xml] [--file=PATH]` (mamoaka tondro tsiambaratelo `vault:` / `file:` ihany), `cli/cloudflare.php validate --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php plan --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php apply --file=PATH --confirm=<PLAN_HASH> [--format=yaml|xml]`, ary `cli/cloudflare.php health [--format=text|json]`.
+- **Hooks fampidirana tontolo manodidina (`includes/ecosystem.php`, `setup.php`)**:
+  - `abilities_register` (`AbilitiesProvider`): misoratra `cloudflare-list-tunnels` sy `cloudflare-get-health` vakiana ihany, voafehin'ny sehatra Cloudflare: View (fanomezana mivantana sy vondrona) tsy misy token na tsiambaratelo ao amin'ny vokatra.
+  - `doctor_register_checks` (`DoctorChecks`): mampiseho `cloudflare_vault_key` (fanamarinana ny mode, symlink, ary halavany), `cloudflare_token_dir` (fanamarinana ny lalana feno, symlink, ary fahafahan'ny rehetra manoratra), `cloudflare_tunnel_freshness`, ary `cloudflare_api_failure_rate`.
+  - `casc_register_providers` (`CascProvider`): mampiseho ny mpamatsy CasC `cloudflare` (`export`, `validate`, `plan`, `apply`) ho an'ny kaonty (tondro tsiambaratelo ihany), faritra, tonelina, ary fampifandraisana fandrefesana.
+  - `replicate_out` (`RemoteReplication`): mamerina mandika tabilao metadata tsy misy tsiambaratelo mankany amin'ny poller lavitra (`poller_id > 1`) miaraka amin'ny `token_ciphertext` voafafa ho `NULL` ary esorina ny fitaovan'ny fanalahidin'ny vault.
 
 ### Fanondranana ny lisitra
 
@@ -441,7 +464,7 @@ Ny dingana tsirairay dia avoaka ho dikan-teny 0.x nomena laharana manaraka azy: 
 | 1. Fototra | Tsingerim-piainan'ny plugin, alalana, fikirana kaonty, fitsapana fifandraisana | Navoaka tao amin'ny 0.3.0 ([#2](https://github.com/somethingwithproof/plugin_cloudflare/pull/2) hatramin'ny [#5](https://github.com/somethingwithproof/plugin_cloudflare/pull/5)) |
 | 2. Fitadiavana | Fitadiavana tonelina sy mpampifandray amin'ny mpanangona ao ambadika, pejy Overview, Tunnels ary Connectors | Navoaka tao amin'ny 0.3.0 ([#6](https://github.com/somethingwithproof/plugin_cloudflare/pull/6)) |
 | 3. Fandrefesana | Loharanon-drakitra momba ny fahasalaman'ny tonelina, modely kisary, fitantanana fahatapahana tsy mirakitra aotra noforonina mihitsy | Navoaka tao amin'ny 0.3.0 ([#7](https://github.com/somethingwithproof/plugin_cloudflare/pull/7)) |
-| 4. Fanadihadiana sy fampitandremana | Fanadihadiana GraphQL araka ny drafitra isaky ny faritra, fetra Thold miaraka amin'ny fanafoanana mandritra ny fahatapahana | Voalahatra |
+| 4. Fanadihadiana sy fampitandremana | Fanadihadiana GraphQL araka ny drafitra (`GraphqlAnalyticsClient`), famintinana sy modely Thold (`AnalyticsSummary`), CLI CasC (`cli/cloudflare.php`), hooks tontolo manodidina, ary famerimberenana lavitra | Voapetraka ao amin'ny 0.4.0-dev; miandry fanamarinana amin'ny kaonty mivantana |
 | 5. Fanamafisana | Fampidirana lesoka, modely TLA+ ho an'ny fitadiavana sy ny fanangonana, antontan-taratasy feno | Voalahatra |
 
 ## Fampandrosoana

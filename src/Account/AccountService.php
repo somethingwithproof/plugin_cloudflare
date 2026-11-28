@@ -38,6 +38,7 @@ use OutOfBoundsException;
  * line carries only the error class or the SecretException reason.
  */
 final class AccountService {
+	/** Messages. */
 	private const MESSAGES = array(
 		'ok'                => 'Connection verified',
 		'token_inactive'    => 'Token is not active; it may be expired or disabled',
@@ -48,10 +49,15 @@ final class AccountService {
 		'error'             => 'Cloudflare API request failed unexpectedly',
 	);
 
+	/** @var string Message forbidden. */
 	private const MESSAGE_FORBIDDEN     = 'Token lacks the permissions needed to verify it';
+	/** @var string Message undecryptable. */
 	private const MESSAGE_UNDECRYPTABLE = 'Stored token cannot be decrypted';
+	/** @var string Message key missing. */
 	private const MESSAGE_KEY_MISSING   = 'Token vault key file is missing or unusable';
+	/** @var string Message file. */
 	private const MESSAGE_FILE          = 'Token file is missing or insecure';
+	/** @var string Message vault missing. */
 	private const MESSAGE_VAULT_MISSING = 'Encrypted storage is unavailable; configure the key file or use a token file';
 
 	/**
@@ -65,6 +71,7 @@ final class AccountService {
 		'collect_analytics' => 0,
 		'create_graphs'     => 0,
 	);
+	/** @var int Default interval. */
 	private const DEFAULT_INTERVAL = 300;
 
 	/** @var AccountRepository */
@@ -368,12 +375,23 @@ final class AccountService {
 		return $this->repo->all();
 	}
 
+	/**
+	 * Require configure.
+	 *
+	 * @return void
+	 */
 	private function requireConfigure(): void {
 		if (!$this->auth->canConfigure()) {
 			throw new AccessDenied();
 		}
 	}
 
+	/**
+	 * Require account.
+	 *
+	 * @param int $id
+	 * @return Account
+	 */
 	private function requireAccount(int $id): Account {
 		$account = $this->repo->find($id);
 		if ($account === null) {
@@ -426,6 +444,12 @@ final class AccountService {
 		return array($status, self::MESSAGES[$status], $permissions, $tunnelRead ? '' : 'tunnel_read=false');
 	}
 
+	/**
+	 * Status for.
+	 *
+	 * @param string $errorClass
+	 * @return string
+	 */
 	private static function statusFor(string $errorClass): string {
 		switch ($errorClass) {
 			case ErrorClass::AUTH:
@@ -470,6 +494,14 @@ final class AccountService {
 		return $this->requireAccount($account->id());
 	}
 
+	/**
+	 * Log transition.
+	 *
+	 * @param Account $account
+	 * @param string $status
+	 * @param string $detail
+	 * @return void
+	 */
 	private function logTransition(Account $account, string $status, string $detail): void {
 		if ($this->log === null || $account->status() === $status) {
 			return;
@@ -530,6 +562,13 @@ final class AccountService {
 		return $value;
 	}
 
+	/**
+	 * Existing flag.
+	 *
+	 * @param Account $account
+	 * @param string $field
+	 * @return int
+	 */
 	private static function existingFlag(Account $account, string $field): int {
 		switch ($field) {
 			case 'enabled':

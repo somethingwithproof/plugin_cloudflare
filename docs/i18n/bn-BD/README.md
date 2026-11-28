@@ -1,4 +1,4 @@
-<!-- Source: README.md; SHA256: f8de0e02c5904e15bfa4c71edcaab219e5e5d4f6d9dbe589f4ed16351df6bf4d -->
+<!-- Source: README.md; SHA256: 813d1c85c236b426b83e42e63c69496f33f8909b5e435d0d45efa6a4ba2f17ca -->
 
 <!-- translations:start -->
 [English](../../../README.md) | [简体中文](../zh-CN/README.md) | [हिन्दी](../hi-IN/README.md) | [Español (España)](../es-ES/README.md) | [Español (Latinoamérica)](../es-419/README.md) | [العربية (السعودية)](../ar-SA/README.md) | [Afrikaans](../af-ZA/README.md) | [አማርኛ](../am-ET/README.md) | [العربية (مصر)](../ar-EG/README.md) | [العربية (المغرب)](../ar-MA/README.md) | [বাংলা](README.md) | [Bosanski](../bs-BA/README.md) | [Deutsch](../de-DE/README.md) | [فارسی](../fa-IR/README.md) | [Filipino](../fil-PH/README.md) | [Français](../fr-FR/README.md) | [Français (Maroc)](../fr-MA/README.md) | [Français (Sénégal)](../fr-SN/README.md) | [Hausa](../ha-NG/README.md) | [עברית](../he-IL/README.md) | [Hrvatski](../hr-HR/README.md) | [Bahasa Indonesia](../id-ID/README.md) | [Igbo](../ig-NG/README.md) | [Italiano](../it-IT/README.md) | [日本語](../ja-JP/README.md) | [한국어](../ko-KR/README.md) | [Malagasy](../mg-MG/README.md) | [मराठी](../mr-IN/README.md) | [Bahasa Melayu](../ms-MY/README.md) | [Nederlands](../nl-NL/README.md) | [Polski](../pl-PL/README.md) | [Português (Brasil)](../pt-BR/README.md) | [Русский](../ru-RU/README.md) | [Kinyarwanda](../rw-RW/README.md) | [Soomaali](../so-SO/README.md) | [Српски](../sr-RS/README.md) | [Svenska](../sv-SE/README.md) | [Kiswahili](../sw-KE/README.md) | [தமிழ்](../ta-IN/README.md) | [తెలుగు](../te-IN/README.md) | [ไทย](../th-TH/README.md) | [Türkçe](../tr-TR/README.md) | [Українська](../uk-UA/README.md) | [اردو](../ur-PK/README.md) | [Tiếng Việt](../vi-VN/README.md) | [isiXhosa](../xh-ZA/README.md) | [Yorùbá](../yo-NG/README.md) | [繁體中文](../zh-TW/README.md) | [isiZulu](../zu-ZA/README.md)
@@ -236,9 +236,11 @@ Settings > Cloudflare > Token File Directory সেট করুন, উদা�
    প্রতিস্থাপন করুন।
 2. অ্যাডমিন হিসেবে একবার Console > Configuration > Plugins অথবা
    Console > Configuration > Cloudflare Accounts খুলুন। এটি প্লাগইনের মাইগ্রেশনগুলো
-   চালায়, Cloudflare টেমপ্লেটগুলো ইমপোর্ট করে এবং ডেটা কোয়েরি ফাইল কপি করে
-   ([টানেল মেট্রিক্স ও গ্রাফ](#tunnel-metrics-and-graphs) দেখুন), এবং 0.1.0 থেকে
-   আপগ্রেডের ক্ষেত্রে `poller_bottom` হুক নিবন্ধন করে।
+   চালায়, Cloudflare টেমপ্লেটগুলো ইমপোর্ট করে, ডেটা কোয়েরি ফাইল কপি করে
+   ([টানেল মেট্রিক্স ও গ্রাফ](#tunnel-metrics-and-graphs) দেখুন),
+   `abilities_register`, `doctor_register_checks`, `casc_register_providers` এবং
+   `replicate_out` ইকোসিস্টেম হুকসমূহ (`includes/ecosystem.php`) নিবন্ধন করে, এবং
+   0.1.0 থেকে আপগ্রেডের ক্ষেত্রে `poller_bottom` হুক নিবন্ধন করে।
 
 `poller.php` প্লাগইনের আপগ্রেড চালায় না, তাই ধাপ ২ সম্পন্ন না হওয়া পর্যন্ত নতুন
 স্কিমা অনুপস্থিত থাকে। তখন প্রতিটি কালেক্টর রান কোনো কাজ না করেই
@@ -266,10 +268,14 @@ Verify অ্যাকাউন্টের অবস্থা নির্ধ�
 
 ## টানেল ডিসকভারি
 
-মূল পোলারে প্রতিটি পোলিং চক্রের পর, অন্তত একটি সক্রিয় অ্যাকাউন্টে Collect Tunnels
+কনফিগার করা কালেক্টর পোলারে (`cloudflare_poller_id`, ডিফল্ট `1`) প্রতিটি পোলিং চক্রের পর, অন্তত একটি সক্রিয় অ্যাকাউন্টে Collect Tunnels
 চালু থাকলে `poller_bottom` হুকটি `exec_background` দিয়ে একটি ব্যাকগ্রাউন্ড কালেক্টর
 চালু করে। কালেক্টরটি কখনোই পোলারের প্রসেসে চলে না, তাই ধীরগতির Cloudflare API
-`poller.php`-কে বিলম্বিত করে না। রিমোট পোলারগুলো কখনোই এটি চালু করে না।
+`poller.php`-কে বিলম্বিত করে না। `INFO` `remote_collect:1` ঘোষণা করে, এবং `replicate_out`
+হুক (`RemoteReplication`) ভল্ট কী উপাদান বাদ রেখে অ-গোপন মেটাডেটা টেবিলগুলো
+(`token_ciphertext` মুছে `NULL` করা `plugin_cloudflare_accounts`, `plugin_cloudflare_tunnels`,
+`plugin_cloudflare_connectors`, `plugin_cloudflare_zones`, `plugin_cloudflare_metric_mappings`,
+এবং `plugin_cloudflare_resources`) রিমোট পোলারগুলোতে (`poller_id > 1`) পাঠায়।
 
 সময় হয়েছে এমন প্রতিটি অ্যাকাউন্টের জন্য, কালেক্টর অ্যাকাউন্টের টানেলগুলো তালিকাভুক্ত করে,
 তারপর এর সক্রিয় টানেলগুলোর সংযোগ পড়ে, যা প্রতিটি টানেলের কানেক্টর, সেগুলোর সংস্করণ,
@@ -411,7 +417,7 @@ Create Cacti Device পুনরায় চেষ্টা করে।
 
 - প্রতিটি রান সর্বোচ্চ 200টি কানেকশন রিকোয়েস্ট পাঠায়। এই সীমার বাইরের টানেলগুলো অবজারভেশন উইন্ডোর তুলনায় কম ঘন ঘন রিফ্রেশ হয়, তাই সেগুলোর কানেকশন গ্রাফে ফাঁকা অংশ দেখা যায়।
 - আপগ্রেডের সময় সরবরাহকৃত টেমপ্লেট XML পরিবর্তিত হলে প্লাগইনটি ইমপোর্ট করা টেমপ্লেটে অ্যাডমিনিস্ট্রেটরের করা সম্পাদনাগুলো ওভাররাইট করে।
-- অ্যাকাউন্টের ডিভাইসটি অবশ্যই মূল পোলারে থাকতে হবে। প্লাগইনের টেবিলগুলো মূল ডেটাবেসে থাকে এবং স্ক্রিপ্ট সেখান থেকেই সেগুলো পড়ে।
+- রিমোট পোলারগুলো কোনো ক্রেডেনশিয়াল ছাড়াই প্রতিলিপিকৃত মেটাডেটা পায় (`token_ciphertext` মুছে `NULL` করা হয় এবং ভল্ট কী কখনোই প্রতিলিপি করা হয় না)। কোনো নির্দিষ্ট রিমোট পোলারে (`cloudflare_poller_id`) কালেক্টর চালানোর সময় সরাসরি ওই কালেক্টর হোস্টে টোকেন ফাইল বা একটি ভল্ট কী সরবরাহ করুন।
 - মুছে ফেলা টানেলগুলো ডেটা কোয়েরি ইনডেক্সে থেকে যায় এবং অ্যাডমিনিস্ট্রেটর সুনির্দিষ্টভাবে সেগুলো রিটায়ার না করা পর্যন্ত `U` প্রিন্ট করে। রিটায়ারমেন্ট কেবল Cacti-এর মাধ্যমে প্লাগইন-রেকর্ডকৃত গ্রাফ এবং আনশেয়ার্ড ডেটা সোর্সগুলো সরিয়ে ফেলে; ইনভেন্টরি সারিটি দৃশ্যমান থাকে। RRD পরিষ্কার করার বিষয়টি Cacti নিয়ন্ত্রণ করে।
 - কোনো প্লাগইনের কোড প্রকৃত ফ্যাটাল এররে (যেমন মেমোরি শেষ হয়ে যাওয়া) শেষ হলে Cacti সেই প্লাগইনটি নিষ্ক্রিয় করে দেয়। [docs/security.md](../../security.md) দেখুন।
 
@@ -421,13 +427,23 @@ Create Cacti Device পুনরায় চেষ্টা করে।
 - টোকেনগুলো আপনার সরবরাহ করা একটি ফাইলে সংরক্ষিত থাকে অথবা এমন একটি কী ফাইলের অধীনে AES-256-GCM দিয়ে এনক্রিপ্ট করা হয় যা কখনোই ডেটাবেসে প্রবেশ করে না। এগুলো কখনোই কোনো পেজে দেখানো হয় না, লগে লেখা হয় না বা এরর মেসেজে অন্তর্ভুক্ত করা হয় না।
 - ডেটাবেস এররে কেবল SQLSTATE এবং ড্রাইভার এরর কোড থাকে, স্টেটমেন্টের মান কখনোই থাকে না।
 - প্রতিটি পরিবর্তনই Cacti-এর CSRF টোকেন দ্বারা সুরক্ষিত একটি POST রিকোয়েস্ট। অ্যাডমিনিস্ট্রেটিভ অ্যাকাউন্ট এবং কনফিগারেশন পরিবর্তনের জন্য Cloudflare: Configure অনুমতি প্রয়োজন; ব্যক্তিগত ট্রায়াজ স্বীকৃতির জন্য Cloudflare: Operator প্রয়োজন। Cacti ডিভাইস তৈরি করা বা 'গ্রাফ তৈরি' চালু করার জন্য Cacti-এর Sites/Devices/Data অনুমতিও প্রয়োজন হয়। নিষ্ক্রিয় থাকা অবস্থায় প্লাগইনটি এর পেজগুলোতে প্রবেশাধিকার প্রত্যাখ্যান করে।
+- Configuration-as-Code (`cli/cloudflare.php` এবং `casc_register_providers`) শুধুমাত্র `vault:<account_id>` বা `file:<absolute_path>` গোপন রেফারেন্স গ্রহণ করে, কাঁচা টোকেন, ভল্ট সাইফারটেক্সট এবং XML `DOCTYPE` ঘোষণা প্রত্যাখ্যান করে এবং লেখার আগে সঠিক `--confirm=<PLAN_HASH>` দাবি করে।
+- নিবন্ধিত Abilities (`cloudflare-list-tunnels`, `cloudflare-get-health`) কঠোরভাবে কেবল পাঠযোগ্য, কলারের ব্যবহারকারী আইডির জন্য সরাসরি Cacti auth টেবিলের বিপরীতে Cloudflare: View রিয়েল্ম মূল্যায়ন করে (কখনোই সেশন অবস্থা নয়), এবং কোনো টোকেন বা কী উপাদান ফেরত দেয় না।
 
 বিস্তারিত তথ্য ও পরিচিত সীমাবদ্ধতা [docs/security.md](../../security.md)-এ রয়েছে।
 নিরাপত্তা দুর্বলতা গোপনে রিপোর্ট করতে [SECURITY.md](../../../SECURITY.md)-এর নির্দেশনা অনুসরণ করুন।
 
 ## অপারেটর ওয়ার্কফ্লো এবং জোন অ্যানালিটিক্স
 
-ডেভেলপমেন্ট পর্যায়ের সংযোজনগুলোর মধ্যে রয়েছে মুছে ফেলা টানেলের সুনির্দিষ্ট রিটায়ারমেন্ট, ক্যাপাবিলিটি-সচেতন জোন অ্যানালিটিক্স এবং ইমপোর্টযোগ্য Thold টেমপ্লেট। এই সংযোজনগুলোর এখনো কোনো রিলিজ ট্যাগ বা লাইভ-অ্যাকাউন্ট যোগ্যতা নেই। সেটআপ, মেট্রিকের অর্থ এবং যাচাইয়ের সীমাবদ্ধতা জানতে [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) দেখুন।
+`0.4.0-dev`-এর ডেভেলপমেন্ট সংযোজনগুলোর মধ্যে রয়েছে মুছে ফেলা টানেলের সুস্পষ্ট রিটায়ারমেন্ট, ক্যাপাবিলিটি-সচেতন GraphQL জোন ও টানেল অ্যানালিটিক্স, Thold-প্রস্তুত সারাংশ সহায়ক ও ইমপোর্টযোগ্য টেমপ্লেট, একটি CasC ও হেলথ CLI, ইকোসিস্টেম হুক এবং রিমোট কালেক্টর রেপ্লিকেশন। এই সংযোজনগুলোর এখনো কোনো রিলিজ ট্যাগ বা লাইভ-অ্যাকাউন্ট যোগ্যতা নেই। সেটআপ, মেট্রিকের অর্থ এবং যাচাইয়ের সীমাবদ্ধতা জানতে [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) দেখুন।
+
+- **GraphQL অ্যানালিটিক্স ক্লায়েন্ট ও Thold সারাংশ (`src/Api/GraphqlAnalyticsClient.php`, `src/Metrics/AnalyticsSummary.php`)**: `GraphqlAnalyticsClient` জোন ও টানেল রিকোয়েস্টের পরিমাণ, HTTP 5xx ত্রুটির হার, রেসপন্স বাইট এবং এজ ল্যাটেন্সি (গড় ও p95) সংগ্রহ করতে `CloudflareClient`-এর মাধ্যমে (TLS যাচাইকৃত, `api.cloudflare.com`-এ পিন করা, সীমিত রেসপন্স এবং `RetryPolicy` রেট-লিমিট ব্যাকঅফসহ) কেবল কম্পাইল-টাইম অনুমোদিত-তালিকাভুক্ত রিড-অনলি কোয়েরি (`zone_settings`, `zone_http_metrics`, `zone_edge_latency`, `tunnel_analytics`) চালায়। `AnalyticsSummary` প্লাগইনের RRD DS নামের (`health`, `collect_age`, `error_pct`, `age`) সাথে সামঞ্জস্যপূর্ণ `recommendedThresholds()`, `summarizeZones()` এবং `evaluateSample()` প্রদান করে।
+- **অপারেটর ও CasC CLI (`cli/cloudflare.php`)**: `ConfigCodec` (`src/Config/ConfigCodec.php`) এবং `ConfigService` (`src/Config/ConfigService.php`) দ্বারা চালিত, যা `cli/cloudflare.php export [--format=yaml|xml] [--file=PATH]` (কেবল `vault:` / `file:` গোপন রেফারেন্স নির্গত করে), `cli/cloudflare.php validate --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php plan --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php apply --file=PATH --confirm=<PLAN_HASH> [--format=yaml|xml]` এবং `cli/cloudflare.php health [--format=text|json]` সমর্থন করে।
+- **ইকোসিস্টেম ইন্টিগ্রেশন হুক (`includes/ecosystem.php`, `setup.php`)**:
+  - `abilities_register` (`AbilitiesProvider`): আউটপুটে কোনো টোকেন বা গোপন তথ্য ছাড়াই Cloudflare: View রিয়েল্মে (সরাসরি এবং গ্রুপ অনুদান) সীমাবদ্ধ রিড-অনলি `cloudflare-list-tunnels` এবং `cloudflare-get-health` নিবন্ধন করে।
+  - `doctor_register_checks` (`DoctorChecks`): `cloudflare_vault_key` (মোড, সিমলিংক এবং দৈর্ঘ্য যাচাই), `cloudflare_token_dir` (অ্যাবসোলিউট পাথ, সিমলিংক এবং সবার জন্য লিখনযোগ্য কি না পরীক্ষা), `cloudflare_tunnel_freshness`, এবং `cloudflare_api_failure_rate` প্রকাশ করে।
+  - `casc_register_providers` (`CascProvider`): অ্যাকাউন্ট (কেবল গোপন রেফারেন্স), জোন, টানেল এবং মেট্রিক ম্যাপিংয়ের জন্য `cloudflare` CasC প্রোভাইডার (`export`, `validate`, `plan`, `apply`) প্রকাশ করে।
+  - `replicate_out` (`RemoteReplication`): `token_ciphertext` মুছে `NULL` করে এবং ভল্ট কী উপাদান বাদ রেখে অ-গোপন মেটাডেটা টেবিলগুলোকে রিমোট পোলারে (`poller_id > 1`) প্রতিলিপি করে।
 
 ### ইনভেন্টরি এক্সপোর্ট
 
@@ -442,7 +458,7 @@ Cloudflare: View রেলমের জন্য টানেলস ও কা�
 | 1. ভিত্তি | প্লাগইন লাইফসাইকেল, অনুমতি, অ্যাকাউন্ট কনফিগারেশন, কানেকশন টেস্ট | 0.3.0-এ প্রকাশিত ([#2](https://github.com/somethingwithproof/plugin_cloudflare/pull/2) থেকে [#5](https://github.com/somethingwithproof/plugin_cloudflare/pull/5)) |
 | 2. ডিসকভারি | ব্যাকগ্রাউন্ড কালেক্টরে টানেল ও কানেক্টর ডিসকভারি, ওভারভিউ, টানেলস এবং কানেক্টরস পেজ | 0.3.0-এ প্রকাশিত ([#6](https://github.com/somethingwithproof/plugin_cloudflare/pull/6)) |
 | 3. মেট্রিক্স | টানেল হেলথ ডেটা সোর্স, গ্রাফ টেমপ্লেট, বিভ্রাট ব্যবস্থাপনা যা কখনোই কাল্পনিক শূন্য রেকর্ড করে না | 0.3.0-এ প্রকাশিত ([#7](https://github.com/somethingwithproof/plugin_cloudflare/pull/7)) |
-| 4. অ্যানালিটিক্স ও সতর্কতা | প্রতিটি জোনের জন্য প্ল্যান-সচেতন GraphQL অ্যানালিটিক্স, বিভ্রাট দমনসহ Thold থ্রেশহোল্ড | পরিকল্পিত |
+| ৪. অ্যানালিটিক্স ও সতর্কতা | প্ল্যান-সচেতন GraphQL অ্যানালিটিক্স (`GraphqlAnalyticsClient`), Thold সারাংশ ও টেমপ্লেট (`AnalyticsSummary`), CasC CLI (`cli/cloudflare.php`), ইকোসিস্টেম হুক এবং রিমোট রেপ্লিকেশন | 0.4.0-dev-এ বাস্তবায়িত; লাইভ-অ্যাকাউন্ট যোগ্যতা যাচাই বাকি |
 | 5. হার্ডেনিং | ফল্ট ইনজেকশন, ডিসকভারি ও সংগ্রহের TLA+ মডেল, পূর্ণাঙ্গ ডকুমেন্টেশন | পরিকল্পিত |
 
 ## ডেভেলপমেন্ট

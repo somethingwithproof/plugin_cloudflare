@@ -27,11 +27,17 @@ use Somethingwithproof\Cloudflare\Version;
  * metric, so later engines can find a metric without parsing templates.
  */
 final class MetricMappingRepository {
+	/** @var string Table. */
 	private const TABLE = 'plugin_cloudflare_metric_mappings';
 
 	/** @var Database */
 	private $db;
 
+	/**
+	 * Initialize MetricMappingRepository.
+	 *
+	 * @param Database $db
+	 */
 	public function __construct(Database $db) {
 		$this->db = $db;
 	}

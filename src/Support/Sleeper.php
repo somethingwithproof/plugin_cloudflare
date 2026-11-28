@@ -19,6 +19,13 @@
 
 namespace Somethingwithproof\Cloudflare\Support;
 
+/** Sleeper contract for plugin_cloudflare. */
 interface Sleeper {
+	/**
+	 * Sleep.
+	 *
+	 * @param int $seconds
+	 * @return void
+	 */
 	public function sleep(int $seconds): void;
 }

@@ -1,4 +1,4 @@
-<!-- Source: README.md; SHA256: f8de0e02c5904e15bfa4c71edcaab219e5e5d4f6d9dbe589f4ed16351df6bf4d -->
+<!-- Source: README.md; SHA256: 813d1c85c236b426b83e42e63c69496f33f8909b5e435d0d45efa6a4ba2f17ca -->
 
 <!-- translations:start -->
 [English](../../../README.md) | [简体中文](../zh-CN/README.md) | [हिन्दी](../hi-IN/README.md) | [Español (España)](../es-ES/README.md) | [Español (Latinoamérica)](../es-419/README.md) | [العربية (السعودية)](../ar-SA/README.md) | [Afrikaans](../af-ZA/README.md) | [አማርኛ](../am-ET/README.md) | [العربية (مصر)](../ar-EG/README.md) | [العربية (المغرب)](../ar-MA/README.md) | [বাংলা](../bn-BD/README.md) | [Bosanski](../bs-BA/README.md) | [Deutsch](../de-DE/README.md) | [فارسی](../fa-IR/README.md) | [Filipino](../fil-PH/README.md) | [Français](../fr-FR/README.md) | [Français (Maroc)](../fr-MA/README.md) | [Français (Sénégal)](../fr-SN/README.md) | [Hausa](../ha-NG/README.md) | [עברית](../he-IL/README.md) | [Hrvatski](../hr-HR/README.md) | [Bahasa Indonesia](../id-ID/README.md) | [Igbo](../ig-NG/README.md) | [Italiano](../it-IT/README.md) | [日本語](../ja-JP/README.md) | [한국어](../ko-KR/README.md) | [Malagasy](../mg-MG/README.md) | [मराठी](../mr-IN/README.md) | [Bahasa Melayu](../ms-MY/README.md) | [Nederlands](../nl-NL/README.md) | [Polski](../pl-PL/README.md) | [Português (Brasil)](../pt-BR/README.md) | [Русский](../ru-RU/README.md) | [Kinyarwanda](../rw-RW/README.md) | [Soomaali](../so-SO/README.md) | [Српски](../sr-RS/README.md) | [Svenska](../sv-SE/README.md) | [Kiswahili](../sw-KE/README.md) | [தமிழ்](../ta-IN/README.md) | [తెలుగు](../te-IN/README.md) | [ไทย](../th-TH/README.md) | [Türkçe](../tr-TR/README.md) | [Українська](../uk-UA/README.md) | [اردو](../ur-PK/README.md) | [Tiếng Việt](README.md) | [isiXhosa](../xh-ZA/README.md) | [Yorùbá](../yo-NG/README.md) | [繁體中文](../zh-TW/README.md) | [isiZulu](../zu-ZA/README.md)
@@ -27,18 +27,18 @@ Trong Cacti, plugin sao chép các tệp XML truy vấn dữ liệu vào `resour
 tạo thiết bị, biểu đồ cùng mẫu (template) thông qua chính các API của Cacti mà không sửa đổi
 tệp lõi nào.
 
-**Trạng thái: 0.4.0-dev, chưa phát hành.** Phiên bản phát hành gần nhất là 0.3.0. Phiên bản đang phát triển bổ sung tính năng xuất danh mục CSV, đánh dấu ngừng sử dụng rõ ràng đối với các tunnel đã bị xóa, lưu bộ nhớ đệm phân tích zone và các mẫu Thold tùy chọn. Quá trình kiểm định với nhà cung cấp thực tế và triển khai vẫn đang chờ hoàn tất.
+**Trạng thái: 0.4.0-dev, chưa phát hành.** Phiên bản phát hành gần nhất là 0.3.0. Phiên bản đang phát triển bổ sung tính năng xuất danh mục CSV, đánh dấu ngừng sử dụng rõ ràng đối với các tunnel đã bị xóa, lưu bộ nhớ đệm phân tích zone, một client GraphQL Analytics chỉ đọc theo danh sách cho phép (`GraphqlAnalyticsClient`) với các hàm trợ giúp tóm tắt sẵn sàng cho Thold (`AnalyticsSummary`), CLI Configuration-as-Code (`cli/cloudflare.php`), các hook hệ sinh thái (`abilities_register`, `doctor_register_checks`, `casc_register_providers`), và hỗ trợ bộ thu thập từ xa theo phạm vi poller (`replicate_out`). Quá trình kiểm định với nhà cung cấp thực tế và triển khai vẫn đang chờ hoàn tất.
 
-Bảng dưới đây mô tả bản phát hành ổn định 0.3.0. Các bổ sung trong bản đang phát triển được mô tả trong phần Quy trình vận hành và phân tích zone bên dưới.
+Bảng dưới đây mô tả bản phát hành ổn định 0.3.0. Các bổ sung phát triển trong 0.4.0-dev được mô tả trong phần Quy trình vận hành và phân tích zone bên dưới.
 
 | Hiện có sẵn | Dự kiến |
 |---|---|
-| Cài đặt, nâng cấp, vô hiệu hóa và gỡ cài đặt thông qua trình quản lý plugin của Cacti | Phân tích GraphQL và cảnh báo Thold (Cột mốc 4) |
+| Cài đặt, nâng cấp, vô hiệu hóa và gỡ cài đặt thông qua trình quản lý plugin của Cacti | Kiểm định GraphQL trên tài khoản thực tế và kiểm định triển khai (tiêu chí hoàn tất Cột mốc 4) |
 | Các quyền Cloudflare: View, Operator và Configure | Chèn lỗi (fault injection), mô hình TLA+ và tài liệu đầy đủ (Cột mốc 5) |
 | Thêm, chỉnh sửa, xóa, bật và tắt tài khoản Cloudflare | |
 | Lưu trữ token trong một tệp hoặc mã hóa trong cơ sở dữ liệu Cacti | |
 | Xác minh token và kiểm tra quyền đọc tunnel và zone | |
-| Phát hiện tunnel và connector trong một trình thu thập nền do poller chính khởi chạy | |
+| Phát hiện tunnel và connector trong trình thu thập nền (`poller_cloudflare.php`) | |
 | Các trang Overview, Tunnels và Connectors trong mục Management > Cloudflare Tunnels | |
 | Theo dõi vòng đời: `active`, `unavailable` và `deleted` | |
 | Một thiết bị Cacti cho mỗi tài khoản, do quản trị viên tạo, với các tunnel làm chỉ mục của một truy vấn dữ liệu | |
@@ -291,7 +291,7 @@ sẽ bị từ chối. Xem [docs/security.md](../../security.md#token-file).
 2. Mở Console > Configuration > Plugins, hoặc Console > Configuration >
    Cloudflare Accounts, một lần với tư cách quản trị viên. Thao tác này chạy các bản di trú của plugin,
    nhập các mẫu Cloudflare và sao chép tệp truy vấn dữ liệu (xem
-   [Chỉ số và biểu đồ của tunnel](#tunnel-metrics-and-graphs)), đồng thời, khi
+   [Chỉ số và biểu đồ của tunnel](#tunnel-metrics-and-graphs)), đăng ký các hook hệ sinh thái `abilities_register`, `doctor_register_checks`, `casc_register_providers` và `replicate_out` (`includes/ecosystem.php`), đồng thời, khi
    nâng cấp từ 0.1.0, đăng ký hook `poller_bottom`.
 
 `poller.php` không chạy quá trình nâng cấp của plugin, vì vậy cho đến bước 2, lược đồ
@@ -320,11 +320,10 @@ Trang chỉnh sửa cũng hiển thị liệu quyền đọc tunnel và đọc z
 
 ## Phát hiện tunnel
 
-Sau mỗi chu kỳ thăm dò trên poller chính, hook `poller_bottom` khởi chạy
+Sau mỗi chu kỳ thăm dò trên poller thu thập đã cấu hình (`cloudflare_poller_id`, mặc định `1`), hook `poller_bottom` khởi chạy
 trình thu thập chạy nền bằng `exec_background` khi có ít nhất một tài khoản đã bật
 có bật Collect Tunnels. Trình thu thập không bao giờ chạy trong tiến trình của poller,
-vì vậy việc API Cloudflare phản hồi chậm không làm trễ `poller.php`. Các poller từ xa
-không bao giờ khởi chạy nó.
+vì vậy việc API Cloudflare phản hồi chậm không làm trễ `poller.php`. `INFO` khai báo `remote_collect:1`, và hook `replicate_out` (`RemoteReplication`) đẩy các bảng siêu dữ liệu không chứa bí mật (`plugin_cloudflare_accounts` với `token_ciphertext` được xóa thành `NULL`, `plugin_cloudflare_tunnels`, `plugin_cloudflare_connectors`, `plugin_cloudflare_zones`, `plugin_cloudflare_metric_mappings`, và `plugin_cloudflare_resources`) tới các poller từ xa (`poller_id > 1`) đồng thời loại trừ dữ liệu khóa vault.
 
 Đối với mỗi tài khoản đến hạn, trình thu thập liệt kê các tunnel của tài khoản, sau đó
 đọc các kết nối của các tunnel đang hoạt động, từ đó lấy thông tin connector của từng tunnel,
@@ -467,7 +466,7 @@ Thiết bị được giữ lại sẽ ngừng nhận dữ liệu. Sau khi gỡ 
 
 - Mỗi lượt chạy thực hiện tối đa 200 yêu cầu kết nối. Các tunnel vượt quá giới hạn đó sẽ được làm mới ít thường xuyên hơn cửa sổ quan sát, nên đồ thị kết nối của chúng sẽ xuất hiện các khoảng trống.
 - Plugin sẽ ghi đè các chỉnh sửa của quản trị viên đối với những mẫu đã nhập khi bản nâng cấp thay đổi tệp XML mẫu đi kèm.
-- Thiết bị của tài khoản phải nằm trên poller chính. Các bảng của plugin nằm trong cơ sở dữ liệu chính và script đọc dữ liệu từ đó.
+- Các poller từ xa nhận siêu dữ liệu được sao chép mà không có thông tin xác thực (`token_ciphertext` được xóa thành `NULL` và khóa vault không bao giờ được sao chép). Khi chạy trình thu thập trên một poller từ xa được chỉ định (`cloudflare_poller_id`), hãy cấp phát trực tiếp tệp token hoặc khóa vault trên máy chủ thu thập đó.
 - Các tunnel đã xóa vẫn nằm trong chỉ mục truy vấn dữ liệu và in ra `U` cho đến khi quản trị viên cho ngừng hoạt động một cách tường minh. Việc ngừng hoạt động chỉ xóa các đồ thị do plugin ghi nhận và các nguồn dữ liệu không dùng chung thông qua Cacti; hàng trong danh mục kiểm kê vẫn hiển thị. Cacti kiểm soát việc dọn dẹp RRD.
 - Cacti sẽ vô hiệu hóa một plugin nếu mã của plugin kết thúc bằng lỗi nghiêm trọng thực sự, chẳng hạn như hết bộ nhớ. Xem [docs/security.md](../../security.md).
 
@@ -477,12 +476,28 @@ Thiết bị được giữ lại sẽ ngừng nhận dữ liệu. Sau khi gỡ 
 - Token được lưu trong một tệp do bạn cấp phát hoặc được mã hóa bằng AES-256-GCM dưới một tệp khóa không bao giờ đi vào cơ sở dữ liệu. Chúng không bao giờ được hiển thị trên trang web, ghi vào nhật ký hay đưa vào thông báo lỗi.
 - Lỗi cơ sở dữ liệu chỉ mang mã SQLSTATE và mã lỗi của driver, không bao giờ chứa các giá trị của câu lệnh.
 - Mọi thay đổi đều là yêu cầu POST được bảo vệ bởi CSRF token của Cacti. Các thay đổi về cấu hình và tài khoản quản trị yêu cầu quyền Cloudflare: Configure; việc xác nhận phân loại cá nhân yêu cầu quyền Cloudflare: Operator. Việc tạo thiết bị Cacti hoặc bật Create Graphs cũng cần quyền Sites/Devices/Data của Cacti. Một plugin bị vô hiệu hóa sẽ từ chối truy cập vào các trang của nó.
+- Configuration-as-Code (`cli/cloudflare.php` và `casc_register_providers`)
+  chỉ chấp nhận tham chiếu bí mật `vault:<account_id>` hoặc `file:<absolute_path>`,
+  từ chối token thô, bản mã vault và khai báo XML `DOCTYPE`, đồng thời
+  yêu cầu chính xác `--confirm=<PLAN_HASH>` trước khi ghi.
+- Các Ability đã đăng ký (`cloudflare-list-tunnels`, `cloudflare-get-health`) hoàn toàn
+  chỉ đọc, đánh giá phạm vi quyền Cloudflare: View trực tiếp đối chiếu với
+  các bảng xác thực của Cacti cho ID người dùng của bên gọi (không bao giờ dùng trạng thái phiên), và
+  không trả về token hay dữ liệu khóa nào.
 
 Thông tin chi tiết và các giới hạn đã biết có trong [docs/security.md](../../security.md). Hãy báo cáo lỗ hổng bảo mật một cách riêng tư theo hướng dẫn trong [SECURITY.md](../../../SECURITY.md).
 
 ## Quy trình vận hành và phân tích zone
 
-Các bổ sung đang phát triển bao gồm việc cho ngừng hoạt động tường minh đối với các tunnel đã xóa, phân tích zone theo năng lực gói và các mẫu Thold có thể nhập. Những bổ sung này chưa có thẻ phát hành hay kiểm định trên tài khoản thực tế. Xem [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) để biết cách thiết lập, ngữ nghĩa chỉ số và các giới hạn kiểm chứng.
+Các bổ sung phát triển trong `0.4.0-dev` bao gồm việc cho ngừng hoạt động tường minh đối với các tunnel đã xóa, phân tích GraphQL cho zone và tunnel theo năng lực gói, các hàm trợ giúp tóm tắt sẵn sàng cho Thold cùng các mẫu có thể nhập, CLI CasC và sức khỏe, các hook hệ sinh thái và sao chép cho bộ thu thập từ xa. Những bổ sung này chưa có thẻ phát hành hay kiểm định trên tài khoản thực tế. Xem [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) để biết cách thiết lập, ngữ nghĩa chỉ số và các giới hạn kiểm chứng.
+
+- **Client GraphQL Analytics và tóm tắt Thold (`src/Api/GraphqlAnalyticsClient.php`, `src/Metrics/AnalyticsSummary.php`)**: `GraphqlAnalyticsClient` chỉ thực thi các truy vấn chỉ đọc nằm trong danh sách cho phép lúc biên dịch (`zone_settings`, `zone_http_metrics`, `zone_edge_latency`, `tunnel_analytics`) qua `CloudflareClient` (xác minh TLS, ghim tới `api.cloudflare.com`, phản hồi có giới hạn và giãn thời gian chờ khi bị giới hạn tốc độ bằng `RetryPolicy`) để thu thập lưu lượng yêu cầu zone và tunnel, tỷ lệ lỗi HTTP 5xx, số byte phản hồi và độ trễ biên (trung bình và p95). `AnalyticsSummary` cung cấp `recommendedThresholds()` khớp với tên RRD DS của plugin (`health`, `collect_age`, `error_pct`, `age`), `summarizeZones()` và `evaluateSample()`.
+- **CLI vận hành và CasC (`cli/cloudflare.php`)**: được hỗ trợ bởi `ConfigCodec` (`src/Config/ConfigCodec.php`) và `ConfigService` (`src/Config/ConfigService.php`), hỗ trợ `cli/cloudflare.php export [--format=yaml|xml] [--file=PATH]` (chỉ xuất tham chiếu bí mật `vault:` / `file:`), `cli/cloudflare.php validate --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php plan --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php apply --file=PATH --confirm=<PLAN_HASH> [--format=yaml|xml]`, và `cli/cloudflare.php health [--format=text|json]`.
+- **Các hook tích hợp hệ sinh thái (`includes/ecosystem.php`, `setup.php`)**:
+  - `abilities_register` (`AbilitiesProvider`): đăng ký `cloudflare-list-tunnels` và `cloudflare-get-health` chỉ đọc, kiểm soát theo phạm vi quyền Cloudflare: View (cấp trực tiếp và theo nhóm) với hoàn toàn không có token hoặc bí mật trong đầu ra.
+  - `doctor_register_checks` (`DoctorChecks`): cung cấp các kiểm tra `cloudflare_vault_key` (xác thực chế độ quyền, liên kết tượng trưng và độ dài), `cloudflare_token_dir` (kiểm tra đường dẫn tuyệt đối, liên kết tượng trưng và quyền ghi cho mọi người), `cloudflare_tunnel_freshness`, và `cloudflare_api_failure_rate`.
+  - `casc_register_providers` (`CascProvider`): cung cấp nhà cung cấp CasC `cloudflare` (`export`, `validate`, `plan`, `apply`) cho tài khoản (chỉ tham chiếu bí mật), zone, tunnel và ánh xạ chỉ số.
+  - `replicate_out` (`RemoteReplication`): sao chép các bảng siêu dữ liệu không chứa bí mật tới các poller từ xa (`poller_id > 1`) với `token_ciphertext` được xóa thành `NULL` và loại trừ dữ liệu khóa vault.
 
 ### Xuất danh mục kiểm kê
 
@@ -497,7 +512,7 @@ Mỗi cột mốc được phát hành dưới dạng phiên bản 0.x đánh s�
 | 1. Nền tảng | Vòng đời plugin, phân quyền, cấu hình tài khoản, kiểm tra kết nối | Đã phát hành trong 0.3.0 ([#2](https://github.com/somethingwithproof/plugin_cloudflare/pull/2) đến [#5](https://github.com/somethingwithproof/plugin_cloudflare/pull/5)) |
 | 2. Phát hiện | Phát hiện tunnel và connector trong bộ thu thập nền, các trang Overview, Tunnels và Connectors | Đã phát hành trong 0.3.0 ([#6](https://github.com/somethingwithproof/plugin_cloudflare/pull/6)) |
 | 3. Chỉ số | Nguồn dữ liệu sức khỏe tunnel, mẫu đồ thị, xử lý sự cố gián đoạn không bao giờ ghi nhận giá trị 0 bịa đặt | Đã phát hành trong 0.3.0 ([#7](https://github.com/somethingwithproof/plugin_cloudflare/pull/7)) |
-| 4. Phân tích và cảnh báo | Phân tích GraphQL theo gói cho từng zone, ngưỡng Thold có tính năng triệt tiêu khi gián đoạn | Đã lên kế hoạch |
+| 4. Phân tích và cảnh báo | Phân tích GraphQL theo gói (`GraphqlAnalyticsClient`), tóm tắt và mẫu Thold (`AnalyticsSummary`), CasC CLI (`cli/cloudflare.php`), các hook hệ sinh thái và sao chép từ xa | Đã triển khai trong 0.4.0-dev; đang chờ kiểm định trên tài khoản thực tế |
 | 5. Tăng cường độ tin cậy | Tiêm lỗi, mô hình TLA+ cho quá trình phát hiện và thu thập, tài liệu đầy đủ | Đã lên kế hoạch |
 
 ## Phát triển

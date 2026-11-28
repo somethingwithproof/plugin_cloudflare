@@ -23,6 +23,9 @@ use Somethingwithproof\Cloudflare\Storage\Database;
 use Somethingwithproof\Cloudflare\Storage\DatabaseException;
 use Somethingwithproof\Cloudflare\Storage\Migrations\M001Foundation;
 use Somethingwithproof\Cloudflare\Storage\Migrations\M002Discovery;
+use Somethingwithproof\Cloudflare\Storage\Migrations\M003Metrics;
+use Somethingwithproof\Cloudflare\Storage\Migrations\M004Retirement;
+use Somethingwithproof\Cloudflare\Storage\Migrations\M005Analytics;
 use Somethingwithproof\Cloudflare\Storage\Migrator;
 use Somethingwithproof\Cloudflare\Tests\Support\TestDatabase;
 use PDO;
@@ -195,6 +198,12 @@ final class SetupDatabaseTest extends IntegrationTestCase {
 		), cloudflare_glue_calls('api_plugin_register_realm'));
 		$this->assertSame(array(
 			array('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', true),
+			array('cloudflare', 'abilities_register', 'cloudflare_abilities_register', 'includes/ecosystem.php', true),
+			array('cloudflare', 'doctor_register_checks', 'cloudflare_doctor_register_checks', 'includes/ecosystem.php', true),
+			array('cloudflare', 'doctor_register_debug_info', 'cloudflare_doctor_register_debug_info', 'includes/ecosystem.php', true),
+			array('cloudflare', 'casc_register_providers', 'cloudflare_casc_register_providers', 'includes/ecosystem.php', true),
+			array('cloudflare', 'api_register_resources', 'cloudflare_api_register_resources', 'includes/ecosystem.php', true),
+			array('cloudflare', 'replicate_out', 'cloudflare_replicate_out', 'includes/ecosystem.php', true),
 		), cloudflare_glue_calls('api_plugin_register_hook'));
 	}
 
@@ -210,6 +219,12 @@ final class SetupDatabaseTest extends IntegrationTestCase {
 		$this->assertSame(
 			array(
 				array('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', true),
+				array('cloudflare', 'abilities_register', 'cloudflare_abilities_register', 'includes/ecosystem.php', true),
+				array('cloudflare', 'doctor_register_checks', 'cloudflare_doctor_register_checks', 'includes/ecosystem.php', true),
+				array('cloudflare', 'doctor_register_debug_info', 'cloudflare_doctor_register_debug_info', 'includes/ecosystem.php', true),
+				array('cloudflare', 'casc_register_providers', 'cloudflare_casc_register_providers', 'includes/ecosystem.php', true),
+				array('cloudflare', 'api_register_resources', 'cloudflare_api_register_resources', 'includes/ecosystem.php', true),
+				array('cloudflare', 'replicate_out', 'cloudflare_replicate_out', 'includes/ecosystem.php', true),
 				array('cloudflare', 'poller_bottom', 'cloudflare_poller_bottom', 'includes/polling.php', true),
 			),
 			cloudflare_glue_calls('api_plugin_register_hook')
@@ -281,9 +296,17 @@ final class SetupDatabaseTest extends IntegrationTestCase {
 		);
 		$this->assertSame(6, $this->mappingCount());
 		$this->assertSame(
-			array(array('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', true)),
+			array(
+				array('cloudflare', 'auth_alternate_realms', 'cloudflare_auth_alternate_realms', 'setup.php', true),
+				array('cloudflare', 'abilities_register', 'cloudflare_abilities_register', 'includes/ecosystem.php', true),
+				array('cloudflare', 'doctor_register_checks', 'cloudflare_doctor_register_checks', 'includes/ecosystem.php', true),
+				array('cloudflare', 'doctor_register_debug_info', 'cloudflare_doctor_register_debug_info', 'includes/ecosystem.php', true),
+				array('cloudflare', 'casc_register_providers', 'cloudflare_casc_register_providers', 'includes/ecosystem.php', true),
+				array('cloudflare', 'api_register_resources', 'cloudflare_api_register_resources', 'includes/ecosystem.php', true),
+				array('cloudflare', 'replicate_out', 'cloudflare_replicate_out', 'includes/ecosystem.php', true),
+			),
 			cloudflare_glue_calls('api_plugin_register_hook'),
-			'0.2.0 keeps its poller hook and gains role inheritance'
+			'0.2.0 keeps its poller hook and gains role inheritance and ecosystem hooks'
 		);
 		$this->assertSame(array(
 			array('UPDATE plugin_config SET version = ? WHERE directory = ?', array('0.4.0-dev', 'cloudflare')),
@@ -335,5 +358,101 @@ final class SetupDatabaseTest extends IntegrationTestCase {
 		$this->assertSame(array(
 			array('DELETE FROM settings WHERE name LIKE ? ESCAPE \'!\'', array('cloudflare!_%')),
 		), cloudflare_glue_calls('db_execute_prepared'));
+	}
+
+	public function testUpgradeFromPriorMainSchemaIsCleanAndIdempotent(): void {
+		$db = new Database($this->pdo);
+
+		// Simulate prior 0.3.0 schema (M001..M004) with existing production data.
+		(new Migrator($db, array(
+			new M001Foundation(),
+			new M002Discovery(),
+			new M003Metrics(),
+			new M004Retirement(),
+		)))->migrate();
+
+		$db->execute(
+			"INSERT INTO plugin_cloudflare_accounts (cf_account_id, name, token_source, enabled, discovery_interval, created_at, updated_at)
+			VALUES (?, 'Edge Primary', 'file', 1, 300, 1700000000, 1700000000)",
+			array('0123456789abcdef0123456789abcdef')
+		);
+		$accountId = $db->lastInsertId();
+		$db->execute(
+			"INSERT INTO plugin_cloudflare_tunnels (account_id, cf_tunnel_id, name, lifecycle, cf_status, last_seen_at)
+			VALUES (?, '0b0e3f43-63a8-4f0c-bb4c-0d6b2b5a2f10', 'edge-nyc', 'active', 'healthy', 1700000100)",
+			array($accountId)
+		);
+		$this->assertFalse($this->tableExists('plugin_cloudflare_zones'));
+
+		// First upgrade from 0.3.0 to 0.4.0-dev: runs M005 and registers ecosystem hooks.
+		/** @var array<string, bool> $registeredHooks */
+		$registeredHooks = array();
+		$GLOBALS['cloudflare_glue']['cell'] = static function (string $sql, array $params) use (&$registeredHooks): string {
+			if (strpos($sql, 'FROM plugin_config') !== false) {
+				return '0.3.0';
+			}
+
+			if (strpos($sql, 'FROM plugin_hooks') !== false && isset($params[1])) {
+				return isset($registeredHooks[(string) $params[1]]) ? '1' : '0';
+			}
+
+			return '1';
+		};
+
+		$this->assertTrue(plugin_cloudflare_upgrade());
+		$this->assertTrue($this->tableExists('plugin_cloudflare_zones'));
+		$this->assertSame('5', (string) $this->pdo->query('SELECT MAX(version) FROM plugin_cloudflare_migrations')->fetchColumn());
+		$this->assertSame('Edge Primary', (string) $db->fetchCell('SELECT name FROM plugin_cloudflare_accounts WHERE id = ?', array($accountId)));
+		$this->assertSame('edge-nyc', (string) $db->fetchCell('SELECT name FROM plugin_cloudflare_tunnels WHERE account_id = ?', array($accountId)));
+
+		foreach (cloudflare_glue_calls('api_plugin_register_hook') as $call) {
+			$registeredHooks[(string) $call[1]] = true;
+		}
+		foreach (array('auth_alternate_realms', 'abilities_register', 'doctor_register_checks', 'doctor_register_debug_info', 'casc_register_providers', 'api_register_resources', 'replicate_out') as $expectedHook) {
+			$this->assertArrayHasKey($expectedHook, $registeredHooks);
+		}
+
+		// Second upgrade at 0.4.0-dev (idempotent no-op with all rows preserved).
+		cloudflare_glue_reset();
+		$GLOBALS['cloudflare_glue']['cell'] = static function (string $sql): string {
+			return strpos($sql, 'FROM plugin_config') !== false ? '0.4.0-dev' : '1';
+		};
+
+		$this->assertTrue(plugin_cloudflare_upgrade());
+		$this->assertSame(array(), cloudflare_glue_calls('api_plugin_register_hook'));
+		$this->assertSame(array(), cloudflare_glue_calls('db_execute_prepared'));
+		$this->assertSame(1, (int) $db->fetchCell('SELECT COUNT(*) FROM plugin_cloudflare_accounts'));
+		$this->assertSame(1, (int) $db->fetchCell('SELECT COUNT(*) FROM plugin_cloudflare_tunnels'));
+		$this->assertSame(array(), $this->loggedLines());
+
+		// Also verify prior main schema (M001..M005 already applied, missing new ecosystem hooks) repairs cleanly.
+		cloudflare_glue_reset();
+		$GLOBALS['cloudflare_glue']['cell'] = static function (string $sql, array $params): string {
+			if (strpos($sql, 'FROM plugin_config') !== false) {
+				return '0.4.0-dev';
+			}
+
+			if (strpos($sql, 'FROM plugin_hooks') !== false && isset($params[1]) && in_array($params[1], array('doctor_register_debug_info', 'api_register_resources'), true)) {
+				return '0';
+			}
+
+			return '1';
+		};
+
+		$this->assertTrue(plugin_cloudflare_upgrade());
+		$this->assertSame(
+			array(
+				array('cloudflare', 'doctor_register_debug_info', 'cloudflare_doctor_register_debug_info', 'includes/ecosystem.php', true),
+				array('cloudflare', 'api_register_resources', 'cloudflare_api_register_resources', 'includes/ecosystem.php', true),
+			),
+			cloudflare_glue_calls('api_plugin_register_hook')
+		);
+		$this->assertSame(array(), (new Migrator($db, array(
+			new M001Foundation(),
+			new M002Discovery(),
+			new M003Metrics(),
+			new M004Retirement(),
+			new M005Analytics(),
+		)))->pending());
 	}
 }

@@ -19,7 +19,10 @@
 
 namespace Somethingwithproof\Cloudflare;
 
+/** Version component for plugin_cloudflare. */
 final class Version {
+	/** @var string Plugin. */
 	const PLUGIN = '0.4.0-dev';
+	/** @var int Metric schema. */
 	const METRIC_SCHEMA = 1;
 }

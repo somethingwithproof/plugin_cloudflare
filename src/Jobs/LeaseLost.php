@@ -26,6 +26,11 @@ use RuntimeException;
  * written. The message names only the job id.
  */
 final class LeaseLost extends RuntimeException {
+	/**
+	 * Initialize LeaseLost.
+	 *
+	 * @param Lease $lease
+	 */
 	public function __construct(Lease $lease) {
 		parent::__construct('Lease on job ' . $lease->jobId() . ' is no longer held');
 	}

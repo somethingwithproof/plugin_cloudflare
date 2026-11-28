@@ -19,6 +19,12 @@
 
 namespace Somethingwithproof\Cloudflare\Auth;
 
+/** Authorizer contract for plugin_cloudflare. */
 interface Authorizer {
+	/**
+	 * Can configure.
+	 *
+	 * @return bool
+	 */
 	public function canConfigure(): bool;
 }

@@ -19,7 +19,13 @@
 
 namespace Somethingwithproof\Cloudflare\Storage;
 
+/** Migration contract for plugin_cloudflare. */
 interface Migration {
+	/**
+	 * Version.
+	 *
+	 * @return int
+	 */
 	public function version(): int;
 
 	/**

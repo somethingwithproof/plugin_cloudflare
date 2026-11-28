@@ -28,17 +28,29 @@ use Somethingwithproof\Cloudflare\Support\Redactor;
 use DateTimeImmutable;
 use Exception;
 
+/** Cloudflare client component for plugin_cloudflare. */
 final class CloudflareClient {
+	/** @var int Auth code. */
 	private const AUTH_CODE         = 10000;
+	/** Bad header codes. */
 	private const BAD_HEADER_CODES  = array(6003, 6111);
+	/** @var int Max API messages. */
 	private const MAX_API_MESSAGES  = 3;
+	/** @var int Unknown resource. */
 	private const UNKNOWN_RESOURCE  = 1001;
+	/** @var int Page size. */
 	private const PAGE_SIZE         = 1000;
+	/** @var int Max pages. */
 	private const MAX_PAGES         = 50;
+	/** @var int Max name. */
 	private const MAX_NAME          = 255;
+	/** @var int Max short. */
 	private const MAX_SHORT         = 32;
+	/** @var int Max list. */
 	private const MAX_LIST          = 255;
+	/** @var int Max timestamp. */
 	private const MAX_TIMESTAMP     = 4294967295;
+	/** Tunnel statuses. */
 	private const TUNNEL_STATUSES   = array('healthy', 'degraded', 'down', 'inactive');
 
 	/** @var HttpTransport */
@@ -56,6 +68,15 @@ final class CloudflareClient {
 	/** @var int */
 	private $totalTimeout;
 
+	/**
+	 * Initialize CloudflareClient.
+	 *
+	 * @param HttpTransport $transport
+	 * @param RetryPolicy $retry
+	 * @param string $baseUrl
+	 * @param int $connectTimeout
+	 * @param int $totalTimeout
+	 */
 	public function __construct(
 		HttpTransport $transport,
 		RetryPolicy $retry,
@@ -583,6 +604,13 @@ final class CloudflareClient {
 	}
 
 	/* The columns count characters, so a multibyte string is cut by character where mbstring allows. */
+	/**
+	 * Clip.
+	 *
+	 * @param string $text
+	 * @param int $max
+	 * @return string
+	 */
 	private static function clip(string $text, int $max): string {
 		if (function_exists('mb_substr')) {
 			return mb_substr($text, 0, $max, 'UTF-8');
@@ -614,6 +642,12 @@ final class CloudflareClient {
 		return $kept;
 	}
 
+	/**
+	 * Require account ID.
+	 *
+	 * @param string $cfAccountId
+	 * @return void
+	 */
 	private function requireAccountId(string $cfAccountId): void {
 		if (!Ids::isAccountId($cfAccountId)) {
 			throw new ApiException(ErrorClass::CONFIG, null, array(), 'invalid account id');

@@ -32,6 +32,12 @@ if (!defined('CLOUDFLARE_TEMPLATES_LOCK')) {
 }
 
 // Every object hash in the shipped XML, as tests/build/generate_templates.php builds it.
+/**
+ * Template hash.
+ *
+ * @param  string $key
+ * @return string
+ */
 function cloudflare_template_hash(string $key) : string {
 	return md5('plugin_cloudflare/' . $key);
 }
@@ -100,6 +106,13 @@ function cloudflare_templates_install(int $lock_timeout = 10) : bool {
 	}
 }
 
+/**
+ * Templates install locked.
+ *
+ * @param  Database $db
+ * @param  string   $target
+ * @return bool
+ */
 function cloudflare_templates_install_locked(Database $db, string $target) : bool {
 	if (!cloudflare_templates_copy_resource($target)) {
 		return false;
@@ -301,6 +314,13 @@ function cloudflare_templates_ready() : ?array {
 }
 
 // $table is one of the fixed names above, never input.
+/**
+ * Template ID.
+ *
+ * @param  string $table
+ * @param  string $key
+ * @return ?int
+ */
 function cloudflare_template_id(string $table, string $key) : ?int {
 	$id = db_fetch_cell_prepared('SELECT id FROM `' . $table . '` WHERE hash = ?', array(cloudflare_template_hash($key)));
 
@@ -330,6 +350,11 @@ function cloudflare_zone_templates_ready(string $xml) : bool {
 	return true;
 }
 
+/**
+ * Zone templates install.
+ *
+ * @return bool
+ */
 function cloudflare_zone_templates_install() : bool {
 	$base = cloudflare_templates_resource_path();
 

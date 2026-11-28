@@ -22,11 +22,22 @@ namespace Somethingwithproof\Cloudflare\Storage\Migrations;
 use Somethingwithproof\Cloudflare\Storage\Database;
 use Somethingwithproof\Cloudflare\Storage\Migration;
 
+/** M002 discovery component for plugin_cloudflare. */
 final class M002Discovery implements Migration {
+	/**
+	 * Version.
+	 *
+	 * @return int
+	 */
 	public function version(): int {
 		return 2;
 	}
 
+	/**
+	 * Statements.
+	 *
+	 * @param Database $db
+	 */
 	public function statements(Database $db): array {
 		$statements = array(
 			'CREATE TABLE IF NOT EXISTS plugin_cloudflare_tunnels (
@@ -96,6 +107,14 @@ final class M002Discovery implements Migration {
 		return $statements;
 	}
 
+	/**
+	 * Column exists.
+	 *
+	 * @param Database $db
+	 * @param string $table
+	 * @param string $column
+	 * @return bool
+	 */
 	private function columnExists(Database $db, string $table, string $column): bool {
 		return (int) $db->fetchCell(
 			'SELECT COUNT(*) FROM information_schema.columns

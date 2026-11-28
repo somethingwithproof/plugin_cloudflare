@@ -1,4 +1,4 @@
-<!-- Source: README.md; SHA256: f8de0e02c5904e15bfa4c71edcaab219e5e5d4f6d9dbe589f4ed16351df6bf4d -->
+<!-- Source: README.md; SHA256: 813d1c85c236b426b83e42e63c69496f33f8909b5e435d0d45efa6a4ba2f17ca -->
 
 <!-- translations:start -->
 [English](../../../README.md) | [简体中文](../zh-CN/README.md) | [हिन्दी](../hi-IN/README.md) | [Español (España)](../es-ES/README.md) | [Español (Latinoamérica)](../es-419/README.md) | [العربية (السعودية)](../ar-SA/README.md) | [Afrikaans](../af-ZA/README.md) | [አማርኛ](../am-ET/README.md) | [العربية (مصر)](../ar-EG/README.md) | [العربية (المغرب)](../ar-MA/README.md) | [বাংলা](../bn-BD/README.md) | [Bosanski](../bs-BA/README.md) | [Deutsch](../de-DE/README.md) | [فارسی](../fa-IR/README.md) | [Filipino](../fil-PH/README.md) | [Français](../fr-FR/README.md) | [Français (Maroc)](../fr-MA/README.md) | [Français (Sénégal)](../fr-SN/README.md) | [Hausa](../ha-NG/README.md) | [עברית](../he-IL/README.md) | [Hrvatski](../hr-HR/README.md) | [Bahasa Indonesia](README.md) | [Igbo](../ig-NG/README.md) | [Italiano](../it-IT/README.md) | [日本語](../ja-JP/README.md) | [한국어](../ko-KR/README.md) | [Malagasy](../mg-MG/README.md) | [मराठी](../mr-IN/README.md) | [Bahasa Melayu](../ms-MY/README.md) | [Nederlands](../nl-NL/README.md) | [Polski](../pl-PL/README.md) | [Português (Brasil)](../pt-BR/README.md) | [Русский](../ru-RU/README.md) | [Kinyarwanda](../rw-RW/README.md) | [Soomaali](../so-SO/README.md) | [Српски](../sr-RS/README.md) | [Svenska](../sv-SE/README.md) | [Kiswahili](../sw-KE/README.md) | [தமிழ்](../ta-IN/README.md) | [తెలుగు](../te-IN/README.md) | [ไทย](../th-TH/README.md) | [Türkçe](../tr-TR/README.md) | [Українська](../uk-UA/README.md) | [اردو](../ur-PK/README.md) | [Tiếng Việt](../vi-VN/README.md) | [isiXhosa](../xh-ZA/README.md) | [Yorùbá](../yo-NG/README.md) | [繁體中文](../zh-TW/README.md) | [isiZulu](../zu-ZA/README.md)
@@ -27,18 +27,18 @@ dan menyimpan datanya di dalam tabelnya sendiri. Di Cacti, plugin ini menyalin
 berkas XML kueri data ke `resource/script_server/` serta membuat perangkat,
 grafik, dan templat melalui API Cacti sendiri, tanpa perubahan pada berkas inti.
 
-**Status: 0.4.0-dev, belum dirilis.** Versi rilis terakhir adalah 0.3.0. Versi pengembangan menambahkan ekspor inventaris CSV, penghentian eksplisit untuk tunnel yang dihapus, analitik zona yang di-cache, serta templat Thold opsional. Kualifikasi penyedia langsung dan penerapan masih tertunda.
+**Status: 0.4.0-dev, belum dirilis.** Versi rilis terakhir adalah 0.3.0. Versi pengembangan menambahkan ekspor inventaris CSV, penghentian eksplisit untuk tunnel yang dihapus, analitik zona yang di-cache, klien GraphQL Analytics hanya-baca berdaftar izin (`GraphqlAnalyticsClient`) dengan pembantu ringkasan siap-Thold (`AnalyticsSummary`), CLI Configuration-as-Code (`cli/cloudflare.php`), hook ekosistem (`abilities_register`, `doctor_register_checks`, `casc_register_providers`), serta dukungan kolektor jarak jauh tercakup-poller (`replicate_out`). Kualifikasi penyedia langsung dan penerapan masih tertunda.
 
-Tabel di bawah ini menjelaskan rilis stabil 0.3.0. Penambahan pada versi pengembangan dijelaskan di bagian alur kerja Operator dan analitik zona di bawah ini.
+Tabel di bawah ini menjelaskan rilis stabil 0.3.0. Penambahan pada versi pengembangan di 0.4.0-dev dijelaskan di bagian alur kerja Operator dan analitik zona di bawah ini.
 
 | Tersedia saat ini | Direncanakan |
 |---|---|
-| Instalasi, peningkatan, penonaktifan, dan penghapusan instalasi melalui pengelola plugin Cacti | Analitik GraphQL dan peringatan Thold (Milestone 4) |
+| Instalasi, peningkatan, penonaktifan, dan penghapusan instalasi melalui pengelola plugin Cacti | Kualifikasi GraphQL akun langsung dan penerapan (keluarnya Milestone 4) |
 | Izin Cloudflare: View, Operator, dan Configure | Injeksi kesalahan, model TLA+, dan dokumentasi lengkap (Milestone 5) |
 | Menambah, menyunting, menghapus, mengaktifkan, dan menonaktifkan akun Cloudflare | |
 | Menyimpan token dalam berkas atau terenkripsi di basis data Cacti | |
 | Memverifikasi token dan memeriksa izin baca tunnel serta zona | |
-| Penemuan tunnel dan konektor pada kolektor latar belakang yang dijalankan oleh poller utama | |
+| Penemuan tunnel dan konektor pada kolektor latar belakang (`poller_cloudflare.php`) | |
 | Halaman Overview, Tunnels, dan Connectors di bawah Management > Cloudflare Tunnels | |
 | Pelacakan siklus hidup: `active`, `unavailable`, dan `deleted` | |
 | Satu perangkat Cacti per akun, dibuat oleh administrator, dengan tunnel sebagai indeks kueri data | |
@@ -290,8 +290,10 @@ ditolak. Lihat [docs/security.md](../../security.md#token-file).
    mempertahankan nama direktorinya.
 2. Buka Console > Configuration > Plugins, atau Console > Configuration >
    Cloudflare Accounts, satu kali sebagai admin. Tindakan tersebut menjalankan migrasi plugin,
-   mengimpor templat Cloudflare dan menyalin berkas data query (lihat
-   [Metrik dan grafik tunnel](#tunnel-metrics-and-graphs)), serta pada
+   mengimpor templat Cloudflare, menyalin berkas data query (lihat
+   [Metrik dan grafik tunnel](#tunnel-metrics-and-graphs)), mendaftarkan hook ekosistem
+   `abilities_register`, `doctor_register_checks`, `casc_register_providers`,
+   dan `replicate_out` (`includes/ecosystem.php`), serta pada
    pembaruan dari versi 0.1.0, mendaftarkan hook `poller_bottom`.
 
 `poller.php` tidak menjalankan pembaruan plugin, sehingga sebelum langkah 2
@@ -320,11 +322,16 @@ Halaman penyuntingan juga menampilkan apakah izin baca tunnel dan izin baca zona
 
 ## Penemuan tunnel
 
-Setelah setiap siklus polling pada poller utama, hook `poller_bottom` menjalankan
+Setelah setiap siklus polling pada poller kolektor yang dikonfigurasi (`cloudflare_poller_id`, default `1`), hook `poller_bottom` menjalankan
 kolektor di latar belakang menggunakan `exec_background` apabila setidaknya satu akun yang
 aktif mengaktifkan Collect Tunnels. Kolektor tidak pernah berjalan di dalam proses
-poller, sehingga API Cloudflare yang lambat tidak akan menunda `poller.php`. Poller jarak jauh
-tidak pernah menjalankannya.
+poller, sehingga API Cloudflare yang lambat tidak akan menunda `poller.php`. `INFO` mendeklarasikan
+`remote_collect:1`, dan hook `replicate_out` (`RemoteReplication`) mengirimkan
+tabel metadata non-rahasia (`plugin_cloudflare_accounts` dengan `token_ciphertext`
+dikosongkan menjadi `NULL`, `plugin_cloudflare_tunnels`, `plugin_cloudflare_connectors`,
+`plugin_cloudflare_zones`, `plugin_cloudflare_metric_mappings`, dan
+`plugin_cloudflare_resources`) ke poller jarak jauh (`poller_id > 1`) sambil
+mengecualikan materi kunci vault.
 
 Untuk setiap akun yang telah jatuh tempo, kolektor mengambil daftar tunnel akun tersebut, lalu
 membaca koneksi dari tunnel yang aktif, yang menghasilkan informasi konektor setiap
@@ -467,7 +474,7 @@ Perangkat yang dipertahankan akan berhenti menerima data. Setelah penghapusan in
 
 - Satu kali eksekusi melakukan paling banyak 200 permintaan koneksi. Tunnel yang melampaui batas tersebut diperbarui lebih jarang daripada jendela pengamatan, sehingga grafik koneksinya menampilkan celah (*gap*).
 - Plugin akan menimpa suntingan administrator pada templat yang diimpor apabila pemutakhiran mengubah XML templat bawaan.
-- Perangkat akun harus tetap berada pada poller utama (*main poller*). Tabel-tabel plugin berada di basis data utama dan skrip membacanya di sana.
+- Poller jarak jauh menerima metadata tereplikasi tanpa kredensial (`token_ciphertext` dikosongkan menjadi `NULL` dan kunci vault tidak pernah direplikasi). Saat menjalankan kolektor pada poller jarak jauh yang ditunjuk (`cloudflare_poller_id`), sediakan berkas token atau kunci vault secara langsung di host kolektor tersebut.
 - Tunnel yang dihapus tetap berada di indeks kueri data dan mencetak `U` hingga administrator menghentikannya (*retire*) secara eksplisit. Penghentian (*retirement*) hanya menghapus grafik yang dicatat plugin dan sumber data yang tidak dibagikan melalui Cacti; baris inventaris tetap terlihat. Cacti mengontrol pembersihan RRD.
 - Cacti menonaktifkan plugin yang kodenya berakhir dengan kesalahan fatal (*fatal error*) sejati, seperti kehabisan memori. Lihat [docs/security.md](../../security.md).
 
@@ -477,13 +484,23 @@ Perangkat yang dipertahankan akan berhenti menerima data. Setelah penghapusan in
 - Token disimpan dalam berkas yang Anda sediakan atau dienkripsi dengan AES-256-GCM menggunakan berkas kunci yang tidak pernah masuk ke basis data. Token tidak pernah ditampilkan di halaman, ditulis ke log, atau disertakan dalam pesan kesalahan.
 - Kesalahan basis data hanya memuat SQLSTATE dan kode kesalahan driver, tidak pernah menyertakan nilai pernyataan (*statement values*).
 - Setiap perubahan berupa POST yang dilindungi oleh token CSRF Cacti. Perubahan akun administratif dan konfigurasi memerlukan izin Cloudflare: Configure; pengakuan triase pribadi memerlukan Cloudflare: Operator. Membuat perangkat Cacti atau mengaktifkan Create Graphs juga memerlukan izin Sites/Devices/Data Cacti. Plugin yang dinonaktifkan menolak akses ke halaman-halamannya.
+- Configuration-as-Code (`cli/cloudflare.php` dan `casc_register_providers`) hanya menerima referensi rahasia `vault:<account_id>` atau `file:<absolute_path>`, menolak token mentah, ciphertext vault, dan deklarasi XML `DOCTYPE`, serta mewajibkan `--confirm=<PLAN_HASH>` yang persis sebelum menulis.
+- Kemampuan terdaftar (`cloudflare-list-tunnels`, `cloudflare-get-health`) sepenuhnya hanya-baca, mengevaluasi ranah Cloudflare: View secara langsung terhadap tabel autentikasi Cacti untuk ID pengguna pemanggil (tidak pernah menggunakan status sesi), dan tidak mengembalikan token maupun materi kunci.
 
 Rincian dan keterbatasan yang diketahui terdapat di [docs/security.md](../../security.md).
 Laporkan kerentanan secara privat sebagaimana dijelaskan dalam [SECURITY.md](../../../SECURITY.md).
 
 ## Alur kerja operator dan analitik zona
 
-Penambahan pengembangan mencakup penghentian eksplisit atas tunnel yang dihapus, analitik zona berbasis kapabilitas (*capability-aware*), serta templat Thold yang dapat diimpor. Penambahan ini belum memiliki tag rilis atau kualifikasi akun langsung (*live-account qualification*). Lihat [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) untuk penyiapan, semantik metrik, dan batasan verifikasi.
+Penambahan pengembangan di `0.4.0-dev` mencakup penghentian eksplisit atas tunnel yang dihapus, analitik zona dan tunnel GraphQL berbasis kapabilitas (*capability-aware*), pembantu ringkasan siap-Thold serta templat yang dapat diimpor, CLI CasC dan kesehatan, hook ekosistem, serta replikasi kolektor jarak jauh. Penambahan ini belum memiliki tag rilis atau kualifikasi akun langsung (*live-account qualification*). Lihat [docs/analytics-and-alerting.md](../../analytics-and-alerting.md) untuk penyiapan, semantik metrik, dan batasan verifikasi.
+
+- **Klien GraphQL Analytics dan ringkasan Thold (`src/Api/GraphqlAnalyticsClient.php`, `src/Metrics/AnalyticsSummary.php`)**: `GraphqlAnalyticsClient` hanya mengeksekusi kueri hanya-baca yang masuk daftar izin waktu kompilasi (`zone_settings`, `zone_http_metrics`, `zone_edge_latency`, `tunnel_analytics`) melalui `CloudflareClient` (TLS terverifikasi, tersemat ke `api.cloudflare.com`, respons terbatas, dan penundaan batas laju `RetryPolicy`) untuk mengumpulkan volume permintaan zona dan tunnel, tingkat galat HTTP 5xx, byte respons, dan latensi tepi (rata-rata dan p95). `AnalyticsSummary` menyediakan `recommendedThresholds()` yang diselaraskan dengan nama DS RRD plugin (`health`, `collect_age`, `error_pct`, `age`), `summarizeZones()`, dan `evaluateSample()`.
+- **CLI Operator dan CasC (`cli/cloudflare.php`)**: didukung oleh `ConfigCodec` (`src/Config/ConfigCodec.php`) dan `ConfigService` (`src/Config/ConfigService.php`), yang mendukung `cli/cloudflare.php export [--format=yaml|xml] [--file=PATH]` (hanya mengeluarkan referensi rahasia `vault:` / `file:`), `cli/cloudflare.php validate --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php plan --file=PATH [--format=yaml|xml]`, `cli/cloudflare.php apply --file=PATH --confirm=<PLAN_HASH> [--format=yaml|xml]`, dan `cli/cloudflare.php health [--format=text|json]`.
+- **Hook integrasi ekosistem (`includes/ecosystem.php`, `setup.php`)**:
+  - `abilities_register` (`AbilitiesProvider`): mendaftarkan `cloudflare-list-tunnels` dan `cloudflare-get-health` hanya-baca yang dibatasi pada ranah Cloudflare: View (izin langsung dan grup) tanpa token atau rahasia apa pun dalam keluaran.
+  - `doctor_register_checks` (`DoctorChecks`): mengekspos `cloudflare_vault_key` (validasi mode, symlink, dan panjang), `cloudflare_token_dir` (pemeriksaan jalur absolut, symlink, dan izin tulis publik), `cloudflare_tunnel_freshness`, dan `cloudflare_api_failure_rate`.
+  - `casc_register_providers` (`CascProvider`): mengekspos penyedia CasC `cloudflare` (`export`, `validate`, `plan`, `apply`) untuk akun (referensi rahasia saja), zona, tunnel, dan pemetaan metrik.
+  - `replicate_out` (`RemoteReplication`): mereplikasi tabel metadata non-rahasia ke poller jarak jauh (`poller_id > 1`) dengan `token_ciphertext` dikosongkan menjadi `NULL` dan materi kunci vault dikecualikan.
 
 ### Ekspor inventaris
 
@@ -498,7 +515,7 @@ Setiap tonggak pencapaian (*milestone*) dirilis sebagai rilis 0.x dengan nomor m
 | 1. Fondasi | Siklus hidup plugin, izin, konfigurasi akun, pengujian koneksi | Dirilis pada 0.3.0 ([#2](https://github.com/somethingwithproof/plugin_cloudflare/pull/2) hingga [#5](https://github.com/somethingwithproof/plugin_cloudflare/pull/5)) |
 | 2. Penemuan | Penemuan tunnel dan connector di pengumpul latar belakang, halaman Overview, Tunnels, dan Connectors | Dirilis pada 0.3.0 ([#6](https://github.com/somethingwithproof/plugin_cloudflare/pull/6)) |
 | 3. Metrik | Sumber data kesehatan tunnel, templat grafik, penanganan gangguan (*outage*) yang tidak pernah mencatat nilai nol rekayasa | Dirilis pada 0.3.0 ([#7](https://github.com/somethingwithproof/plugin_cloudflare/pull/7)) |
-| 4. Analitik dan peringatan | Analitik GraphQL berbasis paket (*plan-aware*) per zona, ambang batas Thold dengan peredaman gangguan (*outage suppression*) | Direncanakan |
+| 4. Analitik dan peringatan | Analitik GraphQL berbasis paket (`GraphqlAnalyticsClient`), ringkasan dan templat Thold (`AnalyticsSummary`), CLI CasC (`cli/cloudflare.php`), hook ekosistem, dan replikasi jarak jauh | Diimplementasikan di 0.4.0-dev; kualifikasi akun langsung tertunda |
 | 5. Penguatan | Injeksi kesalahan (*fault injection*), model TLA+ untuk penemuan dan pengumpulan, dokumentasi lengkap | Direncanakan |
 
 ## Pengembangan

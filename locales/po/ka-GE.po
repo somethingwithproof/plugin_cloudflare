@@ -1,0 +1,774 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-FileCopyrightText: 2026 Thomas Vincent <thomasvincent@gmail.com>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cloudflare 0.4.0-dev\n"
+"Report-Msgid-Bugs-To: https://github.com/somethingwithproof/plugin_cloudflare/issues\n"
+"PO-Revision-Date: 2026-11-27 00:00+0000\n"
+"Last-Translator: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language-Team: Thomas Vincent <thomasvincent@gmail.com>\n"
+"Language: ka-GE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#: cloudflare_operator.php
+msgid "Monitoring view"
+msgstr "მონიტორინგის ხედი"
+
+#: cloudflare_operator.php
+msgid "Observations could not be read. Ask an administrator to check the plugin log."
+msgstr "დაკვირვებების წაკითხვა ვერ მოხერხდა. სთხოვეთ ადმინისტრატორს პლაგინის ჟურნალის შემოწმება."
+
+#: includes/accounts.php
+msgid "Connection verified"
+msgstr "კავშირი დადასტურებულია"
+
+#: includes/accounts.php
+msgid "Token is not active; it may be expired or disabled"
+msgstr "ტოკენი არ არის აქტიური; შესაძლოა ვადაგასული ან გათიშული იყოს"
+
+#: includes/accounts.php
+msgid "Token is invalid or expired"
+msgstr "ტოკენი არასწორია ან ვადაგასულია"
+
+#: includes/accounts.php
+msgid "Token lacks the Account Cloudflare Tunnel Read permission"
+msgstr "ტოკენს აკლია Account Cloudflare Tunnel Read უფლება"
+
+#: includes/accounts.php
+msgid "Cloudflare API is unreachable; try again later"
+msgstr "Cloudflare API მიუწვდომელია; სცადეთ მოგვიანებით"
+
+#: includes/accounts.php
+msgid "Cloudflare API rate limit reached; try again later"
+msgstr "Cloudflare API-ის მოთხოვნების ლიმიტი ამოიწურა; სცადეთ მოგვიანებით"
+
+#: includes/accounts.php
+msgid "Cloudflare API request failed unexpectedly"
+msgstr "Cloudflare API მოთხოვნა მოულოდნელად ჩაიშალა"
+
+#: includes/accounts.php
+msgid "Token lacks the permissions needed to verify it"
+msgstr "ტოკენს აკლია მისი შემოწმებისთვის საჭირო უფლებები"
+
+#: includes/accounts.php
+msgid "Stored token cannot be decrypted"
+msgstr "შენახული ტოკენის გაშიფვრა შეუძლებელია"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing or unusable"
+msgstr "ტოკენის საცავის გასაღების ფაილი არ არსებობს ან გამოუსადეგარია"
+
+#: includes/accounts.php
+msgid "Token file is missing or insecure"
+msgstr "ტოკენის ფაილი არ არსებობს ან დაუცველია"
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable; configure the key file or use a token file"
+msgstr "დაშიფრული საცავი მიუწვდომელია; დააკონფიგურირეთ გასაღების ფაილი ან გამოიყენეთ ტოკენის ფაილი"
+
+#: includes/accounts.php
+msgid "Enter the 32-character hexadecimal Cloudflare account ID"
+msgstr "შეიყვანეთ 32-სიმბოლოიანი თექვსმეტობითი Cloudflare ანგარიშის ID"
+
+#: includes/accounts.php
+msgid "Enter a name of 1 to 100 characters without control characters"
+msgstr "შეიყვანეთ სახელი 1-დან 100-მდე სიმბოლოთი მართვის სიმბოლოების გარეშე"
+
+#: includes/accounts.php
+msgid "Choose an encrypted token or a token file"
+msgstr "აირჩიეთ დაშიფრული ტოკენი ან ტოკენის ფაილი"
+
+#: includes/accounts.php
+msgid "Enter an API token"
+msgstr "შეიყვანეთ API ტოკენი"
+
+#: includes/accounts.php
+msgid "Re-enter the token when changing the account ID"
+msgstr "ანგარიშის ID-ის შეცვლისას ხელახლა შეიყვანეთ ტოკენი"
+
+#: includes/accounts.php
+msgid "Enter an absolute path of at most 255 characters"
+msgstr "შეიყვანეთ აბსოლუტური გზა მაქსიმუმ 255 სიმბოლოთი"
+
+#: includes/accounts.php
+msgid "Must be 0 or 1"
+msgstr "უნდა იყოს 0 ან 1"
+
+#: includes/accounts.php
+msgid "Enter a whole number of seconds from 60 to 86400"
+msgstr "შეიყვანეთ მთელი წამების რაოდენობა 60-დან 86400-მდე"
+
+#: includes/accounts.php
+msgid "This Cloudflare account ID is already configured"
+msgstr "ეს Cloudflare ანგარიშის ID უკვე კონფიგურირებულია"
+
+#: includes/accounts.php
+msgid "Global API Keys are not accepted; use a scoped API token"
+msgstr "Global API Keys არ მიიღება; გამოიყენეთ შეზღუდული უფლებების მქონე API ტოკენი"
+
+#: includes/accounts.php
+msgid "API token format is invalid"
+msgstr "API ტოკენის ფორმატი არასწორია"
+
+#: includes/accounts.php
+msgid "Token vault key file is missing, unreadable, insecure or malformed"
+msgstr "ტოკენის საცავის გასაღების ფაილი არ არსებობს, წაუკითხავია, დაუცველია ან დაზიანებულია"
+
+#: includes/accounts.php
+msgid "Stored API token could not be decrypted"
+msgstr "შენახული API ტოკენის გაშიფვრა ვერ მოხერხდა"
+
+#: includes/accounts.php
+msgid "Token file is missing, unreadable, not a regular file or too large"
+msgstr "ტოკენის ფაილი არ არსებობს, წაუკითხავია, არ არის ჩვეულებრივი ფაილი ან ზედმეტად დიდია"
+
+#: includes/accounts.php
+msgid "Token file path is not absolute, is a symlink, or the file is world-readable or world-writable"
+msgstr "ტოკენის ფაილის გზა არ არის აბსოლუტური, არის სიმბოლური ბმული, ან ფაილი ყველასთვის წასაკითხი ან ჩაწერადია"
+
+#: includes/accounts.php
+msgid "Token file is not inside the Token File Directory"
+msgstr "ტოკენის ფაილი არ მდებარეობს ტოკენის ფაილების დირექტორიაში"
+
+#: includes/accounts.php
+msgid "API token could not be encrypted"
+msgstr "API ტოკენის დაშიფვრა ვერ მოხერხდა"
+
+#: includes/accounts.php
+msgid "Credential error"
+msgstr "ავტორიზაციის მონაცემის შეცდომა"
+
+#: includes/accounts.php includes/settings.php
+msgid "Cloudflare"
+msgstr "Cloudflare"
+
+#: includes/accounts.php
+msgid "Encrypted in the Cacti database"
+msgstr "დაშიფრული Cacti-ის მონაცემთა ბაზაში"
+
+#: includes/accounts.php
+msgid "Token file on this server"
+msgstr "ტოკენის ფაილი ამ სერვერზე"
+
+#: includes/accounts.php includes/viewer.php
+msgid "Account"
+msgstr "ანგარიში"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Name"
+msgstr "სახელი"
+
+#: includes/accounts.php
+msgid "A label for this account in Cacti."
+msgstr "ამ ანგარიშის სახელწოდება Cacti-ში."
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Account ID"
+msgstr "ანგარიშის ID"
+
+#: includes/accounts.php
+msgid "The 32-character Cloudflare account ID, shown in the dashboard URL and on the account overview page."
+msgstr "32-სიმბოლოიანი Cloudflare ანგარიშის ID, რომელიც ჩანს მართვის პანელის URL-ში და ანგარიშის მიმოხილვის გვერდზე."
+
+#: includes/accounts.php
+msgid "API Token"
+msgstr "API ტოკენი"
+
+#: includes/accounts.php
+msgid "Token Storage"
+msgstr "ტოკენის შენახვა"
+
+#: includes/accounts.php
+msgid "Where the scoped API token is kept. Global API Keys are not accepted."
+msgstr "სად ინახება შეზღუდული უფლებების მქონე API ტოკენი. Global API Keys არ მიიღება."
+
+#: includes/accounts.php
+msgid "Encrypted storage is unavailable because the key file in Settings is missing or unusable; only token files can be used."
+msgstr "დაშიფრული საცავი მიუწვდომელია, რადგან პარამეტრებში მითითებული გასაღების ფაილი არ არსებობს ან გამოუსადეგარია; შესაძლებელია მხოლოდ ტოკენის ფაილების გამოყენება."
+
+#: includes/accounts.php
+msgid "Leave blank to keep the current token"
+msgstr "დატოვეთ ცარიელი მიმდინარე ტოკენის შესანარჩუნებლად"
+
+#: includes/accounts.php
+msgid "A scoped API token with Account Cloudflare Tunnel Read permission."
+msgstr "შეზღუდული უფლებების მქონე API ტოკენი Account Cloudflare Tunnel Read უფლებით."
+
+#: includes/accounts.php
+msgid "Token File"
+msgstr "ტოკენის ფაილი"
+
+#: includes/accounts.php
+msgid "Absolute path to a file that contains only the token. It must be readable by the web server and poller users and must not be world-readable."
+msgstr "აბსოლუტური გზა ფაილისკენ, რომელიც მხოლოდ ტოკენს შეიცავს. ის წასაკითხი უნდა იყოს ვებ-სერვერისა და პოლერის მომხმარებლებისთვის და არ უნდა იყოს ყველასთვის წასაკითხი."
+
+#: includes/accounts.php
+msgid "Collection"
+msgstr "შეგროვება"
+
+#: includes/accounts.php includes/accounts_page.php
+msgid "Enabled"
+msgstr "ჩართულია"
+
+#: includes/accounts.php
+msgid "Disabled accounts are not polled."
+msgstr "გათიშული ანგარიშები არ იკითხება."
+
+#: includes/accounts.php
+msgid "Collect Tunnels"
+msgstr "გვირაბების შეგროვება"
+
+#: includes/accounts.php
+msgid "Discover Cloudflare Tunnels and their connectors."
+msgstr "Cloudflare გვირაბებისა და მათი კონექტორების აღმოჩენა."
+
+#: includes/accounts.php
+msgid "Collect Analytics"
+msgstr "ანალიტიკის შეგროვება"
+
+#: includes/accounts.php
+msgid "Collect zone traffic analytics. This needs the Account Analytics Read and Analytics Read (Zone) permissions."
+msgstr "ზონის ტრაფიკის ანალიტიკის შეგროვება. ამისთვის საჭიროა Account Analytics Read და Analytics Read (Zone) უფლებები."
+
+#: includes/accounts.php
+msgid "Create Graphs"
+msgstr "გრაფიკების შექმნა"
+
+#: includes/accounts.php
+msgid "Create graphs for each tunnel on the account's Cacti device. Turning this on needs the permission to edit Cacti devices."
+msgstr "თითოეული გვირაბისთვის გრაფიკების შექმნა ანგარიშის Cacti მოწყობილობაზე. ამის ჩასართავად საჭიროა Cacti მოწყობილობების რედაქტირების უფლება."
+
+#: includes/accounts.php
+msgid "Discovery Interval"
+msgstr "აღმოჩენის ინტერვალი"
+
+#: includes/accounts.php
+msgid "Seconds between inventory refreshes, from 60 to 86400."
+msgstr "წამების რაოდენობა ინვენტარის განახლებებს შორის, 60-დან 86400-მდე."
+
+#: includes/accounts.php
+msgid "The token and its confirmation do not match"
+msgstr "ტოკენი და მისი დადასტურება არ ემთხვევა"
+
+#: includes/accounts_page.php
+msgid "Delete"
+msgstr "წაშლა"
+
+#: includes/accounts_page.php
+msgid "Verify"
+msgstr "შემოწმება"
+
+#: includes/accounts_page.php
+msgid "Enable"
+msgstr "ჩართვა"
+
+#: includes/accounts_page.php
+msgid "Disable"
+msgstr "გათიშვა"
+
+#: includes/accounts_page.php
+msgid "Create Cacti Device"
+msgstr "Cacti მოწყობილობის შექმნა"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to change Cloudflare accounts."
+msgstr "თქვენ არ გაქვთ Cloudflare ანგარიშების შეცვლის უფლება."
+
+#: includes/accounts_page.php
+msgid "The Cloudflare account no longer exists."
+msgstr "Cloudflare ანგარიში აღარ არსებობს."
+
+#: includes/accounts_page.php
+msgid "The Cloudflare accounts could not be read. See the Cacti log for details."
+msgstr "Cloudflare ანგარიშების წაკითხვა ვერ მოხერხდა. დეტალებისთვის იხილეთ Cacti-ის ჟურნალი."
+
+#: includes/accounts_page.php
+msgid "Create Graphs was left off: turning it on needs the permission to edit Cacti devices."
+msgstr "„გრაფიკების შექმნა“ გამორთული დარჩა: მის ჩასართავად საჭიროა Cacti მოწყობილობების რედაქტირების უფლება."
+
+#: includes/accounts_page.php
+msgid "Cacti device created"
+msgstr "Cacti მოწყობილობა შეიქმნა"
+
+#: includes/accounts_page.php
+msgid "A Cacti device already exists for this account"
+msgstr "ამ ანგარიშისთვის Cacti მოწყობილობა უკვე არსებობს"
+
+#: includes/accounts_page.php
+msgid "The Cloudflare templates are not installed; see the Cacti log"
+msgstr "Cloudflare შაბლონები არ არის დაყენებული; იხილეთ Cacti-ის ჟურნალი"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices"
+msgstr "თქვენ არ გაქვთ Cacti მოწყობილობების შექმნის უფლება"
+
+#: includes/accounts_page.php
+msgid "The Cacti device could not be created; see the Cacti log"
+msgstr "Cacti მოწყობილობის შექმნა ვერ მოხერხდა; იხილეთ Cacti-ის ჟურნალი"
+
+#: includes/accounts_page.php
+msgid "You are not permitted to create Cacti devices."
+msgstr "თქვენ არ გაქვთ Cacti მოწყობილობების შექმნის უფლება."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Delete the following Cloudflare Account. Its discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgid_plural "Click 'Continue' to Delete the following Cloudflare Accounts. Their discovered inventory and job state are removed; Cacti devices and graphs are kept."
+msgstr[0] "დააწკაპუნეთ „გაგრძელება“-ზე შემდეგი Cloudflare ანგარიშის წასაშლელად. მისი აღმოჩენილი ინვენტარი და დავალებების მდგომარეობა წაიშლება; Cacti მოწყობილობები და გრაფიკები შენარჩუნდება."
+msgstr[1] "დააწკაპუნეთ „გაგრძელება“-ზე შემდეგი Cloudflare ანგარიშების წასაშლელად. მათი აღმოჩენილი ინვენტარი და დავალებების მდგომარეობა წაიშლება; Cacti მოწყობილობები და გრაფიკები შენარჩუნდება."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Verify the following Cloudflare Account against the Cloudflare API."
+msgid_plural "Click 'Continue' to Verify the following Cloudflare Accounts against the Cloudflare API."
+msgstr[0] "დააწკაპუნეთ „გაგრძელება“-ზე შემდეგი Cloudflare ანგარიშის შესამოწმებლად Cloudflare API-თან."
+msgstr[1] "დააწკაპუნეთ „გაგრძელება“-ზე შემდეგი Cloudflare ანგარიშების შესამოწმებლად Cloudflare API-თან."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Enable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Enable the following Cloudflare Accounts."
+msgstr[0] "დააწკაპუნეთ „გაგრძელება“-ზე შემდეგი Cloudflare ანგარიშის ჩასართავად."
+msgstr[1] "დააწკაპუნეთ „გაგრძელება“-ზე შემდეგი Cloudflare ანგარიშების ჩასართავად."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to Disable the following Cloudflare Account."
+msgid_plural "Click 'Continue' to Disable the following Cloudflare Accounts."
+msgstr[0] "დააწკაპუნეთ „გაგრძელება“-ზე შემდეგი Cloudflare ანგარიშის გასათიშად."
+msgstr[1] "დააწკაპუნეთ „გაგრძელება“-ზე შემდეგი Cloudflare ანგარიშების გასათიშად."
+
+#: includes/accounts_page.php
+msgid "Click 'Continue' to create a Cacti device for the following Cloudflare Account. An account that already has one is left as it is."
+msgid_plural "Click 'Continue' to create a Cacti device for each of the following Cloudflare Accounts. An account that already has one is left as it is."
+msgstr[0] "დააწკაპუნეთ „გაგრძელება“-ზე შემდეგი Cloudflare ანგარიშისთვის Cacti მოწყობილობის შესაქმნელად. ანგარიში, რომელსაც უკვე აქვს მოწყობილობა, უცვლელი დარჩება."
+msgstr[1] "დააწკაპუნეთ „გაგრძელება“-ზე თითოეული შემდეგი Cloudflare ანგარიშისთვის Cacti მოწყობილობის შესაქმნელად. ანგარიში, რომელსაც უკვე აქვს მოწყობილობა, უცვლელი დარჩება."
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Cancel"
+msgstr "გაუქმება"
+
+#: includes/accounts_page.php includes/tunnel_retirement.php
+msgid "Continue"
+msgstr "გაგრძელება"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Cloudflare Account [edit: %s]"
+msgstr "Cloudflare ანგარიში [რედაქტირება: %s]"
+
+#: includes/accounts_page.php
+msgid "Cloudflare Account [new]"
+msgstr "Cloudflare ანგარიში [ახალი]"
+
+#: includes/accounts_page.php includes/viewer.php src/OperatorPage.php
+msgid "Never"
+msgstr "არასდროს"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Status"
+msgstr "სტატუსი"
+
+#: includes/accounts_page.php
+msgid "Message"
+msgstr "შეტყობინება"
+
+#: includes/accounts_page.php
+msgid "No"
+msgstr "არა"
+
+#: includes/accounts_page.php
+msgid "Token Stored"
+msgstr "ტოკენი შენახულია"
+
+#: includes/accounts_page.php
+msgid "Yes"
+msgstr "დიახ"
+
+#: includes/accounts_page.php
+msgid "Last Checked"
+msgstr "ბოლო შემოწმება"
+
+#: includes/accounts_page.php
+msgid "Last Verified"
+msgstr "ბოლო დადასტურება"
+
+#: includes/accounts_page.php
+#, php-format
+msgid "Permission: %s"
+msgstr "უფლება: %s"
+
+#: includes/accounts_page.php
+msgid "Granted"
+msgstr "მინიჭებულია"
+
+#: includes/accounts_page.php
+msgid "Missing"
+msgstr "არ არსებობს"
+
+#: includes/accounts_page.php
+msgid "Connection Status"
+msgstr "კავშირის სტატუსი"
+
+#: includes/accounts_page.php includes/settings.php includes/viewer.php
+msgid "Cloudflare Accounts"
+msgstr "Cloudflare ანგარიშები"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Search"
+msgstr "ძებნა"
+
+#: includes/accounts_page.php
+msgid "Accounts"
+msgstr "ანგარიშები"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Default"
+msgstr "ნაგულისხმევი"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Go"
+msgstr "გამოყენება"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Set/Refresh Filters"
+msgstr "ფილტრების დაყენება/განახლება"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear"
+msgstr "გასუფთავება"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "Clear Filters"
+msgstr "ფილტრების გასუფთავება"
+
+#: includes/accounts_page.php
+msgid "The name of this account in Cacti."
+msgstr "ამ ანგარიშის სახელი Cacti-ში."
+
+#: includes/accounts_page.php
+msgid "Whether an API token is configured. The edit page shows where it is kept."
+msgstr "არის თუ არა API ტოკენი კონფიგურირებული. რედაქტირების გვერდი აჩვენებს, სად ინახება იგი."
+
+#: includes/accounts_page.php
+msgid "The result of the last Verify."
+msgstr "ბოლო შემოწმების შედეგი."
+
+#: includes/accounts_page.php
+msgid "ID"
+msgstr "ID"
+
+#: includes/accounts_page.php includes/viewer.php
+msgid "No Cloudflare Accounts Found"
+msgstr "Cloudflare ანგარიშები ვერ მოიძებნა"
+
+#: includes/operator.php
+msgid "Inspect tunnels and connector counts. Escalate token changes, account configuration and graph creation to an administrator."
+msgstr "შეამოწმეთ გვირაბები და კონექტორების რაოდენობა. ტოკენის შეცვლის, ანგარიშის კონფიგურაციისა და გრაფიკების შექმნის საკითხები გადასცეთ ადმინისტრატორს."
+
+#: includes/settings.php
+msgid "Configuration"
+msgstr "კონფიგურაცია"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Cloudflare Operations"
+msgstr "Cloudflare ოპერაციები"
+
+#: includes/settings.php
+msgid "Management"
+msgstr "მართვა"
+
+#: includes/settings.php includes/viewer.php
+msgid "Cloudflare Tunnels"
+msgstr "Cloudflare გვირაბები"
+
+#: includes/settings.php
+msgid "(edit)"
+msgstr "(რედაქტირება)"
+
+#: includes/settings.php src/OperatorPage.php
+msgid "Actions"
+msgstr "მოქმედებები"
+
+#: includes/settings.php includes/viewer.php
+msgid "Overview"
+msgstr "მიმოხილვა"
+
+#: includes/settings.php includes/viewer.php
+msgid "Tunnels"
+msgstr "გვირაბები"
+
+#: includes/settings.php includes/viewer.php
+msgid "Connectors"
+msgstr "კონექტორები"
+
+#: includes/settings.php
+msgid "Token Vault Key File"
+msgstr "ტოკენის საცავის გასაღების ფაილი"
+
+#: includes/settings.php
+msgid "Absolute path to the 32-byte key used to encrypt stored API tokens. It must be readable by the web server and poller users and not world-readable. When the file is missing, only token files can be used."
+msgstr "აბსოლუტური გზა 32-ბაიტიანი გასაღებისკენ, რომელიც გამოიყენება შენახული API ტოკენების დასაშიფრად. ის წასაკითხი უნდა იყოს ვებ-სერვერისა და პოლერის მომხმარებლებისთვის და არ უნდა იყოს ყველასთვის წასაკითხი. როცა ფაილი არ არსებობს, მხოლოდ ტოკენის ფაილების გამოყენებაა შესაძლებელი."
+
+#: includes/settings.php
+msgid "Token File Directory"
+msgstr "ტოკენის ფაილების დირექტორია"
+
+#: includes/settings.php
+msgid "Absolute path of the directory that every account token file must be in. When empty, a token file may be anywhere the web server and poller users can read."
+msgstr "აბსოლუტური გზა დირექტორიისკენ, რომელშიც უნდა მდებარეობდეს ანგარიშის ყველა ტოკენის ფაილი. ცარიელი მნიშვნელობისას, ტოკენის ფაილი შეიძლება იყოს ნებისმიერ ადგილას, სადაც ვებ-სერვერისა და პოლერის მომხმარებლებს წაკითხვა შეუძლიათ."
+
+#: includes/settings.php
+msgid "Interactive Request Timeout"
+msgstr "ინტერაქტიული მოთხოვნის მოლოდინის დრო"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made from the web interface, such as Verify."
+msgstr "სრული დრო წამებში ვებ-ინტერფეისიდან გაგზავნილი Cloudflare API მოთხოვნისთვის, მაგალითად შემოწმებისთვის."
+
+#: includes/settings.php
+msgid "Collector Request Timeout"
+msgstr "კოლექტორის მოთხოვნის მოლოდინის დრო"
+
+#: includes/settings.php
+msgid "Total time in seconds allowed for a Cloudflare API request made by the background collector."
+msgstr "სრული დრო წამებში ფონური კოლექტორის მიერ გაგზავნილი Cloudflare API მოთხოვნისთვის."
+
+#: includes/settings.php
+msgid "Log Level"
+msgstr "ჟურნალირების დონე"
+
+#: includes/settings.php
+msgid "The amount of detail the plugin writes to the Cacti log."
+msgstr "დეტალიზაციის დონე, რომელსაც პლაგინი წერს Cacti-ის ჟურნალში."
+
+#: includes/tunnel_retirement.php
+msgid "The tunnel could not be retired. Check permissions and retry after collection finishes."
+msgstr "გვირაბის ჩამოწერა ვერ მოხერხდა. შეამოწმეთ უფლებები და სცადეთ ხელახლა შეგროვების დასრულების შემდეგ."
+
+#: includes/tunnel_retirement.php includes/viewer.php
+msgid "Retire tunnel"
+msgstr "გვირაბის ჩამოწერა"
+
+#: includes/tunnel_retirement.php
+msgid "Retiring removes the graphs and unshared data sources created for this deleted tunnel. Cacti controls RRD cleanup. The inventory record is kept."
+msgstr "ჩამოწერა შლის ამ წაშლილი გვირაბისთვის შექმნილ გრაფიკებსა და გაუზიარებელ მონაცემთა წყაროებს. RRD ფაილების გასუფთავებას Cacti აკონტროლებს. ინვენტარის ჩანაწერი შენარჩუნდება."
+
+#: includes/viewer.php
+msgid "The Cloudflare tunnels could not be read. See the Cacti log for details."
+msgstr "Cloudflare გვირაბების წაკითხვა ვერ მოხერხდა. დეტალებისთვის იხილეთ Cacti-ის ჟურნალი."
+
+#: includes/viewer.php
+msgid "Zone Analytics"
+msgstr "ზონის ანალიტიკა"
+
+#: includes/viewer.php
+msgid "Disabled"
+msgstr "გათიშულია"
+
+#: includes/viewer.php
+msgid "Not collected"
+msgstr "არ გროვდება"
+
+#: includes/viewer.php
+msgid "Collection failing"
+msgstr "შეგროვება ჩაიშალა"
+
+#: includes/viewer.php
+msgid "Not yet collected"
+msgstr "ჯერ არ შეგროვებულა"
+
+#: includes/viewer.php
+msgid "Down"
+msgstr "გათიშულია"
+
+#: includes/viewer.php
+msgid "Degraded"
+msgstr "დაქვეითებულია"
+
+#: includes/viewer.php
+msgid "Healthy"
+msgstr "გამართულია"
+
+#: includes/viewer.php
+msgid "Inactive"
+msgstr "არააქტიურია"
+
+#: includes/viewer.php
+msgid "No active tunnels"
+msgstr "აქტიური გვირაბები არ არის"
+
+#: includes/viewer.php
+msgid "The worst status among active tunnels, or Collection failing while discovery fails."
+msgstr "ყველაზე უარესი სტატუსი აქტიურ გვირაბებს შორის, ან „შეგროვება ჩაიშალა“, როცა აღმოჩენა ვერ ხერხდება."
+
+#: includes/viewer.php
+msgid "Active"
+msgstr "აქტიური"
+
+#: includes/viewer.php
+msgid "Unavailable"
+msgstr "მიუწვდომელი"
+
+#: includes/viewer.php
+msgid "Deleted"
+msgstr "წაშლილი"
+
+#: includes/viewer.php
+msgid "Last Successful Discovery"
+msgstr "ბოლო წარმატებული აღმოჩენა"
+
+#: includes/viewer.php
+msgid "Consecutive Failures"
+msgstr "ზედიზედ შეფერხებები"
+
+#: includes/viewer.php
+#, php-format
+msgid "Last error: %s"
+msgstr "ბოლო შეცდომა: %s"
+
+#: includes/viewer.php
+msgid "Tunnel"
+msgstr "გვირაბი"
+
+#: includes/viewer.php
+msgid "Cloudflare Status"
+msgstr "Cloudflare სტატუსი"
+
+#: includes/viewer.php
+msgid "The status Cloudflare reported at the last discovery."
+msgstr "სტატუსი, რომელიც Cloudflare-მა ბოლო აღმოჩენისას გადმოსცა."
+
+#: includes/viewer.php
+msgid "Lifecycle"
+msgstr "სასიცოცხლო ციკლი"
+
+#: includes/viewer.php
+msgid "Whether the last discoveries still found this tunnel."
+msgstr "აღმოაჩინა თუ არა ბოლო აღმოჩენებმა კვლავ ეს გვირაბი."
+
+#: includes/viewer.php
+msgid "Type"
+msgstr "ტიპი"
+
+#: includes/viewer.php
+msgid "Connections"
+msgstr "კავშირები"
+
+#: includes/viewer.php
+msgid "Last Seen"
+msgstr "ბოლოს ნანახი"
+
+#: includes/viewer.php
+msgid "Any"
+msgstr "ნებისმიერი"
+
+#: includes/viewer.php
+msgid "All"
+msgstr "ყველა"
+
+#: includes/viewer.php
+msgid "No Cloudflare Tunnels Found"
+msgstr "Cloudflare გვირაბები ვერ მოიძებნა"
+
+#: includes/viewer.php
+msgid "Choose a tunnel on the Tunnels tab."
+msgstr "აირჩიეთ გვირაბი „გვირაბები“ ჩანართზე."
+
+#: includes/viewer.php
+msgid "The tunnel no longer exists."
+msgstr "გვირაბი აღარ არსებობს."
+
+#: includes/viewer.php
+#, php-format
+msgid "Connectors for %s"
+msgstr "კონექტორები %s-სთვის"
+
+#: includes/viewer.php
+msgid "Connector ID"
+msgstr "კონექტორის ID"
+
+#: includes/viewer.php
+msgid "Version"
+msgstr "ვერსია"
+
+#: includes/viewer.php
+msgid "Architecture"
+msgstr "არქიტექტურა"
+
+#: includes/viewer.php
+msgid "Running Since"
+msgstr "გაშვებულია"
+
+#: includes/viewer.php
+msgid "Data Centers"
+msgstr "მონაცემთა ცენტრები"
+
+#: includes/viewer.php
+msgid "Origin IPs"
+msgstr "საწყისი IP-ები"
+
+#: includes/viewer.php
+#, php-format
+msgid "This tunnel is %s. These connectors were last seen while the tunnel was active."
+msgstr "ეს გვირაბი არის %s. ეს კონექტორები ბოლოს დაფიქსირდა, სანამ გვირაბი აქტიური იყო."
+
+#: includes/viewer.php
+msgid "No connectors are running for this tunnel."
+msgstr "ამ გვირაბისთვის არცერთი კონექტორი არ მუშაობს."
+
+#: includes/viewer.php
+msgid "Export"
+msgstr "ექსპორტი"
+
+#: includes/viewer.php
+msgid "Bytes/s"
+msgstr "ბაიტი/წმ"
+
+#: includes/viewer.php
+msgid "HTTP 5xx (%)"
+msgstr "HTTP 5xx (%)"
+
+#: includes/viewer.php
+msgid "Requests/s"
+msgstr "მოთხოვნა/წმ"
+
+#: includes/viewer.php
+msgid "Zone"
+msgstr "ზონა"
+
+#: src/OperatorPage.php
+msgid "Review the recorded observations below. Acknowledgments are personal to this session, expire when observations change, and never suppress alerts or change health."
+msgstr "გადახედეთ ქვემოთ ჩაწერილ დაკვირვებებს. აღიარებები პერსონალურია ამ სესიისთვის, ძალას კარგავს დაკვირვებების შეცვლისას და არასდროს ახშობს განგაშებს ან ცვლის გამართულობას."
+
+#: src/OperatorPage.php
+msgid "Investigation"
+msgstr "გამოკვლევა"
+
+#: src/OperatorPage.php
+msgid "Object"
+msgstr "ობიექტი"
+
+#: src/OperatorPage.php
+msgid "Observed (UTC)"
+msgstr "დაფიქსირებულია (UTC)"
+
+#: src/OperatorPage.php
+msgid "State"
+msgstr "მდგომარეობა"
+
+#: src/OperatorPage.php
+msgid "Unknown or stale"
+msgstr "უცნობი ან მოძველებული"
+
+#: src/OperatorPage.php
+msgid "Acknowledged; health unchanged."
+msgstr "აღიარებულია; გამართულობა უცვლელია."
+
+#: src/OperatorPage.php
+msgid "Acknowledge"
+msgstr "აღიარება"
+
+#: src/OperatorPage.php
+msgid "No observations are available."
+msgstr "დაკვირვებები არ არის."
